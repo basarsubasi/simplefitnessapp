@@ -4,7 +4,7 @@
   "expo": {
     "name": "Simple",
     "slug": "simplefitnessappbeta",
-    "version": "1.0.1",
+    "version": "1.1.1",
     "orientation": "portrait",
     "icon": "./assets/simpleicon.png",
     "userInterfaceStyle": "light",
@@ -16,7 +16,11 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "tr.com.basarsubasi.simplefitnessapp"
+      "bundleIdentifier": "tr.com.basarsubasi.simplefitnessapp",
+      "plugins": ["react-native-iap"],
+      "config": {
+        "googleMobileAdsAppId": "ca-app-pub-9707948896132362~7468309982"
+      }
     },
     "android": {
 
