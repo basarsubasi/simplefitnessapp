@@ -1,6 +1,4 @@
 {
- 
-
   "expo": {
     "name": "Simple",
     "slug": "simplefitnessappbeta",
@@ -17,22 +15,28 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "tr.com.basarsubasi.simplefitnessapp",
-      "plugins": ["react-native-iap"],
+      "plugins": [
+        "react-native-iap",
+        "react-native-iap"
+      ],
       "config": {
         "googleMobileAdsAppId": "ca-app-pub-9707948896132362~7468309982"
       }
     },
     "android": {
-
       "config": {
         "googleMobileAdsAppId": "ca-app-pub-9707948896132362~7260721577"
       },
-
-      "plugins": ["react-native-iap", {
-        "paymentProvider": "Play Store"
-      }
-  ], 
-
+      "plugins": [
+        "react-native-iap",
+        {
+          "paymentProvider": "Play Store"
+        },
+        "react-native-iap",
+        {
+          "paymentProvider": "Play Store"
+        }
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/simpleicon.png",
         "backgroundColor": "#ffffff"
@@ -46,9 +50,10 @@
       "eas": {
         "projectId": "1b72cc6b-8e1a-47b1-a7d3-8fcf199a3015"
       }
+    },
+    "runtimeVersion": "1.0.0",
+    "updates": {
+      "url": "https://u.expo.dev/1b72cc6b-8e1a-47b1-a7d3-8fcf199a3015"
     }
   }
-
-  
-  
 }
