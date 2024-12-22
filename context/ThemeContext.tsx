@@ -31,7 +31,7 @@ const DarkTheme = {
   background: '#121212',
   text: 'white',
   card: '#1E1E1E',
-  border: 'rgba(54, 54, 54, 0.1)',
+  border: 'rgba(125, 125, 125, 0.1)',
   buttonBackground: 'white',
   buttonText: 'black',
   homeCardColor1: '#1E1E1E',
