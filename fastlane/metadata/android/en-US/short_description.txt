@@ -1,0 +1,1 @@
+An easy to use fitness app that lets you create, schedule and track your workouts locally.

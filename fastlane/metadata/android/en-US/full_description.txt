@@ -1,0 +1,33 @@
+🏋️ Create a Workout
+
+    Easily create customized workouts with exercises, sets, and reps.
+
+📅 Schedule Your Workouts
+
+    Plan your fitness journey by scheduling workouts on specific days.
+
+📊 Track Your Progress
+
+    Log your weights and reps to monitor your progress over time.
+
+📆 Customizable Date and Weight Formats
+
+    Choose between dd-mm-yyyy or mm-dd-yyyy date formats and toggle between kg or lbs for weights.
+
+🛠️ How It Works
+
+    Adjust Settings: Change the Date and Weight Formats to your liking.
+
+    Create Workouts: Start by adding days, exercises, sets, and reps.
+
+    Schedule Workouts: Plan your fitness routine by selecting a date.
+
+    Track Progress: Log weights and reps you have done during your workouts to see your improvement.
+
+⬇️ Installation Methods
+
+Soon on Google Play Store, App Store and F-Droid.
+
+In the meantime, you can use the apk file under the Releases tab.
+
+Thank you for using Simple. ❤️
