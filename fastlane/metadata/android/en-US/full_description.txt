@@ -24,10 +24,4 @@
 
     Track Progress: Log weights and reps you have done during your workouts to see your improvement.
 
-⬇️ Installation Methods
-
-Soon on Google Play Store, App Store and F-Droid.
-
-In the meantime, you can use the apk file under the Releases tab.
-
 Thank you for using Simple. ❤️
