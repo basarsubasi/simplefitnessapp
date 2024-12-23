@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Button, Alert } from 'react-native';
 import * as FileSystem from 'expo-file-system';
 import { useAdContext } from '../context/AdContext'; // Import the context
-import { requestPurchase } from 'react-native-iap';
+import { requestPurchase, getProducts } from 'react-native-iap';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native'; // Add these imports
 import { useTheme } from '../context/ThemeContext';
 
@@ -13,6 +13,8 @@ const RemoveAdsButton = () => {
 
   const handlePurchase = async () => {
     try {
+      const products = await getProducts({ skus: ['remove_ads'] }); // Fetch the product info
+      console.log(products); // Ensure "remove_ads" is in the list
       await requestPurchase({ sku: 'remove_ads' }); // Replace with your real product ID REPLACE WITH REMOVEAD PRODUCT ID ID AFTER YOU GET IT
       const path = `${FileSystem.documentDirectory}ads_removed.json`;
       await FileSystem.writeAsStringAsync(
@@ -22,8 +24,8 @@ const RemoveAdsButton = () => {
       setAdsRemoved(true); // Update the global context state
       Alert.alert('Success', 'Ads have been removed!');
     } catch (error) {
-      Alert.alert('Error', 'Purchase failed. Please try again.');
-    }
+      console.log('Error:', error);
+      Alert.alert('Error', `Purchase failed: ${error}`);    }
   };
 
   if (adsRemoved) return null; // Hide button if ads are already removed
