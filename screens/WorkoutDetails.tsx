@@ -188,7 +188,7 @@ export default function WorkoutDetails() {
               key={index}
               onLongPress={() => deleteExercise(day.day_id, exercise.exercise_name)}
               activeOpacity={0.8}
-              style={[styles.exerciseContainer, { backgroundColor: theme.border }]}
+              style={[styles.exerciseContainer, { backgroundColor: theme.card, borderColor: theme.border }]}
             >
               <AutoSizeText
                 fontSize={18}

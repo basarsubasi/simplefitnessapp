@@ -199,7 +199,7 @@ export default function CreateWorkout() {
               style={styles.backButton}
               onPress={() => navigation.goBack()}
             >
-              <Ionicons name="arrow-back" size={40} color={theme.text} />
+              <Ionicons name="arrow-back" size={30} color={theme.text} />
             </TouchableOpacity>
 
             {/* Title */}
@@ -396,9 +396,9 @@ const styles = StyleSheet.create({
   },
   backButton: {
     position: 'absolute',
-    top: 33,
-    left: 5,
-    zIndex: 10,
+    top: 1,
+    left: 1,
+    zIndex: 1,
     padding: 8,
   },
 });

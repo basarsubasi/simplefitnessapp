@@ -23,7 +23,7 @@ const LightTheme = {
   homeCardText1: 'white',
   homeCardText2: 'white',
   inactivetint: 'rgba(0, 0, 0, 0.2)',
-  logborder:'rgba(0, 0, 0, 0.2)'
+  logborder:'rgba(0, 0, 0, 0.2)',
 };
 
 const DarkTheme = {
