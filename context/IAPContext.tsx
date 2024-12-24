@@ -4,6 +4,8 @@ import {
   endConnection,
   purchaseUpdatedListener,
   purchaseErrorListener,
+  Purchase,
+  finishTransaction
 } from 'react-native-iap';
 import { Alert } from 'react-native';
 
@@ -21,9 +23,24 @@ export const IAPProvider = ({ children }: { children: React.ReactNode }) => {
       }
     };
 
-    const purchaseUpdateSubscription = purchaseUpdatedListener((purchase) => {
-      console.log('Purchase updated:', purchase);
-      // Add logic for purchase verification and delivery
+    const purchaseUpdateSubscription = purchaseUpdatedListener(async (purchase: Purchase) => {
+      try {
+        console.log('Purchase updated:', purchase);
+        
+        if (purchase.transactionReceipt) {
+          // Mark the transaction as complete
+          await finishTransaction({
+            purchase,
+            isConsumable: false, // Adjust based on whether the product is consumable
+          });
+
+          // Add any additional logic here (e.g., update state)
+          Alert.alert('Success', 'Purchase successful!');
+        }
+      } catch (error) {
+        console.error('Error processing purchase:', error);
+        Alert.alert('Error', 'Failed to process the purchase.');
+      }
     });
 
     const purchaseErrorSubscription = purchaseErrorListener((error) => {
