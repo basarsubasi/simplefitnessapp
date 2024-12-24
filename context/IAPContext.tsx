@@ -38,9 +38,8 @@ export const IAPProvider = ({ children }: { children: React.ReactNode }) => {
           Alert.alert('Success', 'Purchase successful!');
         }
       } catch (error) {
-        console.error('Error processing purchase:', error);
-        Alert.alert('Error', 'Failed to process the purchase.');
-      }
+            console.log('Error:', error);
+            Alert.alert('Error', `Purchase failed: ${error}`);}
     });
 
     const purchaseErrorSubscription = purchaseErrorListener((error) => {
