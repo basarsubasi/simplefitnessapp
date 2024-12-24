@@ -21,6 +21,9 @@
       ],
       "config": {
         "googleMobileAdsAppId": "ca-app-pub-9707948896132362~7468309982"
+      },
+      "entitlements": {
+        "com.apple.InAppPurchase": true
       }
       
     },
