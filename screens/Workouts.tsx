@@ -79,6 +79,7 @@ export default function Workouts() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: 50,
     backgroundColor: 'white',
   },
   adContainer: {

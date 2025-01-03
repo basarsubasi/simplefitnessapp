@@ -289,7 +289,7 @@ export default function LogWorkout() {
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      padding: 20,
+      padding: 50,
       backgroundColor: '#FFFFFF',
     },
         backButton: {

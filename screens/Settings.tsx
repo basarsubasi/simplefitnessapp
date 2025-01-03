@@ -88,7 +88,7 @@ export default function Settings() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 60, // Add padding to move everything down
+    paddingTop: 70, // Add padding to move everything down
     paddingHorizontal: 20,
     backgroundColor: '#FFFFFF',
   },

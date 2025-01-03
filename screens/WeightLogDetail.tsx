@@ -359,7 +359,7 @@ export default function WeightLogDetail() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 20,
+    paddingHorizontal: 30,
     paddingTop: 40,
     backgroundColor: '#FFFFFF',
   },

@@ -354,9 +354,7 @@ export default function MyCalendar() {
         </View>
       </View>
     </Modal>
-      <View style={styles.adContainer}>
-        <BannerAdComponent />
-      </View>
+
   </ScrollView>
   
   );
@@ -366,7 +364,7 @@ export default function MyCalendar() {
 // MyCalendar.tsx
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FFFFFF' },
+  container: { flex: 1, backgroundColor: '#FFFFFF', paddingTop: 50 },
   contentContainer: { alignItems: 'center', paddingHorizontal: 20 },
   title: {
     fontSize: 32,
