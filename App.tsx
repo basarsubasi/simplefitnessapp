@@ -21,8 +21,6 @@
   import Settings from './screens/Settings';
   import { SettingsProvider } from './context/SettingsContext';
   import { ThemeProvider, useTheme } from './context/ThemeContext';
-  import { AdProvider } from './context/AdContext';
-  import { IAPProvider } from './context/IAPContext';
   
 
 
@@ -297,11 +295,9 @@ const AppContent = () => {
       <GestureHandlerRootView>
         <NavigationContainer>
           <SettingsProvider>
-          <AdProvider>
-          <IAPProvider>
+
           <AppContent/>
-          </IAPProvider>
-          </AdProvider>
+
           </SettingsProvider>
         </NavigationContainer>
         
