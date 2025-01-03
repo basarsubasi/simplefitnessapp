@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useSettings } from '../context/SettingsContext';
 import { useNavigation } from '@react-navigation/native';
-import RemoveAdsButton from '../components/RemoveAdsButton';
 import { useTheme } from '../context/ThemeContext'; 
 
 
@@ -81,24 +80,6 @@ export default function Settings() {
         </TouchableOpacity>
       </View>
     </View>
-
-
-
-
-
-
-
-
-
-        {/* RemoveAds */}
-        <View style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: theme.text }]}>Remove Ads</Text>
-        <View style={styles.buttonGroup}> 
-          <RemoveAdsButton />
-        </View>
-      </View>
-
-
 
     </View>
   );
