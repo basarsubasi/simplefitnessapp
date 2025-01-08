@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "SimpleFitnessAppBeta.app"
-               BlueprintName = "SimpleFitnessAppBeta"
-               ReferencedContainer = "container:SimpleFitnessAppBeta.xcodeproj">
+               BuildableName = "Simple.app"
+               BlueprintName = "Simple"
+               ReferencedContainer = "container:Simple.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "SimpleFitnessAppBetaTests.xctest"
-               BlueprintName = "SimpleFitnessAppBetaTests"
-               ReferencedContainer = "container:SimpleFitnessAppBeta.xcodeproj">
+               BuildableName = "SimpleTests.xctest"
+               BlueprintName = "SimpleTests"
+               ReferencedContainer = "container:Simple.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "SimpleFitnessAppBeta.app"
-            BlueprintName = "SimpleFitnessAppBeta"
-            ReferencedContainer = "container:SimpleFitnessAppBeta.xcodeproj">
+            BuildableName = "Simple.app"
+            BlueprintName = "Simple"
+            ReferencedContainer = "container:Simple.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "SimpleFitnessAppBeta.app"
-            BlueprintName = "SimpleFitnessAppBeta"
-            ReferencedContainer = "container:SimpleFitnessAppBeta.xcodeproj">
+            BuildableName = "Simple.app"
+            BlueprintName = "Simple"
+            ReferencedContainer = "container:Simple.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

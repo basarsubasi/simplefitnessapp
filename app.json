@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Simple",
-    "slug": "simplefitnessappbeta",
+    "slug": "simpleios",
     "version": "1.1.3",
     "orientation": "portrait",
     "icon": "./assets/simpleicon.png",
@@ -15,29 +15,15 @@
     "ios": {
       "buildNumber": "1.0.1",
       "supportsTablet": true,
-      "bundleIdentifier": "tr.com.basarsubasi.simplefitnessapp",
-
+      "bundleIdentifier": "com.basarsubasi.simplefitnessapp",
       "config": {
         "googleMobileAdsAppId": "ca-app-pub-9707948896132362~7468309982"
-
-        
-      },
-      "entitlements": {
-        "com.apple.InAppPurchase": false
       }
-      
-      
     },
     "android": {
       "config": {
         "googleMobileAdsAppId": "ca-app-pub-9707948896132362~7260721577"
       },
-
-      "plugins": ["react-native-iap", {
-        "paymentProvider": "Play Store"
-      }
-  ], 
-
       "adaptiveIcon": {
         "foregroundImage": "./assets/simpleicon.png",
         "backgroundColor": "#ffffff"
@@ -47,10 +33,9 @@
     "web": {
       "favicon": "./assets/simpleicon.png"
     },
-
     "extra": {
       "eas": {
-        "projectId": "1b72cc6b-8e1a-47b1-a7d3-8fcf199a3015"
+        "projectId": "304669cf-e466-4f48-8212-17d769256e30"
       }
     },
     "owner": "basarsubasi"
