@@ -13,8 +13,8 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "buildNumber": "1.0.1",
-      "supportsTablet": true,
+      "supportsTablet" : false,
+      "buildNumber": "1.0.2",
       "bundleIdentifier": "com.basarsubasi.simplefitnessapp",
       "config": {
         "googleMobileAdsAppId": "ca-app-pub-9707948896132362~7468309982"
