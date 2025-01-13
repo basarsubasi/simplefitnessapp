@@ -7,7 +7,7 @@ interface BannerAdProps {
 }
 
 const BannerAdComponent: React.FC<BannerAdProps> = ({
-  adUnitId = 'ca-app-pub-9707948896132362/8972963349',
+  adUnitId = 'ca-app-pub-9707948896132362/4182399574',
 }) => {
 
  const requestOptions = {requestNonPersonalizedAdsOnly: true,};
