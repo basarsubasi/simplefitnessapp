@@ -308,6 +308,9 @@ export default function MyCalendar() {
           No upcoming workouts scheduled.
         </Text>
       )}
+          <Text style={[styles.tipText, { color: theme.text }]}>
+            Tip: You need to schedule your workouts here to track them on the My Progress screen!
+          </Text>
     </View>
   
     {/* Modal for Workout Details */}
@@ -395,6 +398,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     position: 'absolute',
     marginBottom:10,
+  },
+  tipText: {
+    marginTop: 20, // Space above the text
+    textAlign: 'center', // Center align
+    fontSize: 14, // Smaller font size
+    fontStyle: 'italic', // Italic for emphasis
   },
   icon: {
     marginRight: 10,

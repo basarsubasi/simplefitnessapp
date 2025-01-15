@@ -53,7 +53,12 @@ export default function WorkoutList({
           <Text style={[styles.workoutText, { color: theme.text }]}>{workout.workout_name}</Text>
           <Ionicons name="chevron-forward" size={20} color={theme.text} />
         </TouchableOpacity>
+        
       ))}
+         {/* Tip Text at the Bottom */}
+    <Text style={[styles.tipText, { color: theme.text }]}>
+      Tip: You can delete most things by pressing long to it, try it when you get the chance!
+    </Text>
     </ScrollView>
   );
 }
@@ -71,6 +76,12 @@ const styles = StyleSheet.create({
     fontWeight: '900', // Extra bold
     marginBottom: 24,
     textAlign: 'center', // Centered text
+  },
+  tipText: {
+    marginTop: 20, // Space above the text
+    textAlign: 'center', // Center align
+    fontSize: 14, // Smaller font size
+    fontStyle: 'italic', // Italic for emphasis
   },
   createButton: {
     borderRadius: 20,

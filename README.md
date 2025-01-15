@@ -46,9 +46,32 @@ An easy to use fitness app that lets you create, schedule and track your workout
 
 ## ⬇️ **Installation Methods**
 
-Soon on Google Play Store, App Store and F-Droid.
+<div align="left">
+  <a href="https://github.com/basarsubasi/simplefitnessapp/releases">
+        <img src="https://github.com/user-attachments/assets/a78be8fb-51a2-4328-b6c0-56d00648fea5" alt="Get it on GitHub" width="180">
+  </a>
+  
+</br>
 
-In the meantime, you can use the apk file under the Releases tab.
+
+<a href="https://play.google.com/store/apps/details?id=tr.com.basarsubasi.simplefitnessapp" style="padding: 10px;">
+    <img src="https://github.com/user-attachments/assets/c11a6262-0a5b-4100-9394-0832507f8eef" alt="Get it on Google Play" width="180">
+</a>
+
+</br>
+
+<a href="https://apps.apple.com/us/app/simple-fitness-simplified/id6740262965" style="padding: 10px;">
+    <img src="https://github.com/user-attachments/assets/9473c701-e53e-4bb9-bbc2-3cf01669889f" alt="Download from App Store" width="180">
+
+</div>
+
+</br>
+
+
+
+Soon on  F-Droid.
+
+
 
 
 

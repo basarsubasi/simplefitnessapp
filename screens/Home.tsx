@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import BannerAdComponent from '../components/BannerAd'; // Import the BannerAdComponent
 import { useTheme } from '../context/ThemeContext';
+import { ScaledSheet } from 'react-native-size-matters'; // Import ScaledSheet for scaling
 
 const { height } = Dimensions.get('window'); // Get screen height for dynamic sizing
 
@@ -64,43 +65,46 @@ export default function Home({ navigation }: any) {
 
 // Home.tsx
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 20,
-    paddingTop: 40,
+    paddingHorizontal: 20, // Keep fixed padding for consistency
+    paddingTop: 30, // Fixed padding
   },
   headerContainer: {
-    marginBottom: 20,
+    position: 'relative',
+    marginBottom: '15@vs', // Slightly reduced scaled margin
   },
   title: {
-    fontSize: 44,
+    fontSize: '36@s', // Smaller scaled font size
     fontWeight: '900',
-    textAlign: 'center', // Center the title horizontally
+    textAlign: 'center',
   },
   card: {
-    borderRadius: 15,
-    padding: 20,
-    marginBottom: 10,
+    borderRadius: 15, // Keep fixed border radius for better uniformity
+    padding: '13@s', // Slightly reduced padding
+    marginBottom: '12@vs', // Reduced vertical margin
     justifyContent: 'center',
     alignItems: 'center',
-    height: height * 0.22,
+    height: '140@vs', // Adjusted height to be smaller
+    width: '90%', // Add a width constraint
+    alignSelf: 'center',
   },
   cardTitle: {
-    fontSize: 24,
+    fontSize: '20@s', // Smaller scaled font size
     fontWeight: '800',
     textAlign: 'center',
-    lineHeight: 30,
+    lineHeight: '26@s', // Adjusted line height
   },
   button: {
-    borderRadius: 20,
-    paddingVertical: 8,
-    paddingHorizontal: 18,
-    marginTop: 10,
+    borderRadius: 20, // Keep fixed radius for consistency
+    paddingVertical: '6@vs', // Slightly reduced padding
+    paddingHorizontal: '14@s', // Adjusted padding
+    marginTop: '8@vs', // Reduced vertical margin
     alignSelf: 'center',
   },
   buttonText: {
-    fontSize: 16,
+    fontSize: '14@s', // Smaller font size for button text
     fontWeight: '800',
   },
   lightGrayText: {

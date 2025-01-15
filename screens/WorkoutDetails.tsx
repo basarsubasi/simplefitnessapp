@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native'; // Import useFocusEffect
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, Modal, TextInput } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -6,7 +7,14 @@ import { useSQLiteContext } from 'expo-sqlite';
 import { AutoSizeText, ResizeTextMode } from 'react-native-auto-size-text';
 import BannerAdComponent from '../components/BannerAd'; // Import the BannerAdComponent
 import { useTheme } from '../context/ThemeContext';
+import { WorkoutStackParamList } from '../App';
+import { StackNavigationProp } from '@react-navigation/stack';
 
+
+
+
+
+type WorkoutListNavigationProp = StackNavigationProp<WorkoutStackParamList, 'WorkoutDetails'>;
 
 
 type Day = {
@@ -14,11 +22,10 @@ type Day = {
   day_name: string;
   exercises: { exercise_name: string; sets: number; reps: number }[];
 };
-
 export default function WorkoutDetails() {
   const db = useSQLiteContext();
   const route = useRoute();
-  const navigation = useNavigation();
+ 
 
   const { theme } = useTheme();
   
@@ -34,10 +41,14 @@ export default function WorkoutDetails() {
   const [exerciseName, setExerciseName] = useState('');
   const [exerciseSets, setExerciseSets] = useState('');
   const [exerciseReps, setExerciseReps] = useState('');
+  const navigation = useNavigation<WorkoutListNavigationProp>();
 
-  useEffect(() => {
-    fetchWorkoutDetails();
-  }, [workout_id]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchWorkoutDetails();
+    }, [workout_id])
+  );
 
   const fetchWorkoutDetails = async () => {
     const workoutResult = await db.getAllAsync<{ workout_name: string }>(
@@ -61,7 +72,12 @@ export default function WorkoutDetails() {
       })
     );
 
-    setDays(daysWithExercises);
+     // Sort days by day_id in ascending order
+     const sortedDays = daysWithExercises.sort((a, b) => a.day_id - b.day_id);
+
+     setDays(sortedDays);
+
+    setDays(sortedDays);
   };
 
   const openAddDayModal = () => {
@@ -147,12 +163,26 @@ export default function WorkoutDetails() {
   };
 
   const deleteExercise = async (day_id: number, exercise_name: string) => {
-    await db.runAsync(
-      'DELETE FROM Exercises WHERE day_id = ? AND exercise_name = ?;',
-      [day_id, exercise_name]
+    Alert.alert(
+      'Delete Exercise',
+      `Are you sure you want to delete the exercise "${exercise_name}"? This action cannot be undone.`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            await db.runAsync(
+              'DELETE FROM Exercises WHERE day_id = ? AND exercise_name = ?;',
+              [day_id, exercise_name]
+            );
+            fetchWorkoutDetails(); // Refresh the data after deletion
+          },
+        },
+      ]
     );
-    fetchWorkoutDetails(); // Refresh the data after deletion
   };
+  
   
 
   return (
@@ -161,7 +191,15 @@ export default function WorkoutDetails() {
     <Ionicons name="arrow-back" size={24} color={theme.text} />
   </TouchableOpacity>
 
+  <View style={styles.titleContainer}>
   <Text style={[styles.title, { color: theme.text }]}>{workoutName}</Text>
+  <TouchableOpacity
+    style={styles.editIcon}
+    onPress={() => navigation.navigate('EditWorkout', { workout_id: workout_id })}
+  >
+    <Ionicons name="pencil-outline" size={24} color={theme.text} />
+  </TouchableOpacity>
+</View>
 
   <FlatList
     data={days}
@@ -329,6 +367,18 @@ const styles = StyleSheet.create({
       left: 10,
       zIndex: 10,
       padding: 8,
+    },
+    titleContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: 30, // Spacing between the title and the content below
+    },
+    
+    editIcon: {
+      paddingLeft:30, // Adds space between the text and the icon
+      paddingTop: 5,
+      paddingBottom:30,     // Increases touchable area around the icon
     },
     title: {
       fontSize: 36,
