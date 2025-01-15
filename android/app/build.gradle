@@ -91,8 +91,8 @@ android {
         applicationId 'tr.com.basarsubasi.simplefitnessapp'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 11
-        versionName "1.1.4"
+        versionCode 1
+        versionName "1.1.7"
          missingDimensionStrategy "store", "play"
 
     }
