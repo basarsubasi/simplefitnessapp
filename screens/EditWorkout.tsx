@@ -6,7 +6,6 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
-  KeyboardAvoidingView,
   ScrollView,
   Keyboard,
   TouchableWithoutFeedback,
@@ -34,6 +33,9 @@ export default function EditWorkout() {
     fetchWorkoutDetails();
   }, [workout_id]);
 
+
+
+  
   const fetchWorkoutDetails = async () => {
     try {
       const workoutResult = await db.getAllAsync<{ workout_name: string }>(
@@ -47,6 +49,7 @@ export default function EditWorkout() {
         [workout_id]
       );
 
+      
       const daysWithExercises = await Promise.all(
         daysResult.map(async (day) => {
           const exercises = await db.getAllAsync<Exercise>(
@@ -68,8 +71,134 @@ export default function EditWorkout() {
     }
   };
 
+  
+  
+  
+
+  
+  
+  const fetchOriginalWorkoutLogData = async (workout_id: number) => {
+    try {
+      const currentDate = Math.floor(new Date().setHours(0, 0, 0, 0) / 1000); // Today's date as Unix timestamp
+  
+      // Fetch the original workout name
+      const originalWorkout = await db.getAllAsync<{ workout_name: string }>(
+        'SELECT workout_name FROM Workouts WHERE workout_id = ?;',
+        [workout_id]
+      );
+  
+      if (!originalWorkout.length) {
+        console.error('Workout not found:', workout_id);
+        return [];
+      }
+  
+      const originalWorkoutName = originalWorkout[0].workout_name;
+  
+      // Fetch all days for the workout
+      const originalDays = await db.getAllAsync<{ day_id: number; day_name: string }>(
+        'SELECT day_id, day_name FROM Days WHERE workout_id = ?;',
+        [workout_id]
+      );
+  
+      // Fetch all workout logs referencing the original workout and day names
+      const logsWithDayNames = await Promise.all(
+        originalDays.map(async (day) => {
+          const logs = await db.getAllAsync<{ workout_log_id: number; day_name: string; workout_name: string; workout_date: number }>(
+            'SELECT workout_log_id, day_name, workout_name, workout_date FROM Workout_Log WHERE day_name = ? AND workout_name = ? AND workout_date >= ?;',
+            [day.day_name, originalWorkoutName, currentDate] // Only fetch logs with workout_date >= today
+          );
+  
+          return logs.map((log) => ({
+            log_id: log.workout_log_id,
+            original_day_name: log.day_name,
+            original_workout_name: log.workout_name,
+            workout_date: log.workout_date,
+            day_id: day.day_id,
+          }));
+        })
+      );
+  
+      return logsWithDayNames.flat();
+    } catch (error) {
+      console.error('Error fetching original workout log data:', error);
+      return [];
+    }
+  };
+  
+  
+  
+  const updateWorkoutLogs = async (originalLogs: any[], updatedWorkoutName: string) => {
+    try {
+      const currentDate = Math.floor(new Date().setHours(0, 0, 0, 0) / 1000); // Today's date as Unix timestamp
+  
+      for (const originalLog of originalLogs) {
+        const { log_id, original_day_name, day_id, workout_date } = originalLog;
+  
+        // Skip logs with workout_date in the past
+        if (workout_date < currentDate) {
+          console.log(`Skipping log ${log_id} as workout_date is in the past.`);
+          continue;
+        }
+  
+        console.log('Updating log:', log_id, 'Original day:', original_day_name, 'Updated workout:', updatedWorkoutName);
+  
+        // Fetch the updated day name
+        const updatedDay = await db.getAllAsync<{ day_name: string }>(
+          'SELECT day_name FROM Days WHERE day_id = ?;',
+          [day_id]
+        );
+  
+        if (!updatedDay.length) {
+          console.error('Updated day not found for day_id:', day_id);
+          continue;
+        }
+  
+        const updatedDayName = updatedDay[0].day_name;
+  
+        // Update the log and its exercises
+        // 1. Delete old exercises
+        await db.runAsync('DELETE FROM Logged_Exercises WHERE workout_log_id = ?;', [log_id]);
+  
+        // 2. Fetch updated exercises for the day
+        const updatedExercises = await db.getAllAsync<{ exercise_name: string; sets: number; reps: number }>(
+          'SELECT exercise_name, sets, reps FROM Exercises WHERE day_id = ?;',
+          [day_id]
+        );
+  
+        // 3. Insert updated exercises
+        const insertExercisePromises = updatedExercises.map((exercise) =>
+          db.runAsync(
+            'INSERT INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?);',
+            [log_id, exercise.exercise_name, exercise.sets, exercise.reps]
+          )
+        );
+  
+        await Promise.all(insertExercisePromises);
+  
+        // 4. Update the Workout_Log with the new workout name and day name
+        await db.runAsync(
+          'UPDATE Workout_Log SET workout_name = ?, day_name = ? WHERE workout_log_id = ?;',
+          [updatedWorkoutName, updatedDayName, log_id]
+        );
+  
+        console.log(`Successfully updated log ${log_id}`);
+      }
+    } catch (error) {
+      console.error('Error updating workout logs:', error);
+    }
+  };
+  
+  
+  
+  
+  
+  
+
   const saveWorkoutDetails = async () => {
     try {
+
+      const originalLogs = await fetchOriginalWorkoutLogData(workout_id);
+
       // Validation: Ensure workout name is not empty
       if (!workoutName.trim()) {
         Alert.alert('Error', 'Workout name cannot be empty.');
@@ -103,11 +232,21 @@ export default function EditWorkout() {
 
       setIsSaving(true);
 
+   
+
       // Update workout name
       await db.runAsync('UPDATE Workouts SET workout_name = ? WHERE workout_id = ?;', [
         workoutName.trim(),
         workout_id,
       ]);
+
+          // Fetch the updated workout name
+        const updatedWorkout = await db.getAllAsync<{ workout_name: string }>(
+          'SELECT workout_name FROM Workouts WHERE workout_id = ?;',
+            [workout_id]
+            );
+
+            const updatedWorkoutName = updatedWorkout[0].workout_name;
 
       // Update days and exercises
       for (const day of days) {
@@ -119,7 +258,11 @@ export default function EditWorkout() {
             [exercise.exercise_name.trim(), exercise.sets, exercise.reps, exercise.exercise_id]
           );
         }
+        
       }
+
+          // Update logs after saving the workout
+          await updateWorkoutLogs(originalLogs, updatedWorkoutName);
 
       Alert.alert('Success', 'Workout details updated successfully!');
       navigation.goBack(); // Navigate back to WorkoutDetails
