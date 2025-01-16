@@ -38,6 +38,9 @@
         "projectId": "304669cf-e466-4f48-8212-17d769256e30"
       }
     },
+    "plugins": [
+      "expo-sqlite"
+    ],
     "owner": "basarsubasi"
   }
 }

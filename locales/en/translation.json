@@ -1,0 +1,17 @@
+{
+    "_comment_settings": "These are settings-related strings.",
+
+    "settingsTitle": "Settings",
+    "languageSection": "Language",
+    "dateFormatSection": "Date Format",
+    "weightFormatSection": "Weight Format",
+    "themeSection": "Theme",
+    "switchToDark": "Switch to Dark",
+    "switchToLight": "Switch to Light",
+    "dd-mm-yyyy": "DD-MM-YYYY",
+    "mm-dd-yyyy": "MM-DD-YYYY",
+    "kg": "Kilograms",
+    "lbs": "Pounds",
+    "createWorkout": "Create a\nworkout."
+  }
+  

@@ -1,6 +1,6 @@
   // App.tsx
   import React, {useState } from 'react';
-  import { View,Text, ActivityIndicator, StatusBar, StyleSheet, Pressable } from 'react-native'; // Import Pressable here
+  import { View, ActivityIndicator, StatusBar, StyleSheet, Pressable } from 'react-native'; // Import Pressable here
   import * as FileSystem from 'expo-file-system';
   import { SQLiteProvider } from 'expo-sqlite';
   import { Asset } from 'expo-asset';
@@ -18,7 +18,9 @@
   import MyProgress from './screens/MyProgress';
   import LogWeights from './screens/LogWeights';
   import WeightLogDetail from './screens/WeightLogDetail';
-  
+  import './i18n'; // Ensure this is present to initialize i18n
+  import i18n from './i18n'; // Import the i18n instance
+  import { I18nextProvider } from 'react-i18next';
   import Settings from './screens/Settings';
   import { SettingsProvider } from './context/SettingsContext';
   import { ThemeProvider, useTheme } from './context/ThemeContext';
@@ -304,10 +306,11 @@ const AppContent = () => {
       <GestureHandlerRootView>
         <NavigationContainer>
           <SettingsProvider>
-
-          <AppContent/>
-
+          <I18nextProvider i18n={i18n}>
+          <AppContent/> {/* Use AppContent here */}
+          </I18nextProvider>
           </SettingsProvider>
+         
         </NavigationContainer>
         
       </GestureHandlerRootView>
