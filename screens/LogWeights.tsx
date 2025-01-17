@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -16,6 +16,8 @@ import BannerAdComponent from '../components/BannerAd'; // Import the BannerAdCo
 
 import { useTheme } from '../context/ThemeContext';
 import { KeyboardAwareFlatList, KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { useTranslation } from 'react-i18next';
+
 
 
 
@@ -26,6 +28,7 @@ export default function LogWeights() {
   const navigation = useNavigation();
 
   const { theme } = useTheme(); // Add the theme hook here
+  const { t } = useTranslation(); // Initialize translations
   const [workouts, setWorkouts] = useState<WorkoutLog[]>([]);
   const [selectedWorkout, setSelectedWorkout] = useState<WorkoutLog | null>(null);
   const [exercises, setExercises] = useState<LoggedExercise[]>([]);
@@ -156,7 +159,7 @@ export default function LogWeights() {
 
   const logWeights = async () => {
     if (!selectedWorkout) {
-      Alert.alert('Error', 'Please select a workout.');
+      Alert.alert(t('errorTitle'), t('selectAWorkout'));
       return;
     }
 
@@ -194,7 +197,7 @@ export default function LogWeights() {
       navigation.goBack();
     } catch (error) {
       console.error('Error logging weights:', error);
-      Alert.alert('Error', 'Failed to log weights.');
+      Alert.alert(t('errorTitle'), t('failedToLogWeights'));
     }
   };
   const [adHeight, setAdHeight] = useState(50);
@@ -207,8 +210,8 @@ export default function LogWeights() {
       <View style={[styles.exerciseContainer, { backgroundColor: theme.background, borderColor: theme.border }]}>
       <Text style={[styles.exerciseTitle, { color: theme.text }]}>{exercise.exercise_name}</Text>
       <View style={styles.labelsRow}>
-        <Text style={[styles.label, { color: theme.text }]}>Reps</Text>
-        <Text style={[styles.label, { color: theme.text }]}>Weight ({weightFormat})</Text>
+        <Text style={[styles.label, { color: theme.text }]}>{t('repsPlaceholder')}</Text>
+        <Text style={[styles.label, { color: theme.text }]}>{t('Weight')} ({weightFormat})</Text>
       </View>
       {exerciseSets[exercise.logged_exercise_id]?.map((setNumber) => {
         const weightKey = `${exercise.logged_exercise_id}_${setNumber}`;
@@ -223,10 +226,10 @@ export default function LogWeights() {
             onLongPress={() => deleteSet(exercise.logged_exercise_id.toString(), setNumber)}
             style={[styles.setContainer, { backgroundColor: theme.background, borderColor: theme.logborder }]}
           >
-            <Text style={[styles.setText, { color: theme.text }]}>Set {setNumber}:</Text>
+            <Text style={[styles.setText, { color: theme.text }]}>{t('Set')} {setNumber}:</Text>
             <TextInput
               style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.logborder }]}
-              placeholder="Reps"
+              placeholder={t('repsPlaceholder')}
               placeholderTextColor={theme.logborder}
               keyboardType="numeric"
               value={reps[repsKey]}
@@ -317,7 +320,7 @@ export default function LogWeights() {
         </TouchableOpacity>
       )}
       ListEmptyComponent={
-        <Text style={[styles.emptyText, { color: theme.text }]}>No workouts available to Track.</Text>
+        <Text style={[styles.emptyText, { color: theme.text }]}>{t('noWorkoutScheduled')}</Text>
       }
     />
   ) : (
@@ -327,11 +330,11 @@ export default function LogWeights() {
         keyExtractor={(item) => item.logged_exercise_id.toString()}
         renderItem={({ item }) => renderExercise(item)}
         ListEmptyComponent={
-          <Text style={[styles.emptyText, { color: theme.text }]}>No exercises available.</Text>
+          <Text style={[styles.emptyText, { color: theme.text }]}>{t('noExercises')}</Text>
         }
       />
       <TouchableOpacity style={[styles.saveButton, { backgroundColor: theme.buttonBackground }]} onPress={logWeights}>
-        <Text style={[styles.saveButtonText, { color: theme.buttonText }]}>Track Weights</Text>
+        <Text style={[styles.saveButtonText, { color: theme.buttonText }]}>{t('trackWeights')}</Text>
       </TouchableOpacity>
     </>
   )}

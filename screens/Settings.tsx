@@ -1,12 +1,16 @@
-import React, { useState } from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useSettings } from '../context/SettingsContext';
-import { useNavigation } from '@react-navigation/native';
+import {useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useTheme } from '../context/ThemeContext'; 
 import i18n from '../i18n';
 import { FlatList } from 'react-native-gesture-handler';
 import { useTranslation } from 'react-i18next';
+import { saveSettings, loadSettings } from '../settingsStorage'
+import * as Localization from 'expo-localization';
+
+
 
 
 
@@ -27,9 +31,66 @@ export default function Settings() {
   const currentLanguage = i18n.language;
 
 
+
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchSettings = async () => {
+        const savedSettings = await loadSettings();
+        if (savedSettings && savedSettings.dateFormat) {
+          setDateFormat(savedSettings.dateFormat);
+        } else {
+          setDateFormat('dd-mm-yyyy'); // Default to 'dd-mm-yyyy'
+        }
+  
+        if (savedSettings && savedSettings.weightFormat) {
+          setWeightFormat(savedSettings.weightFormat);
+        } else {
+          setWeightFormat('kg'); // Default to 'kg'
+        }
+  
+        if (savedSettings?.language) {
+          i18n.changeLanguage(savedSettings.language);
+        } else {
+          const defaultLanguage = Localization.getLocales()[0]?.languageCode || 'en';
+          i18n.changeLanguage(defaultLanguage);
+        }
+      };
+      fetchSettings();
+    }, [])
+  );
+  
+
+
+
+
+// Automatically save settings when they change
+useEffect(() => {
+  const saveCurrentSettings = async () => {
+    const settings = {
+      dateFormat,
+      weightFormat,
+      language: currentLanguage,
+    };
+    await saveSettings(settings);
+  };
+  saveCurrentSettings();
+}, [dateFormat, weightFormat, currentLanguage]);
+  
+
   const handleLanguageChange = (languageCode: string) => {
     i18n.changeLanguage(languageCode);
     setLanguageDropdownVisible(false); // Close the dropdown after selection
+    
+  };
+
+  const handleDateFormatChange = (format: string) => {
+    setDateFormat(format);
+
+  };
+
+  const handleWeightFormatChange = (format: string) => {
+    setWeightFormat(format);
   };
 
 
@@ -45,7 +106,7 @@ export default function Settings() {
       <Ionicons
         name={languageDropdownVisible ? 'chevron-up' : 'chevron-down'}
         size={18}
-        color={theme.text}
+        color='white'
         style={styles.dropdownIcon}
       />
     </TouchableOpacity>
@@ -84,7 +145,7 @@ export default function Settings() {
   
  {/* Language Selection */}
  <View style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: theme.text }]}>Language</Text>
+        <Text style={[styles.sectionTitle, { color: theme.text }]}>{t('settingsLanguage')}</Text>
         {renderLanguageButton()}
         {languageDropdownVisible && (
           <FlatList
@@ -128,25 +189,25 @@ export default function Settings() {
   
     {/* Date Format Section */}
     <View style={styles.section}>
-      <Text style={[styles.sectionTitle, { color: theme.text }]}>Date Format</Text>
+      <Text style={[styles.sectionTitle, { color: theme.text }]}>{t('settingsDateFormat')}</Text>
       <View style={styles.buttonGroup}>
-        {renderButton('dd-mm-yyyy', dateFormat, () => setDateFormat('dd-mm-yyyy'))}
-        {renderButton('mm-dd-yyyy', dateFormat, () => setDateFormat('mm-dd-yyyy'))}
+      {renderButton('dd-mm-yyyy', dateFormat, () => handleDateFormatChange('dd-mm-yyyy'))}
+      {renderButton('mm-dd-yyyy', dateFormat, () => handleDateFormatChange('mm-dd-yyyy'))}
       </View>
     </View>
   
     {/* Weight Format Section */}
     <View style={styles.section}>
-      <Text style={[styles.sectionTitle, { color: theme.text }]}>Weight Format</Text>
+      <Text style={[styles.sectionTitle, { color: theme.text }]}>{t('settingsWeightFormat')}</Text>
       <View style={styles.buttonGroup}>
-        {renderButton('kg', weightFormat, () => setWeightFormat('kg'))}
-        {renderButton('lbs', weightFormat, () => setWeightFormat('lbs'))}
+        {renderButton('kg', weightFormat, () => handleWeightFormatChange('kg'))}
+        {renderButton('lbs', weightFormat, () => handleWeightFormatChange('lbs'))}
       </View>
     </View>
   
     {/* Theme Section */}
     <View style={styles.section}>
-      <Text style={[styles.sectionTitle, { color: theme.text }]}>Theme</Text>
+      <Text style={[styles.sectionTitle, { color: theme.text }]}>{t('settingsTheme')}</Text>
       <View style={styles.buttonGroup}>
         <TouchableOpacity
           style={[
@@ -161,7 +222,7 @@ export default function Settings() {
               theme.background === '#FFFFFF' && styles.activeButtonText,
             ]}
           >
-            {theme.background === '#FFFFFF' ? 'Switch to Dark' : 'Switch to Light'}
+            {theme.background === '#FFFFFF' ? t('settingsSwitchDark') : t('settingsSwitchLight')}
           </Text>
         </TouchableOpacity>
       </View>

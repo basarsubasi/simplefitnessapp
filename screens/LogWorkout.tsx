@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, {useCallback, useState } from 'react';
+
 import {
   View,
   Text,
@@ -9,16 +10,20 @@ import {
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useSQLiteContext } from 'expo-sqlite';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useSettings } from '../context/SettingsContext';
 import { useTheme } from '../context/ThemeContext';
+import { useTranslation } from 'react-i18next';
+
 
 
 export default function LogWorkout() {
   const db = useSQLiteContext();
   const navigation = useNavigation();
   const { theme } = useTheme(); 
+  const { t } = useTranslation(); // Initialize translations
+  
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [workouts, setWorkouts] = useState<{ workout_id: number; workout_name: string }[]>([]);
@@ -26,9 +31,14 @@ export default function LogWorkout() {
   const [days, setDays] = useState<{ day_id: number; day_name: string }[]>([]);
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const { dateFormat } = useSettings();
-  useEffect(() => {
-    fetchWorkouts();
-  }, []);
+
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchWorkouts();
+    }, [])
+  );
+
 
   // Fetch the list of available workouts
   const fetchWorkouts = async () => {
@@ -63,15 +73,15 @@ export default function LogWorkout() {
   // Log the workout and prevent duplication
   const logWorkout = async () => {
     if (!selectedDate) {
-      Alert.alert('Error', 'Please select a date.');
+      Alert.alert(t('errorTitle'), t('noDatePicked'));
       return;
     }
     if (!selectedWorkout) {
-      Alert.alert('Error', 'Please select a workout.');
+      Alert.alert(t('errorTitle'), t('selectAWorkout'));
       return;
     }
     if (!selectedDay) {
-      Alert.alert('Error', 'Please select a day.');
+      Alert.alert(t('errorTitle'), t('selectADay'));
       return;
     }
 
@@ -83,7 +93,7 @@ export default function LogWorkout() {
       const selectedDayName = days.find((day) => day.day_id === selectedDay)?.day_name;
 
       if (!selectedDayName) {
-        Alert.alert('Error', 'Failed to find the selected day.');
+        Alert.alert(t('errorTitle'), 'Failed to find the selected day.');
         return;
       }
 
@@ -101,8 +111,8 @@ export default function LogWorkout() {
 
       if (existingLog.length > 0) {
         Alert.alert(
-          'Duplicate Log',
-          'A workout log for this workout, day, and date already exists.'
+          t('duplicateLogTitle'),
+          t('duplicateLogMessage'),
         );
         return;
       }
@@ -143,7 +153,7 @@ export default function LogWorkout() {
       navigation.goBack(); // Navigate back to the previous screen
     } catch (error) {
       console.error('Error logging workout:', error);
-      Alert.alert('Error', 'Failed to log workout.');
+      Alert.alert(t('errorTitle'), 'Failed to log workout.');
     }
   };
 
@@ -164,11 +174,11 @@ export default function LogWorkout() {
   
     // Check if the date matches today, yesterday, or tomorrow
     if (isSameDay(date, today)) {
-      return 'Today';
+      return t('Today');
     } else if (isSameDay(date, yesterday)) {
-      return 'Yesterday';
+      return t('Yesterday');
     } else if (isSameDay(date, tomorrow)) {
-      return 'Tomorrow';
+      return t('Tomorrow');
     }
   
     // Default date formatting based on user-selected format
@@ -189,10 +199,10 @@ export default function LogWorkout() {
   </TouchableOpacity>
 
   {/* Date Picker */}
-  <Text style={[styles.Title, { color: theme.text }]}>Select Date</Text>
+  <Text style={[styles.Title, { color: theme.text }]}>{t('selectDate')}</Text>
   <TouchableOpacity style={[styles.input, { backgroundColor: theme.card, borderColor: theme.border }]} onPress={() => setShowDatePicker(true)}>
     <Text style={[styles.inputText, { color: theme.text }]}>
-      {selectedDate ? formatDate(normalizeDate(selectedDate)) : 'Select a date'}
+      {selectedDate ? formatDate(normalizeDate(selectedDate)) : t('selectADate')}
     </Text>
   </TouchableOpacity>
   {showDatePicker && (
@@ -210,7 +220,7 @@ export default function LogWorkout() {
   )}
 
   {/* Workouts List */}
-  <Text style={[styles.sectionTitle, { color: theme.text }]}>Select Workout</Text>
+  <Text style={[styles.sectionTitle, { color: theme.text }]}>{t('selectWorkout')}</Text>
   <FlatList
     data={workouts}
     keyExtractor={(item) => item.workout_id.toString()}
@@ -239,13 +249,13 @@ export default function LogWorkout() {
         </Text>
       </TouchableOpacity>
     )}
-    ListEmptyComponent={<Text style={[styles.emptyText, { color: theme.text }]}>No workouts available.</Text>}
+    ListEmptyComponent={<Text style={[styles.emptyText, { color: theme.text }]}>{t('emptyWorkoutLog')}</Text>}
   />
 
   {/* Days List */}
   {selectedWorkout && (
     <>
-      <Text style={[styles.sectionTitle, { color: theme.text }]}>Select Day</Text>
+      <Text style={[styles.sectionTitle, { color: theme.text }]}>{t('selectDay')}</Text>
       <FlatList
         data={days}
         keyExtractor={(item) => item.day_id.toString()}
@@ -269,14 +279,14 @@ export default function LogWorkout() {
             </Text>
           </TouchableOpacity>
         )}
-        ListEmptyComponent={<Text style={[styles.emptyText, { color: theme.text }]}>No days available for this workout.</Text>}
+        ListEmptyComponent={<Text style={[styles.emptyText, { color: theme.text }]}>{t('noDaysAvailable')}</Text>}
       />
     </>
   )}
 
   {/* Save Button */}
   <TouchableOpacity style={[styles.saveButton, { backgroundColor: theme.buttonBackground }]} onPress={logWorkout}>
-    <Text style={[styles.saveButtonText, { color: theme.buttonText }]}>Schedule Workout</Text>
+    <Text style={[styles.saveButtonText, { color: theme.buttonText }]}>{t('scheduleWorkoutLog')}</Text>
   </TouchableOpacity>
 </View>
 

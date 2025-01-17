@@ -6,6 +6,8 @@ import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, ScrollView, View } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '../context/ThemeContext'; // Adjust the path to your ThemeContext
+import { useTranslation } from 'react-i18next';
+
 
 type WorkoutListNavigationProp = StackNavigationProp<WorkoutStackParamList, 'WorkoutsList'>;
 
@@ -18,11 +20,13 @@ export default function WorkoutList({
 }) {
   const navigation = useNavigation<WorkoutListNavigationProp>();
   const { theme } = useTheme(); // Get the current theme
+  const { t } = useTranslation(); // Initialize translations
+  
 
   return (
     <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
       {/* Title */}
-      <Text style={[styles.title, { color: theme.text }]}>My Workouts</Text>
+      <Text style={[styles.title, { color: theme.text }]}>{t('MyWorkouts')}</Text>
 
       {/* Create New Workout Button */}
       <TouchableOpacity
@@ -30,7 +34,7 @@ export default function WorkoutList({
         activeOpacity={0.7}
         onPress={() => navigation.navigate('CreateWorkout')}
       >
-        <Text style={[styles.createButtonText, { color: theme.buttonText }]}>Create a new workout</Text>
+        <Text style={[styles.createButtonText, { color: theme.buttonText }]}>{t('CreateAWorkout')}</Text>
         <Text style={[styles.plus, { color: theme.buttonText }]}>+</Text>
       </TouchableOpacity>
 
@@ -57,7 +61,7 @@ export default function WorkoutList({
       ))}
          {/* Tip Text at the Bottom */}
     <Text style={[styles.tipText, { color: theme.text }]}>
-      Tip: You can delete most things by pressing long to it, try it when you get the chance!
+    {t('WorkoutListTip')}
     </Text>
     </ScrollView>
   );
@@ -72,7 +76,7 @@ const styles = StyleSheet.create({
     marginTop: 50, // Move everything down
   },
   title: {
-    fontSize: 50, // Larger font size
+    fontSize: 35, // Larger font size
     fontWeight: '900', // Extra bold
     marginBottom: 24,
     textAlign: 'center', // Centered text

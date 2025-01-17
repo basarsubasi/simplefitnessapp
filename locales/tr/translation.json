@@ -1,20 +1,195 @@
 {
     
+
+    "_comment_global": "These are global strings.",
+
+
+    "alertCancel" : "İPTAL",
+    "alertDelete": "SİL",
+    "errorTitle": "Hata",
+    "Cancel":"İptal",
+    "Delete":"Sil",
+    "Save":"Kaydet",
+    "Sets":"set",
+    "Reps":"tekrar",
+    "Today":"Bugün",
+    "Tomorrow":"Yarın",
+    "Yesterday":"Dün",
+
+
+    "workoutNameErrorMessage": "Lütfen bir antrenman adı girin.",
+    "provideDayNamesErrorMessage": "Lütfen tüm günler için bir ad girin.",
+    "fillExercisesErrorMessage": "Lütfen tüm egzersizleri geçerli verilerle doldurun.",
+    "failedToCreateWorkoutErrorMessage": "Antrenman oluşturulamadı. Lütfen tekrar deneyin.",
+
+
+    "workoutNamePlaceholder": "Antrenman Adı",
+    "dayNamePlaceholder": "Gün Adı",
+    "exerciseNamePlaceholder": "Egzersiz Adı",
+    "setsPlaceholder": "Set",
+    "repsPlaceholder": "Tekrar",
+
+
+
     "_comment_settings": "These are settings-related strings.",
     
     
     "settingsTitle": "Ayarlar",
-    "languageSection": "Dil",
-    "dateFormatSection": "Tarih Formatı",
-    "weightFormatSection": "Ağırlık Formatı",
-    "themeSection": "Tema",
-    "switchToDark": "Karanlık Moda Geç",
-    "switchToLight": "Aydınlık Moda Geç",
-    "dd-mm-yyyy": "GG-AA-YYYY",
-    "mm-dd-yyyy": "AA-GG-YYYY",
-    "kg": "Kilogram",
-    "lbs": "Pound",
-    "createWorkout": "Bir\nantrenman\noluştur."
+    "settingsLanguage": "Dil",
+    "settingsDateFormat": "Tarih Formatı",
+    "settingsWeightFormat": "Ağırlık Formatı",
+    "settingsTheme": "Tema",
+    "settingsSwitchDark": "Karanlık moda geç",
+    "settingsSwitchLight": "Aydınlık moda geç",
 
+
+
+    "_comment_homepage": "These are homepage-related strings.",
+
+
+    "homeCreateWorkout": "Bir\nantrenman\noluştur.",
+    "homeGotoWorkouts": "Antrenmanlarım'a git",
+    "homeScheduleWorkouts": "Antrenmanlarını\ntakvimine\nekle.",
+    "homeGotoCalendar": "Takvimim'e git",
+    "homeTrackProgress": "İlerlemeni\ntakip\net.",
+    "homeGotoProgress": "İlerlemem'e git",
+
+
+    "_comment_workoutlist": "These are workoutlist-related strings.",
+
+    "MyWorkouts": "Antrenmanlarım",
+    "CreateAWorkout" : "Yeni bir antrenman oluştur",
+    "WorkoutListTip" : "İpucu: Çoğu şeyi üstüne basılı tutarak silebilirsiniz, fırsat bulduğunuzda deneyin!",
+
+
+    "_comment_myworkoutspage": "These are myworkoutspage-related strings.",
+
+    "deleteWorkoutTitle": "{{workoutName}} siliniyor",
+    "deleteWorkoutMessage": "\"{{workoutName}}\" adlı antrenmanı silmek istediğinizden emin misiniz? Bu işlem mevcut kayıtları etkilemeyecek.",
+
+
+
+    "_comment_createWorkout": "These are create-workout-related strings.",
+
+    "deleteDayTitle": "Günü Sil",
+    "deleteDayMessage": "Gün Silinecek.",
+    "deleteExerciseTitle": "Egzersizi Sil",
+    "deleteExerciseMessage": "Bu egzersizi silmek istediğinizden emin misiniz?",
+
+    "addExercise": "+ Egzersiz Ekle",
+    "addDay": "+ Gün Ekle",
+    "saveWorkout": "Antrenmanı Kaydet",
+
+
+
+
+    "_comment_workoutDetails": "These are workot-details-related strings.",
+
+    "noExercises": "Bu günde egzersiz yok",
+    "addExerciseFromDetails": "Egzersiz Ekle",
+    "addDayFromDetails": "Gün Ekle",
+    "emptyWorkoutDetails": "Bu antrenman için gün veya egzersiz mevcut değil.",
+  
+    
+    
+    
+    "deleteDayTitleDetails": "Günü Sil",
+   "deleteExerciseTitleDetails": "Egzersizi Sil",
+   "deleteExerciseMessageDetails": "Bu egzersizi silmek istediğinizden emin misiniz? Bu işlem, egzersizi ileri tarihe planlanmış olan antrenmanlardan da silecektir.",
+    "deleteDayMessageDetails": "Bu günü silmek istediğinizden emin misiniz? Bu işlem, bu günü ileri tarihe planlanmış olan antrenmanlardan da silecektir.",
+
+    "repsValidationError": "Tekrar sayısı 0'dan büyük bir sayı olmalıdır.",
+    "setsValidationError": "Set sayısı 0'dan büyük bir sayı olmalıdır.",
+    "exerciseNameValidationError": "Egzersiz adı boş olamaz.",
+    "dayNameValidationError": "Gün adı boş olamaz.",
+
+    "_comment_editWorkout": "These are edit-workout-related strings.",
+    
+    "fetchWorkoutDetailsError": "Anternman detayları güncellenemedi",
+    "isSaving": "Kaydediliyor...",
+    "saveChanges": "Kaydet",
+    "daysAndExercises": "Günler ve Egzersizler",
+    "editWorkout": "Antenmanı Düzenle",
+
+
+
+    "_comment_myCalendar": "Bunlar takvimle ilgili metinlerdir.",
+
+    "scheduleTip": "İpucu: Burada planladığınız antrenmanları zamanı gelince İlerlemem'den takip edebilirsiniz.",
+    "noUpcomingWorkouts": "Yaklaşan bir antrenman planlanmadı.",
+    "upcomingWorkouts": "Yaklaşan Antrenmanlar",
+    "noUntrackedWorkouts": "Takip edilmeyen bir antrenman bulunamadı.",
+    "untrackedWorkouts": "Takip Edilmeyen Antrenmanlar",
+    "noWorkoutToday": "Bugün için bir antrenman planlanmadı.",
+    "todaysWorkout": "Bugünün Antrenmanı",
+    "scheduleWorkout": "Bir Antrenman Planla",
+    "myCalendar": "Takvimim",
+    "noExerciseLogged": " Bu gün için egzersiz bulunamadı.",
+
+
+    "_comment_LogWorkouts": "These are Log-Workouts-related strings.",
+  
+    "noDatePicked": "Lütfen bir tarih seçin.",
+    "selectAWorkout": "Lütfen bir antrenman seçin.",
+    "selectADay": "Lütfen bir gün seçin.",
+    "duplicateLogTitle": "Çift Kayıt",
+    "duplicateLogMessage": "Aynı antrenman için aynı güne bir kayıt zaten mevcut.",
+    "selectDate": "Tarih Seç",
+    "selectADate": "Bir tarih seçin",
+    "selectWorkout": "Antrenman Seç",
+    "selectDay": "Gün Seç",
+    "emptyWorkoutLog": "Takip etmek için bir antrenman oluşturun!",
+    "noDaysAvailable": "Bu antrenmanda gün yok!",
+    "scheduleWorkoutLog": "Antrenman Planla",
+
+
+
+    "_comment_MyProgress": "These are My-Progress-related strings.",
+
+
+    "deleteLogsTitle": "Kayıtları Sil",
+    "deleteLogsMessage": "Bu antrenman ile ilişkilendirilen tüm kayıtları silmek istediğinizden emin misiniz?",
+    "failedToDeleteDays": "İlişkili günler silinemedi.",
+    "myProgress": "İlerlemem",
+    "trackAWorkout": "Bir antrenmanı takip et",
+    "notTracking": "Hiçbir antrenmanı takip etmiyorsunuz.",
+    "myProgressTip": "İpucu: Yaptığınız antrenmanlardaki egzersizleri buradan takip edebilirsiniz. Her. Bir. Detayına. Kadar.",
+  
+    
+    "_comment_LogWeights": "These are Log-Weights-related strings.",
+
+
+    "failedToLogWeights": "Ağırlıklar kaydedilemedi.",
+    "Set":"Set",
+    "Weight":"Ağırlık",
+    "noWorkoutScheduled": "Antrenmanı takip etmek için önce planla!",
+    "trackWeights":"Ağırlıkları takip et.",
+
+
+    "_comment_WeightLogDetails": "These are Weight-Log-Details-related strings.",
+
+  
+    "deleteWeightLog": "Bu tarihteki günün kayıtlarını silmek istediğinizden emin misiniz?",
+    "weightLog": "kayıtları",
+    "dateFrom": "Başlangıç Tarihi:",
+    "pickStartDate": "Bir başlangıç tarihi seçin",
+    "dateTo": "Bitiş Tarihi:",
+    "pickEndDate": "Bir bitiş tarihi seçin",
+    "clearSelection": "Seçimi Temizle",
+    "noLog": "Seçilen tarihler arasında kayıt bulunmamaktadır."
+    
+    
+
+
+
+
+
+
+
+
+
+
+    
+    
   }
   

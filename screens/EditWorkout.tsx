@@ -14,6 +14,8 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useSQLiteContext } from 'expo-sqlite';
 import { useTheme } from '../context/ThemeContext';
+import { useTranslation } from 'react-i18next';
+
 
 type Exercise = { exercise_id: number; exercise_name: string; sets: number; reps: number };
 type Day = { day_id: number; day_name: string; exercises: Exercise[] };
@@ -23,6 +25,8 @@ export default function EditWorkout() {
   const route = useRoute();
   const navigation = useNavigation();
   const { theme } = useTheme();
+  const { t } = useTranslation(); // Initialize translations
+  
   const { workout_id } = route.params as { workout_id: number };
 
   const [workoutName, setWorkoutName] = useState('');
@@ -66,7 +70,7 @@ export default function EditWorkout() {
     setDays(sortedDays);
 
     } catch (error) {
-      Alert.alert('Error', 'Failed to fetch workout details.');
+      Alert.alert(t('errorTitle'), t('fetchWorkoutDetailsError'));
       console.error(error);
     }
   };
@@ -201,14 +205,14 @@ export default function EditWorkout() {
 
       // Validation: Ensure workout name is not empty
       if (!workoutName.trim()) {
-        Alert.alert('Error', 'Workout name cannot be empty.');
+        Alert.alert(t('errorTitle'), t('workoutNameErrorMessage'));
         return;
       }
   
       // Validation: Check all exercises for empty or invalid fields
       for (const day of days) {
         if (!day.day_name.trim()) {
-          Alert.alert('Error', `Day name cannot be empty for Day ID: ${day.day_id}`);
+          Alert.alert(t('errorTitle'), t('provideDayNamesErrorMessage'));
           return;
         }
   
@@ -221,8 +225,8 @@ export default function EditWorkout() {
             parseInt(exercise.reps.toString(), 10) === 0
           ) {
             Alert.alert(
-              'Error',
-              `Invalid input in Day "${day.day_name}". Ensure all exercises have valid name, sets, and reps.`
+              t('errorTitle'),
+              t('fillExercisesErrorMessage'),
             );
             return;
           }
@@ -264,10 +268,9 @@ export default function EditWorkout() {
           // Update logs after saving the workout
           await updateWorkoutLogs(originalLogs, updatedWorkoutName);
 
-      Alert.alert('Success', 'Workout details updated successfully!');
       navigation.goBack(); // Navigate back to WorkoutDetails
     } catch (error) {
-      Alert.alert('Error', 'Failed to update workout details.');
+      Alert.alert(t('errorTitle'), 'Failed to update workout details.');
       console.error(error);
     } finally {
       setIsSaving(false);
@@ -314,19 +317,19 @@ export default function EditWorkout() {
           </TouchableOpacity>
 
           {/* Title */}
-          <Text style={[styles.title, { color: theme.text }]}>Edit Workout</Text>
+          <Text style={[styles.title, { color: theme.text }]}>{t('editWorkout')}</Text>
 
           {/* Workout Name */}
           <TextInput
             style={[styles.input, { color: theme.text, backgroundColor: theme.card }]}
             value={workoutName}
             onChangeText={setWorkoutName}
-            placeholder="Workout Name"
+            placeholder={t('workoutNamePlaceholder')}
             placeholderTextColor={theme.text}
           />
 
           {/* Days and Exercises */}
-          <Text style={[styles.subtitle, { color: theme.text }]}>Days and Exercises:</Text>
+          <Text style={[styles.subtitle, { color: theme.text }]}>{t('daysAndExercises')}</Text>
           {days.map((day) => (
             <View key={day.day_id} style={[styles.dayContainer, { backgroundColor: theme.card }]}>
               {/* Day Name */}
@@ -334,7 +337,7 @@ export default function EditWorkout() {
                 style={[styles.dayInput, { color: theme.text },{ borderBottomColor: theme.border }]}
                 value={day.day_name}
                 onChangeText={(text) => handleDayNameChange(day.day_id, text)}
-                placeholder="Day Name"
+                placeholder={t('dayNamePlaceholder')}
                 placeholderTextColor={theme.text}
               />
 
@@ -351,7 +354,7 @@ export default function EditWorkout() {
                     onChangeText={(text) =>
                       handleExerciseChange(day.day_id, index, 'exercise_name', text)
                     }
-                    placeholder="Exercise Name"
+                    placeholder={t('exerciseNamePlaceholder')}
                     placeholderTextColor={theme.text}
                   />
                   {/* Sets */}
@@ -362,7 +365,7 @@ export default function EditWorkout() {
                       handleExerciseChange(day.day_id, index, 'sets', text)
                     }
                     keyboardType="numeric"
-                    placeholder="Sets"
+                    placeholder={t('setsPlaceholder')}
                     placeholderTextColor={theme.text}
                   />
                   {/* Reps */}
@@ -373,7 +376,7 @@ export default function EditWorkout() {
                       handleExerciseChange(day.day_id, index, 'reps', text)
                     }
                     keyboardType="numeric"
-                    placeholder="Reps"
+                    placeholder={t('repsPlaceholder')}
                     placeholderTextColor={theme.text}
                   />
                 </View>
@@ -388,7 +391,7 @@ export default function EditWorkout() {
             disabled={isSaving}
           >
             <Text style={[styles.saveButtonText, { color: theme.buttonText }]}>
-              {isSaving ? 'Saving...' : 'Save Changes'}
+              {isSaving ? t('isSaving') : t('saveChanges')}
             </Text>
           </TouchableOpacity>
         </View>

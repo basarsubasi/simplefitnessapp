@@ -13,6 +13,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useSettings } from '../context/SettingsContext';
 import { useTheme } from '../context/ThemeContext'; 
+import { useTranslation } from 'react-i18next';
 import BannerAdComponent from '../components/BannerAd';
 
 
@@ -22,6 +23,8 @@ export default function WeightLogDetail() {
   
   const navigation = useNavigation();
   const { theme } = useTheme();
+  const { t } = useTranslation(); // Initialize translations
+
   const db = useSQLiteContext();
   const { workoutName } = route.params as { workoutName: string };
   const { weightFormat, dateFormat } = useSettings();
@@ -195,12 +198,12 @@ export default function WeightLogDetail() {
   
     const confirmDeleteDay = () => {
       Alert.alert(
-        'Delete Day',
-        `Are you sure you want to delete all logs for "${day_name}" on ${formattedDate}?`,
+        t('deleteDayTitle'),
+        t('deleteWeightLog'),
         [
-          { text: 'Cancel', style: 'cancel' },
+          { text: t('alertCancel'), style: 'cancel' },
           {
-            text: 'Delete',
+            text: t('alertDelete'),
             style: 'destructive',
             onPress: async () => {
               await deleteDayLogs(day_name, workout_date);
@@ -251,7 +254,7 @@ export default function WeightLogDetail() {
           <Text style={[styles.exerciseName, { color: theme.text }]}>{exercise_name}</Text>
           {sets.map((set, index) => (
             <Text key={index} style={[styles.logDetail, { color: theme.text }]}>
-              Set {set.set_number}: {set.reps_logged} reps, {set.weight_logged} {weightFormat}
+              {t('Set')} {set.set_number}: {set.reps_logged} {t('Reps')}, {set.weight_logged} {weightFormat}
             </Text>
           ))}
         </View>
@@ -273,7 +276,7 @@ export default function WeightLogDetail() {
       <Ionicons name="arrow-back" size={24} color={theme.text} />
     </TouchableOpacity>
   
-    <Text style={[styles.headerTitle, { color: theme.text }]}>{workoutName} logs</Text>
+    <Text style={[styles.headerTitle, { color: theme.text }]}>{workoutName} {t('weightLog')}</Text>
   
     {/* Filter Buttons */}
     <View style={styles.filterContainer}>
@@ -284,8 +287,8 @@ export default function WeightLogDetail() {
         <Ionicons name="calendar-outline" size={20} color={theme.buttonText} />
         <Text style={[styles.filterButtonText, { color: theme.buttonText }]}>
           {dateRange.start
-            ? `From: ${formatDate(dateRange.start.getTime() / 1000)}`
-            : 'Pick Start Date'}
+            ? `${t('dateFrom')} ${formatDate(dateRange.start.getTime() / 1000)}`
+            : t('pickStartDate')}
         </Text>
       </TouchableOpacity>
       <TouchableOpacity
@@ -295,8 +298,8 @@ export default function WeightLogDetail() {
         <Ionicons name="calendar-outline" size={20} color={theme.buttonText} />
         <Text style={[styles.filterButtonText, { color: theme.buttonText }]}>
           {dateRange.end
-            ? `To: ${formatDate(dateRange.end.getTime() / 1000)}`
-            : 'Pick End Date'}
+            ? `${t('dateTo')} ${formatDate(dateRange.end.getTime() / 1000)}`
+            : t('pickEndDate')}
         </Text>
       </TouchableOpacity>
     </View>
@@ -306,7 +309,7 @@ export default function WeightLogDetail() {
         style={[styles.clearButton, { backgroundColor: theme.text }]}
         onPress={clearDateSelection}
       >
-        <Text style={[styles.clearButtonText, { color: theme.card }]}>Clear Selection</Text>
+        <Text style={[styles.clearButtonText, { color: theme.card }]}>{t('clearSelection')}</Text>
       </TouchableOpacity>
     )}
   
@@ -341,7 +344,7 @@ export default function WeightLogDetail() {
       renderItem={({ item }) => renderDay(item)}
       ListEmptyComponent={
         <Text style={[styles.emptyText, { color: theme.text }]}>
-          No logs available for the selected range.
+          {t('noLog')}
         </Text>
       }
     />

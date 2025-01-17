@@ -15,6 +15,8 @@ import { WorkoutStackParamList } from '../App'; // Adjust path to where WorkoutS
 import { StackNavigationProp } from '@react-navigation/stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '../context/ThemeContext'; // Import theme context
+import { useTranslation } from 'react-i18next';
+
 
 type WorkoutListNavigationProp = StackNavigationProp<WorkoutStackParamList, 'WorkoutsList'>;
 
@@ -73,6 +75,7 @@ async function createWorkout(
 export default function CreateWorkout() {
   const db = useSQLiteContext();
   const { theme } = useTheme(); // Get the current theme
+  const { t } = useTranslation(); // Initialize translations
   const [workoutName, setWorkoutName] = useState('');
   const [days, setDays] = useState<
     { dayName: string; exercises: { exerciseName: string; sets: string; reps: string }[] }[]
@@ -96,12 +99,12 @@ export default function CreateWorkout() {
 
   const deleteDay = (index: number) => {
     Alert.alert(
-      'Delete Day',
-      `Are you sure you want to delete Day ${index + 1}?`,
+      t('deleteDayTitle'),
+      t('deleteDayMessage'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('alertCancel'), style: 'cancel' },
         {
-          text: 'Delete',
+          text: t('alertDelete'),
           style: 'destructive',
           onPress: () => {
             setDays((prev) => prev.filter((_, dayIndex) => dayIndex !== index));
@@ -113,12 +116,12 @@ export default function CreateWorkout() {
 
   const deleteExercise = (dayIndex: number, exerciseIndex: number) => {
     Alert.alert(
-      'Delete Exercise',
-      `Are you sure you want to delete this exercise?`,
+      t('deleteExerciseTitle'),
+      t('deleteExerciseMessage'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('alertCancel'), style: 'cancel' },
         {
-          text: 'Delete',
+          text: t('alertDelete'),
           style: 'destructive',
           onPress: () => {
             setDays((prev) => {
@@ -136,12 +139,14 @@ export default function CreateWorkout() {
 
   const handleSaveWorkout = async () => {
     if (!workoutName.trim()) {
-      Alert.alert('Error', 'Please enter a workout name.');
+      Alert.alert(t('errorTitle'),
+      t('workoutNameErrorMessage'));
       return;
     }
 
     if (days.some((day) => !day.dayName.trim())) {
-      Alert.alert('Error', 'Please provide names for all days.');
+      Alert.alert(t('errorTitle'),
+      t('provideDayNamesErrorMessage'));
       return;
     }
 
@@ -157,7 +162,7 @@ export default function CreateWorkout() {
         )
       )
     ) {
-      Alert.alert('Error', 'Please complete all exercises with valid data.');
+      Alert.alert(t('errorTitle'), t('fillExercisesErrorMessage'));
       return;
     }
 
@@ -176,7 +181,7 @@ export default function CreateWorkout() {
       setWorkoutName('');
       setDays([]);
     } catch (error) {
-      Alert.alert('Error', 'Failed to create workout. Please try again.');
+      Alert.alert(t('errorTitle'), t('failedToCreateWorkoutErrorMessage'));
       console.error(error);
     }
   };
@@ -203,12 +208,12 @@ export default function CreateWorkout() {
             </TouchableOpacity>
 
             {/* Title */}
-            <Text style={[styles.title, { color: theme.text }]}>Create a New Workout</Text>
+            <Text style={[styles.title, { color: theme.text }]}>{t('CreateAWorkout')}</Text>
 
             {/* Workout Name Input */}
             <TextInput
               style={[styles.input, { backgroundColor: theme.card, color: theme.text, borderColor: theme.border }]}
-              placeholder="Workout Name"
+              placeholder={t('workoutNamePlaceholder')}
               placeholderTextColor={theme.text}
               value={workoutName}
               onChangeText={setWorkoutName}
@@ -226,7 +231,7 @@ export default function CreateWorkout() {
           >
             <TextInput
               style={[styles.input, { backgroundColor: theme.card, color: theme.text, borderColor: theme.border }]}
-              placeholder={`Day ${index + 1} Name`}
+              placeholder={t('dayNamePlaceholder')}
               placeholderTextColor={theme.text}
               value={item.dayName}
               onChangeText={(text) => {
@@ -248,7 +253,7 @@ export default function CreateWorkout() {
               >
                 <TextInput
                   style={[styles.exerciseInput, { backgroundColor: theme.card, color: theme.text, borderColor: theme.border }]}
-                  placeholder="Exercise Name"
+                  placeholder={t('exerciseNamePlaceholder')}
                   placeholderTextColor={theme.text}
                   value={exercise.exerciseName}
                   onChangeText={(text) => {
@@ -259,7 +264,7 @@ export default function CreateWorkout() {
                 />
                 <TextInput
                   style={[styles.smallInput, { backgroundColor: theme.card, color: theme.text, borderColor: theme.border }]}
-                  placeholder="Sets"
+                  placeholder={t('setsPlaceholder')}
                   placeholderTextColor={theme.text}
                   keyboardType="numeric"
                   value={exercise.sets}
@@ -272,7 +277,7 @@ export default function CreateWorkout() {
                 />
                 <TextInput
                   style={[styles.smallInput, { backgroundColor: theme.card, color: theme.text, borderColor: theme.border }]}
-                  placeholder="Reps"
+                  placeholder={t('repsPlaceholder')}
                   placeholderTextColor={theme.text}
                   keyboardType="numeric"
                   value={exercise.reps}
@@ -290,7 +295,7 @@ export default function CreateWorkout() {
               style={[styles.addButton, { backgroundColor: theme.buttonBackground }]}
               onPress={() => addExercise(index)}
             >
-              <Text style={[styles.addButtonText, { color: theme.buttonText }]}>+ Add Exercise</Text>
+              <Text style={[styles.addButtonText, { color: theme.buttonText }]}>{t('addExercise')}</Text>
             </TouchableOpacity>
           </TouchableOpacity>
         )}
@@ -300,13 +305,13 @@ export default function CreateWorkout() {
               style={[styles.addButton, { backgroundColor: theme.buttonBackground }]}
               onPress={addDay}
             >
-              <Text style={[styles.addButtonText, { color: theme.buttonText }]}>+ Add Day</Text>
+              <Text style={[styles.addButtonText, { color: theme.buttonText }]}>{t('addDay')}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.saveButton, { backgroundColor: theme.buttonBackground }]}
               onPress={handleSaveWorkout}
             >
-              <Text style={[styles.saveButtonText, { color: theme.buttonText }]}>Save Workout</Text>
+              <Text style={[styles.saveButtonText, { color: theme.buttonText }]}>{t('saveWorkout')}</Text>
             </TouchableOpacity>
           </View>
         }

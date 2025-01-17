@@ -17,6 +17,8 @@ import { useSettings } from '../context/SettingsContext';
 import BannerAdComponent from '../components/BannerAd'; // Import the BannerAdComponent
 
 import { useTheme } from '../context/ThemeContext';
+import { useTranslation } from 'react-i18next';
+
 
 
 
@@ -30,6 +32,8 @@ export default function MyCalendar() {
   const navigation = useNavigation<MyCalendarNavigationProp>();
 
     const { theme } = useTheme(); 
+    const { t } = useTranslation(); // Initialize translations
+    
 
   const [todayWorkout, setTodayWorkout] = useState<
     { workout_name: string; workout_date: number; day_name: string; workout_log_id: number } | null
@@ -161,11 +165,11 @@ export default function MyCalendar() {
   
     // Check if the date matches today, yesterday, or tomorrow
     if (isSameDay(date, today)) {
-      return 'Today';
+      return t('Today');
     } else if (isSameDay(date, yesterday)) {
-      return 'Yesterday';
+      return t('Yesterday');
     } else if (isSameDay(date, tomorrow)) {
-      return 'Tomorrow';
+      return t('Tomorrow');
     }
   
     // Default date formatting based on user-selected format
@@ -248,7 +252,7 @@ export default function MyCalendar() {
     style={{ flex: 1, backgroundColor: theme.background }}
     contentContainerStyle={[styles.contentContainer, { paddingTop: 70 }]}
   >
-    <Text style={[styles.title, { color: theme.text }]}>My Calendar</Text>
+    <Text style={[styles.title, { color: theme.text }]}>{t('myCalendar')}</Text>
   
     {/* Schedule a Workout Button */}
     <TouchableOpacity
@@ -262,27 +266,27 @@ export default function MyCalendar() {
         style={styles.icon}
       />
       <Text style={[styles.logWorkoutButtonText, { color: theme.buttonText }]}>
-        Schedule a Workout
+      {t('scheduleWorkout')}
       </Text>
     </TouchableOpacity>
   
     {/* Today's Workout Section */}
     <View style={styles.section}>
       <Text style={[styles.sectionTitle, { color: theme.text }]}>
-        Today's Workout
+      {t('todaysWorkout')}
       </Text>
       {todayWorkout ? (
         renderWorkoutCard(todayWorkout)
       ) : (
         <Text style={[styles.emptyText, { color: theme.text }]}>
-          No workout scheduled for today.
+          {t('noWorkoutToday')}
         </Text>
       )}
     </View>
   
     <View style={styles.section}>
       <Text style={[styles.sectionTitle, { color: theme.text }]}>
-        Untracked Workouts
+      {t('untrackedWorkouts')}
       </Text>
       {pastWorkouts.length > 0 ? (
         pastWorkouts.map((item) => (
@@ -290,14 +294,14 @@ export default function MyCalendar() {
         ))
       ) : (
         <Text style={[styles.emptyText, { color: theme.text }]}>
-          No untracked workouts found.
+          {t('noUntrackedWorkouts')}
         </Text>
       )}
     </View>
   
     <View style={styles.section}>
       <Text style={[styles.sectionTitle, { color: theme.text }]}>
-        Upcoming Workouts
+      {t('upcomingWorkouts')}
       </Text>
       {futureWorkouts.length > 0 ? (
         futureWorkouts.map((item) => (
@@ -305,11 +309,11 @@ export default function MyCalendar() {
         ))
       ) : (
         <Text style={[styles.emptyText, { color: theme.text }]}>
-          No upcoming workouts scheduled.
+          {t('noUpcomingWorkouts')}
         </Text>
       )}
           <Text style={[styles.tipText, { color: theme.text }]}>
-            Tip: You need to schedule your workouts here to track them on the My Progress screen!
+          {t('scheduleTip')}
           </Text>
     </View>
   
@@ -343,13 +347,13 @@ export default function MyCalendar() {
                       {exercise.exercise_name}
                     </Text>
                     <Text style={[styles.modalExerciseDetails, { color: theme.text }]}>
-                      {exercise.sets} sets x {exercise.reps} reps
+                      {exercise.sets} {t('Sets')} x {exercise.reps} {t('Reps')}
                     </Text>
                   </View>
                 ))
               ) : (
                 <Text style={[styles.emptyText, { color: theme.text }]}>
-                  No exercises logged.
+                  {t('noExerciseLogged')}
                 </Text>
               )}
             </>
