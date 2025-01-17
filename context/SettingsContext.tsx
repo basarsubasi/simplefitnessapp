@@ -1,20 +1,54 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { loadSettings, saveSettings } from '../settingsStorage';
+import i18n from '../i18n';
 
+// 1) Create the type for your context values:
 type SettingsContextType = {
   language: string;
   setLanguage: (lang: string) => void;
   dateFormat: string;
-  setDateFormat: (format: string) => void;
+  setDateFormat: (fmt: string) => void;
   weightFormat: string;
-  setWeightFormat: (format: string) => void;
+  setWeightFormat: (fmt: string) => void;
 };
 
+// 2) Declare the actual context:
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
 
-export const SettingsProvider = ({ children }: { children: ReactNode }) => {
-  const [language, setLanguage] = useState<string>('English');
-  const [dateFormat, setDateFormat] = useState<string>('dd-mm-yyyy');
-  const [weightFormat, setWeightFormat] = useState<string>('kg');
+export function SettingsProvider({ children }: { children: React.ReactNode }) {
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  const [language, setLanguage] = useState('en');
+  const [dateFormat, setDateFormat] = useState('dd-mm-yyyy');
+  const [weightFormat, setWeightFormat] = useState('kg');
+
+  // Load settings on mount
+  useEffect(() => {
+    const initializeSettings = async () => {
+      const savedSettings = await loadSettings();
+      if (savedSettings) {
+        setLanguage(savedSettings.language || 'en');
+        setDateFormat(savedSettings.dateFormat || 'dd-mm-yyyy');
+        setWeightFormat(savedSettings.weightFormat || 'kg');
+      }
+      setIsInitialized(true);
+    };
+    initializeSettings();
+  }, []);
+
+  // Keep i18n in sync with context
+  useEffect(() => {
+    i18n.changeLanguage(language);
+  }, [language]);
+
+  // Save settings only after initial load
+  useEffect(() => {
+    if (!isInitialized) return;
+    const persistSettings = async () => {
+      await saveSettings({ language, dateFormat, weightFormat });
+    };
+    persistSettings();
+  }, [language, dateFormat, weightFormat, isInitialized]);
 
   return (
     <SettingsContext.Provider
@@ -30,12 +64,13 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
       {children}
     </SettingsContext.Provider>
   );
-};
+}
 
-export const useSettings = () => {
+// Export a custom hook so consumers can read from our SettingsContext
+export function useSettings() {
   const context = useContext(SettingsContext);
   if (!context) {
     throw new Error('useSettings must be used within a SettingsProvider');
   }
   return context;
-};
+}
