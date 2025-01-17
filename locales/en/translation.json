@@ -62,7 +62,8 @@
     "_comment_workoutlist": "These are workoutlist-related strings.",
 
     "MyWorkouts": "My Workouts",
-    "CreateAWorkout" : "Create a new workout",
+    "CreateAWorkout" : "New\nWorkout",
+    "CreateAWorkoutButton" : "Create a new workout",
     "WorkoutListTip" : "Tip: You can delete most things by pressing long to it, try it when you get the chance!",
 
 

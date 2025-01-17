@@ -108,11 +108,11 @@ export default function LogWeights() {
   
     // Check if the date matches today, yesterday, or tomorrow
     if (isSameDay(date, today)) {
-      return 'Today';
+      return t('Today');
     } else if (isSameDay(date, yesterday)) {
-      return 'Yesterday';
+      return t('Yesterday');
     } else if (isSameDay(date, tomorrow)) {
-      return 'Tomorrow';
+      return t('Tomorrow');
     }
   
     // Default date formatting based on user-selected format

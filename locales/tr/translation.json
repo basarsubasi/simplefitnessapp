@@ -58,7 +58,8 @@
     "_comment_workoutlist": "These are workoutlist-related strings.",
 
     "MyWorkouts": "Antrenmanlarım",
-    "CreateAWorkout" : "Yeni bir antrenman oluştur",
+    "CreateAWorkout" : "Yeni\nAntrenman ",
+    "CreateAWorkoutButton" : "Yeni bir antrenman oluştur",
     "WorkoutListTip" : "İpucu: Çoğu şeyi üstüne basılı tutarak silebilirsiniz, fırsat bulduğunuzda deneyin!",
 
 
