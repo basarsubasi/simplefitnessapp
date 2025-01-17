@@ -18,10 +18,25 @@ export default function Settings() {
 
   // Languages array with i18n-compatible codes
   const languages = [
+    { code: 'cs', label: 'Čeština' },
+    { code: 'de', label: 'Deutsch' },
     { code: 'en', label: 'English' },
+    { code: 'es', label: 'Español' },
+    { code: 'fi', label: 'Suomi' },
+    { code: 'fr', label: 'Français' },
+    { code: 'it', label: 'Italiano' },
+    { code: 'nl', label: 'Nederlands' },
+    { code: 'no', label: 'Norsk' },
+    { code: 'pl', label: 'Polski' },
+    { code: 'pt', label: 'Português' },
+    { code: 'ru', label: 'Русский' },
+    { code: 'sl', label: 'Slovenščina' },
+    { code: 'sv', label: 'Svenska' },
     { code: 'tr', label: 'Türkçe' },
+    { code: 'uk', label: 'Українська' },
     // add more languages here #2
   ];
+  
 
   // We'll display the label corresponding to the current context language
   const currentLanguage = language;

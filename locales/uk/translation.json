@@ -1,219 +1,151 @@
 {
-    
-  
-   "_comment_global": "These are global strings.",
-
-
-    "alertCancel" : "CANCEL",
-    "alertDelete": "DELETE",
-    "errorTitle": "Error",
-    "Cancel":"Cancel",
-    "Delete":"Delete",
-    "Save":"Save",
-    "Sets":"sets",
-    "Reps":"reps",
-    "Today":"Today",
-    "Tomorrow":"Tomorrow",
-    "Yesterday":"Yesterday",
-
-
-
-    "workoutNameErrorMessage": "Please enter a workout name.",
-    "provideDayNamesErrorMessage": "Please provide names for all days.",
-    "fillExercisesErrorMessage": "Please complete all exercises with valid data.",
-    "failedToCreateWorkoutErrorMessage": "Failed to create workout. Please try again.",
-
-
-    "workoutNamePlaceholder": "Workout Name",
-    "dayNamePlaceholder": "Day Name",
-    "exerciseNamePlaceholder": "Exercise Name",
-
-    "setsPlaceholder": "Sets",
-    "repsPlaceholder": "Reps",
-
-
-    "_comment_settings": "These are settings-related strings.",
-  
-
-
-    "settingsTitle": "Settings",
-    "settingsLanguage": "Language",
-    "settingsDateFormat": "Date Format",
-    "settingsWeightFormat": "Weight Format",
-    "settingsTheme": "Theme",
-    "settingsSwitchDark": "Switch to Dark",
-    "settingsSwitchLight": "Switch to Light",
-
-
-
-
-
-    "_comment_homepage": "These are homepage-related strings.",
-
-
-    "homeCreateWorkout": "Create a\nworkout.",
-    "homeGotoWorkouts": "Go to My Workouts",
-    "homeScheduleWorkouts": "Schedule\nyour\nworkout.",
-    "homeGotoCalendar": "Go to My Calendar",
-    "homeTrackProgress": "Track\nyour\nprogress.",
-    "homeGotoProgress": "Go to My Progress",
-
-
-    "_comment_workoutlist": "These are workoutlist-related strings.",
-
-    "MyWorkouts": "My Workouts",
-    "CreateAWorkout" : "New\nWorkout",
-    "CreateAWorkoutButton" : "Create a new workout",
-    "WorkoutListTip" : "Tip: You can delete most things by pressing long to it, try it when you get the chance!",
-
-
-    "_comment_myworkoutspage": "These are myworkoutspage-related strings.",
-
-    "deleteWorkoutTitle": "Deleting {{workoutName}}",
-    "deleteWorkoutMessage": "Are you sure you want to delete \"{{workoutName}}\"? This action won't affect existing logs.",
-
-
-    "_comment_createWorkout": "These are create-workout-related strings.",
-
-    "deleteDayTitle": "Delete Day",
-    "deleteDayMessage": "Are you sure you want to delete this day?",
-
-    "deleteExerciseTitle": "Delete Exercise",
-    "deleteExerciseMessage": "Are you sure you want to delete this exercise?",
-    "addExercise": "+ Add Exercise",
-    "addDay": "+ Add Day",
-    "saveWorkout":"Save Workout",
-
-
-
-    "_comment_workoutDetails": "These are workot-details-related strings.",
-
-    "noExercises":"No exercises on this day",
-    "addExerciseFromDetails": "Add Exercise",
-    "addDayFromDetails":"Add Day",
-    "emptyWorkoutDetails":" No days or exercises available for this workout.",
-
-    "deleteDayTitleDetails": "Delete Day",
-    "deleteDayMessageDetails": "Are you sure you want to delete this day? This action will also delete the days from the upcoming planned workouts",
-    "deleteExerciseTitleDetails": "Delete Exercise",
-    "deleteExerciseMessageDetails": "Are you sure you want to delete this exercise? This action will also delete the exercise from the upcoming planned workouts",
-
-    "repsValidationError": "Reps must be a number greater than 0.",
-    "setsValidationError": "Sets must be a number greater than 0.",
-    "exerciseNameValidationError": "Exercise name cannot be empty.",
-    "dayNameValidationError": "Day name cannot be empty.",
-
-
-
-    "_comment_editWorkout": "These are edit-workout-related strings.",
-    
-    "fetchWorkoutDetailsError": "Failed to update workout details.",
-    "isSaving": "Saving...",
-    "saveChanges": "Save Changes",
-    "daysAndExercises": "Days and Exercises",
-    "editWorkout": "Edit Workout",
-
-
-    "_comment_myCalendar": "These are my-calendar-related strings.",
-
-  
-    "scheduleTip": "Tip: You need to schedule your workouts here to track them on the My Progress screen!",
-    "noUpcomingWorkouts": "No upcoming workouts scheduled.",
-    "upcomingWorkouts": "Upcoming Workouts",
-    "noUntrackedWorkouts": "No untracked workouts found.",
-    "untrackedWorkouts": "Untracked Workouts",
-    "noWorkoutToday": "No workout scheduled for today.",
-    "todaysWorkout": "Today's Workout",
-    "scheduleWorkout": "Schedule a Workout",
-    "myCalendar": "My Calendar",
-    "noExerciseLogged":" No exercises logged.",
-
-
-    "_comment_LogWorkouts": "These are Log-Workouts-related strings.",
-    
-    
-    "noDatePicked": "Please select a date.",
-    "selectAWorkout":"Please select a workout.",
-    "selectADay":"Please select a day.",
-    "duplicateLogTitle": "Duplicate Log",
-    "duplicateLogMessage": "There is already a log present for this workout at the picked date.",
-    "selectDate":"Select Date",
-    "selectADate":"Select a Date",
-    "selectWorkout":"Select Workout",
-    "selectDay":"Select Day",
-    "emptyWorkoutLog":"Create a workout to track!",
-    "noDaysAvailable":"This workout has no days!",
-    "scheduleWorkoutLog":"Schedule Workout",
-
-
-    "_comment_MyProgress": "These are My-Progress-related strings.",
-
-    "deleteLogsTitle": "Delete Logs",
-    "deleteLogsMessage": "Are you sure you want to delete all logs associated with this workout?",
-    "failedToDeleteDays": "Failed to delete associated days.",
-    "myProgress":"My Progress",
-    "trackAWorkout":"Track a Workout",
-    "notTracking":"You are not tracking any workouts.",
-    "myProgressTip": "Tip: You can track the exercises at the workouts you've done. Down to the every. single. detail.",
-
-
-    "_comment_LogWeights": "These are Log-Weights-related strings.",
-
-    "failedToLogWeights": "Failed to log weights.",
-    "Set":"Set",
-    "Weight":"Weight",
-    "noWorkoutScheduled": "You need to schedule a workout to track it!",
-    "trackWeights":"Track Weights",
-
-
-
-    "_comment_WeightLogDetails": "These are Weight-Log-Details-related strings.",
-
-    "deleteWeightLog": "Are you sure you want to delete all logs for this day on this date?",
-    "weightLog": "logs",
-    "dateFrom": "Date From:",
-    "pickStartDate": "Pick a start date",
-    "dateTo": "Date To:",
-    "pickEndDate": "Pick an end date",
-    "clearSelection":"Clear Selection",
-    "noLog":"No logs available between the selected dates."
-
-
-
-
-    
-
-
-
-
-
-
-        
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-  }
-  
+  "_comment_global": "Це глобальні рядки.",
+
+  "alertCancel": "ВІДМІНИТИ",
+  "alertDelete": "ВИДАЛИТИ",
+  "errorTitle": "Помилка",
+  "Cancel": "Відмінити",
+  "Delete": "Видалити",
+  "Save": "Зберегти",
+  "Sets": "підходи",
+  "Reps": "повторення",
+  "Today": "Сьогодні",
+  "Tomorrow": "Завтра",
+  "Yesterday": "Вчора",
+
+  "workoutNameErrorMessage": "Будь ласка, введіть назву тренування.",
+  "provideDayNamesErrorMessage": "Будь ласка, надайте назви для всіх днів.",
+  "fillExercisesErrorMessage": "Будь ласка, заповніть всі вправи коректними даними.",
+  "failedToCreateWorkoutErrorMessage": "Не вдалося створити тренування. Спробуйте знову.",
+
+  "workoutNamePlaceholder": "Назва тренування",
+  "dayNamePlaceholder": "Назва дня",
+  "exerciseNamePlaceholder": "Назва вправи",
+
+  "setsPlaceholder": "Підходи",
+  "repsPlaceholder": "Повторення",
+
+  "_comment_settings": "Це рядки, пов’язані з налаштуваннями.",
+
+  "settingsTitle": "Налаштування",
+  "settingsLanguage": "Мова",
+  "settingsDateFormat": "Формат дати",
+  "settingsWeightFormat": "Формат ваги",
+  "settingsTheme": "Тема",
+  "settingsSwitchDark": "Переключити на темну тему",
+  "settingsSwitchLight": "Переключити на світлу тему",
+
+  "_comment_homepage": "Це рядки, пов’язані з домашнім екраном.",
+
+  "homeCreateWorkout": "Створіть\nтренування.",
+  "homeGotoWorkouts": "Перейти до Моїх тренувань",
+  "homeScheduleWorkouts": "Заплануйте\nсвоє\nтренування.",
+  "homeGotoCalendar": "Перейти до Мого календаря",
+  "homeTrackProgress": "Відстежуйте\nсвій\nпрогрес.",
+  "homeGotoProgress": "Перейти до Мого прогресу",
+
+  "_comment_workoutlist": "Це рядки, пов’язані зі списком тренувань.",
+
+  "MyWorkouts": "Мої тренування",
+  "CreateAWorkout": "Нове\nтренування",
+  "CreateAWorkoutButton": "Створити нове тренування",
+  "WorkoutListTip": "Порада: Ви можете видалити більшість елементів, затиснувши їх на деякий час. Спробуйте, коли буде можливість!",
+
+  "_comment_myworkoutspage": "Це рядки, пов’язані зі сторінкою Моїх тренувань.",
+
+  "deleteWorkoutTitle": "Видалення {{workoutName}}",
+  "deleteWorkoutMessage": "Ви впевнені, що хочете видалити «{{workoutName}}»? Ця дія не вплине на існуючі записи.",
+
+  "_comment_createWorkout": "Це рядки, пов’язані зі створенням тренування.",
+
+  "deleteDayTitle": "Видалити день",
+  "deleteDayMessage": "Ви впевнені, що хочете видалити цей день?",
+
+  "deleteExerciseTitle": "Видалити вправу",
+  "deleteExerciseMessage": "Ви впевнені, що хочете видалити цю вправу?",
+  "addExercise": "+ Додати вправу",
+  "addDay": "+ Додати день",
+  "saveWorkout": "Зберегти тренування",
+
+  "_comment_workoutDetails": "Це рядки, пов’язані з деталями тренування.",
+
+  "noExercises": "Немає вправ у цей день",
+  "addExerciseFromDetails": "Додати вправу",
+  "addDayFromDetails": "Додати день",
+  "emptyWorkoutDetails": " Немає доступних днів чи вправ для цього тренування.",
+
+  "deleteDayTitleDetails": "Видалити день",
+  "deleteDayMessageDetails": "Ви впевнені, що хочете видалити цей день? Ця дія також видалить дні із запланованих майбутніх тренувань.",
+  "deleteExerciseTitleDetails": "Видалити вправу",
+  "deleteExerciseMessageDetails": "Ви впевнені, що хочете видалити цю вправу? Ця дія також видалить вправу із запланованих майбутніх тренувань.",
+
+  "repsValidationError": "Кількість повторень має бути числом більше 0.",
+  "setsValidationError": "Кількість підходів має бути числом більше 0.",
+  "exerciseNameValidationError": "Назва вправи не може бути порожньою.",
+  "dayNameValidationError": "Назва дня не може бути порожньою.",
+
+  "_comment_editWorkout": "Це рядки, пов’язані з редагуванням тренування.",
+
+  "fetchWorkoutDetailsError": "Не вдалося оновити деталі тренування.",
+  "isSaving": "Збереження...",
+  "saveChanges": "Зберегти зміни",
+  "daysAndExercises": "Дні та вправи",
+  "editWorkout": "Редагувати тренування",
+
+  "_comment_myCalendar": "Це рядки, пов’язані з Моїм календарем.",
+
+  "scheduleTip": "Порада: Вам потрібно запланувати свої тренування тут, щоб відстежувати їх на екрані Мій прогрес!",
+  "noUpcomingWorkouts": "Немає запланованих майбутніх тренувань.",
+  "upcomingWorkouts": "Майбутні тренування",
+  "noUntrackedWorkouts": "Не знайдено незафіксованих тренувань.",
+  "untrackedWorkouts": "Незафіксовані тренування",
+  "noWorkoutToday": "На сьогодні тренування не заплановано.",
+  "todaysWorkout": "Сьогоднішнє тренування",
+  "scheduleWorkout": "Запланувати тренування",
+  "myCalendar": "Мій календар",
+  "noExerciseLogged": " Немає записаних вправ.",
+
+  "_comment_LogWorkouts": "Це рядки, пов’язані з журналом тренувань.",
+
+  "noDatePicked": "Будь ласка, виберіть дату.",
+  "selectAWorkout": "Будь ласка, виберіть тренування.",
+  "selectADay": "Будь ласка, виберіть день.",
+  "duplicateLogTitle": "Дубль запису",
+  "duplicateLogMessage": "Для цього тренування вже існує запис на вибрану дату.",
+  "selectDate": "Виберіть дату",
+  "selectADate": "Виберіть дату",
+  "selectWorkout": "Виберіть тренування",
+  "selectDay": "Виберіть день",
+  "emptyWorkoutLog": "Створіть тренування, щоб відстежувати!",
+  "noDaysAvailable": "Це тренування не має днів!",
+  "scheduleWorkoutLog": "Запланувати тренування",
+
+  "_comment_MyProgress": "Це рядки, пов’язані з Моїм прогресом.",
+
+  "deleteLogsTitle": "Видалити записи",
+  "deleteLogsMessage": "Ви впевнені, що хочете видалити всі записи, пов’язані з цим тренуванням?",
+  "failedToDeleteDays": "Не вдалося видалити пов’язані дні.",
+  "myProgress": "Мій прогрес",
+  "trackAWorkout": "Відстежити тренування",
+  "notTracking": "Ви не відстежуєте жодного тренування.",
+  "myProgressTip": "Порада: Ви можете відстежувати вправи у виконаних тренуваннях. До найменших деталей.",
+
+  "_comment_LogWeights": "Це рядки, пов’язані з реєстрацією ваг.",
+
+  "failedToLogWeights": "Не вдалося зберегти вагу.",
+  "Set": "Підхід",
+  "Weight": "Вага",
+  "noWorkoutScheduled": "Вам потрібно запланувати тренування, щоб його відстежувати!",
+  "trackWeights": "Відстежити вагу",
+
+  "_comment_WeightLogDetails": "Це рядки, пов’язані з деталями записів ваги.",
+
+  "deleteWeightLog": "Ви впевнені, що хочете видалити всі записи для цього дня на цю дату?",
+  "weightLog": "записи",
+  "dateFrom": "Дата з:",
+  "pickStartDate": "Виберіть початкову дату",
+  "dateTo": "Дата по:",
+  "pickEndDate": "Виберіть кінцеву дату",
+  "clearSelection": "Очистити вибір",
+  "noLog": "Немає доступних записів у вибраному діапазоні дат."
+}
