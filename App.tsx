@@ -288,17 +288,7 @@ const AppContent = () => {
         try {
           //await resetDatabase();
           await loadDatabase();
-          setDbLoaded(true);
-          const initializeSettings = async () => {
-            const savedSettings = await loadSettings();
-            if (savedSettings) {
-              if (savedSettings.language) {
-                i18n.changeLanguage(savedSettings.language); // Apply saved language
-              }
-            }
-          };
-          initializeSettings();
-          
+          setDbLoaded(true);          
         } catch (e) {
           console.error("Database loading error:", e);
         }
