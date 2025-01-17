@@ -20,6 +20,7 @@ export default function Settings() {
   const languages = [
     { code: 'en', label: 'English' },
     { code: 'tr', label: 'Türkçe' },
+    // add more languages here #2
   ];
 
   // We'll display the label corresponding to the current context language
