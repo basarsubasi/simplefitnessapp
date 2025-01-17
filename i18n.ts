@@ -5,6 +5,9 @@ import { initReactI18next } from 'react-i18next';
 import en from './locales/en/translation.json';
 import tr from './locales/tr/translation.json';
 
+// import more languages here
+
+
 const fallbackLng = 'en';
 const defaultLocale = Localization.getLocales()[0]?.languageCode || fallbackLng;
 
@@ -14,6 +17,7 @@ i18n
     resources: {
       en: { translation: en },
       tr: { translation: tr },
+      // add more languages here #1
     },
     lng: defaultLocale, // Use the language code of the first locale
     fallbackLng, // Fallback to English if no translations are found
