@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { loadSettings, saveSettings } from '../settingsStorage';
 import i18n from '../i18n';
+import * as Localization from 'expo-localization'; // <-- import expo-localization
 
 // 1) Create the type for your context values:
 type SettingsContextType = {
@@ -30,6 +31,13 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         setLanguage(savedSettings.language || 'en');
         setDateFormat(savedSettings.dateFormat || 'dd-mm-yyyy');
         setWeightFormat(savedSettings.weightFormat || 'kg');
+      }
+      else {
+       const fallbackLng = 'en';
+       const defaultLocale = Localization.getLocales()[0]?.languageCode || fallbackLng;
+       setLanguage(defaultLocale)
+
+
       }
       setIsInitialized(true);
     };
