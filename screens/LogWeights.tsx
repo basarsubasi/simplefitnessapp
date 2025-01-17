@@ -291,15 +291,15 @@ export default function LogWeights() {
         <BannerAdComponent />
       </View>
    
-
-      <Text style={[styles.title, { color: theme.text }]}>Track Weights</Text>
-
-      <TouchableOpacity
-        style={[styles.backButton, { top: adHeight + 20 }]} // Adjust dynamically
-        onPress={() => navigation.goBack()}
-      >
-        <Ionicons name="arrow-back" size={24} color={theme.text} />
-      </TouchableOpacity>
+<View style={{ flexDirection: 'row', alignItems: 'center', gap:35 }}>
+  <Ionicons name="arrow-back" size={24} color={theme.text}
+  
+  onPress={() => navigation.goBack()}/>
+  
+  <Text style={[styles.title, { color: theme.text, marginLeft: 8 }]}>
+    {t('trackWeights')}
+  </Text>
+</View>
       
 
   {!selectedWorkout ? (
@@ -462,6 +462,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   emptyText: {
+    marginTop:80,
     textAlign: 'center',
     color: '#666666',
     fontSize: 16,
