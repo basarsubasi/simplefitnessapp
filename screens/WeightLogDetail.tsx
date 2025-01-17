@@ -167,11 +167,11 @@ export default function WeightLogDetail() {
   
     // Check if the date matches today, yesterday, or tomorrow
     if (isSameDay(date, today)) {
-      return 'Today';
+      return t('Today');
     } else if (isSameDay(date, yesterday)) {
-      return 'Yesterday';
+      return t('Yesterday');
     } else if (isSameDay(date, tomorrow)) {
-      return 'Tomorrow';
+      return t('Tomorrow');
     }
   
     // Default date formatting based on user-selected format
@@ -253,7 +253,7 @@ export default function WeightLogDetail() {
           <Text style={[styles.exerciseName, { color: theme.text }]}>{exercise_name}</Text>
           {sets.map((set, index) => (
             <Text key={index} style={[styles.logDetail, { color: theme.text }]}>
-              {t('Set')} {set.set_number}: {set.reps_logged} {t('Reps')}, {set.weight_logged} {weightFormat}
+              {t('Set')} {set.set_number}: {set.weight_logged} {weightFormat}, {set.reps_logged} {t('Reps')}
             </Text>
           ))}
         </View>
