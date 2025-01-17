@@ -285,6 +285,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   dropdownList: {
+    maxHeight: 200,
     marginTop: 10,
     borderWidth: 1,
     borderColor: 'black',
