@@ -206,12 +206,12 @@ export default function MyCalendar() {
   }
   onLongPress={() =>
     Alert.alert(
-      'Delete Workout',
-      'Are you sure you want to delete this workout log? This action cannot be undone.',
+      t('deleteDayTitle'),
+      t('deleteDayMessage'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('alertCancel'), style: 'cancel' },
         {
-          text: 'Delete',
+          text: t('alertDelete'),
           style: 'destructive',
           onPress: async () => {
             try {
