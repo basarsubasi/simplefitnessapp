@@ -8,6 +8,7 @@ import { useTheme } from '../context/ThemeContext';
 import RemoveAdsButton from '../components/RemoveAdsButton';
 import { useTranslation } from 'react-i18next';
 
+
 export default function Settings() {
   const navigation = useNavigation();
   const { dateFormat, setDateFormat, weightFormat, setWeightFormat, language, setLanguage } =

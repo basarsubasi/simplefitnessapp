@@ -5,11 +5,14 @@ import { useAdContext } from '../context/AdContext'; // Import the context
 import { requestPurchase, getProducts } from 'react-native-iap';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native'; // Add these imports
 import { useTheme } from '../context/ThemeContext';
+import { useTranslation } from 'react-i18next';
+
 
 
 const RemoveAdsButton = () => {
   const { adsRemoved, setAdsRemoved } = useAdContext(); // Access context state
   const  {theme} = useTheme();
+    const { t } = useTranslation(); // Initialize translations
 
   const handlePurchase = async () => {
     try {
@@ -33,7 +36,7 @@ const RemoveAdsButton = () => {
 
   return (
 <TouchableOpacity style= {[styles.button, { backgroundColor: theme.buttonBackground }]} onPress={handlePurchase}>
-  <Text style={[styles.buttonText, { color: theme.buttonText }]}>Remove Ads</Text>
+  <Text style={[styles.buttonText, { color: theme.buttonText }]}>{t('settingsRemoveAds')}</Text>
 </TouchableOpacity>
   );
 
