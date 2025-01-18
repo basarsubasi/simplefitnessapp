@@ -327,9 +327,9 @@ export default function WorkoutDetails() {
               activeOpacity={0.8}
               style={[styles.exerciseContainer, { backgroundColor: theme.card, borderColor: theme.border }]}
             >
-              <AutoSizeText
+   <AutoSizeText
                 fontSize={18}
-                numberOfLines={1}
+                numberOfLines={2}
                 mode={ResizeTextMode.max_lines}
                 style={[styles.exerciseName, { color: theme.text }]}
               >
@@ -337,11 +337,11 @@ export default function WorkoutDetails() {
               </AutoSizeText>
               <AutoSizeText
                 fontSize={16}
-                numberOfLines={1}
+                numberOfLines={3}
                 mode={ResizeTextMode.max_lines}
                 style={[styles.exerciseDetails, { color: theme.text }]}
               >
-                {exercise.sets} {t('Sets')} x {exercise.reps} {t('Reps')} 
+                {exercise.sets} {t('Sets')} {'\n'} {exercise.reps} {t('Reps')} 
               </AutoSizeText>
             </TouchableOpacity>
           ))
