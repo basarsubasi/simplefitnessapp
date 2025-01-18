@@ -291,15 +291,11 @@ export default function LogWeights() {
         <BannerAdComponent />
       </View>
    
-<View style={{ flexDirection: 'row', alignItems: 'center', gap:35 }}>
-  <Ionicons name="arrow-back" size={24} color={theme.text}
-  
-  onPress={() => navigation.goBack()}/>
-  
-  <Text style={[styles.title, { color: theme.text, marginLeft: 8 }]}>
-    {t('trackWeights')}
-  </Text>
-</View>
+<TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+    <Ionicons name="arrow-back" size={24} color={theme.text} />
+  </TouchableOpacity>
+
+  <Text style={[styles.title, { color: theme.text }]}>{t('trackWeights')}</Text>
       
 
   {!selectedWorkout ? (
