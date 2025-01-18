@@ -329,7 +329,7 @@ export default function WorkoutDetails() {
             >
               <AutoSizeText
                 fontSize={18}
-                numberOfLines={1}
+                numberOfLines={2}
                 mode={ResizeTextMode.max_lines}
                 style={[styles.exerciseName, { color: theme.text }]}
               >
