@@ -26,6 +26,7 @@
   import { ThemeProvider, useTheme } from './context/ThemeContext';
 import EditWorkout from './screens/EditWorkout';
   import { loadSettings } from './settingsStorage';
+  import AllLogs from './screens/AllLogs';
 
 
 
@@ -112,6 +113,7 @@ import EditWorkout from './screens/EditWorkout';
     MyProgress: undefined;
     LogWeights: undefined;
     WeightLogDetail:{ workoutName: string }
+    AllLogs: undefined;
   }
 
   function WorkoutStack() {
@@ -189,6 +191,11 @@ import EditWorkout from './screens/EditWorkout';
           component={WeightLogDetail}
           options={{ headerShown: false }} // No header for MyCalendar screen
         />
+      <WeightLogStackScreen.Screen
+          name="AllLogs"
+          component={AllLogs}
+          options={{ headerShown: false }} // No header for MyCalendar screen
+        />    
       
       </WeightLogStackScreen.Navigator>
     );

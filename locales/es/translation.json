@@ -129,6 +129,8 @@
   "trackAWorkout": "Registrar un entrenamiento",
   "notTracking": "No estás siguiendo ningún entrenamiento.",
   "myProgressTip": "Consejo: Puedes registrar los ejercicios de los entrenamientos que hayas realizado. Hasta el más mínimo detalle.",
+  "allTracks": "Todos los registros",
+
 
   "_comment_LogWeights": "Estas son cadenas relacionadas con el registro de pesos.",
 

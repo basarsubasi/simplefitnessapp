@@ -129,6 +129,7 @@
   "trackAWorkout": "Een training bijhouden",
   "notTracking": "U houdt geen enkele training bij.",
   "myProgressTip": "Tip: U kunt de oefeningen van de trainingen die u hebt gedaan bijhouden, tot in elk detail.",
+  "allTracks": "Alle logboeken",
 
   "_comment_LogWeights": "Dit zijn strings voor het loggen van gewichten.",
 

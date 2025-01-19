@@ -6,6 +6,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { WeightLogStackParamList } from '../App'; // Adjust the path to where WeightLogStackParamList is defined
 import { useSQLiteContext } from 'expo-sqlite';
 import { useFocusEffect } from '@react-navigation/native';
+import AllLogs from './AllLogs';
 import BannerAdComponent from '../components/BannerAd'; // Import the BannerAdComponent
 
 import { useTheme } from '../context/ThemeContext';
@@ -15,7 +16,7 @@ import { useTranslation } from 'react-i18next';
 
 type WeightLogNavigationProp = StackNavigationProp<
   WeightLogStackParamList,
-  'LogWeights' | 'WeightLogDetail'
+  'LogWeights' | 'WeightLogDetail' | 'AllLogs'
 >;
 
 export default function MyProgress() {
@@ -107,6 +108,19 @@ export default function MyProgress() {
     {t('trackAWorkout')}    
     </Text>
   </TouchableOpacity>
+
+  <TouchableOpacity
+        style={[styles.workoutCard, { backgroundColor: theme.card, borderColor: theme.border }]}
+        onPress={() => navigation.navigate('AllLogs')}
+        >
+        {/* Container to align the icon and text */}
+        <View style={styles.workoutCardContent}>
+          <Text style={[styles.workoutText, { color: theme.text }]}>{t('allTracks')}</Text>
+          <Ionicons name="chevron-forward" size={20} color={theme.text} />
+        </View>
+        
+      </TouchableOpacity>
+
 
   {/* List of Workouts with Logs */}
   <FlatList
