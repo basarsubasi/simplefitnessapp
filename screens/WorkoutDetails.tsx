@@ -350,7 +350,7 @@ export default function WorkoutDetails() {
                 mode={ResizeTextMode.max_lines}
                 style={[styles.exerciseDetails, { color: theme.text }]}
               >
-                {exercise.sets} {t('Sets')} {'\n'} {exercise.reps} {t('Reps')} 
+                {exercise.sets} {t('Sets')}{'\n'}{exercise.reps} {t('Reps')} 
               </AutoSizeText>
             </TouchableOpacity>
           ))
