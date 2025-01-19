@@ -291,9 +291,7 @@ export default function LogWeights() {
         <BannerAdComponent />
       </View>
    
-<TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-    <Ionicons name="arrow-back" size={24} color={theme.text} />
-  </TouchableOpacity>
+<TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}> <Ionicons name="arrow-back" size={24} color={theme.text} /> </TouchableOpacity>
 
   <Text style={[styles.title, { color: theme.text }]}>{t('trackWeights')}</Text>
       
@@ -351,8 +349,8 @@ const styles = StyleSheet.create({
   alignItems : 'center',
   },
   backButton: {
-    position: 'absolute',
-    top: 20,
+
+    top: 40,
     left: 10,
     zIndex: 10,
     padding: 8,

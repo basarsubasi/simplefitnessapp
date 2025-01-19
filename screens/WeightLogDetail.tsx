@@ -75,8 +75,11 @@ export default function WeightLogDetail() {
         [workoutName]
       );
 
-      setDays(result);
-      setFilteredDays(result); // Initially show all days
+      
+      const sortedDays = result.sort((a, b) => b.workout_date - a.workout_date);
+
+      setDays(sortedDays);
+      setFilteredDays(sortedDays); // Initially show all days
     } catch (error) {
       console.error('Error fetching days:', error);
     }

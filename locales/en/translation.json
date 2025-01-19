@@ -156,6 +156,7 @@
     "trackAWorkout":"Track a Workout",
     "notTracking":"You are not tracking any workouts.",
     "myProgressTip": "Tip: You can track the exercises at the workouts you've done. Down to the every. single. detail.",
+    "allTracks": "All Logs",
 
 
     "_comment_LogWeights": "These are Log-Weights-related strings.",

@@ -130,6 +130,8 @@
   "trackAWorkout": "Suivre un entraînement",
   "notTracking": "Vous ne suivez aucun entraînement.",
   "myProgressTip": "Conseil : Vous pouvez suivre les exercices des entraînements que vous avez effectués. Jusqu'au moindre détail.",
+  "allTracks": "Tous les journaux",
+
 
   "_comment_LogWeights": "Voici des chaînes liées à l'enregistrement des poids.",
 
