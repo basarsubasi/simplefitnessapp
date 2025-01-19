@@ -290,15 +290,24 @@ export default function WorkoutDetails() {
     <Ionicons name="arrow-back" size={24} color={theme.text} />
   </TouchableOpacity>
 
-  <View style={styles.titleContainer}>
-  <Text style={[styles.title, { color: theme.text }]}>{workoutName}</Text>
-  <TouchableOpacity
+
+    {/* Icon on the right */}
+    <TouchableOpacity
     style={styles.editIcon}
     onPress={() => navigation.navigate('EditWorkout', { workout_id: workout_id })}
   >
     <Ionicons name="pencil-outline" size={24} color={theme.text} />
   </TouchableOpacity>
+
+  <View style={styles.titleContainer}>
+  {/* This View will stretch and center the text */}
+  <View style={{ flex: 1, alignItems: 'center' }}>
+    <Text style={[styles.title, { color: theme.text }]}>{workoutName}</Text>
+  </View>
+  
+
 </View>
+
 
   <FlatList
     data={days}
@@ -470,14 +479,16 @@ const styles = StyleSheet.create({
     titleContainer: {
       flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'center',
-      marginBottom: 30, // Spacing between the title and the content below
+      marginBottom: 30, 
     },
     
     editIcon: {
-      paddingLeft:30, // Adds space between the text and the icon
-      paddingTop: 5,
-      paddingBottom:30,     // Increases touchable area around the icon
+      position: 'absolute',
+      top: 20,
+      right: 10,
+      zIndex: 10,
+      padding: 8,
+      marginTop:3,
     },
     title: {
       fontSize: 36,
