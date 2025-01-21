@@ -1,23 +1,34 @@
 // screens/Workouts.tsx
 
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Workout } from '../types';
-import WorkoutList from '../components/WorkoutList';
 import { useSQLiteContext } from 'expo-sqlite';
 import { Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 
 import { useTheme } from '../context/ThemeContext';
 import { useTranslation } from 'react-i18next';
+import DifficultyList from '../components/DifficultyList';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useRoute, useNavigation } from '@react-navigation/native';
+import { WorkoutStackParamList } from '../App';
+import { StackNavigationProp } from '@react-navigation/stack';
 
 
 
-export default function Workouts() {
+
+type WorkoutListNavigationProp = StackNavigationProp<WorkoutStackParamList, 'Difficulty'>;
+
+
+
+export default function Difficulty() {
   const [workouts, setWorkouts] = React.useState<Workout[]>([]);
   const db = useSQLiteContext();
     const { theme } = useTheme();
     const { t } = useTranslation(); // Initialize translations
+    const navigation = useNavigation<WorkoutListNavigationProp>();
+    const route = useRoute();
     
 
 
@@ -60,8 +71,14 @@ export default function Workouts() {
   
 
   return (
+
+
+    
     <View style={[styles.container, { backgroundColor: theme.background }]}>
-      <WorkoutList workouts={workouts} deleteWorkout={deleteWorkout} />
+       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+    <Ionicons name="arrow-back" size={24} color={theme.text} />
+  </TouchableOpacity>
+      <DifficultyList workouts={workouts} deleteWorkout={deleteWorkout} />
     </View>
     
   );
@@ -74,8 +91,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
   },
+  backButton: { 
+    position: 'absolute', 
+    top: 20, 
+    left: 10, 
+    padding: 8, 
+    zIndex: 10 },
   adContainer: {
     alignItems: 'center',
     marginBottom:10,
   },
+  
 });

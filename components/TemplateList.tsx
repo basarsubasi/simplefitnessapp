@@ -9,9 +9,9 @@ import { useTheme } from '../context/ThemeContext'; // Adjust the path to your T
 import { useTranslation } from 'react-i18next';
 
 
-type WorkoutListNavigationProp = StackNavigationProp<WorkoutStackParamList, 'WorkoutsList'>;
+type WorkoutListNavigationProp = StackNavigationProp<WorkoutStackParamList, 'TemplateList'>;
 
-export default function WorkoutList({
+export default function TemplateList({
   workouts,
   deleteWorkout,
 }: {
@@ -28,16 +28,25 @@ export default function WorkoutList({
       {/* Title */}
       <Text style={[styles.title, { color: theme.text }]}>{t('MyWorkouts')}</Text>
 
-      {/* Create New Workout Button */}
-      <TouchableOpacity
-        style={[styles.createButton, { backgroundColor: theme.buttonBackground, shadowColor: theme.text }]}
-        activeOpacity={0.7}
-        onPress={() => navigation.navigate('CreateWorkout')}
-      >
-        <Text style={[styles.createButtonText, { color: theme.buttonText }]}>{t('CreateAWorkoutButton')}</Text>
-        <Text style={[styles.plus, { color: theme.buttonText }]}>+</Text>
-      </TouchableOpacity>
 
+
+      <TouchableOpacity
+          style={[
+            styles.workoutCard,
+            {
+              backgroundColor: theme.card,
+              borderColor: theme.border,
+              shadowColor: theme.text,
+            },
+          ]}
+          activeOpacity={0.7}
+          onPress={() => navigation.navigate('TemplateDetails')}
+        >
+          <Text style={[styles.workoutText, { color: theme.text }]}>asd</Text>
+          <Ionicons name="chevron-forward" size={20} color={theme.text} />
+        </TouchableOpacity>
+
+     
       {/* Workout List */}
       {workouts.map((workout) => (
         <TouchableOpacity
