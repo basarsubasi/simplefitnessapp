@@ -5,7 +5,7 @@ export const insertWorkouts = async (db: any) => {
           `INSERT OR IGNORE INTO Template_Workouts (workout_name, workout_difficulty)
           VALUES 
           ('Push Pull Legs', 'Intermediate'),
-          ('Newbie\'s Luck', 'Beginner'),
+          ('Newbie Gains', 'Beginner'),
           ('Bro Split', 'Advanced');`
         );
   
@@ -76,7 +76,7 @@ export const insertWorkouts = async (db: any) => {
           (9, 'Leg Extension', 6, 12);`
         );
   
-        console.log('Initial workouts inserted into the database.');
+        console.log('Initial  Template workouts inserted into the database.');
     } catch (error) {
       console.error('Error inserting workouts:', error);
     }
