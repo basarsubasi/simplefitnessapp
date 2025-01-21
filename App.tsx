@@ -2,7 +2,7 @@
   import React, {useState } from 'react';
   import { View, ActivityIndicator, StatusBar, StyleSheet, Pressable } from 'react-native'; // Import Pressable here
   import * as FileSystem from 'expo-file-system';
-  import { SQLiteProvider } from 'expo-sqlite';
+  import { SQLiteProvider, useSQLiteContext } from 'expo-sqlite';
   import { Asset } from 'expo-asset';
   import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
   import { NavigationContainer } from '@react-navigation/native';
@@ -30,12 +30,14 @@
   
   
   
+  
   import { loadSettings } from './settingsStorage';
   
   import AllLogs from './screens/AllLogs';
 import Difficulty from './screens/Difficulty';
 import Template from './screens/Template';
 import TemplateDetails from './screens/TemplateDetails';
+import { insertWorkouts } from './insertWorkouts';
 
 
 
@@ -46,10 +48,17 @@ import TemplateDetails from './screens/TemplateDetails';
   const WorkoutLogStackScreen= createNativeStackNavigator<WorkoutLogStackParamList>();
   const WeightLogStackScreen= createNativeStackNavigator<WeightLogStackParamList>();
 
+  
+
+
+
+  
+
   const resetDatabase = async () => {
     try {
       const dbName = "SimpleDB.db";
       const dbFilePath = `${FileSystem.documentDirectory}SQLite/${dbName}`;
+
 
       // Check if the database file exists
       const fileInfo = await FileSystem.getInfoAsync(dbFilePath);
@@ -86,9 +95,9 @@ import TemplateDetails from './screens/TemplateDetails';
       const dbAsset = require("./assets/SimpleDB.db");
       const dbUri = Asset.fromModule(dbAsset).uri;
       const dbFilePath = `${FileSystem.documentDirectory}SQLite/${dbName}`;
-
+  
       const fileInfo = await FileSystem.getInfoAsync(dbFilePath);
-
+  
       if (!fileInfo.exists) {
         await FileSystem.makeDirectoryAsync(
           `${FileSystem.documentDirectory}SQLite`,
@@ -96,14 +105,16 @@ import TemplateDetails from './screens/TemplateDetails';
         );
         console.log("Downloading database...");
         await FileSystem.downloadAsync(dbUri, dbFilePath);
+        
       } else {
         console.log("Database already exists.");
+ 
       }
     } catch (error) {
       console.error("Error in loadDatabase:", error);
     }
   };
-
+  
 
 
   export type WorkoutStackParamList = {
@@ -232,6 +243,67 @@ import TemplateDetails from './screens/TemplateDetails';
 // Define AppContent here
 const AppContent = () => {
   const { theme } = useTheme(); // Access the theme context
+  const [dbLoaded, setDbLoaded] = useState<boolean>(false);
+  const db = useSQLiteContext(); // Ensure SQLite context is accessible
+  const addTables = async (db: any) => {
+    try {
+      db.runAsync(
+        
+          `CREATE TABLE IF NOT EXISTS Template_Workouts (
+            workout_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+            workout_name TEXT NOT NULL UNIQUE,
+            workout_difficulty TEXT NOT NULL
+          );`
+        );
+  
+        db.runAsync(
+          `CREATE TABLE IF NOT EXISTS Template_Days (
+            day_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+            workout_id INTEGER NOT NULL,
+            day_name TEXT NOT NULL,
+            FOREIGN KEY (workout_id) REFERENCES Template_Workouts(workout_id) ON DELETE CASCADE,
+            UNIQUE(workout_id, day_name)
+          );`
+        );
+  
+        db.runAsync(
+          `CREATE TABLE IF NOT EXISTS Template_Exercises (
+            exercise_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+            day_id INTEGER NOT NULL,
+            exercise_name TEXT NOT NULL,
+            sets INTEGER NOT NULL,
+            reps INTEGER NOT NULL,
+            FOREIGN KEY (day_id) REFERENCES Template_Days(day_id) ON DELETE CASCADE
+          );`
+        );
+        console.log("tables created")
+    } catch (error) {
+      console.error('Database initialization error:', error);
+    }
+
+  };
+
+  React.useEffect(() => {
+    (async () => {
+      try {
+        //await resetDatabase();
+        await loadDatabase();
+        await addTables(db);
+        await insertWorkouts(db);
+        setDbLoaded(true);
+      } catch (e) {
+        console.error("Database loading error:", e);
+      }
+    })();
+  }, [db]);
+  
+  if (!dbLoaded) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="black" />
+      </View>
+    );
+  }
 
   return (
     <>
@@ -316,28 +388,7 @@ const AppContent = () => {
 
 
   export default function App() {
-    const [dbLoaded, setDbLoaded] = useState<boolean>(false);
 
-
-    React.useEffect(() => {
-      (async () => {
-        try {
-          //await resetDatabase();
-          await loadDatabase();
-          setDbLoaded(true);          
-        } catch (e) {
-          console.error("Database loading error:", e);
-        }
-      })();
-    }, []);
-    
-    if (!dbLoaded) {
-      return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <ActivityIndicator size="large" color="black" />
-        </View>
-      );
-    }
 
     return (
       <ThemeProvider>
