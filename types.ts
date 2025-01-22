@@ -1,5 +1,11 @@
 // types.ts
 
+export interface TemplateWorkouts {
+  workout_id: number;
+  workout_difficulty: string;
+  workout_name: string;
+}
+
 // Interface for the Workouts table
 export interface Workout {
     workout_id: number;
