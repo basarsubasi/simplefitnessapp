@@ -9,6 +9,7 @@ import { useTheme } from '../context/ThemeContext';
 import { WorkoutStackParamList } from '../App';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useTranslation } from 'react-i18next';
+import Workouts from './Workouts';
 
 
 
@@ -27,7 +28,9 @@ export default function TemplateDetails() {
   const db = useSQLiteContext();
   const route = useRoute();
  
-
+interface LastRowIdResult {
+  id: number;
+}
   const { theme } = useTheme();
   const { t } = useTranslation(); // Initialize translations
   
@@ -78,6 +81,70 @@ export default function TemplateDetails() {
     setDays(sortedDays);
   };
 
+/**
+ * Helper function to run an INSERT (or similar) and return the last inserted row ID.
+ */
+async function runInsertAndGetId(sql: string, params: any[] = []): Promise<number> {
+  // Run the INSERT
+  await db.runAsync(sql, params);
+
+  // Immediately fetch the last inserted row ID (synchronously here)
+  const rows = db.getAllSync<LastRowIdResult>(
+    'SELECT last_insert_rowid() as id'
+  );
+  return rows[0].id;
+}
+
+
+
+
+async function insertWorkoutIntoRealTables(workoutName: string, days: any[]) {
+  // Start a transaction
+  await db.runAsync('BEGIN TRANSACTION');
+  
+  try {
+    // 1. Insert into Workouts and get the ID
+    const newWorkoutId = await runInsertAndGetId(
+      'INSERT OR IGNORE INTO Workouts (workout_name) VALUES (?)',
+      [workoutName]
+    );
+
+    // 2. Insert each day
+    for (const day of days) {
+      const newDayId = await runInsertAndGetId(
+        'INSERT INTO Days (workout_id, day_name) VALUES (?, ?)',
+        [newWorkoutId, day.day_name]
+      );
+
+      // 3. Insert each exercise
+      for (const exercise of day.exercises) {
+        await db.runAsync(
+          `INSERT  INTO Exercises (day_id, exercise_name, sets, reps) 
+           VALUES (?, ?, ?, ?)`,
+          [newDayId, exercise.exercise_name, exercise.sets, exercise.reps]
+        );
+      }
+    }
+
+    // Commit the transaction
+    await db.runAsync('COMMIT');
+    console.log('Insert successful');
+  } catch (error) {
+    // Roll back the transaction if anything fails
+    await db.runAsync('ROLLBACK');
+    console.error('Error inserting workout:', error);
+  }
+}
+
+const handleSaveWorkout = async () => {
+  try {
+    await insertWorkoutIntoRealTables(workoutName, days);
+    console.log('Workout saved successfully');
+    navigation.navigate('WorkoutsList');
+  } catch (error) {
+    console.error('Error saving workout:', error);
+  }
+};
   
 
   return (
@@ -144,17 +211,16 @@ export default function TemplateDetails() {
     )}
     ListFooterComponent={
       <TouchableOpacity
-        style={[styles.addDayButton, { backgroundColor: theme.buttonBackground }]}
+        style={[styles.addDayButton, { backgroundColor: theme.buttonBackground},]}
+        onPress={handleSaveWorkout}
+  
+
       >
         <Ionicons name="add-circle" size={28} color={theme.buttonText} />
         <Text style={[styles.addDayButtonText, { color: theme.buttonText }]}>{t('addDayFromDetails')}</Text>
       </TouchableOpacity>
     }
-    ListEmptyComponent={
-      <Text style={[styles.emptyText, { color: theme.text }]}>
-        {t('emptyWorkoutDetails')}
-      </Text>
-    }
+  
   />
 
     </View>

@@ -14,6 +14,11 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { WorkoutStackParamList } from '../App';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { insertWorkouts } from '../insertWorkouts';
+import { addTables } from '../addTables';
+
+
+
 
 
 
@@ -35,8 +40,13 @@ export default function Difficulty() {
    // Use useFocusEffect to fetch workouts when the screen is focused
    useFocusEffect(
     React.useCallback(() => {
-      db.withTransactionAsync(getWorkouts);
-    }, [db])
+      const fetchData = async () => {
+        await addTables(db);
+        await insertWorkouts(db);
+        await db.withTransactionAsync(getWorkouts);
+      };
+        fetchData()
+    }, [])
   );
 
   async function getWorkouts() {
