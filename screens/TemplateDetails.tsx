@@ -47,36 +47,36 @@ export default function TemplateDetails() {
 
   const fetchWorkoutDetails = async () => {
     const workoutResult = await db.getAllAsync<{ workout_name: string }>(
-      'SELECT workout_name FROM Workouts WHERE workout_id = ?',
+      'SELECT workout_name FROM Template_Workouts WHERE workout_id = ?',
       [workout_id]
     );
     setWorkoutName(workoutResult[0]?.workout_name || '');
-   
-    
-    
+  
     const daysResult = await db.getAllAsync<{ day_id: number; day_name: string }>(
-      'SELECT day_id, day_name FROM Days WHERE workout_id = ?',
+      'SELECT day_id, day_name FROM Template_Days WHERE workout_id = ?',
       [workout_id]
     );
-
+  
     const daysWithExercises = await Promise.all(
       daysResult.map(async (day) => {
-        const exercises = await db.getAllAsync<{ exercise_name: string; sets: number; reps: number }>(
-          'SELECT exercise_name, sets, reps FROM Exercises WHERE day_id = ?',
+        const exercises = await db.getAllAsync<{
+          exercise_id: number;
+          exercise_name: string;
+          sets: number;
+          reps: number;
+        }>(
+          'SELECT exercise_id, exercise_name, sets, reps FROM Template_Exercises WHERE day_id = ? ORDER BY exercise_id',
           [day.day_id]
         );
         return { ...day, exercises };
       })
     );
-
-     // Sort days by day_id in ascending order
-     const sortedDays = daysWithExercises.sort((a, b) => a.day_id - b.day_id);
-
-     setDays(sortedDays);
-
+  
+    // Sort days by day_id in ascending order
+    const sortedDays = daysWithExercises.sort((a, b) => a.day_id - b.day_id);
+  
     setDays(sortedDays);
   };
-
 
   
 
@@ -101,8 +101,7 @@ export default function TemplateDetails() {
     data={days}
     keyExtractor={(item) => item.day_id.toString()}
     renderItem={({ item: day }) => (
-      <TouchableOpacity
-        activeOpacity={0.8}
+      <View
         style={[styles.dayContainer, { backgroundColor: theme.card, borderColor: theme.border }]} // Entire day card is now pressable
       >
         {/* Day Header */}
@@ -141,7 +140,7 @@ export default function TemplateDetails() {
         ) : (
           <Text style={[styles.noExercisesText, { color: theme.text }]}>{t('noExercises')} </Text>
         )}
-      </TouchableOpacity>
+      </View>
     )}
     ListFooterComponent={
       <TouchableOpacity

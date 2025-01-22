@@ -1,7 +1,8 @@
 export const insertWorkouts = async (db: any) => {
     try {
+     
         // Insert Workouts into Template_Workouts
-        db.runAsync(
+       await db.runAsync(
           `INSERT OR IGNORE INTO Template_Workouts (workout_name, workout_difficulty)
           VALUES 
           ('Push Pull Legs', 'Intermediate'),
@@ -10,7 +11,7 @@ export const insertWorkouts = async (db: any) => {
         );
   
         // Insert Days into Template_Days
-        db.runAsync(
+      await  db.runAsync(
           `INSERT OR IGNORE INTO Template_Days (workout_id, day_name)
           VALUES 
           (1, 'Push Day'),
@@ -25,7 +26,7 @@ export const insertWorkouts = async (db: any) => {
         );
   
         // Insert Exercises into Template_Exercises
-        db.runAsync(          
+      await db.runAsync(          
         `INSERT OR IGNORE INTO Template_Exercises (day_id, exercise_name, sets, reps)
           VALUES 
           (1, 'Bench Press', 6, 8),

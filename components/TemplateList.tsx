@@ -1,54 +1,38 @@
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { WorkoutStackParamList } from '../App'; // Adjust path to where WorkoutStackParamList is defined
-import { Workout } from '../types';
+import { TemplateWorkouts } from '../types';
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, ScrollView, View } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '../context/ThemeContext'; // Adjust the path to your ThemeContext
 import { useTranslation } from 'react-i18next';
 
-
 type WorkoutListNavigationProp = StackNavigationProp<WorkoutStackParamList, 'TemplateList'>;
 
 export default function TemplateList({
   workouts,
-  deleteWorkout,
 }: {
-  workouts: Workout[];
-  deleteWorkout: (workout_id: number, workout_name: string) => Promise<void>;
+  workouts: TemplateWorkouts[];
 }) {
   const navigation = useNavigation<WorkoutListNavigationProp>();
+  const route = useRoute(); // Use route to get params
+  const { workout_difficulty } = route.params as { workout_difficulty: string }; // Ensure type safety
   const { theme } = useTheme(); // Get the current theme
   const { t } = useTranslation(); // Initialize translations
-  
+
+  // Filter workouts based on workout_difficulty
+  const filteredWorkouts = workouts.filter(
+    (workout) => workout.workout_difficulty === workout_difficulty
+  );
 
   return (
     <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
       {/* Title */}
-      <Text style={[styles.title, { color: theme.text }]}>{t('MyWorkouts')}</Text>
+      <Text style={[styles.title, { color: theme.text }]}>{t('Templates')}</Text>
 
-
-
-      <TouchableOpacity
-          style={[
-            styles.workoutCard,
-            {
-              backgroundColor: theme.card,
-              borderColor: theme.border,
-              shadowColor: theme.text,
-            },
-          ]}
-          activeOpacity={0.7}
-          onPress={() => navigation.navigate('TemplateDetails')}
-        >
-          <Text style={[styles.workoutText, { color: theme.text }]}>asd</Text>
-          <Ionicons name="chevron-forward" size={20} color={theme.text} />
-        </TouchableOpacity>
-
-     
-      {/* Workout List */}
-      {workouts.map((workout) => (
+      {/* Filtered Workout List */}
+      {filteredWorkouts.map((workout) => (
         <TouchableOpacity
           key={workout.workout_id}
           style={[
@@ -60,18 +44,15 @@ export default function TemplateList({
             },
           ]}
           activeOpacity={0.7}
-          onLongPress={() => deleteWorkout(workout.workout_id, workout.workout_name)}
-          onPress={() => navigation.navigate('WorkoutDetails', { workout_id: workout.workout_id })}
+          onPress={() => navigation.navigate('TemplateDetails', { workout_id: workout.workout_id })}
         >
           <Text style={[styles.workoutText, { color: theme.text }]}>{workout.workout_name}</Text>
           <Ionicons name="chevron-forward" size={20} color={theme.text} />
         </TouchableOpacity>
-        
       ))}
-         {/* Tip Text at the Bottom */}
-    <Text style={[styles.tipText, { color: theme.text }]}>
-    {t('WorkoutListTip')}
-    </Text>
+
+      {/* Tip Text at the Bottom */}
+      <Text style={[styles.tipText, { color: theme.text }]}>{t('WorkoutListTip')}</Text>
     </ScrollView>
   );
 }

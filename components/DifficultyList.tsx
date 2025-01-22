@@ -12,8 +12,6 @@ import { useTranslation } from 'react-i18next';
 type WorkoutListNavigationProp = StackNavigationProp<WorkoutStackParamList, 'DifficultyList'>;
 
 export default function DifficultyList({
-  workouts,
-  deleteWorkout,
 }: {
   workouts: Workout[];
   deleteWorkout: (workout_id: number, workout_name: string) => Promise<void>;
@@ -38,17 +36,13 @@ export default function DifficultyList({
             },
           ]}
           activeOpacity={0.7}
-          onPress={() => navigation.navigate('Template')}
-        >
-          <Text style={[styles.workoutText, { color: theme.text }]}>asdfdasdass</Text>
+          onPress={() => navigation.navigate('Template', { workout_difficulty: 'Beginner' })}
+>
+          <Text style={[styles.workoutText, { color: theme.text }]}>{t('Beginner')}</Text>
           <Ionicons name="chevron-forward" size={20} color={theme.text} />
         </TouchableOpacity>
 
-
-      {/* Workout List */}
-      {workouts.map((workout) => (
         <TouchableOpacity
-          key={workout.workout_id}
           style={[
             styles.workoutCard,
             {
@@ -58,14 +52,30 @@ export default function DifficultyList({
             },
           ]}
           activeOpacity={0.7}
-          onLongPress={() => deleteWorkout(workout.workout_id, workout.workout_name)}
-          onPress={() => navigation.navigate('WorkoutDetails', { workout_id: workout.workout_id })}
-        >
-          <Text style={[styles.workoutText, { color: theme.text }]}>{workout.workout_name}</Text>
+          onPress={() => navigation.navigate('Template', { workout_difficulty: 'Intermediate' })}
+>
+          <Text style={[styles.workoutText, { color: theme.text }]}>{t('Intermediate')}</Text>
           <Ionicons name="chevron-forward" size={20} color={theme.text} />
         </TouchableOpacity>
-        
-      ))}
+
+        <TouchableOpacity
+          style={[
+            styles.workoutCard,
+            {
+              backgroundColor: theme.card,
+              borderColor: theme.border,
+              shadowColor: theme.text,
+            },
+          ]}
+          activeOpacity={0.7}
+          onPress={() => navigation.navigate('Template', { workout_difficulty: 'Advanced' })}
+>
+          <Text style={[styles.workoutText, { color: theme.text }]}>{t('Advanced')}</Text>
+          <Ionicons name="chevron-forward" size={20} color={theme.text} />
+        </TouchableOpacity>
+
+
+    
          {/* Tip Text at the Bottom */}
     <Text style={[styles.tipText, { color: theme.text }]}>
     {t('WorkoutListTip')}

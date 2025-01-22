@@ -125,8 +125,8 @@ import { insertWorkouts } from './insertWorkouts';
     TemplateList: undefined;
     DifficultyList: undefined;
     Difficulty: undefined;
-    Template: undefined;
-    TemplateDetails: undefined
+    Template: { workout_difficulty: string };
+    TemplateDetails: { workout_id: number };
   };
 
   export type WorkoutLogStackParamList = {
@@ -247,7 +247,7 @@ const AppContent = () => {
   const db = useSQLiteContext(); // Ensure SQLite context is accessible
   const addTables = async (db: any) => {
     try {
-      db.runAsync(
+   await db.runAsync(
         
           `CREATE TABLE IF NOT EXISTS Template_Workouts (
             workout_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -256,7 +256,7 @@ const AppContent = () => {
           );`
         );
   
-        db.runAsync(
+       await db.runAsync(
           `CREATE TABLE IF NOT EXISTS Template_Days (
             day_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
             workout_id INTEGER NOT NULL,
@@ -266,7 +266,7 @@ const AppContent = () => {
           );`
         );
   
-        db.runAsync(
+        await db.runAsync(
           `CREATE TABLE IF NOT EXISTS Template_Exercises (
             exercise_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
             day_id INTEGER NOT NULL,
@@ -274,6 +274,7 @@ const AppContent = () => {
             sets INTEGER NOT NULL,
             reps INTEGER NOT NULL,
             FOREIGN KEY (day_id) REFERENCES Template_Days(day_id) ON DELETE CASCADE
+            UNIQUE(day_id, exercise_name)
           );`
         );
         console.log("tables created")

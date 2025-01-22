@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import { Workout } from '../types';
+import { TemplateWorkouts, Workout } from '../types';
 import { useSQLiteContext } from 'expo-sqlite';
 import { Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
@@ -19,7 +19,7 @@ type WorkoutListNavigationProp = StackNavigationProp<WorkoutStackParamList, 'Tem
 
 
 export default function Template() {
-  const [workouts, setWorkouts] = React.useState<Workout[]>([]);
+  const [workouts, setWorkouts] = React.useState<TemplateWorkouts[]>([]);
   const db = useSQLiteContext();
     const { theme } = useTheme();
     const { t } = useTranslation(); // Initialize translations
@@ -36,34 +36,11 @@ export default function Template() {
   );
 
   async function getWorkouts() {
-    const result = await db.getAllAsync<Workout>('SELECT * FROM Workouts;');
+    const result = await db.getAllAsync<TemplateWorkouts>('SELECT * FROM Template_Workouts;');
+    console.log(result);
     setWorkouts(result);
   }
 
-  async function deleteWorkout(workout_id: number, workout_name: string) {
-    Alert.alert(
-      t('deleteWorkoutTitle', { workoutName: workout_name }),
-      t('deleteWorkoutMessage', { workoutName: workout_name }),
-      [
-        {
-          text: t('alertCancel'),
-          onPress: () => console.log('Cancel pressed'), // Do nothing
-          style: 'cancel',
-        },
-        {
-          text: t('alertDelete'),
-          onPress: async () => {
-            await db.withTransactionAsync(async () => {
-              await db.runAsync('DELETE FROM Workouts WHERE workout_id = ?;', [
-                workout_id,
-              ]);
-              await getWorkouts();
-            });
-          },
-        },
-      ]
-    );
-  }
   
 
   return (
@@ -76,7 +53,7 @@ export default function Template() {
            <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color={theme.text} />
         </TouchableOpacity>
-      <TemplateList workouts={workouts} deleteWorkout={deleteWorkout} />
+      <TemplateList workouts={workouts}/>
     </View>
     
   );
