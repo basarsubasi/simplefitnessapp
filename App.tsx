@@ -2,7 +2,7 @@
   import React, {useState } from 'react';
   import { View, ActivityIndicator, StatusBar, StyleSheet, Pressable } from 'react-native'; // Import Pressable here
   import * as FileSystem from 'expo-file-system';
-  import { SQLiteProvider, useSQLiteContext } from 'expo-sqlite';
+  import { SQLiteProvider} from 'expo-sqlite';
   import { Asset } from 'expo-asset';
   import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
   import { NavigationContainer } from '@react-navigation/native';
@@ -27,18 +27,10 @@
   import { AdProvider } from './context/AdContext';
   import { IAPProvider } from './context/IAPContext';
   import EditWorkout from './screens/EditWorkout';
-  
-  
-  
-  
-  import { loadSettings } from './settingsStorage';
-  
   import AllLogs from './screens/AllLogs';
-import Difficulty from './screens/Difficulty';
-import Template from './screens/Template';
-import TemplateDetails from './screens/TemplateDetails';
-import { insertWorkouts } from './insertWorkouts';
-
+  import Difficulty from './screens/Difficulty';
+  import Template from './screens/Template';
+  import TemplateDetails from './screens/TemplateDetails';
 
 
 
@@ -143,6 +135,9 @@ import { insertWorkouts } from './insertWorkouts';
 
   function WorkoutStack() {
     return (
+
+      <SQLiteProvider databaseName="SimpleDB.db" useSuspense>
+
       <WorkoutStackScreen.Navigator screenOptions={{
         headerShown: false, // Disable headers for all screens in this stack
       }}
@@ -183,6 +178,7 @@ import { insertWorkouts } from './insertWorkouts';
           options={{title: 'TemplateDetails'}}
           />
       </WorkoutStackScreen.Navigator>
+      </SQLiteProvider>
     );
   }
 
@@ -243,68 +239,7 @@ import { insertWorkouts } from './insertWorkouts';
 // Define AppContent here
 const AppContent = () => {
   const { theme } = useTheme(); // Access the theme context
-  const [dbLoaded, setDbLoaded] = useState<boolean>(false);
-  const db = useSQLiteContext(); // Ensure SQLite context is accessible
-  const addTables = async (db: any) => {
-    try {
-   await db.runAsync(
-        
-          `CREATE TABLE IF NOT EXISTS Template_Workouts (
-            workout_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-            workout_name TEXT NOT NULL UNIQUE,
-            workout_difficulty TEXT NOT NULL
-          );`
-        );
   
-       await db.runAsync(
-          `CREATE TABLE IF NOT EXISTS Template_Days (
-            day_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-            workout_id INTEGER NOT NULL,
-            day_name TEXT NOT NULL,
-            FOREIGN KEY (workout_id) REFERENCES Template_Workouts(workout_id) ON DELETE CASCADE,
-            UNIQUE(workout_id, day_name)
-          );`
-        );
-  
-        await db.runAsync(
-          `CREATE TABLE IF NOT EXISTS Template_Exercises (
-            exercise_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-            day_id INTEGER NOT NULL,
-            exercise_name TEXT NOT NULL,
-            sets INTEGER NOT NULL,
-            reps INTEGER NOT NULL,
-            FOREIGN KEY (day_id) REFERENCES Template_Days(day_id) ON DELETE CASCADE
-            UNIQUE(day_id, exercise_name)
-          );`
-        );
-        console.log("tables created")
-    } catch (error) {
-      console.error('Database initialization error:', error);
-    }
-
-  };
-
-  React.useEffect(() => {
-    (async () => {
-      try {
-        //await resetDatabase();
-        await loadDatabase();
-        await addTables(db);
-        await insertWorkouts(db);
-        setDbLoaded(true);
-      } catch (e) {
-        console.error("Database loading error:", e);
-      }
-    })();
-  }, []);
-  
-  if (!dbLoaded) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color="black" />
-      </View>
-    );
-  }
 
   return (
     <>
@@ -316,7 +251,7 @@ const AppContent = () => {
               </View>
             }
             />
-
+             <SQLiteProvider databaseName="SimpleDB.db" useSuspense>
             <Bottom.Navigator
                 screenOptions={{
                   headerShown: false,
@@ -380,6 +315,7 @@ const AppContent = () => {
        />
 
                  </Bottom.Navigator>
+                 </SQLiteProvider>
          </>
   );
 };
@@ -387,6 +323,28 @@ const AppContent = () => {
 
 
   export default function App() {
+
+    const [dbLoaded, setDbLoaded] = useState<boolean>(false);
+
+  React.useEffect(() => {
+    (async () => {
+      try {
+        //await resetDatabase();
+        await loadDatabase();
+        setDbLoaded(true);
+      } catch (e) {
+        console.error("Database loading error:", e);
+      }
+    })();
+  }, []);
+  
+  if (!dbLoaded) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="black" />
+      </View>
+    );
+  }
 
 
     return (
