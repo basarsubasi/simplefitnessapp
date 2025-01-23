@@ -149,5 +149,16 @@
   "dateTo": "Datum do:",
   "pickEndDate": "Izberite končni datum",
   "clearSelection": "Počisti izbiro",
-  "noLog": "Ni razpoložljivih zapisov v izbranem časovnem obdobju."
+  "noLog": "Ni razpoložljivih zapisov v izbranem časovnem obdobju.",
+
+
+
+  "navigateToDifficulty": "Priporočene vadbe",
+  "Difficulty": "Težavnost vadbe",
+  "Beginner": "Začetnik",
+  "Intermediate": "Srednji",
+  "Advanced": "Napredni",
+  "featuredWorkouts": "Priporočene vadbe",
+  "templateListTip": "Nasvet: Priporočene vadbe lahko prilagodite po tem, ko jih dodate na svoj seznam vadb.",
+  "addTemplate": "Dodaj k mojim vadbam"
 }

@@ -149,5 +149,17 @@
   "dateTo": "Datum tot:",
   "pickEndDate": "Kies een einddatum",
   "clearSelection": "Selectie wissen",
-  "noLog": "Geen logboeken beschikbaar tussen de geselecteerde datums."
+  "noLog": "Geen logboeken beschikbaar tussen de geselecteerde datums.",
+
+
+
+
+  "navigateToDifficulty": "Aanbevolen trainingen",
+  "Difficulty": "Moeilijkheidsgraad van de training",
+  "Beginner": "Beginner",
+  "Intermediate": "Gemiddeld",
+  "Advanced": "Gevorderd",
+  "featuredWorkouts": "Aanbevolen trainingen",
+  "templateListTip": "Tip: Je kunt de aanbevolen trainingen aanpassen nadat je ze aan je trainingslijst hebt toegevoegd.",
+  "addTemplate": "Toevoegen aan mijn trainingen"
 }

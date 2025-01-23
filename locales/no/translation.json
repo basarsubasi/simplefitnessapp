@@ -149,5 +149,17 @@
   "dateTo": "Dato til:",
   "pickEndDate": "Velg en sluttdato",
   "clearSelection": "Fjern valg",
-  "noLog": "Ingen logger tilgjengelig i den valgte tidsperioden."
+  "noLog": "Ingen logger tilgjengelig i den valgte tidsperioden.",
+
+
+
+
+  "navigateToDifficulty": "Anbefalte treningsøkter",
+  "Difficulty": "Vanskelighetsgrad for treningen",
+  "Beginner": "Nybegynner",
+  "Intermediate": "Middels",
+  "Advanced": "Viderekommen",
+  "featuredWorkouts": "Anbefalte treningsøkter",
+  "templateListTip": "Tips: Du kan tilpasse de anbefalte treningsøktene etter at du har lagt dem til i treningslisten din.",
+  "addTemplate": "Legg til i mine treningsøkter"
 }

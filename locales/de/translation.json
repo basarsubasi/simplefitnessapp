@@ -150,5 +150,14 @@
   "dateTo": "Datum bis:",
   "pickEndDate": "Wählen Sie ein Enddatum",
   "clearSelection": "Auswahl löschen",
-  "noLog": "Keine Protokolle im ausgewählten Zeitraum verfügbar."
+  "noLog": "Keine Protokolle im ausgewählten Zeitraum verfügbar.",
+
+  "navigateToDifficulty": "Empfohlene Workouts",
+  "Difficulty": "Trainingsschwierigkeit",
+  "Beginner": "Anfänger",
+  "Intermediate": "Mittleres Niveau",
+  "Advanced": "Fortgeschritten",
+  "featuredWorkouts": "Empfohlene Workouts",
+  "templateListTip": "Tipp: Du kannst empfohlene Workouts anpassen, nachdem du sie zu deiner Workout-Liste hinzugefügt hast.",
+  "addTemplate": "Zu meinen Workouts hinzufügen"
 }

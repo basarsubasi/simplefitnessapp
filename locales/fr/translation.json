@@ -150,5 +150,17 @@
   "dateTo": "Date de fin :",
   "pickEndDate": "Choisissez une date de fin",
   "clearSelection": "Effacer la sélection",
-  "noLog": "Aucun journal disponible entre les dates sélectionnées."
+  "noLog": "Aucun journal disponible entre les dates sélectionnées.",
+
+
+
+
+  "navigateToDifficulty": "Entraînements recommandés",
+  "Difficulty": "Difficulté de l'entraînement",
+  "Beginner": "Débutant",
+  "Intermediate": "Intermédiaire",
+  "Advanced": "Avancé",
+  "featuredWorkouts": "Entraînements recommandés",
+  "templateListTip": "Conseil : Vous pouvez personnaliser les entraînements recommandés après les avoir ajoutés à votre liste d'entraînements.",
+  "addTemplate": "Ajouter à mes entraînements"
 }

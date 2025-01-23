@@ -149,5 +149,17 @@
   "dateTo": "Data de Término:",
   "pickEndDate": "Escolha uma data de término",
   "clearSelection": "Limpar Seleção",
-  "noLog": "Nenhum registro disponível no intervalo de datas selecionado."
+  "noLog": "Nenhum registro disponível no intervalo de datas selecionado.",
+
+
+
+
+  "navigateToDifficulty": "Treinos em destaque",
+  "Difficulty": "Dificuldade do treino",
+  "Beginner": "Iniciante",
+  "Intermediate": "Intermediário",
+  "Advanced": "Avançado",
+  "featuredWorkouts": "Treinos em destaque",
+  "templateListTip": "Dica: Você pode personalizar os treinos em destaque depois de adicioná-los à sua lista de treinos.",
+  "addTemplate": "Adicionar aos meus treinos"
 }

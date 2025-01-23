@@ -149,5 +149,17 @@
   "dateTo": "Datum Till:",
   "pickEndDate": "Välj ett slutdatum",
   "clearSelection": "Rensa Val",
-  "noLog": "Inga loggar tillgängliga mellan de valda datumen."
+  "noLog": "Inga loggar tillgängliga mellan de valda datumen.",
+
+
+
+
+  "navigateToDifficulty": "Rekommenderade träningspass",
+  "Difficulty": "Svårighetsgrad för träningspass",
+  "Beginner": "Nybörjare",
+  "Intermediate": "Mellanliggande",
+  "Advanced": "Avancerad",
+  "featuredWorkouts": "Rekommenderade träningspass",
+  "templateListTip": "Tips: Du kan anpassa de rekommenderade träningspassen efter att du har lagt till dem i din träningslista.",
+  "addTemplate": "Lägg till i mina träningspass"
 }

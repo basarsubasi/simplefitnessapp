@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 16,
-    marginTop: 50, // Move everything down
+    marginTop: 100, // Move everything down
   },
   title: {
     fontSize: 35, // Larger font size
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
   
   },
 
-  
+
   createButton: {
     borderRadius: 20,
     paddingVertical: 15,
@@ -121,10 +121,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   workoutCard: {
+    backgroundColor: '#F7F7F7',
     paddingVertical: 16,
     paddingHorizontal: 16,
     borderRadius: 10,
     borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.1)',
+    elevation: 2,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.8,
     shadowRadius: 5,

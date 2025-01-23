@@ -15,6 +15,8 @@ import { useSettings } from '../context/SettingsContext';
 import { useTheme } from '../context/ThemeContext';
 import BannerAdComponent from '../components/BannerAd';
 import { useTranslation } from 'react-i18next';
+import { AutoSizeText, ResizeTextMode } from 'react-native-auto-size-text';
+
 
 export default function AllLogs() {
   const navigation = useNavigation();
@@ -250,9 +252,14 @@ export default function AllLogs() {
           onLongPress={confirmDeleteDay} // Add this line for long press functionality
 
         >
-          <Text style={[styles.logWorkoutName, { color: theme.text }]}>
-            {workout_name}
-          </Text>
+              <AutoSizeText 
+              fontSize={20}
+              numberOfLines={2}
+              mode={ResizeTextMode.max_lines}
+              style={[styles.logWorkoutName, { color: theme.text }]}>
+                {workout_name}
+              </AutoSizeText>
+          
           <Text style={[styles.logDate, { color: theme.text }]}>
             {formattedDate}
           </Text>
@@ -286,8 +293,8 @@ export default function AllLogs() {
                       key={index}
                       style={[styles.logDetail, { color: theme.text }]}
                     >
-                      {t('Set')} {set.set_number}: {set.weight_logged}{' '}
-                      {weightFormat}, {set.reps_logged} {t('Reps')}
+                     {t('Set')} {set.set_number}: {' '} {set.weight_logged}{' '}
+                      {weightFormat} {' '} {set.reps_logged} {t('Reps')}
                     </Text>
                   )
                 )}
