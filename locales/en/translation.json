@@ -178,9 +178,18 @@
     "dateTo": "Date To:",
     "pickEndDate": "Pick an end date",
     "clearSelection":"Clear Selection",
-    "noLog":"No logs available between the selected dates."
+    "noLog":"No logs available between the selected dates.",
 
 
+
+    "navigateToDifficulty": "Featured Workouts",
+    "Difficulty": "Workout Difficulty",
+    "Beginner": "Beginner",
+    "Intermediate": "Intermediate",
+    "Advanced": "Advanced",
+    "featuredWorkouts":"Featured Workouts",
+    "templateListTip":"Tip: You can customize featured workouts after adding them to your workout list.",
+    "addTemplate":"Add to My Workouts"
 
 
     

@@ -50,7 +50,7 @@ export default function WorkoutList({
           activeOpacity={0.7}
           onPress={() => navigation.navigate('Difficulty')}
         >
-          <Text style={[styles.workoutText, { color: theme.text }]}>asdf</Text>
+          <Text style={[styles.workoutText, { color: theme.text }]}>{t('navigateToDifficulty')}</Text>
           <Ionicons name="chevron-forward" size={20} color={theme.text} />
         </TouchableOpacity>
 

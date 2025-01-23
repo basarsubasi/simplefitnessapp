@@ -29,7 +29,7 @@ export default function TemplateList({
   return (
     <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
       {/* Title */}
-      <Text style={[styles.title, { color: theme.text }]}>{t('Templates')}</Text>
+      <Text style={[styles.title, { color: theme.text }]}>{t('featuredWorkouts')}</Text>
 
       {/* Filtered Workout List */}
       {filteredWorkouts.map((workout) => (
@@ -52,7 +52,7 @@ export default function TemplateList({
       ))}
 
       {/* Tip Text at the Bottom */}
-      <Text style={[styles.tipText, { color: theme.text }]}>{t('WorkoutListTip')}</Text>
+      <Text style={[styles.tipText, { color: theme.text }]}>{t('templateListTip')}</Text>
     </ScrollView>
   );
 }
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 16,
-    marginTop: 50, // Move everything down
+    marginTop: 100, // Move everything down
   },
   title: {
     fontSize: 35, // Larger font size
