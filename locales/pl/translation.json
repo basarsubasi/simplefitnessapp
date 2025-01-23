@@ -148,5 +148,17 @@
   "dateTo": "Data do:",
   "pickEndDate": "Wybierz datę końcową",
   "clearSelection": "Wyczyść wybór",
-  "noLog": "Brak dostępnych dzienników w wybranym przedziale dat."
+  "noLog": "Brak dostępnych dzienników w wybranym przedziale dat.",
+
+
+
+
+  "navigateToDifficulty": "Polecane treningi",
+  "Difficulty": "Poziom trudności treningu",
+  "Beginner": "Początkujący",
+  "Intermediate": "Średnio zaawansowany",
+  "Advanced": "Zaawansowany",
+  "featuredWorkouts": "Polecane treningi",
+  "templateListTip": "Wskazówka: Możesz dostosować polecane treningi po dodaniu ich do swojej listy treningów.",
+  "addTemplate": "Dodaj do moich treningów"
 }

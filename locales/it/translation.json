@@ -148,5 +148,17 @@
   "dateTo": "Data a:",
   "pickEndDate": "Seleziona una data di fine",
   "clearSelection": "Cancella selezione",
-  "noLog": "Nessun registro disponibile tra le date selezionate."
+  "noLog": "Nessun registro disponibile tra le date selezionate.",
+
+
+
+
+  "navigateToDifficulty": "Allenamenti consigliati",
+  "Difficulty": "Difficoltà dell'allenamento",
+  "Beginner": "Principiante",
+  "Intermediate": "Intermedio",
+  "Advanced": "Avanzato",
+  "featuredWorkouts": "Allenamenti consigliati",
+  "templateListTip": "Consiglio: Puoi personalizzare gli allenamenti consigliati dopo averli aggiunti alla tua lista di allenamenti.",
+  "addTemplate": "Aggiungi ai miei allenamenti"
 }

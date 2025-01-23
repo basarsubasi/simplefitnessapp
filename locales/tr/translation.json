@@ -178,7 +178,17 @@
     "dateTo": "Bitiş Tarihi:",
     "pickEndDate": "Bir bitiş tarihi seçin",
     "clearSelection": "Seçimi Temizle",
-    "noLog": "Seçilen tarihler arasında kayıt bulunmamaktadır."
+    "noLog": "Seçilen tarihler arasında kayıt bulunmamaktadır.",
+
+
+    "navigateToDifficulty": "Öne Çıkan Antrenmanlar",
+    "Difficulty": "Antrenman Zorluk Seviyesi",
+    "Beginner": "Başlangıç",
+    "Intermediate": "Orta seviye",
+    "Advanced": "İleri seviye",
+    "featuredWorkouts": "Öne Çıkan Antrenmanlar",
+    "templateListTip": "İpucu:Öne çıkan antrenmanları antrenman listenize ekledikten sonra  özelleştirebilirsiniz.",
+    "addTemplate": "Antrenmanlarıma Ekle"
     
     
 

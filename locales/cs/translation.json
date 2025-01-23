@@ -149,5 +149,15 @@
   "dateTo": "Datum do:",
   "pickEndDate": "Vyberte koncové datum",
   "clearSelection": "Vymazat výběr",
-  "noLog": "V zadaném období nejsou k dispozici žádné záznamy."
+  "noLog": "V zadaném období nejsou k dispozici žádné záznamy.",
+
+
+  "navigateToDifficulty": "Doporučené tréninky",
+  "Difficulty": "Obtížnost tréninku",
+  "Beginner": "Začátečník",
+  "Intermediate": "Středně pokročilý",
+  "Advanced": "Pokročilý",
+  "featuredWorkouts": "Doporučené tréninky",
+  "templateListTip": "Tip: Můžete upravit doporučené tréninky poté, co je přidáte do svého seznamu tréninků.",
+  "addTemplate": "Přidat do mých tréninků"
 }

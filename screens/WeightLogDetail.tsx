@@ -16,6 +16,8 @@ import { useTheme } from '../context/ThemeContext';
 import { useTranslation } from 'react-i18next';
 import BannerAdComponent from '../components/BannerAd';
 
+import { AutoSizeText, ResizeTextMode } from 'react-native-auto-size-text';
+
 
 
 export default function WeightLogDetail() {
@@ -242,7 +244,15 @@ export default function WeightLogDetail() {
     onPress={() => toggleDayExpansion(day_name, workout_date)}
     onLongPress={confirmDeleteDay} // Add this line for long press functionality
   >
-    <Text style={[styles.logDayName, { color: theme.text }]}>{day_name}</Text>
+     <AutoSizeText 
+      fontSize={20}
+      numberOfLines={2}
+      mode={ResizeTextMode.max_lines}
+    style={[styles.logDayName, { color: theme.text }]}>
+      {day_name}
+    </AutoSizeText>
+
+
     <Text style={[styles.logDate, { color: theme.text }]}>{formattedDate}</Text>
     <Ionicons
       name={isExpanded ? 'chevron-up' : 'chevron-down'}
@@ -257,7 +267,7 @@ export default function WeightLogDetail() {
           <Text style={[styles.exerciseName, { color: theme.text }]}>{exercise_name}</Text>
           {sets.map((set, index) => (
             <Text key={index} style={[styles.logDetail, { color: theme.text }]}>
-              {t('Set')} {set.set_number}: {set.weight_logged} {weightFormat}, {set.reps_logged} {t('Reps')}
+              {t('Set')} {set.set_number}: {' '} {set.weight_logged}  {weightFormat} {' '}  {set.reps_logged} {t('Reps')}
             </Text>
           ))}
         </View>
@@ -279,7 +289,11 @@ export default function WeightLogDetail() {
       <Ionicons name="arrow-back" size={24} color={theme.text} />
     </TouchableOpacity>
   
-    <Text style={[styles.headerTitle, { color: theme.text }]}>{workoutName} {t('weightLog')}</Text>
+    <Text 
+    style={[styles.headerTitle, { color: theme.text }]}>{workoutName} {t('weightLog')}
+    </Text>
+
+     
   
     {/* Filter Buttons */}
     <View style={styles.filterContainer}>

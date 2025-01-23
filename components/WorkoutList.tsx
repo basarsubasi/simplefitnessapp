@@ -21,6 +21,7 @@ export default function WorkoutList({
   const navigation = useNavigation<WorkoutListNavigationProp>();
   const { theme } = useTheme(); // Get the current theme
   const { t } = useTranslation(); // Initialize translations
+  const sortedWorkouts = [...workouts].sort((a, b) => b.workout_id - a.workout_id);
   
 
   return (
@@ -55,7 +56,7 @@ export default function WorkoutList({
         </TouchableOpacity>
 
       {/* Workout List */}
-      {workouts.map((workout) => (
+      {sortedWorkouts.map((workout) => (
         <TouchableOpacity
           key={workout.workout_id}
           style={[
@@ -127,10 +128,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   workoutCard: {
+    backgroundColor: '#F7F7F7',
     paddingVertical: 16,
     paddingHorizontal: 16,
     borderRadius: 10,
     borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.1)',
+    elevation: 2,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.8,
     shadowRadius: 5,

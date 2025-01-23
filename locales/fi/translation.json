@@ -148,5 +148,16 @@
   "dateTo": "Päivämäärä asti:",
   "pickEndDate": "Valitse loppupäivä",
   "clearSelection": "Tyhjennä valinta",
-  "noLog": "Valituilla päivämäärillä ei ole lokitietoja."
+  "noLog": "Valituilla päivämäärillä ei ole lokitietoja.",
+
+
+
+  "navigateToDifficulty": "Suositellut treenit",
+  "Difficulty": "Treenin vaikeustaso",
+  "Beginner": "Aloittelija",
+  "Intermediate": "Keskitaso",
+  "Advanced": "Edistynyt",
+  "featuredWorkouts": "Suositellut treenit",
+  "templateListTip": "Vinkki: Voit mukauttaa suositeltuja treenejä sen jälkeen, kun olet lisännyt ne treenilistallesi.",
+  "addTemplate": "Lisää treeneihini"
 }
