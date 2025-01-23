@@ -216,8 +216,11 @@ const handleSaveWorkout = async () => {
   
 
       >
-        <Ionicons name="add-circle" size={28} color={theme.buttonText} />
-        <Text style={[styles.addDayButtonText, { color: theme.buttonText }]}>{t('addDayFromDetails')}</Text>
+        
+         <Text style={[styles.addDayButtonText, { color: theme.buttonText }]}>{t('addTemplate')}</Text>
+
+         
+       
       </TouchableOpacity>
     }
   

@@ -76,10 +76,6 @@ export default function DifficultyList({
 
 
     
-         {/* Tip Text at the Bottom */}
-    <Text style={[styles.tipText, { color: theme.text }]}>
-    {t('WorkoutListTip')}
-    </Text>
     </ScrollView>
   );
 }
@@ -97,13 +93,10 @@ const styles = StyleSheet.create({
     fontWeight: '900', // Extra bold
     marginBottom: 24,
     textAlign: 'center', // Centered text
+  
   },
-  tipText: {
-    marginTop: 20, // Space above the text
-    textAlign: 'center', // Center align
-    fontSize: 14, // Smaller font size
-    fontStyle: 'italic', // Italic for emphasis
-  },
+
+  
   createButton: {
     borderRadius: 20,
     paddingVertical: 15,
