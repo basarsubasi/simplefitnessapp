@@ -17,7 +17,7 @@ export const insertWorkouts = async (db: any) => {
           (1, 'Push Day'),
           (1, 'Pull Day'),
           (1, 'Leg Day'),
-          (2, 'Day 1'),
+          (2, 'Cycle'),
           (3, 'Chest'),
           (3, 'Back'),
           (3, 'Shoulders'),
@@ -39,7 +39,7 @@ export const insertWorkouts = async (db: any) => {
           (2, 'Lat Pulldown', 4, 12),
           (2, 'T-Bar Row', 4, 8),
           (2, 'Hammer Curl', 4, 12),
-          (3, 'Squat', 6, 12),
+          (3, 'Back Squat', 6, 12),
           (3, 'Leg Extension', 4, 12),
           (3, 'Leg Curl', 4, 12),
           (3, 'Leg Press', 4, 8),
@@ -51,7 +51,7 @@ export const insertWorkouts = async (db: any) => {
           (4, 'Lat Pulldown', 3, 12),
           (4, 'Dumbell Curl', 3, 12),
           (4, 'Triceps Pushdown', 3, 12),
-          (4, 'Goblet Squats', 3, 12),
+          (4, 'Goblet Squat', 3, 12),
           (5, 'Bench Press', 6, 6),
           (5, 'Incline Bench Press', 6, 6),
           (5, 'Decline Bench Press', 6, 6),
@@ -71,11 +71,106 @@ export const insertWorkouts = async (db: any) => {
           (8, 'Close Grip Bench Press', 6, 12),
           (8, 'V Pushdown', 6, 12),
           (8, 'Skull Crushers', 6, 12),
-          (9, 'Squats', 6, 6),
+          (9, 'Back Squat', 6, 6),
           (9, 'Leg Press', 6, 6),
           (9, 'Leg Curl', 6, 12),
           (9, 'Leg Extension', 6, 12);`
         );
+
+        await db.runAsync(
+          `INSERT OR IGNORE INTO Template_Workouts (workout_name, workout_difficulty)
+          VALUES 
+          ('Upper Lower', 'Advanced'),
+          ('Optimize!', 'Intermediate'),
+          ('Split it!', 'Beginner');`
+      );
+
+      // Insert Days into Template_Days
+      await db.runAsync(
+          `INSERT OR IGNORE INTO Template_Days (workout_id, day_name)
+          VALUES 
+          (4, 'Upper (Strength)'),
+          (4, 'Lower (Strength)'),
+          (4, 'Upper (Hypertrophy)'),
+          (4, 'Lower (Hypertrophy)'),
+          (5, 'Chest & Arms'),
+          (5, 'Back & Shoulders'),
+          (5, 'Legs'),
+          (6, 'First Half'),
+          (6, 'Second Half');`
+      );
+
+      // Insert Exercises into Template_Exercises
+      await db.runAsync(
+          `INSERT OR IGNORE INTO Template_Exercises (day_id, exercise_name, sets, reps)
+          VALUES 
+          -- Upper Lower: Upper (Strength)
+          (10, 'Bench Press', 5, 5),
+          (10, 'Dumbell Incline Bench Press', 5, 5),
+          (10, 'Overhead Press', 5, 5),
+          (10, 'Arnold Press', 5, 5),
+          (10, 'Barbell Row', 5, 5),
+          (10, 'Dumbell Row', 5, 5),
+
+          -- Upper Lower: Lower (Strength)
+          (11, 'Back Squat', 6, 6),
+          (11, 'Front Squat', 6, 6),
+          (11, 'Deadlift', 6, 6),
+          (11, 'Barbell Hip Thrust', 6, 6),
+
+          -- Upper Lower: Upper (Hypertrophy)
+          (12, 'Bench Press', 4, 15),
+          (12, 'Cable Crossovers', 4, 15),
+          (12, 'Dumbell Shoulder Press', 4, 15),
+          (12, 'Lateral Raises', 6, 15),
+          (12, 'Lat Pulldown', 4, 15),
+          (12, 'Seated Row', 4, 15),
+          (12, 'Triceps Pushdown', 4, 15),
+          (12, 'Biceps Curl', 4, 15),
+
+          -- Upper Lower: Lower (Hypertrophy)
+          (13, 'Bulgarian Split Squat', 4, 15),
+          (13, 'Goblet Squat', 4, 15),
+          (13, 'Leg Press', 4, 15),
+          (13, 'Leg Extension', 4, 15),
+          (13, 'Leg Curl', 4, 15),
+          (13, 'Calf Raises', 4, 15),
+
+          -- Optimize!: Chest & Arms
+          (14, 'Bench Press', 6, 8),
+          (14, 'Incline Dumbell Press', 4, 12),
+          (14, 'Pec Deck Machine', 4, 12),
+          (14, 'Dumbell Curl', 4, 12),
+          (14, 'Triceps Pushdown', 4, 12),
+
+          -- Optimize!: Back & Shoulders
+          (15, 'Dumbell Shoulder Press', 6, 12),
+          (15, 'Lateral Raises', 6, 15),
+          (15, 'Front Raises', 4, 12),
+          (15, 'Lat Pulldown', 6, 12),
+          (15, 'T-Bar Row', 6, 12),
+
+          -- Optimize!: Legs
+          (16, 'Back Squat', 4, 10),
+          (16, 'Leg Press', 4, 12),
+          (16, 'Leg Curl', 4, 12),
+          (16, 'Leg Extension', 4, 12),
+          (16, 'Calf Raises', 4, 12),
+
+          -- Split it!: First Half
+          (17, 'Bench Press', 3, 10),
+          (17, 'Dumbell Fly', 3, 12),
+          (17, 'Shoulder Press Machine', 3, 10),
+          (17, 'Lateral Raises', 3, 15),
+          (17, 'Dumbell Curl', 3, 12),
+
+          -- Split it!: Second Half
+          (18, 'Lat Pulldown', 3, 12),
+          (18, 'Dumbell Row', 3, 12),
+          (18, 'Goblet Squat', 3, 12),
+          (18, 'Hack Squat', 3, 12),
+          (18, 'Triceps Pushdown', 3, 12);`
+      );
   
         console.log('Initial  Template workouts inserted into the database.');
     } catch (error) {
