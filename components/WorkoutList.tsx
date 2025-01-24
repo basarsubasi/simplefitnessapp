@@ -106,8 +106,8 @@ const styles = StyleSheet.create({
   },
   createButton: {
     borderRadius: 20,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 15 ,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -134,7 +134,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     borderColor: 'rgba(0, 0, 0, 0.1)',
-    elevation: 2,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.8,
