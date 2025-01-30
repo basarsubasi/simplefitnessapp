@@ -35,7 +35,7 @@ export default function AllLogs() {
     {}
   );
   const [logs, setLogs] = useState<{
-    [key: string]: { [exercise_name: string]: any[] };
+    [key: string]: { [id: number]: { exerciseName: string; sets: any[], loggedExerciseId: number } };
   }>({});
 
   const [datePickerVisible, setDatePickerVisible] = useState<{
@@ -89,27 +89,33 @@ export default function AllLogs() {
         set_number: number;
         weight_logged: number;
         reps_logged: number;
+        logged_exercise_id: number;
       }>(
         `SELECT Workout_Log.workout_name, Weight_Log.exercise_name, 
                 Weight_Log.set_number, Weight_Log.weight_logged, 
-                Weight_Log.reps_logged
+                Weight_Log.reps_logged, Weight_Log.logged_exercise_id
          FROM Weight_Log
          INNER JOIN Workout_Log 
          ON Weight_Log.workout_log_id = Workout_Log.workout_log_id
          WHERE Workout_Log.day_name = ? AND Workout_Log.workout_date = ? 
-         ORDER BY Workout_Log.workout_name, Weight_Log.exercise_name, 
-                  Weight_Log.set_number;`,
+         ORDER BY Weight_Log.logged_exercise_id ASC;`,
         [dayName, workoutDate]
       );
 
       const groupedLogs = result.reduce((acc, log) => {
-        const { workout_name, exercise_name, ...setDetails } = log;
-        if (!acc[exercise_name]) {
-          acc[exercise_name] = [];
+        const { logged_exercise_id, exercise_name, ...setDetails } = log;
+        const compositeKey = `${logged_exercise_id}_${exercise_name}`;
+        
+        if (!acc[compositeKey]) {
+          acc[compositeKey] = {
+            loggedExerciseId: logged_exercise_id,
+            exerciseName: exercise_name,
+            sets: []
+          };
         }
-        acc[exercise_name].push(setDetails);
+        acc[compositeKey].sets.push(setDetails);
         return acc;
-      }, {} as { [exercise_name: string]: any[] });
+      }, {} as { [key: string]: { loggedExerciseId: number; exerciseName: string; sets: any[] } });
 
       setLogs((prev) => ({
         ...prev,
@@ -274,32 +280,23 @@ export default function AllLogs() {
               <Text style={[styles.logDayName, { color: theme.text }]}>
                 {day_name}
                 </Text>
-                {Object.entries(logs[key]).map(([exercise_name, sets]) => (
-              <View key={exercise_name} style={styles.logItem}>
-
-                <Text style={[styles.exerciseName, { color: theme.text }]}>
-                  {exercise_name}
-                </Text>
-                {sets.map(
-                  (
-                    set: {
-                      set_number: number;
-                      weight_logged: number;
-                      reps_logged: number;
-                    },
-                    index: number
-                  ) => (
-                    <Text
-                      key={index}
-                      style={[styles.logDetail, { color: theme.text }]}
-                    >
-                     {t('Set')} {set.set_number}: {' '} {set.weight_logged}{' '}
-                      {weightFormat} {' '} {set.reps_logged} {t('Reps')}
-                    </Text>
-                  )
-                )}
-              </View>
-            ))}
+                {Object.values(logs[key])
+                  .sort((a, b) => a.loggedExerciseId - b.loggedExerciseId)
+                  .map(({ exerciseName, sets, loggedExerciseId }) => (
+                    <View key={`${loggedExerciseId}_${exerciseName}`} style={styles.logItem}>
+                      <Text style={[styles.exerciseName, { color: theme.text }]}>
+                        {exerciseName}
+                      </Text>
+                      {sets.map((set, index) => (
+                        <Text
+                          key={index}
+                          style={[styles.logDetail, { color: theme.text }]}
+                        >
+                          {t('Set')} {set.set_number}: {set.weight_logged} {weightFormat} {set.reps_logged} {t('Reps')}
+                        </Text>
+                      ))}
+                    </View>
+                  ))}
           </View>
         )}
       </View>
