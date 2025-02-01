@@ -63,7 +63,6 @@ export default function WorkoutList({
             {
               backgroundColor: theme.card,
               borderColor: theme.border,
-              shadowColor: theme.text,
             },
           ]}
           activeOpacity={0.7}
@@ -133,11 +132,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     borderColor: 'rgba(0, 0, 0, 0.1)',
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.8,
+    shadowOpacity: 0.2,
     shadowRadius: 5,
-    elevation: 5,
+    elevation: 2,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
