@@ -40,7 +40,6 @@ export default function TemplateList({
             {
               backgroundColor: theme.card,
               borderColor: theme.border,
-              shadowColor: theme.text,
             },
           ]}
           activeOpacity={0.7}

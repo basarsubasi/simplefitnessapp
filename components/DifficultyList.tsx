@@ -32,7 +32,6 @@ export default function DifficultyList({
             {
               backgroundColor: theme.card,
               borderColor: theme.border,
-              shadowColor: theme.text,
             },
           ]}
           activeOpacity={0.7}
@@ -48,7 +47,6 @@ export default function DifficultyList({
             {
               backgroundColor: theme.card,
               borderColor: theme.border,
-              shadowColor: theme.text,
             },
           ]}
           activeOpacity={0.7}
