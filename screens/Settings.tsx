@@ -5,7 +5,6 @@ import { FlatList } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 import { useSettings } from '../context/SettingsContext';
 import { useTheme } from '../context/ThemeContext';
-import RemoveAdsButton from '../components/RemoveAdsButton';
 import { useTranslation } from 'react-i18next';
 
 
@@ -111,11 +110,6 @@ export default function Settings() {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
-      {/* Back Button */}
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Ionicons name="arrow-back" size={24} color={theme.text} />
-      </TouchableOpacity>
-
       {/* Title */}
       <Text style={[styles.title, { color: theme.text }]}>{t('settingsTitle')}</Text>
 
@@ -196,13 +190,6 @@ export default function Settings() {
               {theme.background === '#FFFFFF' ? t('settingsSwitchDark') : t('settingsSwitchLight')}
             </Text>
           </TouchableOpacity>
-        </View>
-      </View>
-
-      {/* Remove Ads */}
-      <View style={styles.section}>
-        <View style={styles.buttonGroup}>
-          <RemoveAdsButton />
         </View>
       </View>
     </View>
