@@ -16,6 +16,7 @@
     "@react-navigation/stack": "^7.1.0",
     "expo": "~52.0.25",
     "expo-asset": "^11.0.1",
+    "expo-doctor": "^1.12.8",
     "expo-file-system": "^18.0.4",
     "expo-localization": "^16.0.1",
     "expo-sqlite": "~15.0.6",

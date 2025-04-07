@@ -108,11 +108,6 @@ export default function Settings() {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
-      {/* Back Button */}
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Ionicons name="arrow-back" size={24} color={theme.text} />
-      </TouchableOpacity>
-
       {/* Title */}
       <Text style={[styles.title, { color: theme.text }]}>{t('settingsTitle')}</Text>
 

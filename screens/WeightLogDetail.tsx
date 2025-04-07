@@ -380,10 +380,6 @@ export default function WeightLogDetail() {
         </Text>
       }
     />
-                   {/* Banner Ad Section */}
-                   <View style={styles.adContainer}>
-        <BannerAdComponent />
-      </View>
     </View>
   );
 }

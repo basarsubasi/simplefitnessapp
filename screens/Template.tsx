@@ -4,7 +4,6 @@ import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { TemplateWorkouts, Workout } from '../types';
 import { useSQLiteContext } from 'expo-sqlite';
-import { Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { useTheme } from '../context/ThemeContext';
 import { useTranslation } from 'react-i18next';

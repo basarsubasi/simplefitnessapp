@@ -5,7 +5,6 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useSQLiteContext } from 'expo-sqlite';
 import { AutoSizeText, ResizeTextMode } from 'react-native-auto-size-text';
-import BannerAdComponent from '../components/BannerAd'; // Import the BannerAdComponent
 import { useTheme } from '../context/ThemeContext';
 import { WorkoutStackParamList } from '../App';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -448,10 +447,6 @@ export default function WorkoutDetails() {
       </View>
     </View>
       </Modal>
-       {/* Banner Ad Section */}
-       <View style={styles.adContainer}>
-        <BannerAdComponent />
-      </View>
     </View>
   );
 }

@@ -1,6 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
-import BannerAdComponent from '../components/BannerAd'; // Import the BannerAdComponent
+import { View, Text, TouchableOpacity, Dimensions } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
 import { ScaledSheet } from 'react-native-size-matters'; // Import ScaledSheet for scaling
 import { useTranslation } from 'react-i18next';
@@ -61,10 +60,6 @@ export default function Home({ navigation }: any) {
         </TouchableOpacity>
       </View>
 
-      {/* Banner Ad Section */}
-      <View style={styles.adContainer}>
-        <BannerAdComponent />
-      </View>
     </View>
   );
 }
