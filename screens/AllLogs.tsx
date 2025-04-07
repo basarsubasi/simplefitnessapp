@@ -291,7 +291,7 @@ export default function AllLogs() {
                           key={index}
                           style={[styles.logDetail, { color: theme.text }]}
                         >
-                          {t('Set')} {set.set_number}: {set.weight_logged} {weightFormat} {set.reps_logged} {t('Reps')}
+                          {t('Set')} {set.set_number}: {set.weight_logged} {weightFormat} {} {set.reps_logged} {t('Reps')}
                         </Text>
                       ))}
                     </View>
