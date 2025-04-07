@@ -233,19 +233,10 @@ export default function LogWeights() {
               keyboardType="numeric"
               value={reps[repsKey]}
               onChangeText={(text) => {
-                const sanitizedText = text.replace(/[^0-9]/g, ''); // Remove non-numeric characters
-                let value = parseInt(sanitizedText || '0'); // Convert to integer
-                if (value > 0 && value <= 10000) {
-                  setReps((prev) => ({
-                    ...prev,
-                    [repsKey]: value.toString(), // Update state with valid input
-                  }));
-                } else if (value === 0) {
-                  setReps((prev) => ({
-                    ...prev,
-                    [repsKey]: '', // Prevent 0 from being displayed
-                  }));
-                }
+                setReps((prev) => ({
+                  ...prev,
+                  [repsKey]: text,
+                }));
               }}
             />
     
@@ -256,10 +247,9 @@ export default function LogWeights() {
               keyboardType="decimal-pad"
               value={weights[weightKey]}
               onChangeText={(text) => {
-                const sanitizedText = text.replace(/[^0-9.,]/g, '');
                 setWeights((prev) => ({
                   ...prev,
-                  [weightKey]: sanitizedText,
+                  [weightKey]: text,
                 }));
               }}
             />
