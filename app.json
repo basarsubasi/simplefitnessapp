@@ -15,15 +15,9 @@
     "ios": {
       "supportsTablet" : false,
       "buildNumber": "1.1.2",
-      "bundleIdentifier": "com.basarsubasi.simplefitnessapp",
-      "config": {
-        "googleMobileAdsAppId": "ca-app-pub-9707948896132362~7468309982"
-      }
+      "bundleIdentifier": "com.basarsubasi.simplefitnessapp"
     },
     "android": {
-      "config": {
-        "googleMobileAdsAppId": "ca-app-pub-9707948896132362~7260721577"
-      },
       "adaptiveIcon": {
         "foregroundImage": "./assets/simpleicon.png",
         "backgroundColor": "#ffffff"
