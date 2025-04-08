@@ -19,11 +19,7 @@
     <key>CFBundlePackageType</key>
     <string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
     <key>CFBundleShortVersionString</key>
-<<<<<<< HEAD:ios/SimpleFitnessAppBeta/Info.plist
-    <string>1.1.3</string>
-=======
-    <string>1.4.1</string>
->>>>>>> origin:ios/Simple/Info.plist
+    <string>1.5.0</string>
     <key>CFBundleSignature</key>
     <string>????</string>
     <key>CFBundleURLTypes</key>

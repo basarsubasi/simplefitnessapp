@@ -2,7 +2,7 @@
   "expo": {
     "name": "Simple",
     "slug": "simplefitnessappbeta",
-    "version": "1.4.1",
+    "version": "1.5.0",
     "orientation": "portrait",
     "icon": "./assets/simpleicon.png",
     "userInterfaceStyle": "light",
@@ -13,11 +13,13 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true,
       "bundleIdentifier": "tr.com.basarsubasi.simplefitnessapp"
     },
+
     "android": {
-      "versionCode": 25,
+
+      "blockedPermissions": ["android.permission.INTERNET"],
+      "versionCode": 26,
       "adaptiveIcon": {
         "foregroundImage": "./assets/simpleicon.png",
         "backgroundColor": "#ffffff",

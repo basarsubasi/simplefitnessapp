@@ -1,0 +1,3 @@
+- Multilanguage support
+- editing and reordering workouts
+- featured workouts
