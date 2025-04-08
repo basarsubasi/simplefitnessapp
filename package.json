@@ -16,7 +16,6 @@
     "@react-navigation/stack": "^7.1.0",
     "expo": "~52.0.42",
     "expo-asset": "^11.0.1",
-    "expo-build-properties": "~0.13.2",
     "expo-doctor": "^1.12.8",
     "expo-file-system": "^18.0.4",
     "expo-localization": "^16.0.1",
