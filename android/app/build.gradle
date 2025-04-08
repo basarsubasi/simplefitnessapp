@@ -67,6 +67,13 @@ react {
  */
 def enableProguardInReleaseBuilds = (findProperty('android.enableProguardInReleaseBuilds') ?: false).toBoolean()
 
+def enableSeparateBuildPerCPUArchitecture = true
+
+def reactNativeArchitectures() {
+    def value = project.getProperties().get("reactNativeArchitectures")
+    return value
+}
+
 /**
  * The preferred build flavor of JavaScriptCore (JSC)
  *

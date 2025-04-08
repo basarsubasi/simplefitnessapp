@@ -22,11 +22,7 @@
       "versionCode": 26,
       "adaptiveIcon": {
         "foregroundImage": "./assets/simpleicon.png",
-        "backgroundColor": "#ffffff",
-        "compileSdkVersion": 35,
-        "targetSdkVersion": 34,
-        "buildToolsVersion": "35.0.0",
-        "kotlinVersion": "1.9.25"
+        "backgroundColor": "#ffffff"
       },
       "package": "tr.com.basarsubasi.simplefitnessapp"
     },
@@ -39,8 +35,7 @@
       }
     },
     "plugins": [
-      "expo-sqlite",
-      "expo-build-properties"
+      "expo-sqlite"
     ],
     "owner": "basarsubasi"
   }
