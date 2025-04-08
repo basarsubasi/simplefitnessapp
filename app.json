@@ -2,7 +2,7 @@
   "expo": {
     "name": "Simple",
     "slug": "simpleios",
-    "version": "1.4.1",
+    "version": "1.5.0",
     "orientation": "portrait",
     "icon": "./assets/simpleicon.png",
     "userInterfaceStyle": "light",
@@ -14,7 +14,7 @@
     },
     "ios": {
       "supportsTablet" : false,
-      "buildNumber": "1.1.2",
+      "buildNumber": "1.2.1",
       "bundleIdentifier": "com.basarsubasi.simplefitnessapp"
     },
     "android": {

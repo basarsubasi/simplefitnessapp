@@ -15,7 +15,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useSQLiteContext } from 'expo-sqlite';
 import { useTheme } from '../context/ThemeContext';
 import { useTranslation } from 'react-i18next';
-
+import DraggableFlatList, { RenderItemParams } from 'react-native-draggable-flatlist';
 
 type Exercise = { exercise_id: number; exercise_name: string; sets: number; reps: number };
 type Day = { day_id: number; day_name: string; exercises: Exercise[] };
@@ -25,7 +25,7 @@ export default function EditWorkout() {
   const route = useRoute();
   const navigation = useNavigation();
   const { theme } = useTheme();
-  const { t } = useTranslation(); // Initialize translations
+  const { t } = useTranslation();
   
   const { workout_id } = route.params as { workout_id: number };
 
@@ -37,9 +37,6 @@ export default function EditWorkout() {
     fetchWorkoutDetails();
   }, [workout_id]);
 
-
-
-  
   const fetchWorkoutDetails = async () => {
     try {
       const workoutResult = await db.getAllAsync<{ workout_name: string }>(
@@ -52,34 +49,26 @@ export default function EditWorkout() {
         'SELECT day_id, day_name FROM Days WHERE workout_id = ?',
         [workout_id]
       );
-
       
       const daysWithExercises = await Promise.all(
         daysResult.map(async (day) => {
           const exercises = await db.getAllAsync<Exercise>(
-            'SELECT exercise_id, exercise_name, sets, reps FROM Exercises WHERE day_id = ?',
+            'SELECT exercise_id, exercise_name, sets, reps FROM Exercises WHERE day_id = ? ORDER BY exercise_id',
             [day.day_id]
           );
           return { ...day, exercises };
         })
       );
 
-         // Sort days by day_id in ascending order
-    const sortedDays = daysWithExercises.sort((a, b) => a.day_id - b.day_id);
-
-    setDays(sortedDays);
+      // Sort days by day_id in ascending order
+      const sortedDays = daysWithExercises.sort((a, b) => a.day_id - b.day_id);
+      setDays(sortedDays);
 
     } catch (error) {
       Alert.alert(t('errorTitle'), t('fetchWorkoutDetailsError'));
       console.error(error);
     }
   };
-
-  
-  
-  
-
-  
   
   const fetchOriginalWorkoutLogData = async (workout_id: number) => {
     try {
@@ -128,8 +117,6 @@ export default function EditWorkout() {
       return [];
     }
   };
-  
-  
   
   const updateWorkoutLogs = async (originalLogs: any[], updatedWorkoutName: string) => {
     try {
@@ -191,16 +178,9 @@ export default function EditWorkout() {
       console.error('Error updating workout logs:', error);
     }
   };
-  
-  
-  
-  
-  
-  
 
   const saveWorkoutDetails = async () => {
     try {
-
       const originalLogs = await fetchOriginalWorkoutLogData(workout_id);
 
       // Validation: Ensure workout name is not empty
@@ -233,10 +213,7 @@ export default function EditWorkout() {
         }
       }
 
-
       setIsSaving(true);
-
-   
 
       // Update workout name
       await db.runAsync('UPDATE Workouts SET workout_name = ? WHERE workout_id = ?;', [
@@ -244,29 +221,35 @@ export default function EditWorkout() {
         workout_id,
       ]);
 
-          // Fetch the updated workout name
-        const updatedWorkout = await db.getAllAsync<{ workout_name: string }>(
-          'SELECT workout_name FROM Workouts WHERE workout_id = ?;',
-            [workout_id]
-            );
+      // Fetch the updated workout name
+      const updatedWorkout = await db.getAllAsync<{ workout_name: string }>(
+        'SELECT workout_name FROM Workouts WHERE workout_id = ?;',
+        [workout_id]
+      );
 
-            const updatedWorkoutName = updatedWorkout[0].workout_name;
+      const updatedWorkoutName = updatedWorkout[0].workout_name;
 
       // Update days and exercises
       for (const day of days) {
-        await db.runAsync('UPDATE Days SET day_name = ? WHERE day_id = ?;', [day.day_name.trim(), day.day_id]);
-
+        // Update day name
+        await db.runAsync('UPDATE Days SET day_name = ? WHERE day_id = ?;', 
+          [day.day_name.trim(), day.day_id]
+        );
+        
+        // Delete all exercises for this day to maintain order
+        await db.runAsync('DELETE FROM Exercises WHERE day_id = ?;', [day.day_id]);
+        
+        // Re-insert exercises in the new order
         for (const exercise of day.exercises) {
           await db.runAsync(
-            'UPDATE Exercises SET exercise_name = ?, sets = ?, reps = ? WHERE exercise_id = ?;',
-            [exercise.exercise_name.trim(), exercise.sets, exercise.reps, exercise.exercise_id]
+            'INSERT INTO Exercises (day_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?);',
+            [day.day_id, exercise.exercise_name.trim(), exercise.sets, exercise.reps]
           );
         }
-        
       }
 
-          // Update logs after saving the workout
-          await updateWorkoutLogs(originalLogs, updatedWorkoutName);
+      // Update logs after saving the workout
+      await updateWorkoutLogs(originalLogs, updatedWorkoutName);
 
       navigation.goBack(); // Navigate back to WorkoutDetails
     } catch (error) {
@@ -298,12 +281,79 @@ export default function EditWorkout() {
               ...day,
               exercises: day.exercises.map((exercise, index) =>
                 index === exerciseIndex
-                  ? { ...exercise, [field]: field === 'exercise_name' ? value :value}
+                  ? { ...exercise, [field]: field === 'exercise_name' ? value : value}
                   : exercise
               ),
             }
           : day
       )
+    );
+  };
+
+  // Handle exercise reordering
+  const handleExerciseReorder = (dayId: number, newExercises: Exercise[]) => {
+    setDays((prevDays) =>
+      prevDays.map((day) =>
+        day.day_id === dayId ? { ...day, exercises: newExercises } : day
+      )
+    );
+  };
+
+  // Render exercise item with drag handle
+  const renderExerciseItem = ({ item, drag, isActive }: RenderItemParams<Exercise>, day: Day) => {
+    const index = day.exercises.findIndex(e => e.exercise_id === item.exercise_id);
+    
+    return (
+      <TouchableOpacity
+        onLongPress={drag}
+        disabled={isActive}
+        style={[
+          styles.exerciseContainer,
+          { 
+            borderBottomColor: theme.border,
+          }
+        ]}
+      >
+        {/* Drag handle */}
+        <TouchableOpacity onPressIn={drag} style={styles.dragHandle}>
+          <Ionicons name="reorder-three" size={30} color={theme.text} />
+        </TouchableOpacity>
+        
+        {/* Exercise Name */}
+        <TextInput
+          style={[styles.exerciseInput, { color: theme.text, borderBottomColor: theme.border }]}
+          value={item.exercise_name}
+          onChangeText={(text) =>
+            handleExerciseChange(day.day_id, index, 'exercise_name', text)
+          }
+          placeholder={t('exerciseNamePlaceholder')}
+          placeholderTextColor={theme.text}
+        />
+        
+        {/* Sets */}
+        <TextInput
+          style={[styles.numberInput, { color: theme.text, borderBottomColor: theme.border }]}
+          value={item.sets.toString()}
+          onChangeText={(text) =>
+            handleExerciseChange(day.day_id, index, 'sets', text)
+          }
+          keyboardType="numeric"
+          placeholder={t('setsPlaceholder')}
+          placeholderTextColor={theme.text}
+        />
+        
+        {/* Reps */}
+        <TextInput
+          style={[styles.numberInput, { color: theme.text, borderBottomColor: theme.border }]}
+          value={item.reps.toString()}
+          onChangeText={(text) =>
+            handleExerciseChange(day.day_id, index, 'reps', text)
+          }
+          keyboardType="numeric"
+          placeholder={t('repsPlaceholder')}
+          placeholderTextColor={theme.text}
+        />
+      </TouchableOpacity>
     );
   };
 
@@ -334,53 +384,24 @@ export default function EditWorkout() {
             <View key={day.day_id} style={[styles.dayContainer, { backgroundColor: theme.card }]}>
               {/* Day Name */}
               <TextInput
-                style={[styles.dayInput, { color: theme.text },{ borderBottomColor: theme.border }]}
+                style={[styles.dayInput, { color: theme.text, borderBottomColor: theme.border }]}
                 value={day.day_name}
                 onChangeText={(text) => handleDayNameChange(day.day_id, text)}
                 placeholder={t('dayNamePlaceholder')}
                 placeholderTextColor={theme.text}
               />
 
-              {/* Exercises */}
-              {day.exercises.map((exercise, index) => (
-                <View key={exercise.exercise_id}  style={[
-                    styles.exerciseContainer,
-                    { borderBottomColor: theme.border } // Use theme colors for the underline
-                  ]}>
-                  {/* Exercise Name */}
-                  <TextInput
-                    style={[styles.exerciseInput, { color: theme.text },{ borderBottomColor: theme.border } ]}
-                    value={exercise.exercise_name}
-                    onChangeText={(text) =>
-                      handleExerciseChange(day.day_id, index, 'exercise_name', text)
-                    }
-                    placeholder={t('exerciseNamePlaceholder')}
-                    placeholderTextColor={theme.text}
-                  />
-                  {/* Sets */}
-                  <TextInput
-                    style={[styles.exerciseInput, { color: theme.text },{ borderBottomColor: theme.border }]}
-                    value={exercise.sets.toString()}
-                    onChangeText={(text) =>
-                      handleExerciseChange(day.day_id, index, 'sets', text)
-                    }
-                    keyboardType="numeric"
-                    placeholder={t('setsPlaceholder')}
-                    placeholderTextColor={theme.text}
-                  />
-                  {/* Reps */}
-                  <TextInput
-                    style={[styles.exerciseInput, { color: theme.text }, { borderBottomColor: theme.border }]}
-                    value={exercise.reps.toString()}
-                    onChangeText={(text) =>
-                      handleExerciseChange(day.day_id, index, 'reps', text)
-                    }
-                    keyboardType="numeric"
-                    placeholder={t('repsPlaceholder')}
-                    placeholderTextColor={theme.text}
-                  />
-                </View>
-              ))}
+              {/* Exercises as DraggableFlatList */}
+              <View style={styles.exercisesContainer}>
+                <DraggableFlatList
+                  data={day.exercises}
+                  renderItem={(props) => renderExerciseItem(props, day)}
+                  keyExtractor={(item) => item.exercise_id.toString()}
+                  onDragEnd={({ data }) => handleExerciseReorder(day.day_id, data)}
+                  activationDistance={10}
+                  containerStyle={styles.draggableListContainer}
+                />
+              </View>
             </View>
           ))}
 
@@ -401,86 +422,101 @@ export default function EditWorkout() {
 }
 
 const styles = StyleSheet.create({
-    container: { 
-      flex: 1, 
-      padding: 20 
-    },
-    backButton: { 
-      position: 'absolute', 
-      top: 20, 
-      left: 10, 
-      padding: 8, 
-      zIndex: 10 
-    },
-    title: { 
-      fontSize: 30, 
-      fontWeight: 'bold', 
-      textAlign: 'center', 
-      marginBottom: 40 
-    },
-    input: { 
-      borderWidth: 1, 
-      borderRadius: 15, 
-      padding: 14, 
-      fontSize: 18, 
-      marginBottom: 30, 
-      borderColor: 'transparent', // Theme-based border
-      backgroundColor: 'transparent', // Theme-based background
-    },
-    subtitle: { 
-      fontSize: 24, 
-      fontWeight: 'bold', 
-      marginBottom: 20 
-    },
-    dayContainer: { 
-      padding: 20, 
-      borderRadius: 15, 
-      marginBottom: 25, 
-      borderWidth: 1, 
-      backgroundColor: 'transparent', // Theme-based background
-      borderColor: 'transparent', // Theme-based border
-    },
-    dayInput: { 
-      fontSize: 20, 
-      borderBottomWidth: 1, 
-      marginBottom: 20, 
-      paddingBottom: 8, 
-      borderBottomColor: 'transparent' // Theme-based underline
-    },
-    exerciseContainer: { 
-      flexDirection: 'row', 
-      alignItems: 'center', 
-      justifyContent: 'space-between', 
-      marginBottom: 20, 
-      borderBottomWidth: 2, // Add this line to create the underline
-      padding: 15, 
-      borderRadius: 12, 
-      borderWidth: 1, 
-      backgroundColor: 'transparent', // Theme-based background
-      borderColor: 'transparent' // Theme-based border
-    },
-    exerciseInput: { 
-      flex: 1, 
-      borderBottomWidth: 1, 
-      marginHorizontal: 10, 
-      paddingVertical: 10, 
-      fontSize: 16, 
-      textAlign: 'center', 
-      borderBottomColor: 'transparent' // Theme-based underline
-    },
-    saveButton: { 
-      paddingVertical: 18, 
-      borderRadius: 15, 
-      alignItems: 'center', 
-      marginTop: 40, 
-      backgroundColor: 'transparent' // Theme-based background
-    },
-    saveButtonText: { 
-      fontSize: 20, 
-      fontWeight: 'bold', 
-      color: 'transparent' // Theme-based text
-    }
-  });
-  
-  
-  
+  container: { 
+    flex: 1, 
+    padding: 20 
+  },
+  backButton: { 
+    position: 'absolute', 
+    top: 20, 
+    left: 10, 
+    padding: 8, 
+    zIndex: 10 
+  },
+  title: { 
+    fontSize: 30, 
+    fontWeight: 'bold', 
+    textAlign: 'center', 
+    marginBottom: 40 
+  },
+  input: { 
+    borderWidth: 1, 
+    borderRadius: 15, 
+    padding: 14, 
+    fontSize: 18, 
+    marginBottom: 30, 
+    borderColor: 'transparent',
+    backgroundColor: 'transparent',
+  },
+  subtitle: { 
+    fontSize: 24, 
+    fontWeight: 'bold', 
+    marginBottom: 20 
+  },
+  dayContainer: { 
+    padding: 20, 
+    borderRadius: 15, 
+    marginBottom: 25, 
+    borderWidth: 1, 
+    backgroundColor: 'transparent',
+    borderColor: 'transparent',
+  },
+  dayInput: { 
+    fontSize: 20, 
+    borderBottomWidth: 1, 
+    marginBottom: 20, 
+    paddingBottom: 8, 
+    borderBottomColor: 'transparent'
+  },
+  exercisesContainer: {
+    flex: 1,
+  },
+  draggableListContainer: {
+    flex: 1,
+  },
+  exerciseContainer: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    marginBottom: 15, 
+    borderBottomWidth: 1,
+    padding: 10, 
+    borderRadius: 10, 
+    borderWidth: 1, 
+    backgroundColor: 'transparent',
+    borderColor: 'transparent'
+  },
+  dragHandle: {
+    marginRight: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  exerciseInput: { 
+    flex: 3, 
+    borderBottomWidth: 1, 
+    marginHorizontal: 5, 
+    paddingVertical: 6, 
+    fontSize: 16, 
+    borderBottomColor: 'transparent'
+  },
+  numberInput: {
+    flex: 1,
+    borderBottomWidth: 1,
+    marginHorizontal: 5,
+    paddingVertical: 6,
+    fontSize: 16,
+    textAlign: 'center',
+    borderBottomColor: 'transparent'
+  },
+  saveButton: { 
+    paddingVertical: 18, 
+    borderRadius: 15, 
+    alignItems: 'center', 
+    marginTop: 40, 
+    backgroundColor: 'transparent'
+  },
+  saveButtonText: { 
+    fontSize: 20, 
+    fontWeight: 'bold', 
+    color: 'transparent'
+  }
+});
