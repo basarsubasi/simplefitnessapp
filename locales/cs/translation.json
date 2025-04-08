@@ -1,0 +1,163 @@
+{
+  "_comment_global": "Toto jsou globální texty.",
+
+  "alertCancel": "ZRUŠIT",
+  "alertDelete": "SMAZAT",
+  "errorTitle": "Chyba",
+  "Cancel": "Zrušit",
+  "Delete": "Smazat",
+  "Save": "Uložit",
+  "Sets": "Série",
+  "Reps": "Opakování",
+  "Today": "Dnes",
+  "Tomorrow": "Zítra",
+  "Yesterday": "Včera",
+
+  "workoutNameErrorMessage": "Zadejte prosím název tréninku.",
+  "provideDayNamesErrorMessage": "Zadejte prosím názvy všech dnů.",
+  "fillExercisesErrorMessage": "Vyplňte prosím všechny cviky platnými údaji.",
+  "failedToCreateWorkoutErrorMessage": "Nepodařilo se vytvořit trénink. Zkuste to prosím znovu.",
+
+  "workoutNamePlaceholder": "Název tréninku",
+  "dayNamePlaceholder": "Název dne",
+  "exerciseNamePlaceholder": "Název cviku",
+
+  "setsPlaceholder": "Série",
+  "repsPlaceholder": "Opakování",
+
+  "_comment_settings": "Toto jsou texty pro nastavení.",
+
+  "settingsTitle": "Nastavení",
+  "settingsLanguage": "Jazyk",
+  "settingsDateFormat": "Formát data",
+  "settingsWeightFormat": "Formát hmotnosti",
+  "settingsTheme": "Motiv",
+  "settingsSwitchDark": "Přepnout na tmavý motiv",
+  "settingsSwitchLight": "Přepnout na světlý motiv",
+
+  "_comment_homepage": "Toto jsou texty pro domovskou obrazovku.",
+
+  "homeCreateWorkout": "Vytvořte si\ntrénink.",
+  "homeGotoWorkouts": "Přejít na Moje tréninky",
+  "homeScheduleWorkouts": "Naplánujte\nsvůj\ntrénink.",
+  "homeGotoCalendar": "Přejít na Můj kalendář",
+  "homeTrackProgress": "Sledujte\nsvůj\npokrok.",
+  "homeGotoProgress": "Přejít na Můj pokrok",
+
+  "_comment_workoutlist": "Toto jsou texty pro seznam tréninků.",
+
+  "MyWorkouts": "Moje tréninky",
+  "CreateAWorkout": "Nový\ntrénink",
+  "CreateAWorkoutButton": "Vytvořit nový trénink",
+  "WorkoutListTip": "Tip: Většinu věcí můžete smazat dlouhým stisknutím, vyzkoušejte to, až budete mít příležitost!",
+
+  "_comment_myworkoutspage": "Toto jsou texty pro obrazovku mých tréninků.",
+
+  "deleteWorkoutTitle": "Mazání {{workoutName}}",
+  "deleteWorkoutMessage": "Opravdu chcete smazat „{{workoutName}}“? Tato akce neovlivní existující záznamy.",
+
+  "_comment_createWorkout": "Toto jsou texty pro vytváření tréninku.",
+
+  "deleteDayTitle": "Smazat den",
+  "deleteDayMessage": "Opravdu chcete smazat tento den?",
+
+  "deleteExerciseTitle": "Smazat cvik",
+  "deleteExerciseMessage": "Opravdu chcete smazat tento cvik?",
+  "addExercise": "+ Přidat cvik",
+  "addDay": "+ Přidat den",
+  "saveWorkout": "Uložit trénink",
+
+  "_comment_workoutDetails": "Toto jsou texty pro detaily tréninku.",
+
+  "noExercises": "V tomto dni nejsou žádné cviky",
+  "addExerciseFromDetails": "Přidat cvik",
+  "addDayFromDetails": "Přidat den",
+  "emptyWorkoutDetails": " Pro tento trénink nejsou k dispozici žádné dny ani cviky.",
+
+  "deleteDayTitleDetails": "Smazat den",
+  "deleteDayMessageDetails": "Opravdu chcete smazat tento den? Tato akce také odstraní dny z nadcházejících naplánovaných tréninků.",
+  "deleteExerciseTitleDetails": "Smazat cvik",
+  "deleteExerciseMessageDetails": "Opravdu chcete smazat tento cvik? Tato akce také odstraní cvik z nadcházejících naplánovaných tréninků.",
+
+  "repsValidationError": "Počet opakování musí být číslo větší než 0.",
+  "setsValidationError": "Počet sérií musí být číslo větší než 0.",
+  "exerciseNameValidationError": "Název cviku nesmí být prázdný.",
+  "dayNameValidationError": "Název dne nesmí být prázdný.",
+
+  "_comment_editWorkout": "Toto jsou texty pro úpravu tréninku.",
+
+  "fetchWorkoutDetailsError": "Nepodařilo se aktualizovat detaily tréninku.",
+  "isSaving": "Ukládám...",
+  "saveChanges": "Uložit změny",
+  "daysAndExercises": "Dny a cviky",
+  "editWorkout": "Upravit trénink",
+
+  "_comment_myCalendar": "Toto jsou texty pro Můj kalendář.",
+
+  "scheduleTip": "Tip: Musíte si zde naplánovat tréninky, abyste je mohli sledovat na obrazovce Můj pokrok!",
+  "noUpcomingWorkouts": "Žádné nadcházející tréninky nejsou naplánovány.",
+  "upcomingWorkouts": "Nadcházející tréninky",
+  "noUntrackedWorkouts": "Nebyly nalezeny žádné nenalogované tréninky.",
+  "untrackedWorkouts": "Nenalogované tréninky",
+  "noWorkoutToday": "Dnes není naplánován žádný trénink.",
+  "todaysWorkout": "Dnešní trénink",
+  "scheduleWorkout": "Naplánovat trénink",
+  "myCalendar": "Můj kalendář",
+  "noExerciseLogged": " Nebyly zaznamenány žádné cviky.",
+
+  "_comment_LogWorkouts": "Toto jsou texty pro záznam tréninků.",
+
+  "noDatePicked": "Vyberte prosím datum.",
+  "selectAWorkout": "Vyberte prosím trénink.",
+  "selectADay": "Vyberte prosím den.",
+  "duplicateLogTitle": "Duplicitní záznam",
+  "duplicateLogMessage": "Pro tento trénink již existuje záznam v daném datu.",
+  "selectDate": "Vybrat datum",
+  "selectADate": "Vyberte datum",
+  "selectWorkout": "Vybrat trénink",
+  "selectDay": "Vybrat den",
+  "emptyWorkoutLog": "Vytvořte trénink, abyste jej mohli sledovat!",
+  "noDaysAvailable": "Tento trénink nemá žádné dny!",
+  "scheduleWorkoutLog": "Naplánovat trénink",
+
+  "_comment_MyProgress": "Toto jsou texty pro Můj pokrok.",
+
+  "deleteLogsTitle": "Smazat záznamy",
+  "deleteLogsMessage": "Opravdu chcete smazat všechny záznamy spojené s tímto tréninkem?",
+  "failedToDeleteDays": "Nepodařilo se smazat spojené dny.",
+  "myProgress": "Můj pokrok",
+  "trackAWorkout": "Sledovat trénink",
+  "notTracking": "Nesledujete žádné tréninky.",
+  "myProgressTip": "Tip: Můžete zaznamenávat cviky u dokončených tréninků, a to do posledního detailu.",
+  "allTracks": "Všechny záznamy",
+  
+
+  "_comment_LogWeights": "Toto jsou texty pro záznam vah.",
+
+  "failedToLogWeights": "Nepodařilo se zaznamenat váhy.",
+  "Set": "Série",
+  "Weight": "Hmotnost",
+  "noWorkoutScheduled": "Nejprve musíte naplánovat trénink, abyste jej mohli sledovat!",
+  "trackWeights": "Zaznamenat váhy",
+
+  "_comment_WeightLogDetails": "Toto jsou texty pro detaily záznamů vah.",
+
+  "deleteWeightLog": "Opravdu chcete smazat všechny záznamy pro tento den v daném datu?",
+  "weightLog": "záznamy",
+  "dateFrom": "Datum od:",
+  "pickStartDate": "Vyberte počáteční datum",
+  "dateTo": "Datum do:",
+  "pickEndDate": "Vyberte koncové datum",
+  "clearSelection": "Vymazat výběr",
+  "noLog": "V zadaném období nejsou k dispozici žádné záznamy.",
+
+
+  "navigateToDifficulty": "Doporučené tréninky",
+  "Difficulty": "Obtížnost tréninku",
+  "Beginner": "Začátečník",
+  "Intermediate": "Středně pokročilý",
+  "Advanced": "Pokročilý",
+  "featuredWorkouts": "Doporučené tréninky",
+  "templateListTip": "Tip: Můžete upravit doporučené tréninky poté, co je přidáte do svého seznamu tréninků.",
+  "addTemplate": "Přidat do mých tréninků"
+}

@@ -1,0 +1,164 @@
+{
+  "_comment_global": "Dit zijn globale strings.",
+
+  "alertCancel": "ANNULEREN",
+  "alertDelete": "VERWIJDEREN",
+  "errorTitle": "Fout",
+  "Cancel": "Annuleren",
+  "Delete": "Verwijderen",
+  "Save": "Opslaan",
+  "Sets": "Sets",
+  "Reps": "Herhalingen",
+  "Today": "Vandaag",
+  "Tomorrow": "Morgen",
+  "Yesterday": "Gisteren",
+
+  "workoutNameErrorMessage": "Voer een naam in voor de training.",
+  "provideDayNamesErrorMessage": "Geef alstublieft namen voor alle dagen.",
+  "fillExercisesErrorMessage": "Vul alstublieft alle oefeningen in met geldige gegevens.",
+  "failedToCreateWorkoutErrorMessage": "Het maken van de training is mislukt. Probeer het opnieuw.",
+
+  "workoutNamePlaceholder": "Naam training",
+  "dayNamePlaceholder": "Naam van de dag",
+  "exerciseNamePlaceholder": "Naam oefening",
+
+  "setsPlaceholder": "Sets",
+  "repsPlaceholder": "Herhalingen",
+
+  "_comment_settings": "Dit zijn strings die betrekking hebben op de instellingen.",
+
+  "settingsTitle": "Instellingen",
+  "settingsLanguage": "Taal",
+  "settingsDateFormat": "Datumnotatie",
+  "settingsWeightFormat": "Gewichtsnotatie",
+  "settingsTheme": "Thema",
+  "settingsSwitchDark": "Overschakelen naar donker thema",
+  "settingsSwitchLight": "Overschakelen naar licht thema",
+
+  "_comment_homepage": "Dit zijn strings voor de startpagina.",
+
+  "homeCreateWorkout": "Maak een\ntraining.",
+  "homeGotoWorkouts": "Ga naar Mijn Trainingen",
+  "homeScheduleWorkouts": "Plan\nuw\ntraining.",
+  "homeGotoCalendar": "Ga naar Mijn Kalender",
+  "homeTrackProgress": "Volg\nuw\nvoortgang.",
+  "homeGotoProgress": "Ga naar Mijn Voortgang",
+
+  "_comment_workoutlist": "Dit zijn strings voor de trainingslijst.",
+
+  "MyWorkouts": "Mijn Trainingen",
+  "CreateAWorkout": "Nieuwe\nTraining",
+  "CreateAWorkoutButton": "Maak een nieuwe training",
+  "WorkoutListTip": "Tip: U kunt de meeste dingen verwijderen door er lang op te drukken. Probeer het als u de kans krijgt!",
+
+  "_comment_myworkoutspage": "Dit zijn strings voor de pagina 'Mijn Trainingen'.",
+
+  "deleteWorkoutTitle": "Verwijdert {{workoutName}}",
+  "deleteWorkoutMessage": "Weet u zeker dat u \"{{workoutName}}\" wilt verwijderen? Deze actie heeft geen invloed op bestaande logboeken.",
+
+  "_comment_createWorkout": "Dit zijn strings voor het maken van een training.",
+
+  "deleteDayTitle": "Dag verwijderen",
+  "deleteDayMessage": "Weet u zeker dat u deze dag wilt verwijderen?",
+
+  "deleteExerciseTitle": "Oefening verwijderen",
+  "deleteExerciseMessage": "Weet u zeker dat u deze oefening wilt verwijderen?",
+  "addExercise": "+ Oefening toevoegen",
+  "addDay": "+ Dag toevoegen",
+  "saveWorkout": "Training opslaan",
+
+  "_comment_workoutDetails": "Dit zijn strings voor de trainingsdetails.",
+
+  "noExercises": "Geen oefeningen op deze dag",
+  "addExerciseFromDetails": "Oefening toevoegen",
+  "addDayFromDetails": "Dag toevoegen",
+  "emptyWorkoutDetails": " Geen dagen of oefeningen beschikbaar voor deze training.",
+
+  "deleteDayTitleDetails": "Dag verwijderen",
+  "deleteDayMessageDetails": "Weet u zeker dat u deze dag wilt verwijderen? Deze actie verwijdert ook de dag uit de aankomende geplande trainingen.",
+  "deleteExerciseTitleDetails": "Oefening verwijderen",
+  "deleteExerciseMessageDetails": "Weet u zeker dat u deze oefening wilt verwijderen? Deze actie verwijdert ook de oefening uit de aankomende geplande trainingen.",
+
+  "repsValidationError": "Herhalingen moeten een getal groter dan 0 zijn.",
+  "setsValidationError": "Sets moeten een getal groter dan 0 zijn.",
+  "exerciseNameValidationError": "De naam van de oefening mag niet leeg zijn.",
+  "dayNameValidationError": "De naam van de dag mag niet leeg zijn.",
+
+  "_comment_editWorkout": "Dit zijn strings voor het bewerken van een training.",
+
+  "fetchWorkoutDetailsError": "Fout bij het bijwerken van de trainingsdetails.",
+  "isSaving": "Bezig met opslaan...",
+  "saveChanges": "Wijzigingen opslaan",
+  "daysAndExercises": "Dagen en Oefeningen",
+  "editWorkout": "Training bewerken",
+
+  "_comment_myCalendar": "Dit zijn strings voor Mijn Kalender.",
+
+  "scheduleTip": "Tip: U moet uw trainingen hier plannen om ze te volgen in het scherm Mijn Voortgang!",
+  "noUpcomingWorkouts": "Geen aankomende trainingen gepland.",
+  "upcomingWorkouts": "Aankomende Trainingen",
+  "noUntrackedWorkouts": "Geen niet-gelogde trainingen gevonden.",
+  "untrackedWorkouts": "Niet-gelogde Trainingen",
+  "noWorkoutToday": "Geen training gepland voor vandaag.",
+  "todaysWorkout": "Training van vandaag",
+  "scheduleWorkout": "Plan een Training",
+  "myCalendar": "Mijn Kalender",
+  "noExerciseLogged": " Geen oefeningen gelogd.",
+
+  "_comment_LogWorkouts": "Dit zijn strings voor het loggen van trainingen.",
+
+  "noDatePicked": "Selecteer alstublieft een datum.",
+  "selectAWorkout": "Selecteer alstublieft een training.",
+  "selectADay": "Selecteer alstublieft een dag.",
+  "duplicateLogTitle": "Dubbel Logboek",
+  "duplicateLogMessage": "Er is al een logboek voor deze training op de gekozen datum.",
+  "selectDate": "Selecteer Datum",
+  "selectADate": "Selecteer een Datum",
+  "selectWorkout": "Selecteer Training",
+  "selectDay": "Selecteer Dag",
+  "emptyWorkoutLog": "Maak een training om te volgen!",
+  "noDaysAvailable": "Deze training heeft geen dagen!",
+  "scheduleWorkoutLog": "Training plannen",
+
+  "_comment_MyProgress": "Dit zijn strings voor Mijn Voortgang.",
+
+  "deleteLogsTitle": "Logboeken verwijderen",
+  "deleteLogsMessage": "Weet u zeker dat u alle logboeken die aan deze training zijn gekoppeld wilt verwijderen?",
+  "failedToDeleteDays": "Kan de gekoppelde dagen niet verwijderen.",
+  "myProgress": "Mijn Voortgang",
+  "trackAWorkout": "Een training bijhouden",
+  "notTracking": "U houdt geen enkele training bij.",
+  "myProgressTip": "Tip: U kunt de oefeningen van de trainingen die u hebt gedaan bijhouden, tot in elk detail.",
+  "allTracks": "Alle logboeken",
+
+  "_comment_LogWeights": "Dit zijn strings voor het loggen van gewichten.",
+
+  "failedToLogWeights": "Kan de gewichten niet loggen.",
+  "Set": "Set",
+  "Weight": "Gewicht",
+  "noWorkoutScheduled": "U moet een training plannen om deze te kunnen bijhouden!",
+  "trackWeights": "Gewichten bijhouden",
+
+  "_comment_WeightLogDetails": "Dit zijn strings voor de details van het gewichtslogboek.",
+
+  "deleteWeightLog": "Weet u zeker dat u alle logboeken voor deze dag op deze datum wilt verwijderen?",
+  "weightLog": "logboeken",
+  "dateFrom": "Datum vanaf:",
+  "pickStartDate": "Kies een startdatum",
+  "dateTo": "Datum tot:",
+  "pickEndDate": "Kies een einddatum",
+  "clearSelection": "Selectie wissen",
+  "noLog": "Geen logboeken beschikbaar tussen de geselecteerde datums.",
+
+
+
+
+  "navigateToDifficulty": "Aanbevolen trainingen",
+  "Difficulty": "Moeilijkheidsgraad van de training",
+  "Beginner": "Beginner",
+  "Intermediate": "Gemiddeld",
+  "Advanced": "Gevorderd",
+  "featuredWorkouts": "Aanbevolen trainingen",
+  "templateListTip": "Tip: Je kunt de aanbevolen trainingen aanpassen nadat je ze aan je trainingslijst hebt toegevoegd.",
+  "addTemplate": "Toevoegen aan mijn trainingen"
+}

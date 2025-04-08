@@ -1,0 +1,163 @@
+{
+  "_comment_global": "To so globalni nizi.",
+
+  "alertCancel": "PREKLIČI",
+  "alertDelete": "IZBRIŠI",
+  "errorTitle": "Napaka",
+  "Cancel": "Prekliči",
+  "Delete": "Izbriši",
+  "Save": "Shrani",
+  "Sets": "Serije",
+  "Reps": "Ponovitve",
+  "Today": "Danes",
+  "Tomorrow": "Jutri",
+  "Yesterday": "Včeraj",
+
+  "workoutNameErrorMessage": "Prosimo, vnesite ime vadbe.",
+  "provideDayNamesErrorMessage": "Prosimo, zagotovite imena za vse dneve.",
+  "fillExercisesErrorMessage": "Prosimo, izpolnite vse vaje z veljavnimi podatki.",
+  "failedToCreateWorkoutErrorMessage": "Ustvarjanje vadbe ni uspelo. Poskusite znova.",
+
+  "workoutNamePlaceholder": "Ime vadbe",
+  "dayNamePlaceholder": "Ime dneva",
+  "exerciseNamePlaceholder": "Ime vaje",
+
+  "setsPlaceholder": "Serije",
+  "repsPlaceholder": "Ponovitve",
+
+  "_comment_settings": "To so nizi, povezani z nastavitvami.",
+
+  "settingsTitle": "Nastavitve",
+  "settingsLanguage": "Jezik",
+  "settingsDateFormat": "Oblika datuma",
+  "settingsWeightFormat": "Oblika teže",
+  "settingsTheme": "Tema",
+  "settingsSwitchDark": "Preklopi na temno",
+  "settingsSwitchLight": "Preklopi na svetlo",
+
+  "_comment_homepage": "To so nizi, povezani z domačim zaslonom.",
+
+  "homeCreateWorkout": "Ustvari\nvadbo.",
+  "homeGotoWorkouts": "Pojdi na Moje vadbe",
+  "homeScheduleWorkouts": "Načrtuj\nsvojo\nvadbo.",
+  "homeGotoCalendar": "Pojdi na Moj koledar",
+  "homeTrackProgress": "Sledi\nsvojemu\nnapredku.",
+  "homeGotoProgress": "Pojdi na Moj napredek",
+
+  "_comment_workoutlist": "To so nizi, povezani s seznamom vadb.",
+
+  "MyWorkouts": "Moje vadbe",
+  "CreateAWorkout": "Nova\nvadba",
+  "CreateAWorkoutButton": "Ustvari novo vadbo",
+  "WorkoutListTip": "Namig: Večino elementov lahko izbrišete z dolgim pritiskom nanje. Preizkusite, ko boste imeli priložnost!",
+
+  "_comment_myworkoutspage": "To so nizi, povezani z zaslonom 'Moje vadbe'.",
+
+  "deleteWorkoutTitle": "Brisanje {{workoutName}}",
+  "deleteWorkoutMessage": "Ali res želite izbrisati »{{workoutName}}«? To dejanje ne bo vplivalo na obstoječe zapise.",
+
+  "_comment_createWorkout": "To so nizi, povezani z ustvarjanjem vadbe.",
+
+  "deleteDayTitle": "Izbriši dan",
+  "deleteDayMessage": "Ali res želite izbrisati ta dan?",
+
+  "deleteExerciseTitle": "Izbriši vajo",
+  "deleteExerciseMessage": "Ali res želite izbrisati to vajo?",
+  "addExercise": "+ Dodaj vajo",
+  "addDay": "+ Dodaj dan",
+  "saveWorkout": "Shrani vadbo",
+
+  "_comment_workoutDetails": "To so nizi, povezani s podrobnostmi vadbe.",
+
+  "noExercises": "Ta dan ni nobenih vaj",
+  "addExerciseFromDetails": "Dodaj vajo",
+  "addDayFromDetails": "Dodaj dan",
+  "emptyWorkoutDetails": " Ni dni ali vaj na voljo za to vadbo.",
+
+  "deleteDayTitleDetails": "Izbriši dan",
+  "deleteDayMessageDetails": "Ali res želite izbrisati ta dan? To dejanje bo izbrisalo tudi dneve iz prihajajočih načrtovanih vadb.",
+  "deleteExerciseTitleDetails": "Izbriši vajo",
+  "deleteExerciseMessageDetails": "Ali res želite izbrisati to vajo? To dejanje bo izbrisalo tudi vajo iz prihajajočih načrtovanih vadb.",
+
+  "repsValidationError": "Ponovitve morajo biti število, večje od 0.",
+  "setsValidationError": "Serije morajo biti število, večje od 0.",
+  "exerciseNameValidationError": "Ime vaje ne sme biti prazno.",
+  "dayNameValidationError": "Ime dneva ne sme biti prazno.",
+
+  "_comment_editWorkout": "To so nizi, povezani z urejanjem vadbe.",
+
+  "fetchWorkoutDetailsError": "Posodabljanje podrobnosti vadbe ni uspelo.",
+  "isSaving": "Shranjevanje...",
+  "saveChanges": "Shrani spremembe",
+  "daysAndExercises": "Dnevi in vaje",
+  "editWorkout": "Uredi vadbo",
+
+  "_comment_myCalendar": "To so nizi, povezani z Mojim koledarjem.",
+
+  "scheduleTip": "Namig: Vadbe morate načrtovati tukaj, da jih boste lahko spremljali na zaslonu Moj napredek!",
+  "noUpcomingWorkouts": "Ni načrtovanih prihajajočih vadb.",
+  "upcomingWorkouts": "Prihajajoče vadbe",
+  "noUntrackedWorkouts": "Ni najdenih nesledenih vadb.",
+  "untrackedWorkouts": "Nesledene vadbe",
+  "noWorkoutToday": "Danes ni načrtovane nobene vadbe.",
+  "todaysWorkout": "Današnja vadba",
+  "scheduleWorkout": "Načrtuj vadbo",
+  "myCalendar": "Moj koledar",
+  "noExerciseLogged": " Ni zabeleženih vaj.",
+
+  "_comment_LogWorkouts": "To so nizi, povezani z beleženjem vadb.",
+
+  "noDatePicked": "Prosimo, izberite datum.",
+  "selectAWorkout": "Prosimo, izberite vadbo.",
+  "selectADay": "Prosimo, izberite dan.",
+  "duplicateLogTitle": "Podvojen zapis",
+  "duplicateLogMessage": "Za to vadbo že obstaja zapis na izbrani datum.",
+  "selectDate": "Izberite datum",
+  "selectADate": "Izberite datum",
+  "selectWorkout": "Izberite vadbo",
+  "selectDay": "Izberite dan",
+  "emptyWorkoutLog": "Ustvarite vadbo, da jo boste lahko spremljali!",
+  "noDaysAvailable": "Ta vadba nima nobenih dni!",
+  "scheduleWorkoutLog": "Načrtuj vadbo",
+
+  "_comment_MyProgress": "To so nizi, povezani z Mojim napredkom.",
+
+  "deleteLogsTitle": "Izbriši zapise",
+  "deleteLogsMessage": "Ali res želite izbrisati vse zapise, povezane s to vadbo?",
+  "failedToDeleteDays": "Ni uspelo izbrisati povezanih dni.",
+  "myProgress": "Moj napredek",
+  "trackAWorkout": "Sledi vadbi",
+  "notTracking": "Ne spremljate nobene vadbe.",
+  "myProgressTip": "Namig: Lahko spremljate vaje v izvedenih vadbah. Do vsake najmanjše podrobnosti.",
+  "allTracks": "Vsi dnevniki",
+
+  "_comment_LogWeights": "To so nizi, povezani z beleženjem uteži.",
+
+  "failedToLogWeights": "Ni uspelo zabeležiti uteži.",
+  "Set": "Serija",
+  "Weight": "Utež",
+  "noWorkoutScheduled": "Načrtovati morate vadbo, da ji boste lahko sledili!",
+  "trackWeights": "Sledi utežem",
+
+  "_comment_WeightLogDetails": "To so nizi, povezani s podrobnostmi beleženja uteži.",
+
+  "deleteWeightLog": "Ali res želite izbrisati vse zapise za ta dan na ta datum?",
+  "weightLog": "zapisi",
+  "dateFrom": "Datum od:",
+  "pickStartDate": "Izberite začetni datum",
+  "dateTo": "Datum do:",
+  "pickEndDate": "Izberite končni datum",
+  "clearSelection": "Počisti izbiro",
+  "noLog": "Ni razpoložljivih zapisov v izbranem časovnem obdobju.",
+
+
+
+  "navigateToDifficulty": "Priporočene vadbe",
+  "Difficulty": "Težavnost vadbe",
+  "Beginner": "Začetnik",
+  "Intermediate": "Srednji",
+  "Advanced": "Napredni",
+  "featuredWorkouts": "Priporočene vadbe",
+  "templateListTip": "Nasvet: Priporočene vadbe lahko prilagodite po tem, ko jih dodate na svoj seznam vadb.",
+  "addTemplate": "Dodaj k mojim vadbam"
+}

@@ -1,0 +1,163 @@
+{
+  "_comment_global": "Nämä ovat globaalit merkkijonot.",
+
+  "alertCancel": "PERUUTA",
+  "alertDelete": "POISTA",
+  "errorTitle": "Virhe",
+  "Cancel": "Peruuta",
+  "Delete": "Poista",
+  "Save": "Tallenna",
+  "Sets": "Sarjat",
+  "Reps": "Toistot",
+  "Today": "Tänään",
+  "Tomorrow": "Huomenna",
+  "Yesterday": "Eilen",
+
+  "workoutNameErrorMessage": "Anna treenin nimi.",
+  "provideDayNamesErrorMessage": "Anna nimet kaikille päiville.",
+  "fillExercisesErrorMessage": "Täytä kaikki harjoitukset kelvollisilla tiedoilla.",
+  "failedToCreateWorkoutErrorMessage": "Treenin luominen epäonnistui. Yritä uudelleen.",
+
+  "workoutNamePlaceholder": "Treenin nimi",
+  "dayNamePlaceholder": "Päivän nimi",
+  "exerciseNamePlaceholder": "Harjoituksen nimi",
+
+  "setsPlaceholder": "Sarjat",
+  "repsPlaceholder": "Toistot",
+
+  "_comment_settings": "Nämä ovat asetuksiin liittyvät merkkijonot.",
+
+  "settingsTitle": "Asetukset",
+  "settingsLanguage": "Kieli",
+  "settingsDateFormat": "Päivämäärän muoto",
+  "settingsWeightFormat": "Painon muoto",
+  "settingsTheme": "Teema",
+  "settingsSwitchDark": "Vaihda tummaan tilaan",
+  "settingsSwitchLight": "Vaihda vaaleaan tilaan",
+
+  "_comment_homepage": "Nämä ovat etusivuun liittyvät merkkijonot.",
+
+  "homeCreateWorkout": "Luo\ntreeni.",
+  "homeGotoWorkouts": "Siirry omiin treeneihin",
+  "homeScheduleWorkouts": "Aikatauluta\nharjoituksesi.",
+  "homeGotoCalendar": "Siirry kalenteriini",
+  "homeTrackProgress": "Seuraa\nedistymistäsi.",
+  "homeGotoProgress": "Siirry edistymiseeni",
+
+  "_comment_workoutlist": "Nämä ovat treenilistan merkkijonot.",
+
+  "MyWorkouts": "Omat treenit",
+  "CreateAWorkout": "Uusi\ntreeni",
+  "CreateAWorkoutButton": "Luo uusi treeni",
+  "WorkoutListTip": "Vinkki: Voit poistaa useimmat asiat pitämällä niitä pitkään painettuna. Kokeile, kun sinulla on tilaisuus!",
+
+  "_comment_myworkoutspage": "Nämä ovat 'Omat treenit' -sivuun liittyvät merkkijonot.",
+
+  "deleteWorkoutTitle": "Poistetaan {{workoutName}}",
+  "deleteWorkoutMessage": "Haluatko varmasti poistaa \"{{workoutName}}\"? Tämä toiminto ei vaikuta olemassa oleviin lokitietoihin.",
+
+  "_comment_createWorkout": "Nämä ovat treeninluontiin liittyvät merkkijonot.",
+
+  "deleteDayTitle": "Poista päivä",
+  "deleteDayMessage": "Haluatko varmasti poistaa tämän päivän?",
+
+  "deleteExerciseTitle": "Poista harjoitus",
+  "deleteExerciseMessage": "Haluatko varmasti poistaa tämän harjoituksen?",
+  "addExercise": "+ Lisää harjoitus",
+  "addDay": "+ Lisää päivä",
+  "saveWorkout": "Tallenna treeni",
+
+  "_comment_workoutDetails": "Nämä ovat treenikohtaisiin tietoihin liittyvät merkkijonot.",
+
+  "noExercises": "Ei harjoituksia tälle päivälle",
+  "addExerciseFromDetails": "Lisää harjoitus",
+  "addDayFromDetails": "Lisää päivä",
+  "emptyWorkoutDetails": " Ei päiviä tai harjoituksia saatavilla tähän treeniin.",
+
+  "deleteDayTitleDetails": "Poista päivä",
+  "deleteDayMessageDetails": "Haluatko varmasti poistaa tämän päivän? Tämä toiminto poistaa päivän myös tulevista treenisuunnitelmista.",
+  "deleteExerciseTitleDetails": "Poista harjoitus",
+  "deleteExerciseMessageDetails": "Haluatko varmasti poistaa tämän harjoituksen? Tämä toiminto poistaa harjoituksen myös tulevista treenisuunnitelmista.",
+
+  "repsValidationError": "Toistojen on oltava numero, joka on suurempi kuin 0.",
+  "setsValidationError": "Sarjojen on oltava numero, joka on suurempi kuin 0.",
+  "exerciseNameValidationError": "Harjoituksen nimi ei voi olla tyhjä.",
+  "dayNameValidationError": "Päivän nimi ei voi olla tyhjä.",
+
+  "_comment_editWorkout": "Nämä ovat treenin muokkaamiseen liittyvät merkkijonot.",
+
+  "fetchWorkoutDetailsError": "Treenin tietojen päivittäminen epäonnistui.",
+  "isSaving": "Tallennetaan...",
+  "saveChanges": "Tallenna muutokset",
+  "daysAndExercises": "Päivät ja harjoitukset",
+  "editWorkout": "Muokkaa treeniä",
+
+  "_comment_myCalendar": "Nämä ovat 'Minun kalenterini' -sivuun liittyvät merkkijonot.",
+
+  "scheduleTip": "Vinkki: Sinun täytyy aikatauluttaa treenisi täällä, jotta voit seurata niitä Edistymiseni-näkymässä!",
+  "noUpcomingWorkouts": "Ei tulevia treenejä aikataulutettuna.",
+  "upcomingWorkouts": "Tulevat treenit",
+  "noUntrackedWorkouts": "Ei löytämättömiä/ei seurattuja treenejä.",
+  "untrackedWorkouts": "Seuraamattomat treenit",
+  "noWorkoutToday": "Ei treeniä tälle päivälle.",
+  "todaysWorkout": "Tämän päivän treeni",
+  "scheduleWorkout": "Aikatauluta treeni",
+  "myCalendar": "Kalenterini",
+  "noExerciseLogged": " Ei kirjattuja harjoituksia.",
+
+  "_comment_LogWorkouts": "Nämä ovat treenilokin merkkijonot.",
+
+  "noDatePicked": "Valitse päivämäärä.",
+  "selectAWorkout": "Valitse treeni.",
+  "selectADay": "Valitse päivä.",
+  "duplicateLogTitle": "Kaksoiskirjaus",
+  "duplicateLogMessage": "Valitulle päivälle on jo olemassa lokitieto tästä treenistä.",
+  "selectDate": "Valitse päivämäärä",
+  "selectADate": "Valitse päivämäärä",
+  "selectWorkout": "Valitse treeni",
+  "selectDay": "Valitse päivä",
+  "emptyWorkoutLog": "Luo treeni seurattavaksi!",
+  "noDaysAvailable": "Tässä treenissä ei ole päiviä!",
+  "scheduleWorkoutLog": "Aikatauluta treeni",
+
+  "_comment_MyProgress": "Nämä ovat 'Edistymiseni' -sivuun liittyvät merkkijonot.",
+
+  "deleteLogsTitle": "Poista lokit",
+  "deleteLogsMessage": "Haluatko varmasti poistaa kaikki tähän treeniin liittyvät lokitiedot?",
+  "failedToDeleteDays": "Liittyvien päivien poistaminen epäonnistui.",
+  "myProgress": "Edistymiseni",
+  "trackAWorkout": "Seuraa treeniä",
+  "notTracking": "Et seuraa mitään treenejä.",
+  "myProgressTip": "Vinkki: Voit seurata kaikkien tehtyjen treenien harjoituksia pienintäkin yksityiskohtaa myöten.",
+  "allTracks": "Kaikki lokit",
+
+  "_comment_LogWeights": "Nämä ovat painojen kirjaamiseen liittyvät merkkijonot.",
+
+  "failedToLogWeights": "Painojen kirjaaminen epäonnistui.",
+  "Set": "Sarja",
+  "Weight": "Paino",
+  "noWorkoutScheduled": "Sinun täytyy aikatauluttaa treeni voidaksesi seurata sitä!",
+  "trackWeights": "Seuraa painoja",
+
+  "_comment_WeightLogDetails": "Nämä ovat painolokien tietojen merkkijonot.",
+
+  "deleteWeightLog": "Haluatko varmasti poistaa kaikki lokit tälle päivälle kyseisenä päivämääränä?",
+  "weightLog": "lokit",
+  "dateFrom": "Päivämäärä alkaen:",
+  "pickStartDate": "Valitse aloituspäivä",
+  "dateTo": "Päivämäärä asti:",
+  "pickEndDate": "Valitse loppupäivä",
+  "clearSelection": "Tyhjennä valinta",
+  "noLog": "Valituilla päivämäärillä ei ole lokitietoja.",
+
+
+
+  "navigateToDifficulty": "Suositellut treenit",
+  "Difficulty": "Treenin vaikeustaso",
+  "Beginner": "Aloittelija",
+  "Intermediate": "Keskitaso",
+  "Advanced": "Edistynyt",
+  "featuredWorkouts": "Suositellut treenit",
+  "templateListTip": "Vinkki: Voit mukauttaa suositeltuja treenejä sen jälkeen, kun olet lisännyt ne treenilistallesi.",
+  "addTemplate": "Lisää treeneihini"
+}

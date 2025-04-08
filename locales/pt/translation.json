@@ -1,0 +1,164 @@
+{
+  "_comment_global": "Estes são strings globais.",
+
+  "alertCancel": "CANCELAR",
+  "alertDelete": "EXCLUIR",
+  "errorTitle": "Erro",
+  "Cancel": "Cancelar",
+  "Delete": "Excluir",
+  "Save": "Salvar",
+  "Sets": "Séries",
+  "Reps": "Repetições",
+  "Today": "Hoje",
+  "Tomorrow": "Amanhã",
+  "Yesterday": "Ontem",
+
+  "workoutNameErrorMessage": "Insira o nome do treino.",
+  "provideDayNamesErrorMessage": "Forneça nomes para todos os dias.",
+  "fillExercisesErrorMessage": "Preencha todos os exercícios com dados válidos.",
+  "failedToCreateWorkoutErrorMessage": "Falha ao criar o treino. Tente novamente.",
+
+  "workoutNamePlaceholder": "Nome do treino",
+  "dayNamePlaceholder": "Nome do dia",
+  "exerciseNamePlaceholder": "Nome do exercício",
+
+  "setsPlaceholder": "Séries",
+  "repsPlaceholder": "Repetições",
+
+  "_comment_settings": "Estes são strings relacionados às configurações.",
+
+  "settingsTitle": "Configurações",
+  "settingsLanguage": "Idioma",
+  "settingsDateFormat": "Formato de data",
+  "settingsWeightFormat": "Formato de peso",
+  "settingsTheme": "Tema",
+  "settingsSwitchDark": "Alternar para o modo escuro",
+  "settingsSwitchLight": "Alternar para o modo claro",
+
+  "_comment_homepage": "Estes são strings relacionados à tela inicial.",
+
+  "homeCreateWorkout": "Crie um\ntreino.",
+  "homeGotoWorkouts": "Ir para Meus Treinos",
+  "homeScheduleWorkouts": "Agende\nseu\ntreino.",
+  "homeGotoCalendar": "Ir para Meu Calendário",
+  "homeTrackProgress": "Acompanhe\nseu\nprogresso.",
+  "homeGotoProgress": "Ir para Meu Progresso",
+
+  "_comment_workoutlist": "Estes são strings relacionados à lista de treinos.",
+
+  "MyWorkouts": "Meus Treinos",
+  "CreateAWorkout": "Novo\nTreino",
+  "CreateAWorkoutButton": "Criar um novo treino",
+  "WorkoutListTip": "Dica: Você pode excluir a maioria dos itens mantendo-os pressionados. Experimente quando tiver a oportunidade!",
+
+  "_comment_myworkoutspage": "Estes são strings relacionados à página Meus Treinos.",
+
+  "deleteWorkoutTitle": "Excluindo {{workoutName}}",
+  "deleteWorkoutMessage": "Tem certeza de que deseja excluir \"{{workoutName}}\"? Esta ação não afetará os registros existentes.",
+
+  "_comment_createWorkout": "Estes são strings relacionados à criação de um treino.",
+
+  "deleteDayTitle": "Excluir Dia",
+  "deleteDayMessage": "Tem certeza de que deseja excluir este dia?",
+
+  "deleteExerciseTitle": "Excluir Exercício",
+  "deleteExerciseMessage": "Tem certeza de que deseja excluir este exercício?",
+  "addExercise": "+ Adicionar Exercício",
+  "addDay": "+ Adicionar Dia",
+  "saveWorkout": "Salvar Treino",
+
+  "_comment_workoutDetails": "Estes são strings relacionados aos detalhes do treino.",
+
+  "noExercises": "Nenhum exercício neste dia",
+  "addExerciseFromDetails": "Adicionar Exercício",
+  "addDayFromDetails": "Adicionar Dia",
+  "emptyWorkoutDetails": " Nenhum dia ou exercício disponível para este treino.",
+
+  "deleteDayTitleDetails": "Excluir Dia",
+  "deleteDayMessageDetails": "Tem certeza de que deseja excluir este dia? Essa ação também excluirá esses dias dos próximos treinos planejados.",
+  "deleteExerciseTitleDetails": "Excluir Exercício",
+  "deleteExerciseMessageDetails": "Tem certeza de que deseja excluir este exercício? Essa ação também excluirá o exercício dos próximos treinos planejados.",
+
+  "repsValidationError": "O número de repetições deve ser maior que 0.",
+  "setsValidationError": "O número de séries deve ser maior que 0.",
+  "exerciseNameValidationError": "O nome do exercício não pode estar vazio.",
+  "dayNameValidationError": "O nome do dia não pode estar vazio.",
+
+  "_comment_editWorkout": "Estes são strings relacionados à edição de um treino.",
+
+  "fetchWorkoutDetailsError": "Não foi possível atualizar os detalhes do treino.",
+  "isSaving": "Salvando...",
+  "saveChanges": "Salvar Alterações",
+  "daysAndExercises": "Dias e Exercícios",
+  "editWorkout": "Editar Treino",
+
+  "_comment_myCalendar": "Estes são strings relacionados ao Meu Calendário.",
+
+  "scheduleTip": "Dica: Você precisa agendar seus treinos aqui para acompanhá-los na tela Meu Progresso!",
+  "noUpcomingWorkouts": "Nenhum treino futuro agendado.",
+  "upcomingWorkouts": "Próximos Treinos",
+  "noUntrackedWorkouts": "Nenhum treino não registrado encontrado.",
+  "untrackedWorkouts": "Treinos não registrados",
+  "noWorkoutToday": "Nenhum treino agendado para hoje.",
+  "todaysWorkout": "Treino de Hoje",
+  "scheduleWorkout": "Agendar um Treino",
+  "myCalendar": "Meu Calendário",
+  "noExerciseLogged": " Nenhum exercício registrado.",
+
+  "_comment_LogWorkouts": "Estes são strings relacionados ao registro de treinos.",
+
+  "noDatePicked": "Selecione uma data.",
+  "selectAWorkout": "Selecione um treino.",
+  "selectADay": "Selecione um dia.",
+  "duplicateLogTitle": "Registro Duplicado",
+  "duplicateLogMessage": "Já existe um registro para este treino na data selecionada.",
+  "selectDate": "Selecionar Data",
+  "selectADate": "Selecione uma Data",
+  "selectWorkout": "Selecionar Treino",
+  "selectDay": "Selecionar Dia",
+  "emptyWorkoutLog": "Crie um treino para acompanhar!",
+  "noDaysAvailable": "Este treino não tem dias!",
+  "scheduleWorkoutLog": "Agendar Treino",
+
+  "_comment_MyProgress": "Estes são strings relacionados ao Meu Progresso.",
+
+  "deleteLogsTitle": "Excluir Registros",
+  "deleteLogsMessage": "Tem certeza de que deseja excluir todos os registros associados a este treino?",
+  "failedToDeleteDays": "Falha ao excluir os dias associados.",
+  "myProgress": "Meu Progresso",
+  "trackAWorkout": "Acompanhar um Treino",
+  "notTracking": "Você não está acompanhando nenhum treino.",
+  "myProgressTip": "Dica: Você pode acompanhar os exercícios nos treinos que realizou. Até o menor detalhe.",
+  "allTracks": "Todos os registros",
+
+  "_comment_LogWeights": "Estes são strings relacionados ao registro de pesos.",
+
+  "failedToLogWeights": "Falha ao registrar os pesos.",
+  "Set": "Série",
+  "Weight": "Peso",
+  "noWorkoutScheduled": "Você precisa agendar um treino para acompanhá-lo!",
+  "trackWeights": "Acompanhar Pesos",
+
+  "_comment_WeightLogDetails": "Estes são strings relacionados aos detalhes do registro de pesos.",
+
+  "deleteWeightLog": "Tem certeza de que deseja excluir todos os registros para este dia nesta data?",
+  "weightLog": "registros",
+  "dateFrom": "Data de Início:",
+  "pickStartDate": "Escolha uma data de início",
+  "dateTo": "Data de Término:",
+  "pickEndDate": "Escolha uma data de término",
+  "clearSelection": "Limpar Seleção",
+  "noLog": "Nenhum registro disponível no intervalo de datas selecionado.",
+
+
+
+
+  "navigateToDifficulty": "Treinos em destaque",
+  "Difficulty": "Dificuldade do treino",
+  "Beginner": "Iniciante",
+  "Intermediate": "Intermediário",
+  "Advanced": "Avançado",
+  "featuredWorkouts": "Treinos em destaque",
+  "templateListTip": "Dica: Você pode personalizar os treinos em destaque depois de adicioná-los à sua lista de treinos.",
+  "addTemplate": "Adicionar aos meus treinos"
+}

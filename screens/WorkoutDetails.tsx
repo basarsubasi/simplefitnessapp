@@ -1,11 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native'; // Import useFocusEffect
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, Modal, TextInput } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useSQLiteContext } from 'expo-sqlite';
 import { AutoSizeText, ResizeTextMode } from 'react-native-auto-size-text';
 import { useTheme } from '../context/ThemeContext';
+import { WorkoutStackParamList } from '../App';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useTranslation } from 'react-i18next';
 
+
+
+
+
+
+type WorkoutListNavigationProp = StackNavigationProp<WorkoutStackParamList, 'WorkoutDetails'>;
 
 
 type Day = {
@@ -13,13 +23,14 @@ type Day = {
   day_name: string;
   exercises: { exercise_name: string; sets: number; reps: number }[];
 };
-
 export default function WorkoutDetails() {
   const db = useSQLiteContext();
   const route = useRoute();
-  const navigation = useNavigation();
+ 
 
   const { theme } = useTheme();
+  const { t } = useTranslation(); // Initialize translations
+  
   
   const { workout_id } = route.params as { workout_id: number };
 
@@ -33,10 +44,14 @@ export default function WorkoutDetails() {
   const [exerciseName, setExerciseName] = useState('');
   const [exerciseSets, setExerciseSets] = useState('');
   const [exerciseReps, setExerciseReps] = useState('');
+  const navigation = useNavigation<WorkoutListNavigationProp>();
 
-  useEffect(() => {
-    fetchWorkoutDetails();
-  }, [workout_id]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchWorkoutDetails();
+    }, [workout_id])
+  );
 
   const fetchWorkoutDetails = async () => {
     const workoutResult = await db.getAllAsync<{ workout_name: string }>(
@@ -44,7 +59,9 @@ export default function WorkoutDetails() {
       [workout_id]
     );
     setWorkoutName(workoutResult[0]?.workout_name || '');
-
+   
+    
+    
     const daysResult = await db.getAllAsync<{ day_id: number; day_name: string }>(
       'SELECT day_id, day_name FROM Days WHERE workout_id = ?',
       [workout_id]
@@ -60,9 +77,145 @@ export default function WorkoutDetails() {
       })
     );
 
-    setDays(daysWithExercises);
+     // Sort days by day_id in ascending order
+     const sortedDays = daysWithExercises.sort((a, b) => a.day_id - b.day_id);
+
+     setDays(sortedDays);
+
+    setDays(sortedDays);
   };
 
+  const handleDeleteDay = async (day_id: number, day_name: string, workout_id: number) => {
+    Alert.alert(
+      t('deleteDayTitleDetails'),
+      t('deleteDayMessageDetails'),
+      [
+        { text: t('alertCancel'), style: 'cancel' },
+        {
+          text: t('alertDelete'),
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              const currentDate = Math.floor(new Date().setHours(0, 0, 0, 0) / 1000); // Today's date as Unix timestamp
+  
+              // Fetch logs only for workout_date >= today
+              const logs = await db.getAllAsync<{ workout_log_id: number; workout_date: number }>(
+                'SELECT workout_log_id, workout_date FROM Workout_Log WHERE day_name = ? AND workout_name = (SELECT workout_name FROM Workouts WHERE workout_id = ?) AND workout_date >= ?;',
+                [day_name, workout_id, currentDate]
+              );
+  
+              for (const log of logs) {
+                console.log(`Deleting log ${log.workout_log_id} with workout_date: ${log.workout_date}`);
+                await db.runAsync('DELETE FROM Logged_Exercises WHERE workout_log_id = ?;', [log.workout_log_id]);
+                await db.runAsync('DELETE FROM Workout_Log WHERE workout_log_id = ?;', [log.workout_log_id]);
+              }
+  
+              // Delete the day and its exercises regardless of logs
+              await db.runAsync('DELETE FROM Exercises WHERE day_id = ?;', [day_id]);
+              await db.runAsync('DELETE FROM Days WHERE day_id = ?;', [day_id]);
+  
+              fetchWorkoutDetails();
+            } catch (error) {
+              console.error('Error deleting day with future logs:', error);
+            }
+          },
+        },
+      ]
+    );
+  };
+  
+  const handleDeleteExercise = async (day_id: number, exercise_name: string, workout_id: number) => {
+    Alert.alert(
+      t('deleteExerciseTitleDetails'),
+      t('deleteExerciseMessageDetails'),
+      [
+        { text: t('alertCancel'), style: 'cancel' },
+        {
+          text: t('alertDelete'),
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              const currentDate = Math.floor(new Date().setHours(0, 0, 0, 0) / 1000); // Today's date as Unix timestamp
+  
+              // Fetch logs only for workout_date >= today
+              const logs = await db.getAllAsync<{ workout_log_id: number; workout_date: number }>(
+                'SELECT workout_log_id, workout_date FROM Workout_Log WHERE day_name = (SELECT day_name FROM Days WHERE day_id = ?) AND workout_name = (SELECT workout_name FROM Workouts WHERE workout_id = ?) AND workout_date >= ?;',
+                [day_id, workout_id, currentDate]
+              );
+  
+              for (const log of logs) {
+                console.log(`Deleting log ${log.workout_log_id} with workout_date: ${log.workout_date}`);
+                await db.runAsync(
+                  'DELETE FROM Logged_Exercises WHERE workout_log_id = ? AND exercise_name = ?;',
+                  [log.workout_log_id, exercise_name]
+                );
+              }
+  
+              // Delete the exercise itself
+              await db.runAsync('DELETE FROM Exercises WHERE day_id = ? AND exercise_name = ?;', [day_id, exercise_name]);
+  
+              fetchWorkoutDetails();
+            } catch (error) {
+              console.error('Error deleting exercise with future logs:', error);
+            }
+          },
+        },
+      ]
+    );
+  };
+  
+
+  const updateWorkoutLogsForAdditions = async (workout_id: number) => {
+    try {
+      const currentDate = Math.floor(new Date().setHours(0, 0, 0, 0) / 1000); // Today's date as Unix timestamp
+  
+      // Fetch all logs for the current workout where workout_date >= today
+      const logs = await db.getAllAsync<{ workout_log_id: number; day_name: string; workout_date: number }>(
+        'SELECT workout_log_id, day_name, workout_date FROM Workout_Log WHERE workout_name = (SELECT workout_name FROM Workouts WHERE workout_id = ?) AND workout_date >= ?;',
+        [workout_id, currentDate]
+      );
+  
+      // Fetch updated days and exercises
+      const days = await db.getAllAsync<{ day_id: number; day_name: string }>(
+        'SELECT day_id, day_name FROM Days WHERE workout_id = ?;',
+        [workout_id]
+      );
+  
+      for (const log of logs) {
+        const day = days.find((d) => d.day_name === log.day_name);
+  
+        if (day) {
+          console.log(`Updating log ${log.workout_log_id} for day: ${day.day_name}`);
+  
+          // Fetch updated exercises for the day
+          const exercises = await db.getAllAsync<{ exercise_name: string; sets: number; reps: number }>(
+            'SELECT exercise_name, sets, reps FROM Exercises WHERE day_id = ?;',
+            [day.day_id]
+          );
+  
+          // Delete existing logged exercises for the log
+          await db.runAsync('DELETE FROM Logged_Exercises WHERE workout_log_id = ?;', [log.workout_log_id]);
+  
+          // Insert updated exercises into the log
+          const insertExercisePromises = exercises.map((exercise) =>
+            db.runAsync(
+              'INSERT INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?);',
+              [log.workout_log_id, exercise.exercise_name, exercise.sets, exercise.reps]
+            )
+          );
+  
+          await Promise.all(insertExercisePromises);
+  
+          console.log(`Successfully updated log ${log.workout_log_id} with new exercises.`);
+        } else {
+          console.log(`No matching day found for log ${log.workout_log_id} and day_name: ${log.day_name}`);
+        }
+      }
+    } catch (error) {
+      console.error('Error updating workout logs for additions:', error);
+    }
+  };
+  
   const openAddDayModal = () => {
     setDayName('');
     setShowDayModal(true);
@@ -75,11 +228,12 @@ export default function WorkoutDetails() {
 
   const addDay = async () => {
     if (!dayName.trim()) {
-      Alert.alert('Error', 'Day name cannot be empty.');
+      Alert.alert(t('errorTitle'), t('dayNameValidationError'));
       return;
     }
 
     await db.runAsync('INSERT INTO Days (workout_id, day_name) VALUES (?, ?);', [workout_id, dayName.trim()]);
+    await updateWorkoutLogsForAdditions(workout_id);
     fetchWorkoutDetails();
     closeAddDayModal();
   };
@@ -102,17 +256,17 @@ export default function WorkoutDetails() {
     const reps = exerciseReps.trim();
 
     if (!exerciseName.trim()) {
-      Alert.alert('Error', 'Exercise name cannot be empty.');
+      Alert.alert(t('errorTitle'), t('exerciseNameValidationError'));
       return;
     }
 
     if (!sets || parseInt(sets, 10) <= 0) {
-      Alert.alert('Error', 'Sets must be a number greater than 0.');
+      Alert.alert(t('errorTitle'), t('setsValidationError'));
       return;
     }
 
     if (!reps || parseInt(reps, 10) <= 0) {
-      Alert.alert('Error', 'Reps must be a number greater than 0.');
+      Alert.alert(t('errorTitle'), t('repsValidationError'));
       return;
     }
 
@@ -121,37 +275,12 @@ export default function WorkoutDetails() {
         'INSERT INTO Exercises (day_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?);',
         [currentDayId, exerciseName.trim(), parseInt(sets, 10), parseInt(reps, 10)]
       );
+      await updateWorkoutLogsForAdditions(workout_id);
       fetchWorkoutDetails();
       closeAddExerciseModal();
     }
   };
-
-  const deleteDay = async (day_id: number) => {
-    Alert.alert(
-      'Delete Day',
-      'Are you sure you want to delete this day? All associated exercises will also be deleted.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: async () => {
-            await db.runAsync('DELETE FROM Exercises WHERE day_id = ?;', [day_id]); // Delete associated exercises
-            await db.runAsync('DELETE FROM Days WHERE day_id = ?;', [day_id]); // Delete the day itself
-            fetchWorkoutDetails();
-          },
-        },
-      ]
-    );
-  };
-
-  const deleteExercise = async (day_id: number, exercise_name: string) => {
-    await db.runAsync(
-      'DELETE FROM Exercises WHERE day_id = ? AND exercise_name = ?;',
-      [day_id, exercise_name]
-    );
-    fetchWorkoutDetails(); // Refresh the data after deletion
-  };
+  
   
 
   return (
@@ -160,14 +289,31 @@ export default function WorkoutDetails() {
     <Ionicons name="arrow-back" size={24} color={theme.text} />
   </TouchableOpacity>
 
-  <Text style={[styles.title, { color: theme.text }]}>{workoutName}</Text>
+
+    {/* Icon on the right */}
+    <TouchableOpacity
+    style={styles.editIcon}
+    onPress={() => navigation.navigate('EditWorkout', { workout_id: workout_id })}
+  >
+    <Ionicons name="pencil-outline" size={24} color={theme.text} />
+  </TouchableOpacity>
+
+  <View style={styles.titleContainer}>
+  {/* This View will stretch and center the text */}
+  <View style={{ flex: 1, alignItems: 'center' }}>
+    <Text style={[styles.title, { color: theme.text }]}>{workoutName}</Text>
+  </View>
+  
+
+</View>
+
 
   <FlatList
     data={days}
     keyExtractor={(item) => item.day_id.toString()}
     renderItem={({ item: day }) => (
       <TouchableOpacity
-        onLongPress={() => deleteDay(day.day_id)} // Long press triggers day deletion
+        onLongPress={() => handleDeleteDay(day.day_id, day.day_name, workout_id)} // Long press triggers day deletion
         activeOpacity={0.8}
         style={[styles.dayContainer, { backgroundColor: theme.card, borderColor: theme.border }]} // Entire day card is now pressable
       >
@@ -185,13 +331,13 @@ export default function WorkoutDetails() {
           day.exercises.map((exercise, index) => (
             <TouchableOpacity
               key={index}
-              onLongPress={() => deleteExercise(day.day_id, exercise.exercise_name)}
+              onLongPress={() => handleDeleteExercise(day.day_id, exercise.exercise_name, workout_id)}
               activeOpacity={0.8}
               style={[styles.exerciseContainer, { backgroundColor: theme.card, borderColor: theme.border }]}
             >
               <AutoSizeText
                 fontSize={18}
-                numberOfLines={1}
+                numberOfLines={2}
                 mode={ResizeTextMode.max_lines}
                 style={[styles.exerciseName, { color: theme.text }]}
               >
@@ -199,16 +345,16 @@ export default function WorkoutDetails() {
               </AutoSizeText>
               <AutoSizeText
                 fontSize={16}
-                numberOfLines={1}
+                numberOfLines={3}
                 mode={ResizeTextMode.max_lines}
                 style={[styles.exerciseDetails, { color: theme.text }]}
               >
-                {exercise.sets} sets x {exercise.reps} reps
+                {exercise.sets} {t('Sets')} {'\n'} {exercise.reps} {t('Reps')} 
               </AutoSizeText>
             </TouchableOpacity>
           ))
         ) : (
-          <Text style={[styles.noExercisesText, { color: theme.text }]}>No exercises on this day</Text>
+          <Text style={[styles.noExercisesText, { color: theme.text }]}>{t('noExercises')} </Text>
         )}
       </TouchableOpacity>
     )}
@@ -218,12 +364,12 @@ export default function WorkoutDetails() {
         onPress={openAddDayModal}
       >
         <Ionicons name="add-circle" size={28} color={theme.buttonText} />
-        <Text style={[styles.addDayButtonText, { color: theme.buttonText }]}>Add Day</Text>
+        <Text style={[styles.addDayButtonText, { color: theme.buttonText }]}>{t('addDayFromDetails')}</Text>
       </TouchableOpacity>
     }
     ListEmptyComponent={
       <Text style={[styles.emptyText, { color: theme.text }]}>
-        No days or exercises available for this workout.
+        {t('emptyWorkoutDetails')}
       </Text>
     }
   />
@@ -231,19 +377,19 @@ export default function WorkoutDetails() {
   <Modal visible={showDayModal} animationType="slide" transparent>
     <View style={[styles.modalContainer, { backgroundColor: 'rgba(0, 0, 0, 0.5)' }]}>
       <View style={[styles.modalContent, { backgroundColor: theme.card }]}>
-        <Text style={[styles.modalTitle, { color: theme.text }]}>Add Day</Text>
+        <Text style={[styles.modalTitle, { color: theme.text }]}>{t('addDayFromDetails')}</Text>
         <TextInput
           style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
-          placeholder="Day Name"
+          placeholder={t('dayNamePlaceholder')}
           placeholderTextColor={theme.text}
           value={dayName}
           onChangeText={setDayName}
         />
         <TouchableOpacity style={[styles.saveButton, { backgroundColor: theme.buttonBackground }]} onPress={addDay}>
-          <Text style={[styles.saveButtonText, { color: theme.buttonText }]}>Save</Text>
+          <Text style={[styles.saveButtonText, { color: theme.buttonText }]}>{t('Save')}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[styles.cancelButton, { backgroundColor: theme.card }]} onPress={closeAddDayModal}>
-          <Text style={[styles.cancelButtonText, { color: theme.text }]}>Cancel</Text>
+          <Text style={[styles.cancelButtonText, { color: theme.text }]}>{t('Cancel')}</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -252,17 +398,17 @@ export default function WorkoutDetails() {
   <Modal visible={showExerciseModal} animationType="slide" transparent>
     <View style={[styles.modalContainer, { backgroundColor: 'rgba(0, 0, 0, 0.5)' }]}>
       <View style={[styles.modalContent, { backgroundColor: theme.card }]}>
-        <Text style={[styles.modalTitle, { color: theme.text }]}>Add Exercise</Text>
+        <Text style={[styles.modalTitle, { color: theme.text }]}>{t('addExerciseFromDetails')}</Text>
         <TextInput
           style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
-          placeholder="Exercise Name"
+          placeholder={t('exerciseNamePlaceholder')}
           placeholderTextColor={theme.text}
           value={exerciseName}
           onChangeText={setExerciseName}
         />
         <TextInput
           style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
-          placeholder="Sets (e.g., 3)"
+          placeholder={t('setsPlaceholder')}
           placeholderTextColor={theme.text}
           keyboardType="numeric"
           value={exerciseSets}
@@ -278,7 +424,7 @@ export default function WorkoutDetails() {
         />
         <TextInput
           style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
-          placeholder="Reps (e.g., 10)"
+          placeholder={t('repsPlaceholder')}
           placeholderTextColor={theme.text}
           keyboardType="numeric"
           value={exerciseReps}
@@ -293,16 +439,15 @@ export default function WorkoutDetails() {
           }}
         />
         <TouchableOpacity style={[styles.saveButton, { backgroundColor: theme.buttonBackground }]} onPress={addExercise}>
-          <Text style={[styles.saveButtonText, { color: theme.buttonText }]}>Save</Text>
+          <Text style={[styles.saveButtonText, { color: theme.buttonText }]}>{t('Save')}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[styles.cancelButton, { backgroundColor: theme.card }]} onPress={closeAddExerciseModal}>
-          <Text style={[styles.cancelButtonText, { color: theme.text }]}>Cancel</Text>
+          <Text style={[styles.cancelButtonText, { color: theme.text }]}>{t('Cancel')}</Text>
         </TouchableOpacity>
       </View>
     </View>
-  </Modal>
-</View>
-
+      </Modal>
+    </View>
   );
 }
 
@@ -316,12 +461,29 @@ const styles = StyleSheet.create({
       paddingTop: 60,
       backgroundColor: '#FFFFFF',
     },
+    adContainer: {
+      alignItems: 'center',
+    },
     backButton: {
       position: 'absolute',
       top: 20,
       left: 10,
       zIndex: 10,
       padding: 8,
+    },
+    titleContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 30, 
+    },
+    
+    editIcon: {
+      position: 'absolute',
+      top: 20,
+      right: 10,
+      zIndex: 10,
+      padding: 8,
+      marginTop:3,
     },
     title: {
       fontSize: 36,
@@ -390,7 +552,7 @@ const styles = StyleSheet.create({
       backgroundColor: '#000000',
       borderRadius: 20,
       padding: 12,
-      marginTop: 20,
+      marginTop: 1,
       justifyContent: 'center',
     },
     addDayButtonText: {

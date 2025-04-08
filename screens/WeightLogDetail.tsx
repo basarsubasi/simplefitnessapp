@@ -13,6 +13,9 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useSettings } from '../context/SettingsContext';
 import { useTheme } from '../context/ThemeContext'; 
+import { useTranslation } from 'react-i18next';
+import { AutoSizeText, ResizeTextMode } from 'react-native-auto-size-text';
+
 
 
 export default function WeightLogDetail() {
@@ -20,6 +23,8 @@ export default function WeightLogDetail() {
   
   const navigation = useNavigation();
   const { theme } = useTheme();
+  const { t } = useTranslation(); // Initialize translations
+
   const db = useSQLiteContext();
   const { workoutName } = route.params as { workoutName: string };
   const { weightFormat, dateFormat } = useSettings();
@@ -32,9 +37,9 @@ export default function WeightLogDetail() {
   const [expandedDays, setExpandedDays] = useState<{ [key: string]: boolean }>(
     {}
   );
-  const [logs, setLogs] = useState<{ [key: string]: { [key: string]: any[] } }>(
-    {}
-  );
+  const [logs, setLogs] = useState<{
+    [key: string]: { [id: number]: { exerciseName: string; sets: any[], loggedExerciseId: number } };
+  }>({});
 
   const [datePickerVisible, setDatePickerVisible] = useState<{
     start: boolean;
@@ -71,8 +76,11 @@ export default function WeightLogDetail() {
         [workoutName]
       );
 
-      setDays(result);
-      setFilteredDays(result); // Initially show all days
+      
+      const sortedDays = result.sort((a, b) => b.workout_date - a.workout_date);
+
+      setDays(sortedDays);
+      setFilteredDays(sortedDays); // Initially show all days
     } catch (error) {
       console.error('Error fetching days:', error);
     }
@@ -85,26 +93,34 @@ export default function WeightLogDetail() {
         set_number: number;
         weight_logged: number;
         reps_logged: number;
+        logged_exercise_id: number;
+
       }>(
         `SELECT Weight_Log.exercise_name, Weight_Log.set_number, 
-                Weight_Log.weight_logged, Weight_Log.reps_logged
+                Weight_Log.weight_logged, Weight_Log.reps_logged, Weight_Log.logged_exercise_id
          FROM Weight_Log
          INNER JOIN Workout_Log 
          ON Weight_Log.workout_log_id = Workout_Log.workout_log_id
          WHERE Workout_Log.day_name = ? AND Workout_Log.workout_date = ? 
-         ORDER BY Weight_Log.exercise_name, Weight_Log.set_number;`,
+         ORDER BY Weight_Log.logged_exercise_id ASC;`,
         [dayName, workoutDate]
       );
 
       // Group sets by exercise_name
       const groupedLogs = result.reduce((acc, log) => {
-        const { exercise_name, ...setDetails } = log;
-        if (!acc[exercise_name]) {
-          acc[exercise_name] = [];
+        const { logged_exercise_id, exercise_name, ...setDetails } = log;
+        const compositeKey = `${logged_exercise_id}_${exercise_name}`;
+        
+        if (!acc[compositeKey]) {
+          acc[compositeKey] = {
+            loggedExerciseId: logged_exercise_id,
+            exerciseName: exercise_name,
+            sets: []
+          };
         }
-        acc[exercise_name].push(setDetails);
+        acc[compositeKey].sets.push(setDetails);
         return acc;
-      }, {} as { [exercise_name: string]: any[] });
+      }, {} as { [key: string]: { loggedExerciseId: number; exerciseName: string; sets: any[] } });
 
       setLogs((prev) => ({
         ...prev,
@@ -163,11 +179,11 @@ export default function WeightLogDetail() {
   
     // Check if the date matches today, yesterday, or tomorrow
     if (isSameDay(date, today)) {
-      return 'Today';
+      return t('Today');
     } else if (isSameDay(date, yesterday)) {
-      return 'Yesterday';
+      return t('Yesterday');
     } else if (isSameDay(date, tomorrow)) {
-      return 'Tomorrow';
+      return t('Tomorrow');
     }
   
     // Default date formatting based on user-selected format
@@ -193,12 +209,12 @@ export default function WeightLogDetail() {
   
     const confirmDeleteDay = () => {
       Alert.alert(
-        'Delete Day',
-        `Are you sure you want to delete all logs for "${day_name}" on ${formattedDate}?`,
+        t('deleteDayTitle'),
+        t('deleteWeightLog'),
         [
-          { text: 'Cancel', style: 'cancel' },
+          { text: t('alertCancel'), style: 'cancel' },
           {
-            text: 'Delete',
+            text: t('alertDelete'),
             style: 'destructive',
             onPress: async () => {
               await deleteDayLogs(day_name, workout_date);
@@ -234,7 +250,15 @@ export default function WeightLogDetail() {
     onPress={() => toggleDayExpansion(day_name, workout_date)}
     onLongPress={confirmDeleteDay} // Add this line for long press functionality
   >
-    <Text style={[styles.logDayName, { color: theme.text }]}>{day_name}</Text>
+     <AutoSizeText 
+      fontSize={20}
+      numberOfLines={2}
+      mode={ResizeTextMode.max_lines}
+    style={[styles.logDayName, { color: theme.text }]}>
+      {day_name}
+    </AutoSizeText>
+
+
     <Text style={[styles.logDate, { color: theme.text }]}>{formattedDate}</Text>
     <Ionicons
       name={isExpanded ? 'chevron-up' : 'chevron-down'}
@@ -244,16 +268,23 @@ export default function WeightLogDetail() {
   </TouchableOpacity>
   {isExpanded && logs[key] && (
     <View style={styles.logList}>
-      {Object.entries(logs[key]).map(([exercise_name, sets]) => (
-        <View key={exercise_name} style={styles.logItem}>
-          <Text style={[styles.exerciseName, { color: theme.text }]}>{exercise_name}</Text>
-          {sets.map((set, index) => (
-            <Text key={index} style={[styles.logDetail, { color: theme.text }]}>
-              Set {set.set_number}: {set.reps_logged} reps, {set.weight_logged} {weightFormat}
-            </Text>
-          ))}
-        </View>
-      ))}
+               {Object.values(logs[key])
+                  .sort((a, b) => a.loggedExerciseId - b.loggedExerciseId)
+                  .map(({ exerciseName, sets, loggedExerciseId }) => (
+                    <View key={`${loggedExerciseId}_${exerciseName}`} style={styles.logItem}>
+                      <Text style={[styles.exerciseName, { color: theme.text }]}>
+                        {exerciseName}
+                      </Text>
+                      {sets.map((set, index) => (
+                        <Text
+                          key={index}
+                          style={[styles.logDetail, { color: theme.text }]}
+                        >
+                          {t('Set')} {set.set_number}: {set.weight_logged} {weightFormat} {} {set.reps_logged}  {t('Reps')}
+                        </Text>
+                      ))}
+                    </View>
+                  ))}
     </View>
   )}
 </View>
@@ -271,7 +302,11 @@ export default function WeightLogDetail() {
       <Ionicons name="arrow-back" size={24} color={theme.text} />
     </TouchableOpacity>
   
-    <Text style={[styles.headerTitle, { color: theme.text }]}>{workoutName} logs</Text>
+    <Text 
+    style={[styles.headerTitle, { color: theme.text }]}>{workoutName} {t('weightLog')}
+    </Text>
+
+     
   
     {/* Filter Buttons */}
     <View style={styles.filterContainer}>
@@ -282,8 +317,8 @@ export default function WeightLogDetail() {
         <Ionicons name="calendar-outline" size={20} color={theme.buttonText} />
         <Text style={[styles.filterButtonText, { color: theme.buttonText }]}>
           {dateRange.start
-            ? `From: ${formatDate(dateRange.start.getTime() / 1000)}`
-            : 'Pick Start Date'}
+            ? `${t('dateFrom')} ${formatDate(dateRange.start.getTime() / 1000)}`
+            : t('pickStartDate')}
         </Text>
       </TouchableOpacity>
       <TouchableOpacity
@@ -293,8 +328,8 @@ export default function WeightLogDetail() {
         <Ionicons name="calendar-outline" size={20} color={theme.buttonText} />
         <Text style={[styles.filterButtonText, { color: theme.buttonText }]}>
           {dateRange.end
-            ? `To: ${formatDate(dateRange.end.getTime() / 1000)}`
-            : 'Pick End Date'}
+            ? `${t('dateTo')} ${formatDate(dateRange.end.getTime() / 1000)}`
+            : t('pickEndDate')}
         </Text>
       </TouchableOpacity>
     </View>
@@ -304,7 +339,7 @@ export default function WeightLogDetail() {
         style={[styles.clearButton, { backgroundColor: theme.text }]}
         onPress={clearDateSelection}
       >
-        <Text style={[styles.clearButtonText, { color: theme.card }]}>Clear Selection</Text>
+        <Text style={[styles.clearButtonText, { color: theme.card }]}>{t('clearSelection')}</Text>
       </TouchableOpacity>
     )}
   
@@ -319,8 +354,8 @@ export default function WeightLogDetail() {
           if (date) setDateRange((prev) => ({ ...prev, start: date }));
         }}
       />
-    )}
-    {datePickerVisible.end && (
+      )}
+      {datePickerVisible.end && (
       <DateTimePicker
         value={dateRange.end || new Date()}
         mode="date"
@@ -329,22 +364,22 @@ export default function WeightLogDetail() {
           setDatePickerVisible({ start: false, end: false });
           if (date) setDateRange((prev) => ({ ...prev, end: date }));
         }}
-      />
-    )}
+        />
+      )}
   
-    {/* Logs */}
-    <FlatList
-      data={filteredDays}
-      keyExtractor={(item) => `${item.day_name}_${item.workout_date}`}
-      renderItem={({ item }) => renderDay(item)}
-      ListEmptyComponent={
-        <Text style={[styles.emptyText, { color: theme.text }]}>
-          No logs available for the selected range.
-        </Text>
-      }
-    />
-  </View>
-  
+      {/* Logs */}
+       <FlatList
+         data={filteredDays}
+         keyExtractor={(item) => `${item.day_name}_${item.workout_date}`}
+         renderItem={({ item }) => renderDay(item)}
+         ListEmptyComponent={
+           <Text style={[styles.emptyText, { color: theme.text }]}>
+             {t('noLog')}
+           </Text>
+         }
+       />
+
+    </View>
   );
 }
 
@@ -356,12 +391,13 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     paddingTop: 40,
-    backgroundColor: '#FFFFFF',
+  },
+  adContainer: {
+    alignItems: 'center',
   },
   headerTitle: {
     fontSize: 30,
     fontWeight: '900',
-    color: '#000000',
     textAlign: 'center',
     marginVertical: 20, // Adds spacing above and below the title
   },
@@ -374,7 +410,6 @@ const styles = StyleSheet.create({
   filterButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#000000',
     borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 20,
@@ -382,14 +417,12 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   filterButtonText: {
-    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: 'bold',
     marginLeft: 10,
   },
   clearButton: {
     marginBottom: 20,
-    backgroundColor: '#000000',
     borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 15,
@@ -399,7 +432,6 @@ const styles = StyleSheet.create({
     marginVertical: 0,
   },
   clearButtonText: {
-    color: '#FFFFFF',
     fontWeight: 'bold',
     fontSize: 16,
   },
@@ -411,14 +443,11 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   logContainer: {
-    backgroundColor: '#F7F7F7',
     borderRadius: 20,
     padding: 20,
     marginBottom: 15,
     borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.1)',
     elevation: 2,
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 5,
@@ -432,12 +461,10 @@ const styles = StyleSheet.create({
   logDayName: {
     fontSize: 20,
     fontWeight: '900',
-    color: '#000000',
   },
   logDate: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#000000',
   },
   logList: {
     marginTop: 10,
@@ -449,15 +476,12 @@ const styles = StyleSheet.create({
   exerciseName: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#000000',
   },
   logDetail: {
     fontSize: 14,
-    color: '#666666',
   },
   emptyText: {
     textAlign: 'center',
     fontSize: 16,
-    color: 'rgba(0, 0, 0, 0.5)',
   },
 });

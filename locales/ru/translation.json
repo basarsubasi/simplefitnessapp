@@ -1,0 +1,163 @@
+{
+  "_comment_global": "Это глобальные строки.",
+
+  "alertCancel": "ОТМЕНА",
+  "alertDelete": "УДАЛИТЬ",
+  "errorTitle": "Ошибка",
+  "Cancel": "Отмена",
+  "Delete": "Удалить",
+  "Save": "Сохранить",
+  "Sets": "Подходы",
+  "Reps": "Повторения",
+  "Today": "Сегодня",
+  "Tomorrow": "Завтра",
+  "Yesterday": "Вчера",
+
+  "workoutNameErrorMessage": "Пожалуйста, введите название тренировки.",
+  "provideDayNamesErrorMessage": "Пожалуйста, укажите названия для всех дней.",
+  "fillExercisesErrorMessage": "Пожалуйста, заполните все упражнения корректными данными.",
+  "failedToCreateWorkoutErrorMessage": "Не удалось создать тренировку. Пожалуйста, попробуйте снова.",
+
+  "workoutNamePlaceholder": "Название тренировки",
+  "dayNamePlaceholder": "Название дня",
+  "exerciseNamePlaceholder": "Название упражнения",
+
+  "setsPlaceholder": "Подходы",
+  "repsPlaceholder": "Повторения",
+
+  "_comment_settings": "Это строки, связанные с настройками.",
+
+  "settingsTitle": "Настройки",
+  "settingsLanguage": "Язык",
+  "settingsDateFormat": "Формат даты",
+  "settingsWeightFormat": "Формат веса",
+  "settingsTheme": "Тема",
+  "settingsSwitchDark": "Переключиться на темную тему",
+  "settingsSwitchLight": "Переключиться на светлую тему",
+
+  "_comment_homepage": "Это строки, связанные с главной страницей.",
+
+  "homeCreateWorkout": "Создайте\nтренировку.",
+  "homeGotoWorkouts": "Перейти к Моем тренировкам",
+  "homeScheduleWorkouts": "Запланируйте\nсвою\nтренировку.",
+  "homeGotoCalendar": "Перейти в Мой календарь",
+  "homeTrackProgress": "Отслеживайте\nсвой\nпрогресс.",
+  "homeGotoProgress": "Перейти к Моему прогрессу",
+
+  "_comment_workoutlist": "Это строки, связанные со списком тренировок.",
+
+  "MyWorkouts": "Мои тренировки",
+  "CreateAWorkout": "Новая\nтренировка",
+  "CreateAWorkoutButton": "Создать новую тренировку",
+  "WorkoutListTip": "Совет: большинство элементов можно удалить, удерживая их долго. Попробуйте, когда будет возможность!",
+
+  "_comment_myworkoutspage": "Это строки, связанные со страницей Мои тренировки.",
+
+  "deleteWorkoutTitle": "Удаление {{workoutName}}",
+  "deleteWorkoutMessage": "Вы уверены, что хотите удалить «{{workoutName}}»? Это действие не затронет уже существующие записи.",
+
+  "_comment_createWorkout": "Это строки, связанные с созданием тренировки.",
+
+  "deleteDayTitle": "Удалить день",
+  "deleteDayMessage": "Вы уверены, что хотите удалить этот день?",
+
+  "deleteExerciseTitle": "Удалить упражнение",
+  "deleteExerciseMessage": "Вы уверены, что хотите удалить это упражнение?",
+  "addExercise": "+ Добавить упражнение",
+  "addDay": "+ Добавить день",
+  "saveWorkout": "Сохранить тренировку",
+
+  "_comment_workoutDetails": "Это строки, связанные с деталями тренировки.",
+
+  "noExercises": "Нет упражнений в этот день",
+  "addExerciseFromDetails": "Добавить упражнение",
+  "addDayFromDetails": "Добавить день",
+  "emptyWorkoutDetails": " Нет доступных дней или упражнений для этой тренировки.",
+
+  "deleteDayTitleDetails": "Удалить день",
+  "deleteDayMessageDetails": "Вы уверены, что хотите удалить этот день? Это действие также удалит дни в запланированных тренировках.",
+  "deleteExerciseTitleDetails": "Удалить упражнение",
+  "deleteExerciseMessageDetails": "Вы уверены, что хотите удалить это упражнение? Это действие также удалит упражнение из запланированных тренировок.",
+
+  "repsValidationError": "Число повторений должно быть больше 0.",
+  "setsValidationError": "Число подходов должно быть больше 0.",
+  "exerciseNameValidationError": "Название упражнения не может быть пустым.",
+  "dayNameValidationError": "Название дня не может быть пустым.",
+
+  "_comment_editWorkout": "Это строки, связанные с редактированием тренировки.",
+
+  "fetchWorkoutDetailsError": "Не удалось обновить информацию о тренировке.",
+  "isSaving": "Сохранение...",
+  "saveChanges": "Сохранить изменения",
+  "daysAndExercises": "Дни и упражнения",
+  "editWorkout": "Редактировать тренировку",
+
+  "_comment_myCalendar": "Это строки, связанные с Моим календарем.",
+
+  "scheduleTip": "Совет: вам нужно запланировать тренировки здесь, чтобы отслеживать их на экране Мой прогресс!",
+  "noUpcomingWorkouts": "Нет запланированных тренировок.",
+  "upcomingWorkouts": "Предстоящие тренировки",
+  "noUntrackedWorkouts": "Нет тренировок без учёта.",
+  "untrackedWorkouts": "Неучтённые тренировки",
+  "noWorkoutToday": "Сегодня тренировка не запланирована.",
+  "todaysWorkout": "Сегодняшняя тренировка",
+  "scheduleWorkout": "Запланировать тренировку",
+  "myCalendar": "Мой календарь",
+  "noExerciseLogged": " Нет записанных упражнений.",
+
+  "_comment_LogWorkouts": "Это строки, связанные с журналом тренировок.",
+
+  "noDatePicked": "Пожалуйста, выберите дату.",
+  "selectAWorkout": "Пожалуйста, выберите тренировку.",
+  "selectADay": "Пожалуйста, выберите день.",
+  "duplicateLogTitle": "Дублирование записи",
+  "duplicateLogMessage": "Запись для этой тренировки уже существует на выбранную дату.",
+  "selectDate": "Выберите дату",
+  "selectADate": "Выберите дату",
+  "selectWorkout": "Выберите тренировку",
+  "selectDay": "Выберите день",
+  "emptyWorkoutLog": "Создайте тренировку, чтобы отслеживать!",
+  "noDaysAvailable": "В этой тренировке нет дней!",
+  "scheduleWorkoutLog": "Запланировать тренировку",
+
+  "_comment_MyProgress": "Это строки, связанные с Моим прогрессом.",
+
+  "deleteLogsTitle": "Удалить записи",
+  "deleteLogsMessage": "Вы уверены, что хотите удалить все записи, связанные с этой тренировкой?",
+  "failedToDeleteDays": "Не удалось удалить связанные дни.",
+  "myProgress": "Мой прогресс",
+  "trackAWorkout": "Отслеживать тренировку",
+  "notTracking": "Вы не отслеживаете ни одной тренировки.",
+  "myProgressTip": "Совет: вы можете отслеживать упражнения в выполненных тренировках, до мельчайших подробностей.",
+  "allTracks": "Все записи",
+
+  "_comment_LogWeights": "Это строки, связанные с журналом весов.",
+
+  "failedToLogWeights": "Не удалось записать вес.",
+  "Set": "Подход",
+  "Weight": "Вес",
+  "noWorkoutScheduled": "Вам нужно запланировать тренировку, чтобы отслеживать её!",
+  "trackWeights": "Отслеживать вес",
+
+  "_comment_WeightLogDetails": "Это строки, связанные с деталями журнала весов.",
+
+  "deleteWeightLog": "Вы уверены, что хотите удалить все записи за этот день на эту дату?",
+  "weightLog": "записи",
+  "dateFrom": "Дата начала:",
+  "pickStartDate": "Выберите начальную дату",
+  "dateTo": "Дата окончания:",
+  "pickEndDate": "Выберите конечную дату",
+  "clearSelection": "Очистить выбор",
+  "noLog": "Нет доступных записей в выбранном диапазоне дат.",
+
+
+
+  "navigateToDifficulty": "Рекомендуемые тренировки",
+  "Difficulty": "Сложность тренировки",
+  "Beginner": "Новичок",
+  "Intermediate": "Средний уровень",
+  "Advanced": "Продвинутый",
+  "featuredWorkouts": "Рекомендуемые тренировки",
+  "templateListTip": "Совет: Вы можете настроить рекомендуемые тренировки после того, как добавите их в свой список тренировок.",
+  "addTemplate": "Добавить в мои тренировки"
+}

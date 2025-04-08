@@ -1,0 +1,164 @@
+{
+  "_comment_global": "Dette er globale tekststrenger.",
+
+  "alertCancel": "AVBRYT",
+  "alertDelete": "SLETT",
+  "errorTitle": "Feil",
+  "Cancel": "Avbryt",
+  "Delete": "Slett",
+  "Save": "Lagre",
+  "Sets": "Sett",
+  "Reps": "Repetisjoner",
+  "Today": "I dag",
+  "Tomorrow": "I morgen",
+  "Yesterday": "I går",
+
+  "workoutNameErrorMessage": "Vennligst skriv inn et navn på treningsøkten.",
+  "provideDayNamesErrorMessage": "Vennligst oppgi navn for alle dager.",
+  "fillExercisesErrorMessage": "Vennligst fyll ut alle øvelser med gyldige data.",
+  "failedToCreateWorkoutErrorMessage": "Kunne ikke opprette treningsøkten. Vennligst prøv igjen.",
+
+  "workoutNamePlaceholder": "Treningsnavn",
+  "dayNamePlaceholder": "Navn på dag",
+  "exerciseNamePlaceholder": "Navn på øvelse",
+
+  "setsPlaceholder": "Sett",
+  "repsPlaceholder": "Repetisjoner",
+
+  "_comment_settings": "Dette er tekststrenger for innstillinger.",
+
+  "settingsTitle": "Innstillinger",
+  "settingsLanguage": "Språk",
+  "settingsDateFormat": "Datoformat",
+  "settingsWeightFormat": "Vektformat",
+  "settingsTheme": "Tema",
+  "settingsSwitchDark": "Bytt til mørk",
+  "settingsSwitchLight": "Bytt til lys",
+
+  "_comment_homepage": "Dette er tekststrenger for hjemmesiden.",
+
+  "homeCreateWorkout": "Opprett en\ntreningsøkt.",
+  "homeGotoWorkouts": "Gå til Mine treningsøkter",
+  "homeScheduleWorkouts": "Planlegg\ndin\ntreningsøkt.",
+  "homeGotoCalendar": "Gå til Min kalender",
+  "homeTrackProgress": "Følg\ndin\nfremgang.",
+  "homeGotoProgress": "Gå til Min fremgang",
+
+  "_comment_workoutlist": "Dette er tekststrenger for treningsliste-visningen.",
+
+  "MyWorkouts": "Mine treningsøkter",
+  "CreateAWorkout": "Ny\ntreningsøkt",
+  "CreateAWorkoutButton": "Opprett en ny treningsøkt",
+  "WorkoutListTip": "Tips: Du kan slette de fleste ting ved å holde inne lenge. Prøv det neste gang du har muligheten!",
+
+  "_comment_myworkoutspage": "Dette er tekststrenger for Mine treningsøkter-siden.",
+
+  "deleteWorkoutTitle": "Sletter {{workoutName}}",
+  "deleteWorkoutMessage": "Er du sikker på at du vil slette \"{{workoutName}}\"? Denne handlingen påvirker ikke eksisterende logger.",
+
+  "_comment_createWorkout": "Dette er tekststrenger knyttet til å opprette en treningsøkt.",
+
+  "deleteDayTitle": "Slett dag",
+  "deleteDayMessage": "Er du sikker på at du vil slette denne dagen?",
+
+  "deleteExerciseTitle": "Slett øvelse",
+  "deleteExerciseMessage": "Er du sikker på at du vil slette denne øvelsen?",
+  "addExercise": "+ Legg til øvelse",
+  "addDay": "+ Legg til dag",
+  "saveWorkout": "Lagre treningsøkt",
+
+  "_comment_workoutDetails": "Dette er tekststrenger for detaljer om en treningsøkt.",
+
+  "noExercises": "Ingen øvelser denne dagen",
+  "addExerciseFromDetails": "Legg til øvelse",
+  "addDayFromDetails": "Legg til dag",
+  "emptyWorkoutDetails": " Ingen dager eller øvelser tilgjengelig for denne treningsøkten.",
+
+  "deleteDayTitleDetails": "Slett dag",
+  "deleteDayMessageDetails": "Er du sikker på at du vil slette denne dagen? Denne handlingen sletter også dagene fra kommende planlagte treningsøkter.",
+  "deleteExerciseTitleDetails": "Slett øvelse",
+  "deleteExerciseMessageDetails": "Er du sikker på at du vil slette denne øvelsen? Denne handlingen sletter også øvelsen fra kommende planlagte treningsøkter.",
+
+  "repsValidationError": "Antall repetisjoner må være et tall større enn 0.",
+  "setsValidationError": "Antall sett må være et tall større enn 0.",
+  "exerciseNameValidationError": "Øvelsesnavnet kan ikke være tomt.",
+  "dayNameValidationError": "Navnet på dagen kan ikke være tomt.",
+
+  "_comment_editWorkout": "Dette er tekststrenger for å redigere en treningsøkt.",
+
+  "fetchWorkoutDetailsError": "Kunne ikke oppdatere detaljene for treningsøkten.",
+  "isSaving": "Lagrer...",
+  "saveChanges": "Lagre endringer",
+  "daysAndExercises": "Dager og øvelser",
+  "editWorkout": "Rediger treningsøkt",
+
+  "_comment_myCalendar": "Dette er tekststrenger for Min kalender-visningen.",
+
+  "scheduleTip": "Tips: Du må planlegge treningsøktene dine her for å kunne spore dem på Min fremgang-siden!",
+  "noUpcomingWorkouts": "Ingen kommende treningsøkter er planlagt.",
+  "upcomingWorkouts": "Kommende treningsøkter",
+  "noUntrackedWorkouts": "Ingen uloggede treningsøkter funnet.",
+  "untrackedWorkouts": "Uloggede treningsøkter",
+  "noWorkoutToday": "Ingen treningsøkt planlagt for i dag.",
+  "todaysWorkout": "Dagens treningsøkt",
+  "scheduleWorkout": "Planlegg en treningsøkt",
+  "myCalendar": "Min kalender",
+  "noExerciseLogged": " Ingen øvelser er logget.",
+
+  "_comment_LogWorkouts": "Dette er tekststrenger for å loggføre treningsøkter.",
+
+  "noDatePicked": "Vennligst velg en dato.",
+  "selectAWorkout": "Vennligst velg en treningsøkt.",
+  "selectADay": "Vennligst velg en dag.",
+  "duplicateLogTitle": "Duplisert logg",
+  "duplicateLogMessage": "Det finnes allerede en logg for denne treningsøkten på den valgte datoen.",
+  "selectDate": "Velg dato",
+  "selectADate": "Velg en dato",
+  "selectWorkout": "Velg treningsøkt",
+  "selectDay": "Velg dag",
+  "emptyWorkoutLog": "Opprett en treningsøkt for å kunne spore!",
+  "noDaysAvailable": "Denne treningsøkten har ingen dager!",
+  "scheduleWorkoutLog": "Planlegg treningsøkt",
+
+  "_comment_MyProgress": "Dette er tekststrenger for Min fremgang-visningen.",
+
+  "deleteLogsTitle": "Slett logger",
+  "deleteLogsMessage": "Er du sikker på at du vil slette alle logger knyttet til denne treningsøkten?",
+  "failedToDeleteDays": "Kunne ikke slette tilknyttede dager.",
+  "myProgress": "Min fremgang",
+  "trackAWorkout": "Spor en treningsøkt",
+  "notTracking": "Du sporer ingen treningsøkter.",
+  "myProgressTip": "Tips: Du kan spore øvelsene i treningsøktene du har gjennomført. Helt ned til hver eneste detalj.",
+  "allTracks": "Alle logger",
+
+  "_comment_LogWeights": "Dette er tekststrenger for å loggføre vekter.",
+
+  "failedToLogWeights": "Kunne ikke loggføre vekter.",
+  "Set": "Sett",
+  "Weight": "Vekt",
+  "noWorkoutScheduled": "Du må planlegge en treningsøkt for å kunne spore den!",
+  "trackWeights": "Spor vekter",
+
+  "_comment_WeightLogDetails": "Dette er tekststrenger for detaljer om vekter i loggboken.",
+
+  "deleteWeightLog": "Er du sikker på at du vil slette alle logger for denne dagen på denne datoen?",
+  "weightLog": "logger",
+  "dateFrom": "Dato fra:",
+  "pickStartDate": "Velg en startdato",
+  "dateTo": "Dato til:",
+  "pickEndDate": "Velg en sluttdato",
+  "clearSelection": "Fjern valg",
+  "noLog": "Ingen logger tilgjengelig i den valgte tidsperioden.",
+
+
+
+
+  "navigateToDifficulty": "Anbefalte treningsøkter",
+  "Difficulty": "Vanskelighetsgrad for treningen",
+  "Beginner": "Nybegynner",
+  "Intermediate": "Middels",
+  "Advanced": "Viderekommen",
+  "featuredWorkouts": "Anbefalte treningsøkter",
+  "templateListTip": "Tips: Du kan tilpasse de anbefalte treningsøktene etter at du har lagt dem til i treningslisten din.",
+  "addTemplate": "Legg til i mine treningsøkter"
+}

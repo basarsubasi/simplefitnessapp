@@ -2,7 +2,7 @@
   "expo": {
     "name": "Simple",
     "slug": "simplefitnessappbeta",
-    "version": "1.1.3",
+    "version": "1.4.1",
     "orientation": "portrait",
     "icon": "./assets/simpleicon.png",
     "userInterfaceStyle": "light",
@@ -17,10 +17,14 @@
       "bundleIdentifier": "tr.com.basarsubasi.simplefitnessapp"
     },
     "android": {
-      "appName": "Simple",
+      "versionCode": 25,
       "adaptiveIcon": {
         "foregroundImage": "./assets/simpleicon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#ffffff",
+        "compileSdkVersion": 35,
+        "targetSdkVersion": 34,
+        "buildToolsVersion": "35.0.0",
+        "kotlinVersion": "1.9.25"
       },
       "package": "tr.com.basarsubasi.simplefitnessapp"
     },
@@ -31,6 +35,11 @@
       "eas": {
         "projectId": "1b72cc6b-8e1a-47b1-a7d3-8fcf199a3015"
       }
-    }
+    },
+    "plugins": [
+      "expo-sqlite",
+      "expo-build-properties"
+    ],
+    "owner": "basarsubasi"
   }
 }

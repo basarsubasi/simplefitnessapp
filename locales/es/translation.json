@@ -1,0 +1,162 @@
+{
+  "_comment_global": "Estas son cadenas globales.",
+
+  "alertCancel": "CANCELAR",
+  "alertDelete": "ELIMINAR",
+  "errorTitle": "Error",
+  "Cancel": "Cancelar",
+  "Delete": "Eliminar",
+  "Save": "Guardar",
+  "Sets": "Series",
+  "Reps": "Repeticiones",
+  "Today": "Hoy",
+  "Tomorrow": "Mañana",
+  "Yesterday": "Ayer",
+
+  "workoutNameErrorMessage": "Por favor, introduce un nombre para el entrenamiento.",
+  "provideDayNamesErrorMessage": "Por favor, asigna nombres para todos los días.",
+  "fillExercisesErrorMessage": "Por favor, completa todos los ejercicios con datos válidos.",
+  "failedToCreateWorkoutErrorMessage": "Error al crear el entrenamiento. Por favor, inténtalo de nuevo.",
+
+  "workoutNamePlaceholder": "Nombre del entrenamiento",
+  "dayNamePlaceholder": "Nombre del día",
+  "exerciseNamePlaceholder": "Nombre del ejercicio",
+
+  "setsPlaceholder": "Series",
+  "repsPlaceholder": "Repeticiones",
+
+  "_comment_settings": "Estas son cadenas relacionadas con ajustes.",
+
+  "settingsTitle": "Ajustes",
+  "settingsLanguage": "Idioma",
+  "settingsDateFormat": "Formato de fecha",
+  "settingsWeightFormat": "Formato de peso",
+  "settingsTheme": "Tema",
+  "settingsSwitchDark": "Cambiar a modo oscuro",
+  "settingsSwitchLight": "Cambiar a modo claro",
+
+  "_comment_homepage": "Estas son cadenas relacionadas con la pantalla de inicio.",
+
+  "homeCreateWorkout": "Crea un\nentrenamiento.",
+  "homeGotoWorkouts": "Ir a Mis Entrenamientos",
+  "homeScheduleWorkouts": "Programa\ntu\nentrenamiento.",
+  "homeGotoCalendar": "Ir a Mi Calendario",
+  "homeTrackProgress": "Sigue\ntu\nprogreso.",
+  "homeGotoProgress": "Ir a Mi Progreso",
+
+  "_comment_workoutlist": "Estas son cadenas relacionadas con la lista de entrenamientos.",
+
+  "MyWorkouts": "Mis Entrenamientos",
+  "CreateAWorkout": "Nuevo\nEntrenamiento",
+  "CreateAWorkoutButton": "Crear un nuevo entrenamiento",
+  "WorkoutListTip": "Consejo: Puedes eliminar la mayoría de los elementos manteniendo pulsado sobre ellos. ¡Pruébalo cuando tengas la oportunidad!",
+
+  "_comment_myworkoutspage": "Estas son cadenas relacionadas con la página de mis entrenamientos.",
+
+  "deleteWorkoutTitle": "Eliminando {{workoutName}}",
+  "deleteWorkoutMessage": "¿Estás seguro de que quieres eliminar \"{{workoutName}}\"? Esta acción no afectará a los registros existentes.",
+
+  "_comment_createWorkout": "Estas son cadenas relacionadas con la creación de entrenamientos.",
+
+  "deleteDayTitle": "Eliminar día",
+  "deleteDayMessage": "¿Estás seguro de que quieres eliminar este día?",
+
+  "deleteExerciseTitle": "Eliminar ejercicio",
+  "deleteExerciseMessage": "¿Estás seguro de que quieres eliminar este ejercicio?",
+  "addExercise": "+ Añadir ejercicio",
+  "addDay": "+ Añadir día",
+  "saveWorkout": "Guardar entrenamiento",
+
+  "_comment_workoutDetails": "Estas son cadenas relacionadas con los detalles de un entrenamiento.",
+
+  "noExercises": "No hay ejercicios para este día",
+  "addExerciseFromDetails": "Añadir ejercicio",
+  "addDayFromDetails": "Añadir día",
+  "emptyWorkoutDetails": " No hay días o ejercicios disponibles para este entrenamiento.",
+
+  "deleteDayTitleDetails": "Eliminar día",
+  "deleteDayMessageDetails": "¿Estás seguro de que quieres eliminar este día? Esta acción también eliminará los días de los próximos entrenamientos planificados.",
+  "deleteExerciseTitleDetails": "Eliminar ejercicio",
+  "deleteExerciseMessageDetails": "¿Estás seguro de que quieres eliminar este ejercicio? Esta acción también eliminará el ejercicio de los próximos entrenamientos planificados.",
+
+  "repsValidationError": "Las repeticiones deben ser un número mayor que 0.",
+  "setsValidationError": "Las series deben ser un número mayor que 0.",
+  "exerciseNameValidationError": "El nombre del ejercicio no puede estar vacío.",
+  "dayNameValidationError": "El nombre del día no puede estar vacío.",
+
+  "_comment_editWorkout": "Estas son cadenas relacionadas con la edición de entrenamientos.",
+
+  "fetchWorkoutDetailsError": "Error al actualizar los detalles del entrenamiento.",
+  "isSaving": "Guardando...",
+  "saveChanges": "Guardar cambios",
+  "daysAndExercises": "Días y ejercicios",
+  "editWorkout": "Editar entrenamiento",
+
+  "_comment_myCalendar": "Estas son cadenas relacionadas con Mi Calendario.",
+
+  "scheduleTip": "Consejo: ¡Necesitas programar tus entrenamientos aquí para poder hacerles seguimiento en la pantalla Mi Progreso!",
+  "noUpcomingWorkouts": "No hay entrenamientos programados próximamente.",
+  "upcomingWorkouts": "Próximos Entrenamientos",
+  "noUntrackedWorkouts": "No se encontraron entrenamientos sin seguimiento.",
+  "untrackedWorkouts": "Entrenamientos sin seguimiento",
+  "noWorkoutToday": "No hay entrenamiento programado para hoy.",
+  "todaysWorkout": "Entrenamiento de hoy",
+  "scheduleWorkout": "Programar entrenamiento",
+  "myCalendar": "Mi Calendario",
+  "noExerciseLogged": " No hay ejercicios registrados.",
+
+  "_comment_LogWorkouts": "Estas son cadenas relacionadas con el registro de entrenamientos.",
+
+  "noDatePicked": "Por favor, selecciona una fecha.",
+  "selectAWorkout": "Por favor, selecciona un entrenamiento.",
+  "selectADay": "Por favor, selecciona un día.",
+  "duplicateLogTitle": "Registro duplicado",
+  "duplicateLogMessage": "Ya existe un registro para este entrenamiento en la fecha seleccionada.",
+  "selectDate": "Seleccionar fecha",
+  "selectADate": "Selecciona una fecha",
+  "selectWorkout": "Seleccionar entrenamiento",
+  "selectDay": "Seleccionar día",
+  "emptyWorkoutLog": "¡Crea un entrenamiento para poder hacerle seguimiento!",
+  "noDaysAvailable": "¡Este entrenamiento no tiene días!",
+  "scheduleWorkoutLog": "Programar entrenamiento",
+
+  "_comment_MyProgress": "Estas son cadenas relacionadas con Mi Progreso.",
+
+  "deleteLogsTitle": "Eliminar registros",
+  "deleteLogsMessage": "¿Estás seguro de que quieres eliminar todos los registros asociados con este entrenamiento?",
+  "failedToDeleteDays": "No se pudo eliminar los días asociados.",
+  "myProgress": "Mi Progreso",
+  "trackAWorkout": "Registrar un entrenamiento",
+  "notTracking": "No estás siguiendo ningún entrenamiento.",
+  "myProgressTip": "Consejo: Puedes registrar los ejercicios de los entrenamientos que hayas realizado. Hasta el más mínimo detalle.",
+  "allTracks": "Todos los registros",
+
+
+  "_comment_LogWeights": "Estas son cadenas relacionadas con el registro de pesos.",
+
+  "failedToLogWeights": "No se pudo registrar los pesos.",
+  "Set": "Serie",
+  "Weight": "Peso",
+  "noWorkoutScheduled": "¡Necesitas programar un entrenamiento para poder registrarlo!",
+  "trackWeights": "Registrar pesos",
+
+  "_comment_WeightLogDetails": "Estas son cadenas relacionadas con los detalles del registro de pesos.",
+
+  "deleteWeightLog": "¿Estás seguro de que quieres eliminar todos los registros para este día en esta fecha?",
+  "weightLog": "registros",
+  "dateFrom": "Fecha desde:",
+  "pickStartDate": "Elige una fecha de inicio",
+  "dateTo": "Fecha hasta:",
+  "pickEndDate": "Elige una fecha de fin",
+  "clearSelection": "Borrar selección",
+  "noLog": "No hay registros disponibles entre las fechas seleccionadas.",
+
+  "navigateToDifficulty": "Entrenamientos destacados",
+  "Difficulty": "Dificultad del entrenamiento",
+  "Beginner": "Principiante",
+  "Intermediate": "Intermedio",
+  "Advanced": "Avanzado",
+  "featuredWorkouts": "Entrenamientos destacados",
+  "templateListTip": "Consejo: Puedes personalizar los entrenamientos destacados después de agregarlos a tu lista de entrenamientos.",
+  "addTemplate": "Agregar a mis entrenamientos"
+}

@@ -1,11 +1,18 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
+import { ScaledSheet } from 'react-native-size-matters'; // Import ScaledSheet for scaling
+import { useTranslation } from 'react-i18next';
+
+
+
+
 
 const { height } = Dimensions.get('window'); // Get screen height for dynamic sizing
 
 export default function Home({ navigation }: any) {
   const { theme } = useTheme(); // Get the current theme
+  const { t } = useTranslation(); // Initialize translations
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
@@ -17,85 +24,96 @@ export default function Home({ navigation }: any) {
       {/* Create a Workout Section */}
       <View style={[styles.card, { backgroundColor: theme.homeCardColor1 }]}>
         <Text style={[styles.cardTitle, { color: theme.homeCardText1 }]}>
-          Create a{"\n"}workout.
+        {t('homeCreateWorkout')}
         </Text>
         <TouchableOpacity
           style={[styles.button, { backgroundColor: theme.homeButtonColor1 }]}
           onPress={() => navigation.navigate('My Workouts')}
         >
-          <Text style={[styles.buttonText, { color: theme.homeButtonText1 }]}>Go to My Workouts &gt;</Text>
+          <Text style={[styles.buttonText, { color: theme.homeButtonText1 }]}>{t('homeGotoWorkouts')}</Text>
         </TouchableOpacity>
       </View>
 
       {/* Schedule Your Workout Section */}
       <View style={[styles.card, { backgroundColor: theme.homeCardColor3 }]}>
         <Text style={[styles.cardTitle, { color: theme.homeCardText2 }]}>
-          Schedule{"\n"}your{"\n"}workout.
+        {t('homeScheduleWorkouts')}
         </Text>
         <TouchableOpacity
           style={[styles.button, { backgroundColor: theme.homeButtonColor2 }]}
           onPress={() => navigation.navigate('My Calendar')}
         >
-          <Text style={[styles.buttonText, { color: theme.homeButtonText2 }]}>Go to My Calendar &gt;</Text>
+          <Text style={[styles.buttonText, { color: theme.homeButtonText2 }]}> {t('homeGotoCalendar')}</Text>
         </TouchableOpacity>
       </View>
 
       {/* Track Your Progress Section */}
       <View style={[styles.card, { backgroundColor: theme.homeCardColor2 }]}>
         <Text style={[styles.cardTitle, { color: theme.text }]}>
-          Track{"\n"}your{"\n"}progress.
+        {t('homeTrackProgress')}
         </Text>
         <TouchableOpacity
           style={[styles.button, { backgroundColor: theme.homeButtonColor3 }]}
           onPress={() => navigation.navigate('My Progress')}
         >
-          <Text style={[styles.buttonText, { color: theme.homeButtonText3 }]}>Go to My Progress &gt;</Text>
+          <Text style={[styles.buttonText, { color: theme.homeButtonText3 }]}>{t('homeGotoProgress')}</Text>
         </TouchableOpacity>
+        
       </View>
+
+
     </View>
   );
 }
 
 // Home.tsx
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 20,
-    paddingTop: 30,
+    paddingTop: 20,
   },
   headerContainer: {
-    position: 'relative', // Base container for title and icon
-    marginBottom: 20,
+    position: 'relative',
+    marginBottom: '15@vs', // Slightly reduced scaled margin
   },
   title: {
-    fontSize: 44,
+    fontSize: '36@s', // Smaller scaled font size
     fontWeight: '900',
-    textAlign: 'center', // Center the title horizontally
+    textAlign: 'center',
   },
   card: {
-    borderRadius: 15,
-    padding: 20,
-    marginBottom: 10,
+    borderRadius: 15, // Keep fixed border radius for better uniformity
+    padding: '13@s', // Slightly reduced padding
+    marginBottom: '12@vs', // Reduced vertical margin
     justifyContent: 'center',
     alignItems: 'center',
-    height: height * 0.22,
+    height: '140@vs', // Adjusted height to be smaller
+    width: '90%', // Add a width constraint
+    alignSelf: 'center',
   },
   cardTitle: {
-    fontSize: 24,
+    fontSize: '20@s', // Smaller scaled font size
     fontWeight: '800',
     textAlign: 'center',
-    lineHeight: 30,
+    lineHeight: '26@s', // Adjusted line height
   },
   button: {
-    borderRadius: 20,
-    paddingVertical: 8,
-    paddingHorizontal: 18,
-    marginTop: 10,
+    borderRadius: 20, // Keep fixed radius for consistency
+    paddingVertical: '6@vs', // Slightly reduced padding
+    paddingHorizontal: '14@s', // Adjusted padding
+    marginTop: '8@vs', // Reduced vertical margin
     alignSelf: 'center',
   },
   buttonText: {
-    fontSize: 16,
+    fontSize: '14@s', // Smaller font size for button text
     fontWeight: '800',
+  },
+  lightGrayText: {
+    color: 'white',
+  },
+  adContainer: {
+    alignItems: 'center',
   },
 });

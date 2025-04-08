@@ -1,8 +1,8 @@
   // App.tsx
   import React, {useState } from 'react';
-  import { View,Text, ActivityIndicator, StatusBar, StyleSheet, Pressable } from 'react-native'; // Import Pressable here
+  import { View, ActivityIndicator, StatusBar, StyleSheet, Pressable } from 'react-native'; // Import Pressable here
   import * as FileSystem from 'expo-file-system';
-  import { SQLiteProvider } from 'expo-sqlite';
+  import { SQLiteProvider} from 'expo-sqlite';
   import { Asset } from 'expo-asset';
   import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
   import { NavigationContainer } from '@react-navigation/native';
@@ -18,9 +18,17 @@
   import MyProgress from './screens/MyProgress';
   import LogWeights from './screens/LogWeights';
   import WeightLogDetail from './screens/WeightLogDetail';
+  import './i18n'; // Ensure this is present to initialize i18n
+  import i18n from './i18n'; // Import the i18n instance
+  import { I18nextProvider } from 'react-i18next';
   import Settings from './screens/Settings';
   import { SettingsProvider } from './context/SettingsContext';
   import { ThemeProvider, useTheme } from './context/ThemeContext';
+  import EditWorkout from './screens/EditWorkout';
+  import AllLogs from './screens/AllLogs';
+  import Difficulty from './screens/Difficulty';
+  import Template from './screens/Template';
+  import TemplateDetails from './screens/TemplateDetails';
 
 
 
@@ -30,10 +38,17 @@
   const WorkoutLogStackScreen= createNativeStackNavigator<WorkoutLogStackParamList>();
   const WeightLogStackScreen= createNativeStackNavigator<WeightLogStackParamList>();
 
+  
+
+
+
+  
+
   const resetDatabase = async () => {
     try {
       const dbName = "SimpleDB.db";
       const dbFilePath = `${FileSystem.documentDirectory}SQLite/${dbName}`;
+
 
       // Check if the database file exists
       const fileInfo = await FileSystem.getInfoAsync(dbFilePath);
@@ -70,9 +85,9 @@
       const dbAsset = require("./assets/SimpleDB.db");
       const dbUri = Asset.fromModule(dbAsset).uri;
       const dbFilePath = `${FileSystem.documentDirectory}SQLite/${dbName}`;
-
+  
       const fileInfo = await FileSystem.getInfoAsync(dbFilePath);
-
+  
       if (!fileInfo.exists) {
         await FileSystem.makeDirectoryAsync(
           `${FileSystem.documentDirectory}SQLite`,
@@ -80,33 +95,47 @@
         );
         console.log("Downloading database...");
         await FileSystem.downloadAsync(dbUri, dbFilePath);
+        
       } else {
         console.log("Database already exists.");
+ 
       }
     } catch (error) {
       console.error("Error in loadDatabase:", error);
     }
   };
+  
 
 
   export type WorkoutStackParamList = {
     WorkoutsList: undefined; // No parameters for this route
     CreateWorkout: undefined; // No parameters for this route
     WorkoutDetails: { workout_id: number }; // Add this
+    EditWorkout: { workout_id: number }; // Only `workout_id` for editing a workout
+    TemplateList: undefined;
+    DifficultyList: undefined;
+    Difficulty: undefined;
+    Template: { workout_difficulty: string };
+    TemplateDetails: { workout_id: number };
   };
 
   export type WorkoutLogStackParamList = {
     MyCalendar: undefined; // No parameters for this route
     LogWorkout: undefined; // No parameters for this route
   };
+
   export type WeightLogStackParamList = {
     MyProgress: undefined;
     LogWeights: undefined;
     WeightLogDetail:{ workoutName: string }
+    AllLogs: undefined;
   }
 
   function WorkoutStack() {
     return (
+
+      <SQLiteProvider databaseName="SimpleDB.db" useSuspense>
+
       <WorkoutStackScreen.Navigator screenOptions={{
         headerShown: false, // Disable headers for all screens in this stack
       }}
@@ -126,7 +155,28 @@
           component={WorkoutDetails}
           options={{title: 'WorkoutDetails'}}
           />
+             <WorkoutStackScreen.Screen
+          name='EditWorkout'
+          component={EditWorkout}
+          options={{title: 'EditWorkout'}}
+          />
+                       <WorkoutStackScreen.Screen
+          name='Difficulty'
+          component={Difficulty}
+          options={{title: 'Difficulty'}}
+          />
+                       <WorkoutStackScreen.Screen
+          name='Template'
+          component={Template}
+          options={{title: 'Template'}}
+          />
+                       <WorkoutStackScreen.Screen
+          name='TemplateDetails'
+          component={TemplateDetails}
+          options={{title: 'TemplateDetails'}}
+          />
       </WorkoutStackScreen.Navigator>
+      </SQLiteProvider>
     );
   }
 
@@ -175,6 +225,11 @@
           component={WeightLogDetail}
           options={{ headerShown: false }} // No header for MyCalendar screen
         />
+      <WeightLogStackScreen.Screen
+          name="AllLogs"
+          component={AllLogs}
+          options={{ headerShown: false }} // No header for MyCalendar screen
+        />    
       
       </WeightLogStackScreen.Navigator>
     );
@@ -182,6 +237,7 @@
 // Define AppContent here
 const AppContent = () => {
   const { theme } = useTheme(); // Access the theme context
+  
 
   return (
     <>
@@ -193,8 +249,7 @@ const AppContent = () => {
               </View>
             }
             />
-
-          <SQLiteProvider databaseName="SimpleDB.db" useSuspense>
+             <SQLiteProvider databaseName="SimpleDB.db" useSuspense>
             <Bottom.Navigator
                 screenOptions={{
                   headerShown: false,
@@ -258,7 +313,7 @@ const AppContent = () => {
        />
 
                  </Bottom.Navigator>
-               </SQLiteProvider>
+                 </SQLiteProvider>
          </>
   );
 };
@@ -266,36 +321,40 @@ const AppContent = () => {
 
 
   export default function App() {
+
     const [dbLoaded, setDbLoaded] = useState<boolean>(false);
 
+  React.useEffect(() => {
+    (async () => {
+      try {
+        //await resetDatabase();
+        await loadDatabase();
+        setDbLoaded(true);
+      } catch (e) {
+        console.error("Database loading error:", e);
+      }
+    })();
+  }, []);
+  
+  if (!dbLoaded) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="black" />
+      </View>
+    );
+  }
 
-    React.useEffect(() => {
-      (async () => {
-        try {
-          //await resetDatabase();
-          await loadDatabase();
-          setDbLoaded(true);
-        } catch (e) {
-          console.error("Database loading error:", e);
-        }
-      })();
-    }, []);
-    
-    if (!dbLoaded) {
-      return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <ActivityIndicator size="large" color="black" />
-        </View>
-      );
-    }
 
     return (
       <ThemeProvider>
       <GestureHandlerRootView>
         <NavigationContainer>
           <SettingsProvider>
-          <AppContent/> {/* Use AppContent here */}
+          <I18nextProvider i18n={i18n}>
+          <AppContent/>
+          </I18nextProvider>
           </SettingsProvider>
+         
         </NavigationContainer>
         
       </GestureHandlerRootView>
@@ -335,6 +394,3 @@ const AppContent = () => {
       padding: 1,
     },
   });
-
-
-

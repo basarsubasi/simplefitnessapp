@@ -1,0 +1,164 @@
+{
+  "_comment_global": "Dessa är globala strängar.",
+
+  "alertCancel": "AVBRYT",
+  "alertDelete": "RADERA",
+  "errorTitle": "Fel",
+  "Cancel": "Avbryt",
+  "Delete": "Radera",
+  "Save": "Spara",
+  "Sets": "Set",
+  "Reps": "Reps",
+  "Today": "Idag",
+  "Tomorrow": "Imorgon",
+  "Yesterday": "Igår",
+
+  "workoutNameErrorMessage": "Ange ett namn på träningspasset.",
+  "provideDayNamesErrorMessage": "Var god ange namn för alla dagar.",
+  "fillExercisesErrorMessage": "Vänligen fyll i alla övningar med giltiga uppgifter.",
+  "failedToCreateWorkoutErrorMessage": "Misslyckades med att skapa träningspass. Försök igen.",
+
+  "workoutNamePlaceholder": "Namn på träningspass",
+  "dayNamePlaceholder": "Dagens namn",
+  "exerciseNamePlaceholder": "Namn på övning",
+
+  "setsPlaceholder": "Set",
+  "repsPlaceholder": "Reps",
+
+  "_comment_settings": "Dessa är strängar relaterade till inställningar.",
+
+  "settingsTitle": "Inställningar",
+  "settingsLanguage": "Språk",
+  "settingsDateFormat": "Datumformat",
+  "settingsWeightFormat": "Viktformat",
+  "settingsTheme": "Tema",
+  "settingsSwitchDark": "Byt till mörkt läge",
+  "settingsSwitchLight": "Byt till ljust läge",
+
+  "_comment_homepage": "Dessa är strängar relaterade till hemskärmen.",
+
+  "homeCreateWorkout": "Skapa ett\nträningspass.",
+  "homeGotoWorkouts": "Gå till Mina Träningspass",
+  "homeScheduleWorkouts": "Schemalägg\nditt\nträningspass.",
+  "homeGotoCalendar": "Gå till Min Kalender",
+  "homeTrackProgress": "Följ\ndin\nutveckling.",
+  "homeGotoProgress": "Gå till Min Utveckling",
+
+  "_comment_workoutlist": "Dessa är strängar relaterade till listan över träningspass.",
+
+  "MyWorkouts": "Mina Träningspass",
+  "CreateAWorkout": "Nytt\nTräningspass",
+  "CreateAWorkoutButton": "Skapa ett nytt träningspass",
+  "WorkoutListTip": "Tips: Du kan radera de flesta saker genom att hålla dem intryckta länge. Testa när du får chansen!",
+
+  "_comment_myworkoutspage": "Dessa är strängar relaterade till sidan Mina Träningspass.",
+
+  "deleteWorkoutTitle": "Raderar {{workoutName}}",
+  "deleteWorkoutMessage": "Är du säker på att du vill radera \"{{workoutName}}\"? Denna åtgärd påverkar inte befintliga loggar.",
+
+  "_comment_createWorkout": "Dessa är strängar relaterade till att skapa ett träningspass.",
+
+  "deleteDayTitle": "Radera Dag",
+  "deleteDayMessage": "Är du säker på att du vill radera denna dag?",
+
+  "deleteExerciseTitle": "Radera Övning",
+  "deleteExerciseMessage": "Är du säker på att du vill radera denna övning?",
+  "addExercise": "+ Lägg till Övning",
+  "addDay": "+ Lägg till Dag",
+  "saveWorkout": "Spara Träningspass",
+
+  "_comment_workoutDetails": "Dessa är strängar relaterade till detaljer i träningspasset.",
+
+  "noExercises": "Inga övningar denna dag",
+  "addExerciseFromDetails": "Lägg till Övning",
+  "addDayFromDetails": "Lägg till Dag",
+  "emptyWorkoutDetails": " Inga dagar eller övningar tillgängliga för detta träningspass.",
+
+  "deleteDayTitleDetails": "Radera Dag",
+  "deleteDayMessageDetails": "Är du säker på att du vill radera denna dag? Denna åtgärd tar även bort dagarna från kommande planerade träningspass.",
+  "deleteExerciseTitleDetails": "Radera Övning",
+  "deleteExerciseMessageDetails": "Är du säker på att du vill radera denna övning? Denna åtgärd tar även bort övningen från kommande planerade träningspass.",
+
+  "repsValidationError": "Reps måste vara ett nummer större än 0.",
+  "setsValidationError": "Set måste vara ett nummer större än 0.",
+  "exerciseNameValidationError": "Övningsnamnet kan inte vara tomt.",
+  "dayNameValidationError": "Dagens namn kan inte vara tomt.",
+
+  "_comment_editWorkout": "Dessa är strängar relaterade till att redigera ett träningspass.",
+
+  "fetchWorkoutDetailsError": "Misslyckades med att uppdatera informationen om träningspasset.",
+  "isSaving": "Sparar...",
+  "saveChanges": "Spara Ändringar",
+  "daysAndExercises": "Dagar och Övningar",
+  "editWorkout": "Redigera Träningspass",
+
+  "_comment_myCalendar": "Dessa är strängar relaterade till Min Kalender.",
+
+  "scheduleTip": "Tips: Du måste schemalägga dina träningspass här för att kunna följa dem i vyn Min Utveckling!",
+  "noUpcomingWorkouts": "Inga kommande träningspass schemalagda.",
+  "upcomingWorkouts": "Kommande Träningspass",
+  "noUntrackedWorkouts": "Inga ospårade träningspass hittades.",
+  "untrackedWorkouts": "Ospårade Träningspass",
+  "noWorkoutToday": "Inget träningspass är schemalagt idag.",
+  "todaysWorkout": "Dagens Träningspass",
+  "scheduleWorkout": "Schemalägg ett Träningspass",
+  "myCalendar": "Min Kalender",
+  "noExerciseLogged": " Inga övningar inloggade.",
+
+  "_comment_LogWorkouts": "Dessa är strängar relaterade till att logga träningspass.",
+
+  "noDatePicked": "Välj ett datum.",
+  "selectAWorkout": "Välj ett träningspass.",
+  "selectADay": "Välj en dag.",
+  "duplicateLogTitle": "Duplicerad Logg",
+  "duplicateLogMessage": "Det finns redan en logg för detta träningspass på det valda datumet.",
+  "selectDate": "Välj Datum",
+  "selectADate": "Välj ett Datum",
+  "selectWorkout": "Välj Träningspass",
+  "selectDay": "Välj Dag",
+  "emptyWorkoutLog": "Skapa ett träningspass att följa!",
+  "noDaysAvailable": "Detta träningspass har inga dagar!",
+  "scheduleWorkoutLog": "Schemalägg Träningspass",
+
+  "_comment_MyProgress": "Dessa är strängar relaterade till Min Utveckling.",
+
+  "deleteLogsTitle": "Radera Loggar",
+  "deleteLogsMessage": "Är du säker på att du vill radera alla loggar som är associerade med detta träningspass?",
+  "failedToDeleteDays": "Misslyckades med att radera associerade dagar.",
+  "myProgress": "Min Utveckling",
+  "trackAWorkout": "Spåra ett Träningspass",
+  "notTracking": "Du spårar inga träningspass för närvarande.",
+  "myProgressTip": "Tips: Du kan spåra övningarna i de träningspass du utfört. Ända in i minsta detalj.",
+  "allTracks": "Alla loggar",
+
+  "_comment_LogWeights": "Dessa är strängar relaterade till att logga vikter.",
+
+  "failedToLogWeights": "Misslyckades med att logga vikter.",
+  "Set": "Set",
+  "Weight": "Vikt",
+  "noWorkoutScheduled": "Du måste schemalägga ett träningspass för att spåra det!",
+  "trackWeights": "Spåra Vikter",
+
+  "_comment_WeightLogDetails": "Dessa är strängar relaterade till detaljer kring viktloggar.",
+
+  "deleteWeightLog": "Är du säker på att du vill radera alla loggar för denna dag på detta datum?",
+  "weightLog": "loggar",
+  "dateFrom": "Datum Från:",
+  "pickStartDate": "Välj ett startdatum",
+  "dateTo": "Datum Till:",
+  "pickEndDate": "Välj ett slutdatum",
+  "clearSelection": "Rensa Val",
+  "noLog": "Inga loggar tillgängliga mellan de valda datumen.",
+
+
+
+
+  "navigateToDifficulty": "Rekommenderade träningspass",
+  "Difficulty": "Svårighetsgrad för träningspass",
+  "Beginner": "Nybörjare",
+  "Intermediate": "Mellanliggande",
+  "Advanced": "Avancerad",
+  "featuredWorkouts": "Rekommenderade träningspass",
+  "templateListTip": "Tips: Du kan anpassa de rekommenderade träningspassen efter att du har lagt till dem i din träningslista.",
+  "addTemplate": "Lägg till i mina träningspass"
+}

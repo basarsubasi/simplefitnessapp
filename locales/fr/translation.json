@@ -1,0 +1,165 @@
+{
+  "_comment_global": "Voici des chaînes globales.",
+
+  "alertCancel": "ANNULER",
+  "alertDelete": "SUPPRIMER",
+  "errorTitle": "Erreur",
+  "Cancel": "Annuler",
+  "Delete": "Supprimer",
+  "Save": "Enregistrer",
+  "Sets": "Séries",
+  "Reps": "Répétitions",
+  "Today": "Aujourd'hui",
+  "Tomorrow": "Demain",
+  "Yesterday": "Hier",
+
+  "workoutNameErrorMessage": "Veuillez saisir un nom d'entraînement.",
+  "provideDayNamesErrorMessage": "Veuillez fournir des noms pour tous les jours.",
+  "fillExercisesErrorMessage": "Veuillez compléter tous les exercices avec des données valides.",
+  "failedToCreateWorkoutErrorMessage": "Échec de la création de l'entraînement. Veuillez réessayer.",
+
+  "workoutNamePlaceholder": "Nom de l'entraînement",
+  "dayNamePlaceholder": "Nom du jour",
+  "exerciseNamePlaceholder": "Nom de l'exercice",
+
+  "setsPlaceholder": "Séries",
+  "repsPlaceholder": "Répétitions",
+
+  "_comment_settings": "Voici des chaînes liées aux paramètres.",
+
+  "settingsTitle": "Paramètres",
+  "settingsLanguage": "Langue",
+  "settingsDateFormat": "Format de date",
+  "settingsWeightFormat": "Format de poids",
+  "settingsTheme": "Thème",
+  "settingsSwitchDark": "Passer en mode sombre",
+  "settingsSwitchLight": "Passer en mode clair",
+
+  "_comment_homepage": "Voici des chaînes liées à la page d'accueil.",
+
+  "homeCreateWorkout": "Créez un\nentraînement.",
+  "homeGotoWorkouts": "Aller à Mes entraînements",
+  "homeScheduleWorkouts": "Planifiez\nvotre\nentraînement.",
+  "homeGotoCalendar": "Aller à Mon calendrier",
+  "homeTrackProgress": "Suivez\nvotre\nprogression.",
+  "homeGotoProgress": "Aller à Ma progression",
+
+  "_comment_workoutlist": "Voici des chaînes liées à la liste d'entraînements.",
+
+  "MyWorkouts": "Mes entraînements",
+  "CreateAWorkout": "Nouvel\nentraînement",
+  "CreateAWorkoutButton": "Créer un nouvel entraînement",
+  "WorkoutListTip": "Conseil : Vous pouvez supprimer la plupart des éléments en maintenant un appui long dessus. Essayez dès que vous en avez l'occasion !",
+
+  "_comment_myworkoutspage": "Voici des chaînes liées à la page Mes entraînements.",
+
+  "deleteWorkoutTitle": "Suppression de {{workoutName}}",
+  "deleteWorkoutMessage": "Êtes-vous sûr de vouloir supprimer « {{workoutName}} » ? Cette action n'affectera pas les journaux existants.",
+
+  "_comment_createWorkout": "Voici des chaînes liées à la création d'entraînement.",
+
+  "deleteDayTitle": "Supprimer le jour",
+  "deleteDayMessage": "Êtes-vous sûr de vouloir supprimer ce jour ?",
+
+  "deleteExerciseTitle": "Supprimer l'exercice",
+  "deleteExerciseMessage": "Êtes-vous sûr de vouloir supprimer cet exercice ?",
+  "addExercise": "+ Ajouter un exercice",
+  "addDay": "+ Ajouter un jour",
+  "saveWorkout": "Enregistrer l'entraînement",
+
+  "_comment_workoutDetails": "Voici des chaînes liées aux détails d'un entraînement.",
+
+  "noExercises": "Aucun exercice ce jour-là",
+  "addExerciseFromDetails": "Ajouter un exercice",
+  "addDayFromDetails": "Ajouter un jour",
+  "emptyWorkoutDetails": " Aucun jour ni exercice disponible pour cet entraînement.",
+
+  "deleteDayTitleDetails": "Supprimer le jour",
+  "deleteDayMessageDetails": "Êtes-vous sûr de vouloir supprimer ce jour ? Cette action supprimera également les jours des futurs entraînements prévus.",
+  "deleteExerciseTitleDetails": "Supprimer l'exercice",
+  "deleteExerciseMessageDetails": "Êtes-vous sûr de vouloir supprimer cet exercice ? Cette action supprimera également l'exercice des futurs entraînements prévus.",
+
+  "repsValidationError": "Les répétitions doivent être un nombre supérieur à 0.",
+  "setsValidationError": "Les séries doivent être un nombre supérieur à 0.",
+  "exerciseNameValidationError": "Le nom de l'exercice ne peut pas être vide.",
+  "dayNameValidationError": "Le nom du jour ne peut pas être vide.",
+
+  "_comment_editWorkout": "Voici des chaînes liées à la modification d'un entraînement.",
+
+  "fetchWorkoutDetailsError": "Échec de la mise à jour des détails de l'entraînement.",
+  "isSaving": "Enregistrement...",
+  "saveChanges": "Enregistrer les modifications",
+  "daysAndExercises": "Jours et exercices",
+  "editWorkout": "Modifier l'entraînement",
+
+  "_comment_myCalendar": "Voici des chaînes liées à Mon calendrier.",
+
+  "scheduleTip": "Conseil : Vous devez planifier vos entraînements ici pour les suivre dans l'onglet Ma progression !",
+  "noUpcomingWorkouts": "Aucun entraînement à venir de prévu.",
+  "upcomingWorkouts": "Entraînements à venir",
+  "noUntrackedWorkouts": "Aucun entraînement non suivi trouvé.",
+  "untrackedWorkouts": "Entraînements non suivis",
+  "noWorkoutToday": "Aucun entraînement prévu aujourd'hui.",
+  "todaysWorkout": "Entraînement du jour",
+  "scheduleWorkout": "Planifier un entraînement",
+  "myCalendar": "Mon calendrier",
+  "noExerciseLogged": " Aucun exercice enregistré.",
+
+  "_comment_LogWorkouts": "Voici des chaînes liées à l'enregistrement des entraînements.",
+
+  "noDatePicked": "Veuillez sélectionner une date.",
+  "selectAWorkout": "Veuillez sélectionner un entraînement.",
+  "selectADay": "Veuillez sélectionner un jour.",
+  "duplicateLogTitle": "Journal en double",
+  "duplicateLogMessage": "Un journal existe déjà pour cet entraînement à la date choisie.",
+  "selectDate": "Sélectionner une date",
+  "selectADate": "Sélectionnez une date",
+  "selectWorkout": "Sélectionner un entraînement",
+  "selectDay": "Sélectionner un jour",
+  "emptyWorkoutLog": "Créez un entraînement à suivre !",
+  "noDaysAvailable": "Cet entraînement ne comporte aucun jour !",
+  "scheduleWorkoutLog": "Planifier l'entraînement",
+
+  "_comment_MyProgress": "Voici des chaînes liées à Ma progression.",
+
+  "deleteLogsTitle": "Supprimer les journaux",
+  "deleteLogsMessage": "Êtes-vous sûr de vouloir supprimer tous les journaux associés à cet entraînement ?",
+  "failedToDeleteDays": "Échec de la suppression des jours associés.",
+  "myProgress": "Ma progression",
+  "trackAWorkout": "Suivre un entraînement",
+  "notTracking": "Vous ne suivez aucun entraînement.",
+  "myProgressTip": "Conseil : Vous pouvez suivre les exercices des entraînements que vous avez effectués. Jusqu'au moindre détail.",
+  "allTracks": "Tous les journaux",
+
+
+  "_comment_LogWeights": "Voici des chaînes liées à l'enregistrement des poids.",
+
+  "failedToLogWeights": "Échec de l'enregistrement des poids.",
+  "Set": "Série",
+  "Weight": "Poids",
+  "noWorkoutScheduled": "Vous devez planifier un entraînement pour le suivre !",
+  "trackWeights": "Enregistrer les poids",
+
+  "_comment_WeightLogDetails": "Voici des chaînes liées aux détails de l'enregistrement des poids.",
+
+  "deleteWeightLog": "Êtes-vous sûr de vouloir supprimer tous les journaux pour ce jour à cette date ?",
+  "weightLog": "journaux",
+  "dateFrom": "Date de début :",
+  "pickStartDate": "Choisissez une date de début",
+  "dateTo": "Date de fin :",
+  "pickEndDate": "Choisissez une date de fin",
+  "clearSelection": "Effacer la sélection",
+  "noLog": "Aucun journal disponible entre les dates sélectionnées.",
+
+
+
+
+  "navigateToDifficulty": "Entraînements recommandés",
+  "Difficulty": "Difficulté de l'entraînement",
+  "Beginner": "Débutant",
+  "Intermediate": "Intermédiaire",
+  "Advanced": "Avancé",
+  "featuredWorkouts": "Entraînements recommandés",
+  "templateListTip": "Conseil : Vous pouvez personnaliser les entraînements recommandés après les avoir ajoutés à votre liste d'entraînements.",
+  "addTemplate": "Ajouter à mes entraînements"
+}

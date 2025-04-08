@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -12,8 +12,11 @@ import { useSQLiteContext } from 'expo-sqlite';
 import { WorkoutLog, LoggedExercise } from '../types';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useSettings } from '../context/SettingsContext';
+
 import { useTheme } from '../context/ThemeContext';
 import { KeyboardAwareFlatList, KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { useTranslation } from 'react-i18next';
+
 
 
 
@@ -24,6 +27,7 @@ export default function LogWeights() {
   const navigation = useNavigation();
 
   const { theme } = useTheme(); // Add the theme hook here
+  const { t } = useTranslation(); // Initialize translations
   const [workouts, setWorkouts] = useState<WorkoutLog[]>([]);
   const [selectedWorkout, setSelectedWorkout] = useState<WorkoutLog | null>(null);
   const [exercises, setExercises] = useState<LoggedExercise[]>([]);
@@ -103,11 +107,11 @@ export default function LogWeights() {
   
     // Check if the date matches today, yesterday, or tomorrow
     if (isSameDay(date, today)) {
-      return 'Today';
+      return t('Today');
     } else if (isSameDay(date, yesterday)) {
-      return 'Yesterday';
+      return t('Yesterday');
     } else if (isSameDay(date, tomorrow)) {
-      return 'Tomorrow';
+      return t('Tomorrow');
     }
   
     // Default date formatting based on user-selected format
@@ -154,7 +158,7 @@ export default function LogWeights() {
 
   const logWeights = async () => {
     if (!selectedWorkout) {
-      Alert.alert('Error', 'Please select a workout.');
+      Alert.alert(t('errorTitle'), t('selectAWorkout'));
       return;
     }
 
@@ -192,9 +196,11 @@ export default function LogWeights() {
       navigation.goBack();
     } catch (error) {
       console.error('Error logging weights:', error);
-      Alert.alert('Error', 'Failed to log weights.');
+      Alert.alert(t('errorTitle'), t('failedToLogWeights'));
     }
   };
+  const [adHeight, setAdHeight] = useState(50);
+
 
   const renderExercise = (exercise: LoggedExercise) => {
     return (
@@ -203,8 +209,8 @@ export default function LogWeights() {
       <View style={[styles.exerciseContainer, { backgroundColor: theme.background, borderColor: theme.border }]}>
       <Text style={[styles.exerciseTitle, { color: theme.text }]}>{exercise.exercise_name}</Text>
       <View style={styles.labelsRow}>
-        <Text style={[styles.label, { color: theme.text }]}>Reps</Text>
-        <Text style={[styles.label, { color: theme.text }]}>Weight ({weightFormat})</Text>
+        <Text style={[styles.label, { color: theme.text }]}>{t('repsPlaceholder')}</Text>
+        <Text style={[styles.label, { color: theme.text }]}>{t('Weight')} ({weightFormat})</Text>
       </View>
       {exerciseSets[exercise.logged_exercise_id]?.map((setNumber) => {
         const weightKey = `${exercise.logged_exercise_id}_${setNumber}`;
@@ -219,27 +225,18 @@ export default function LogWeights() {
             onLongPress={() => deleteSet(exercise.logged_exercise_id.toString(), setNumber)}
             style={[styles.setContainer, { backgroundColor: theme.background, borderColor: theme.logborder }]}
           >
-            <Text style={[styles.setText, { color: theme.text }]}>Set {setNumber}:</Text>
+            <Text style={[styles.setText, { color: theme.text }]}>{t('Set')} {setNumber}:</Text>
             <TextInput
               style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.logborder }]}
-              placeholder="Reps"
+              placeholder={t('repsPlaceholder')}
               placeholderTextColor={theme.logborder}
               keyboardType="numeric"
               value={reps[repsKey]}
               onChangeText={(text) => {
-                const sanitizedText = text.replace(/[^0-9]/g, ''); // Remove non-numeric characters
-                let value = parseInt(sanitizedText || '0'); // Convert to integer
-                if (value > 0 && value <= 10000) {
-                  setReps((prev) => ({
-                    ...prev,
-                    [repsKey]: value.toString(), // Update state with valid input
-                  }));
-                } else if (value === 0) {
-                  setReps((prev) => ({
-                    ...prev,
-                    [repsKey]: '', // Prevent 0 from being displayed
-                  }));
-                }
+                setReps((prev) => ({
+                  ...prev,
+                  [repsKey]: text,
+                }));
               }}
             />
     
@@ -250,10 +247,9 @@ export default function LogWeights() {
               keyboardType="decimal-pad"
               value={weights[weightKey]}
               onChangeText={(text) => {
-                const sanitizedText = text.replace(/[^0-9.,]/g, '');
                 setWeights((prev) => ({
                   ...prev,
-                  [weightKey]: sanitizedText,
+                  [weightKey]: text,
                 }));
               }}
             />
@@ -273,17 +269,19 @@ export default function LogWeights() {
 
   return (
 
-    <KeyboardAwareScrollView
+<KeyboardAwareScrollView
       style={{ flex: 1, backgroundColor: theme.background }}
       contentContainerStyle={{ flexGrow: 1, padding: 20 }}
       enableOnAndroid={true}
     >
 
-  <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+  
+<TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
     <Ionicons name="arrow-back" size={24} color={theme.text} />
   </TouchableOpacity>
 
-  <Text style={[styles.title, { color: theme.text }]}>Track Weights</Text>
+  <Text style={[styles.title, { color: theme.text }]}>{t('trackWeights')}</Text>
+      
 
   {!selectedWorkout ? (
     <KeyboardAwareFlatList
@@ -303,7 +301,7 @@ export default function LogWeights() {
         </TouchableOpacity>
       )}
       ListEmptyComponent={
-        <Text style={[styles.emptyText, { color: theme.text }]}>No workouts available to Track.</Text>
+        <Text style={[styles.emptyText, { color: theme.text }]}>{t('noWorkoutScheduled')}</Text>
       }
     />
   ) : (
@@ -313,11 +311,11 @@ export default function LogWeights() {
         keyExtractor={(item) => item.logged_exercise_id.toString()}
         renderItem={({ item }) => renderExercise(item)}
         ListEmptyComponent={
-          <Text style={[styles.emptyText, { color: theme.text }]}>No exercises available.</Text>
+          <Text style={[styles.emptyText, { color: theme.text }]}>{t('noExercises')}</Text>
         }
       />
       <TouchableOpacity style={[styles.saveButton, { backgroundColor: theme.buttonBackground }]} onPress={logWeights}>
-        <Text style={[styles.saveButtonText, { color: theme.buttonText }]}>Track Weights</Text>
+        <Text style={[styles.saveButtonText, { color: theme.buttonText }]}>{t('trackWeights')}</Text>
       </TouchableOpacity>
     </>
   )}
@@ -334,9 +332,12 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#FFFFFF',
   },
+  adContainer: {
+  alignItems : 'center',
+  },
   backButton: {
-    position: 'absolute',
-    top: 20,
+
+    top: 40,
     left: 10,
     zIndex: 10,
     padding: 8,
@@ -434,7 +435,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     borderRadius: 10,
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: 5,
   },
   saveButtonText: {
     color: '#FFFFFF',
@@ -442,6 +443,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   emptyText: {
+    marginTop:80,
     textAlign: 'center',
     color: '#666666',
     fontSize: 16,
