@@ -59,6 +59,13 @@ An easy to use fitness app that lets you create, schedule and track your workout
 </br>
 
 
+<a href="https://f-droid.org/packages/tr.com.basarsubasi.simplefitnessapp" style="padding: 10px;">
+    <img src="https://f-droid.org/badge/get-it-on.png" alt="Get it on F-Droid" width="180">
+</a>
+
+</br>
+
+
 <a href="https://play.google.com/store/apps/details?id=tr.com.basarsubasi.simplefitnessapp" style="padding: 10px;">
     <img src="https://github.com/user-attachments/assets/c11a6262-0a5b-4100-9394-0832507f8eef" alt="Get it on Google Play" width="180">
 </a>
@@ -67,6 +74,8 @@ An easy to use fitness app that lets you create, schedule and track your workout
 
 <a href="https://apps.apple.com/us/app/simple-fitness-simplified/id6740262965" style="padding: 10px;">
     <img src="https://github.com/user-attachments/assets/9473c701-e53e-4bb9-bbc2-3cf01669889f" alt="Download from App Store" width="180">
+</a>
+
 
 </div>
 
@@ -74,7 +83,7 @@ An easy to use fitness app that lets you create, schedule and track your workout
 
 
 
-Soon on  F-Droid.
+
 
 
 
