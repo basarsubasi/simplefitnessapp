@@ -350,9 +350,6 @@ export default function StartedWorkoutInterface() {
             stopRestTimer();
             setCurrentSetIndex(currentSetIndex + 1);
             setWorkoutStage('exercise');
-            if (enableVibration) {
-              Vibration.vibrate([500, 300, 500]);
-            }
           } else {
             // Continue rest timer
             stopRestTimer();
