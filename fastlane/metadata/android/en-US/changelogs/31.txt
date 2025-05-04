@@ -1,0 +1,10 @@
+Main Changes:
+
+    Minor bugfixes
+    Notifications are here (always off by default)
+    Now you can plan recurring (automatically scheduled) workouts, it will always schedule your workout to the next instance of your preferred interval. (you need to be visiting the app at least once for this)
+    There is a new "Start workout" section which enables you to start walk you through the workouts, it logs your weights and reps when you finish your workout automatically, it also has rest and general timers to keep the time in check.
+    Now you can see your progress graphically in the Graphs section.
+    Added buttons to settings page to import and export the data of the app, now you can backup and restore your workouts!
+
+Try them out!
