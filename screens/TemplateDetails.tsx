@@ -9,7 +9,6 @@ import { useTheme } from '../context/ThemeContext';
 import { WorkoutStackParamList } from '../App';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useTranslation } from 'react-i18next';
-import Workouts from './Workouts';
 
 
 

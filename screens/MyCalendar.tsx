@@ -1,4 +1,4 @@
-import React, { useEffect,useState } from 'react';
+import React, {useState } from 'react';
 import {
   View,
   Text,
@@ -17,6 +17,8 @@ import { useSettings } from '../context/SettingsContext';
 
 import { useTheme } from '../context/ThemeContext';
 import { useTranslation } from 'react-i18next';
+import { useNotifications } from '../utils/useNotifications';
+import { useRecurringWorkouts } from '../utils/recurringWorkoutUtils';
 
 
 
@@ -58,10 +60,28 @@ export default function MyCalendar() {
     today.getDate()
   ).getTime() / 1000; // Start of today in seconds
 
+  const { cancelNotification } = useNotifications();
+  const { checkRecurringWorkouts } = useRecurringWorkouts();
+
   useFocusEffect(
     React.useCallback(() => {
-      fetchWorkouts();
-    }, [db])
+      // Check for recurring workouts when screen is focused
+      const checkAndFetchWorkouts = async () => {
+        console.log('MyCalendar: Checking recurring workouts');
+        // First check and schedule any recurring workouts
+        await checkRecurringWorkouts();
+        
+        // Then fetch the workouts to display the latest data
+        fetchWorkouts();
+      };
+      
+      checkAndFetchWorkouts();
+      
+     
+      
+      return () => {
+      };
+    }, [])
   );
 
   const fetchWorkouts = async () => {
@@ -74,7 +94,7 @@ export default function MyCalendar() {
 
       const endOfDayTimestamp = startOfDayTimestamp + 86400 - 1;
 
-      // Fetch today's workout
+      // Fetch today's workout - modified to exclude logged workouts
       const todayResult = await db.getAllAsync<{
         workout_name: string;
         workout_date: number;
@@ -82,7 +102,8 @@ export default function MyCalendar() {
         workout_log_id: number;
       }>(
         `SELECT * FROM Workout_Log 
-         WHERE workout_date BETWEEN ? AND ?;`,
+         WHERE workout_date BETWEEN ? AND ?
+           AND workout_log_id NOT IN (SELECT DISTINCT workout_log_id FROM Weight_Log);`,
         [startOfDayTimestamp, endOfDayTimestamp]
       );
       setTodayWorkout(todayResult[0] || null);
@@ -214,6 +235,18 @@ export default function MyCalendar() {
           style: 'destructive',
           onPress: async () => {
             try {
+              // First, get the notification_id if it exists
+              const [workoutNotification] = await db.getAllAsync<{ notification_id: string | null }>(
+                'SELECT notification_id FROM Workout_Log WHERE workout_log_id = ?;',
+                [workout_log_id]
+              );
+              
+              // If notification_id exists, cancel the notification
+              if (workoutNotification && workoutNotification.notification_id) {
+                await cancelNotification(workoutNotification.notification_id);
+              }
+              
+              // Then proceed with database deletions as before
               await db.runAsync(
                 `DELETE FROM Workout_Log WHERE workout_log_id = ?;`,
                 [workout_log_id]
@@ -229,7 +262,7 @@ export default function MyCalendar() {
               fetchWorkouts(); // Refresh the list
             } catch (error) {
               console.error('Error deleting workout log:', error);
-              Alert.alert('Error', 'Failed to delete workout log.');
+              Alert.alert(t('errorTitle'), t('failedToDeleteWorkoutLog'));
             }
           },
         },
@@ -253,21 +286,40 @@ export default function MyCalendar() {
   >
     <Text style={[styles.title, { color: theme.text }]}>{t('myCalendar')}</Text>
   
-    {/* Schedule a Workout Button */}
-    <TouchableOpacity
-      style={[styles.logWorkoutButton, { backgroundColor: theme.buttonBackground }]}
-      onPress={() => navigation.navigate('LogWorkout')}
-    >
-      <Ionicons
-        name="calendar"
-        size={24}
-        color={theme.buttonText}
-        style={styles.icon}
-      />
-      <Text style={[styles.logWorkoutButtonText, { color: theme.buttonText }]}>
-      {t('scheduleWorkout')}
-      </Text>
-    </TouchableOpacity>
+    {/* Schedule Buttons Row */}
+    <View style={styles.buttonRow}>
+      {/* Schedule a Workout Button */}
+      <TouchableOpacity
+        style={[styles.actionButton, { backgroundColor: theme.buttonBackground }]}
+        onPress={() => navigation.navigate('LogWorkout')}
+      >
+        <Ionicons
+          name="calendar"
+          size={22}
+          color={theme.buttonText}
+          style={styles.icon}
+        />
+        <Text style={[styles.actionButtonText, { color: theme.buttonText }]}>
+          {t('scheduleWorkout')}
+        </Text>
+      </TouchableOpacity>
+
+      {/* Recurring Workouts Button */}
+      <TouchableOpacity
+        style={[styles.actionButton, { backgroundColor: theme.buttonBackground }]}
+        onPress={() => navigation.navigate('RecurringWorkoutOptions')}
+      >
+        <Ionicons
+          name="time"
+          size={22}
+          color={theme.buttonText}
+          style={styles.icon}
+        />
+        <Text style={[styles.actionButtonText, { color: theme.buttonText }]}>
+          {t('recurringWorkouts')}
+        </Text>
+      </TouchableOpacity>
+    </View>
   
     {/* Today's Workout Section */}
     <View style={styles.section}>
@@ -387,15 +439,27 @@ const styles = StyleSheet.create({
     color: '#000000',
     textAlign: 'center',
   },
-  logWorkoutButton: {
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginBottom: 30,
+  },
+  actionButton: {
     backgroundColor: '#000000',
     borderRadius: 20,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 30,
+    width: '48%', // Slightly less than 50% to leave some space between
+  },
+  actionButtonText: {
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+    fontSize: 14, // Smaller font to fit on button
+    textAlign: 'center',
   },
   adContainer: {
     alignItems: 'center',
@@ -410,11 +474,6 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginRight: 10,
-  },
-  logWorkoutButtonText: {
-    color: '#FFFFFF',
-    fontWeight: 'bold',
-    fontSize: 18,
   },
   logContainer: {
     backgroundColor: '#FFFFFF',

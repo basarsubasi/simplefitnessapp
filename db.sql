@@ -84,3 +84,5 @@ CREATE TABLE IF NOT EXISTS Logged_Exercises (
     reps INTEGER NOT NULL, -- Store reps at the time of logging
     FOREIGN KEY (workout_log_id) REFERENCES Workout_Log(workout_log_id) ON DELETE CASCADE
 );
+
+ALTER TABLE Workout_Log ADD COLUMN notification_id TEXT;

@@ -1,6 +1,6 @@
 import { useFocusEffect } from '@react-navigation/native'; // Import useFocusEffect
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, Modal, TextInput } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, Modal, TextInput, Animated } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useSQLiteContext } from 'expo-sqlite';
@@ -45,6 +45,9 @@ export default function WorkoutDetails() {
   const [exerciseSets, setExerciseSets] = useState('');
   const [exerciseReps, setExerciseReps] = useState('');
   const navigation = useNavigation<WorkoutListNavigationProp>();
+  const [isReordering, setIsReordering] = useState(false);
+  const fadeAnim = useRef(new Animated.Value(1)).current;
+  const scaleAnim = useRef(new Animated.Value(1)).current;
 
 
   useFocusEffect(
@@ -98,25 +101,30 @@ export default function WorkoutDetails() {
             try {
               const currentDate = Math.floor(new Date().setHours(0, 0, 0, 0) / 1000); // Today's date as Unix timestamp
   
+              // Use a transaction to ensure all operations succeed or fail together
+              await db.withTransactionAsync(async () => {
               // Fetch logs only for workout_date >= today
               const logs = await db.getAllAsync<{ workout_log_id: number; workout_date: number }>(
                 'SELECT workout_log_id, workout_date FROM Workout_Log WHERE day_name = ? AND workout_name = (SELECT workout_name FROM Workouts WHERE workout_id = ?) AND workout_date >= ?;',
                 [day_name, workout_id, currentDate]
               );
   
+                // Delete all associated future logs
               for (const log of logs) {
                 console.log(`Deleting log ${log.workout_log_id} with workout_date: ${log.workout_date}`);
                 await db.runAsync('DELETE FROM Logged_Exercises WHERE workout_log_id = ?;', [log.workout_log_id]);
                 await db.runAsync('DELETE FROM Workout_Log WHERE workout_log_id = ?;', [log.workout_log_id]);
               }
   
-              // Delete the day and its exercises regardless of logs
+                // Delete the day and its exercises
               await db.runAsync('DELETE FROM Exercises WHERE day_id = ?;', [day_id]);
               await db.runAsync('DELETE FROM Days WHERE day_id = ?;', [day_id]);
+              });
   
               fetchWorkoutDetails();
             } catch (error) {
               console.error('Error deleting day with future logs:', error);
+              Alert.alert(t('errorTitle'), 'Error deleting day and associated logs.');
             }
           },
         },
@@ -137,26 +145,51 @@ export default function WorkoutDetails() {
             try {
               const currentDate = Math.floor(new Date().setHours(0, 0, 0, 0) / 1000); // Today's date as Unix timestamp
   
+              // Use a transaction to ensure all operations succeed or fail together
+              await db.withTransactionAsync(async () => {
+                // Get day name for this day_id
+                const dayResult = await db.getAllAsync<{ day_name: string }>(
+                  'SELECT day_name FROM Days WHERE day_id = ?',
+                  [day_id]
+                );
+                
+                const dayName = dayResult[0]?.day_name;
+                
+                if (dayName) {
+                  // Get workout name for this workout_id
+                  const workoutResult = await db.getAllAsync<{ workout_name: string }>(
+                    'SELECT workout_name FROM Workouts WHERE workout_id = ?',
+                    [workout_id]
+                  );
+                  
+                  const workoutName = workoutResult[0]?.workout_name;
+                  
+                  if (workoutName) {
               // Fetch logs only for workout_date >= today
               const logs = await db.getAllAsync<{ workout_log_id: number; workout_date: number }>(
-                'SELECT workout_log_id, workout_date FROM Workout_Log WHERE day_name = (SELECT day_name FROM Days WHERE day_id = ?) AND workout_name = (SELECT workout_name FROM Workouts WHERE workout_id = ?) AND workout_date >= ?;',
-                [day_id, workout_id, currentDate]
+                      'SELECT workout_log_id, workout_date FROM Workout_Log WHERE day_name = ? AND workout_name = ? AND workout_date >= ?;',
+                      [dayName, workoutName, currentDate]
               );
   
+                    // Delete the exercise from all future logs
               for (const log of logs) {
-                console.log(`Deleting log ${log.workout_log_id} with workout_date: ${log.workout_date}`);
+                      console.log(`Deleting exercise ${exercise_name} from log ${log.workout_log_id} with workout_date: ${log.workout_date}`);
                 await db.runAsync(
                   'DELETE FROM Logged_Exercises WHERE workout_log_id = ? AND exercise_name = ?;',
                   [log.workout_log_id, exercise_name]
                 );
+                    }
+                  }
               }
   
               // Delete the exercise itself
               await db.runAsync('DELETE FROM Exercises WHERE day_id = ? AND exercise_name = ?;', [day_id, exercise_name]);
+              });
   
               fetchWorkoutDetails();
             } catch (error) {
               console.error('Error deleting exercise with future logs:', error);
+              Alert.alert(t('errorTitle'), 'Error deleting exercise from future logs.');
             }
           },
         },
@@ -281,7 +314,195 @@ export default function WorkoutDetails() {
     }
   };
   
+  // Function to animate the reordering state change
+  const animateReordering = (reordering: boolean) => {
+    // Create animation sequence
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: reordering ? 0.7 : 1,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(scaleAnim, {
+        toValue: reordering ? 0.98 : 1,
+        duration: 200,
+        useNativeDriver: true,
+      })
+    ]).start();
+  };
+
+  // Update animation when reordering state changes
+  useEffect(() => {
+    animateReordering(isReordering);
+  }, [isReordering]);
+
+  // Function to move a day up (swap with the previous day)
+  const moveDayUp = async (index: number) => {
+    if (index <= 0 || index >= days.length || isReordering) return; // Can't move first day up
+    
+    try {
+      setIsReordering(true);
+      
+      // Add a small delay for visual feedback
+      setTimeout(async () => {
+        try {
+          const currentDay = days[index];
+          const prevDay = days[index - 1];
+          
+          // Use a transaction to ensure everything happens together
+          await db.withTransactionAsync(async () => {
+            // First, temporarily change the day_id for all exercises in the current day
+            await db.runAsync('UPDATE Exercises SET day_id = ? WHERE day_id = ?', 
+              [-1 * currentDay.day_id, currentDay.day_id]);
+            
+            // Then temporarily change the day_id for all exercises in the previous day
+            await db.runAsync('UPDATE Exercises SET day_id = ? WHERE day_id = ?', 
+              [-1 * prevDay.day_id, prevDay.day_id]);
+            
+            // Swap day_ids in the Days table
+            await db.runAsync('UPDATE Days SET day_id = ? WHERE day_id = ?', [-999, currentDay.day_id]); 
+            await db.runAsync('UPDATE Days SET day_id = ? WHERE day_id = ?', [currentDay.day_id, prevDay.day_id]);
+            await db.runAsync('UPDATE Days SET day_id = ? WHERE day_id = ?', [prevDay.day_id, -999]);
+            
+            // Now update exercises to their new day_ids
+            await db.runAsync('UPDATE Exercises SET day_id = ? WHERE day_id = ?', 
+              [prevDay.day_id, -1 * currentDay.day_id]);
+            await db.runAsync('UPDATE Exercises SET day_id = ? WHERE day_id = ?', 
+              [currentDay.day_id, -1 * prevDay.day_id]);
+          });
+          
+          // Update workout logs for future dates
+          await updateWorkoutLogsForReordering(workout_id);
+          
+          // Refresh the list
+          await fetchWorkoutDetails();
+        } catch (error) {
+          console.error('Database operation failed:', error);
+          Alert.alert(t('errorTitle'), 'Failed to reorder days.');
+        } finally {
+          setIsReordering(false);
+        }
+      }, 300); // 300ms delay for visual effect
+      
+    } catch (error) {
+      console.error('Error moving day up:', error);
+      Alert.alert(t('errorTitle'), 'Failed to reorder days.');
+      setIsReordering(false);
+    }
+  };
+
+  // Function to move a day down (swap with the next day)
+  const moveDayDown = async (index: number) => {
+    if (index < 0 || index >= days.length - 1 || isReordering) return; // Can't move last day down
+    
+    try {
+      setIsReordering(true);
+      
+      // Add a small delay for visual feedback
+      setTimeout(async () => {
+        try {
+          const currentDay = days[index];
+          const nextDay = days[index + 1];
+          
+          // Use a transaction to ensure everything happens together
+          await db.withTransactionAsync(async () => {
+            // First, temporarily change the day_id for all exercises in the current day
+            await db.runAsync('UPDATE Exercises SET day_id = ? WHERE day_id = ?', 
+              [-1 * currentDay.day_id, currentDay.day_id]);
+            
+            // Then temporarily change the day_id for all exercises in the next day
+            await db.runAsync('UPDATE Exercises SET day_id = ? WHERE day_id = ?', 
+              [-1 * nextDay.day_id, nextDay.day_id]);
+            
+            // Swap day_ids in the Days table
+            await db.runAsync('UPDATE Days SET day_id = ? WHERE day_id = ?', [-999, currentDay.day_id]);
+            await db.runAsync('UPDATE Days SET day_id = ? WHERE day_id = ?', [currentDay.day_id, nextDay.day_id]);
+            await db.runAsync('UPDATE Days SET day_id = ? WHERE day_id = ?', [nextDay.day_id, -999]);
+            
+            // Now update exercises to their new day_ids
+            await db.runAsync('UPDATE Exercises SET day_id = ? WHERE day_id = ?', 
+              [nextDay.day_id, -1 * currentDay.day_id]);
+            await db.runAsync('UPDATE Exercises SET day_id = ? WHERE day_id = ?', 
+              [currentDay.day_id, -1 * nextDay.day_id]);
+          });
+          
+          // Update workout logs for future dates
+          await updateWorkoutLogsForReordering(workout_id);
+          
+          // Refresh the list
+          await fetchWorkoutDetails();
+        } catch (error) {
+          console.error('Database operation failed:', error);
+          Alert.alert(t('errorTitle'), 'Failed to reorder days.');
+        } finally {
+          setIsReordering(false);
+        }
+      }, 300); // 300ms delay for visual effect
+      
+    } catch (error) {
+      console.error('Error moving day down:', error);
+      Alert.alert(t('errorTitle'), 'Failed to reorder days.');
+      setIsReordering(false);
+    }
+  };
+
+  // Update workout logs when days are reordered
+  const updateWorkoutLogsForReordering = async (workout_id: number) => {
+    try {
+      const currentDate = Math.floor(new Date().setHours(0, 0, 0, 0) / 1000); // Today's date as Unix timestamp
   
+      // Get the current workout name
+      const workoutResult = await db.getAllAsync<{ workout_name: string }>(
+        'SELECT workout_name FROM Workouts WHERE workout_id = ?',
+        [workout_id]
+      );
+      
+      const workoutName = workoutResult[0]?.workout_name;
+      
+      // Fetch all logs for the current workout where workout_date >= today
+      const logs = await db.getAllAsync<{ workout_log_id: number; day_name: string; workout_date: number }>(
+        'SELECT workout_log_id, day_name, workout_date FROM Workout_Log WHERE workout_name = ? AND workout_date >= ?;',
+        [workoutName, currentDate]
+      );
+  
+      // Fetch updated days and exercises
+      const days = await db.getAllAsync<{ day_id: number; day_name: string }>(
+        'SELECT day_id, day_name FROM Days WHERE workout_id = ? ORDER BY day_id;',
+        [workout_id]
+      );
+  
+      for (const log of logs) {
+        const day = days.find((d) => d.day_name === log.day_name);
+  
+        if (day) {
+          console.log(`Updating log ${log.workout_log_id} for day: ${day.day_name}`);
+  
+          // Fetch updated exercises for the day
+          const exercises = await db.getAllAsync<{ exercise_name: string; sets: number; reps: number }>(
+            'SELECT exercise_name, sets, reps FROM Exercises WHERE day_id = ?;',
+            [day.day_id]
+          );
+  
+          // Delete existing logged exercises for the log
+          await db.runAsync('DELETE FROM Logged_Exercises WHERE workout_log_id = ?;', [log.workout_log_id]);
+  
+          // Insert updated exercises into the log
+          const insertExercisePromises = exercises.map((exercise) =>
+            db.runAsync(
+              'INSERT INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?);',
+              [log.workout_log_id, exercise.exercise_name, exercise.sets, exercise.reps]
+            )
+          );
+  
+          await Promise.all(insertExercisePromises);
+          
+          console.log(`Successfully updated log ${log.workout_log_id} with reordered days.`);
+        }
+      }
+    } catch (error) {
+      console.error('Error updating workout logs after reordering days:', error);
+    }
+  };
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
@@ -311,19 +532,67 @@ export default function WorkoutDetails() {
   <FlatList
     data={days}
     keyExtractor={(item) => item.day_id.toString()}
-    renderItem={({ item: day }) => (
+    renderItem={({ item: day, index }) => (
+      <Animated.View
+        style={[
+          styles.animatedDayContainer,
+          {
+            opacity: fadeAnim,
+            transform: [{ scale: scaleAnim }],
+            backgroundColor: theme.card,
+          }
+        ]}
+      >
       <TouchableOpacity
-        onLongPress={() => handleDeleteDay(day.day_id, day.day_name, workout_id)} // Long press triggers day deletion
+          onLongPress={() => handleDeleteDay(day.day_id, day.day_name, workout_id)}
         activeOpacity={0.8}
-        style={[styles.dayContainer, { backgroundColor: theme.card, borderColor: theme.border }]} // Entire day card is now pressable
+          style={[
+            styles.dayContainer, 
+            { 
+              backgroundColor: theme.card, 
+              borderColor: theme.border
+            }
+          ]}
       >
         {/* Day Header */}
         <View style={styles.dayHeader}>
           <Text style={[styles.dayTitle, { color: theme.text }]}>{day.day_name}</Text>
+            
+            <View style={styles.dayHeaderRightControls}>
+              {/* Day reordering arrows */}
+              <View style={styles.reorderButtonsContainer}>
+                {index > 0 && (
+                  <TouchableOpacity
+                    onPress={() => !isReordering && moveDayUp(index)}
+                    disabled={isReordering}
+                    style={styles.reorderButton}
+                  >
+                    <Ionicons name="arrow-up-circle" size={28} color={isReordering ? theme.border : theme.text} />
+                  </TouchableOpacity>
+                )}
+                {index < days.length - 1 && (
+                  <TouchableOpacity
+                    onPress={() => !isReordering && moveDayDown(index)}
+                    disabled={isReordering}
+                    style={styles.reorderButton}
+                  >
+                    <Ionicons name="arrow-down-circle" size={28} color={isReordering ? theme.border : theme.text} />
+                  </TouchableOpacity>
+                )}
+              </View>
+              
           {/* Add Exercise Button */}
-          <TouchableOpacity onPress={() => openAddExerciseModal(day.day_id)}>
-            <Ionicons name="add-circle" size={28} color={theme.text} />
+            <TouchableOpacity 
+              onPress={() => openAddExerciseModal(day.day_id)}
+              disabled={isReordering}
+            >
+              <Ionicons 
+                name="add-circle" 
+                size={28} 
+                color={isReordering ? theme.border : theme.text} 
+              />
           </TouchableOpacity>
+            </View>
         </View>
 
         {/* Exercises */}
@@ -332,8 +601,15 @@ export default function WorkoutDetails() {
             <TouchableOpacity
               key={index}
               onLongPress={() => handleDeleteExercise(day.day_id, exercise.exercise_name, workout_id)}
-              activeOpacity={0.8}
-              style={[styles.exerciseContainer, { backgroundColor: theme.card, borderColor: theme.border }]}
+                activeOpacity={0.6}
+                delayLongPress={500}
+                style={[
+                  styles.exerciseContainer, 
+                  { 
+                    backgroundColor: theme.card, 
+                    borderColor: theme.border 
+                  }
+                ]}
             >
               <AutoSizeText
                 fontSize={18}
@@ -357,6 +633,7 @@ export default function WorkoutDetails() {
           <Text style={[styles.noExercisesText, { color: theme.text }]}>{t('noExercises')} </Text>
         )}
       </TouchableOpacity>
+      </Animated.View>
     )}
     ListFooterComponent={
       <TouchableOpacity
@@ -511,6 +788,18 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       marginBottom: 12,
     },
+    dayHeaderRightControls: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    reorderButtonsContainer: {
+      flexDirection: 'row',
+      marginRight: 8,
+    },
+    reorderButton: {
+      marginHorizontal: 2,
+      padding: 4,
+    },
     dayTitle: {
       fontSize: 24,
       fontWeight: '800',
@@ -614,6 +903,11 @@ const styles = StyleSheet.create({
     cancelButtonText: {
       color: '#000000',
       fontWeight: 'bold',
+    },
+    animatedDayContainer: {
+      marginBottom: 20,
+      borderRadius: 20,
+      overflow: 'hidden',
     },
   });
   

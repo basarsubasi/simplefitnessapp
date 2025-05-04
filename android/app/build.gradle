@@ -67,13 +67,6 @@ react {
  */
 def enableProguardInReleaseBuilds = (findProperty('android.enableProguardInReleaseBuilds') ?: false).toBoolean()
 
-def enableSeparateBuildPerCPUArchitecture = true
-
-def reactNativeArchitectures() {
-    def value = project.getProperties().get("reactNativeArchitectures")
-    return value
-}
-
 /**
  * The preferred build flavor of JavaScriptCore (JSC)
  *
@@ -98,8 +91,8 @@ android {
         applicationId 'tr.com.basarsubasi.simplefitnessapp'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 26
-        versionName "1.5.0"
+        versionCode 31
+        versionName "1.6.0"
     }
     signingConfigs {
         debug {

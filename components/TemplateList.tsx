@@ -1,7 +1,7 @@
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { WorkoutStackParamList } from '../App'; // Adjust path to where WorkoutStackParamList is defined
-import { TemplateWorkouts } from '../types';
+import { TemplateWorkouts } from '../utils/types';
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, ScrollView, View } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';

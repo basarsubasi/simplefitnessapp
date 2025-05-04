@@ -15,6 +15,7 @@
     "Today":"Today",
     "Tomorrow":"Tomorrow",
     "Yesterday":"Yesterday",
+    "set": "Set",
 
 
 
@@ -127,6 +128,7 @@
     "scheduleWorkout": "Schedule a Workout",
     "myCalendar": "My Calendar",
     "noExerciseLogged":" No exercises logged.",
+    "failedToDeleteWorkoutLog": "Failed to delete workout log.",
 
 
     "_comment_LogWorkouts": "These are Log-Workouts-related strings.",
@@ -188,42 +190,146 @@
     "Advanced": "Advanced",
     "featuredWorkouts":"Featured Workouts",
     "templateListTip":"Tip: You can customize featured workouts after adding them to your workout list.",
-    "addTemplate":"Add to My Workouts"
+    "addTemplate":"Add to My Workouts",
 
 
-    
+    "recurringWorkouts":"Recurring Workouts",
+
+    "_comment_recurringWorkouts": "These are Recurring Workouts-related strings.",
+
+    "createRecurringWorkout": "Create Recurring Workout",
+    "manageRecurringWorkouts": "Manage Recurring Workouts",
+    "recurringWorkoutsExplanation": "Set up workouts that automatically schedule themselves on your calendar at regular intervals.",
+    "everyXDays": "Every {{count}} days",
+    "everyday": "Every day",
+    "weekly": "Weekly",
+    "every": "Every",
+    "days": "days",
+    "Monday": "Monday",
+    "Tuesday": "Tuesday",
+    "Wednesday": "Wednesday",
+    "Thursday": "Thursday",
+    "Friday": "Friday",
+    "Saturday": "Saturday",
+    "Sunday": "Sunday",
+    "deleteRecurringWorkout": "Delete Recurring Workout",
+    "deleteRecurringWorkoutMessage": "Are you sure you want to delete the recurring workout for \"{{workout}}\" on \"{{day}}\"?",
+    "failedToDeleteRecurringWorkout": "Failed to delete recurring workout.",
+    "noRecurringWorkoutsFound": "No recurring workouts found.",
+    "createRecurringWorkoutToSeeHere": "Create a recurring workout to see it here.",
+    "workoutDetails": "Workout Details",
+    "workout": "Workout",
+    "day": "Day",
+    "recurringInterval": "Recurring Interval",
+    "selectDaysOfWeek": "Select Days of Week",
+    "selectedDays": "Selected Days",
+    "notifications": "Notifications",
+    "enableNotifications": "Enable Notifications",
+    "notificationTime": "Notification Time",
+    "notificationPermissions": "Notification Permissions",
+    "notificationPermissionsRequired": "Notification permission is required to enable notifications. Please enable in Settings.",
+    "goToSettings": "Go to Settings",
+    "creating": "Creating...",
+    "saving": "Saving...",
+    "done": "Done",
+    "editRecurringWorkout": "Edit Recurring Workout",
+    "recurringWorkoutNotFound": "Recurring workout not found.",
+    "errorLoadingRecurringWorkout": "Error loading recurring workout.",
+    "failedToUpdateRecurringWorkout": "Failed to update recurring workout.",
+    "anErrorOccurred": "An error occurred.",
+    "workoutNotFound": "Workout not found.",
+    "goBack": "Go Back",
+    "specificDaysOfWeek": "Specific days of week",
+    "confirm": "Confirm",
+    "recurringWorkoutDetails": "Recurring Workout Details",
+    "Notifications enabled": "Notifications enabled",
+    "Notificationsdisabled": "Notifications disabled",
+    "confirmDelete": "Confirm Delete",
+    "confirmDeleteRecurringWorkout": "Are you sure you want to delete this recurring workout?",
+    "edit": "Edit",
+    "errorLoadingWorkout": "Error loading workout.",
+
+    "_comment_startWorkout": "These are Start Workout-related strings.",
+
+    "startWorkout": "Start Workout",
+    "invalidRestTime": "Invalid Rest Time",
+    "pleaseEnterValidSeconds": "Please enter a valid number of seconds.",
+    "missingInformation": "Missing Information",
+    "enterRepsAndWeight": "Please enter both reps and weight before continuing.",
+    "exitWorkout": "Exit Workout?",
+    "exitWorkoutMessage": "Are you sure you want to exit? Your progress will be lost.",
+    "exit": "Exit",
+    "workoutCompleted": "Workout Completed!",
+    "totalTime": "Total Time",
+    "setsCompleted": "Sets Completed",
+    "completeWorkout": "Complete Workout",
+    "workoutTime": "Workout Time",
+    "restTime": "Rest Time",
+    "sec": "sec",
+    "addTime": "+15s",
+    "takeBreath": "Take a breath and prepare for your next set",
+    "upNext": "Up Next",
+    "skipRest": "Skip Rest",
+    "goal": "Goal",
+    "repsDone": "Reps Done",
+    "weightKgLbs": "Weight (kg/lbs)",
+    "finishWorkout": "Finish Workout",
+    "completeSetRest": "Complete Set & Rest",
+    "completeSet": "Complete Set",
+    "upcomingSet": "Upcoming Set",
+    "OK": "OK",
+    "workoutSaved": "Workout Saved",
+    "workoutSavedMessage": "Your workout has been successfully logged!",
+    "loadingWorkout": "Loading workout...",
+    "exercises": "Exercises",
+    "totalSets": "Total Sets",
+    "restTimeBetweenSets": "Rest time between sets (seconds)",
+    "workoutSettings": "Workout Settings",
+    "vibration": "Vibration",
+
+    "_comment_settings1": "These are Settings-related strings.",
+
+    "dataManagement": "Data Management",
+    "exportData": "Export Data",
+    "importData": "Import Data",
+    "notificationsDisableTitle": "Disable Notifications",
+    "notificationsDisableMessage": "Turning off notifications will cancel all scheduled workout reminders. Are you sure?",
+    "exportFailedTitle": "Export Failed",
+    "databaseNotFound": "Database file not found",
+    "sharingNotAvailable": "Sharing is not available on this device",
+    "exportDatabaseTitle": "Export Workout Database",
+    "exportErrorMessage": "Failed to export database",
+    "importConfirmTitle": "Import Database",
+    "importConfirmMessage": "Importing a database will replace your current data. This action cannot be undone. Continue?",
+    "importSuccessTitle": "Import Successful",
+    "importSuccessMessage": "Database imported successfully. Please restart the app for changes to take effect.",
+    "importFailedTitle": "Import Failed",
+    "importErrorMessage": "Failed to import database",
+    "remindScheduledWorkouts": "Remind scheduled workouts",
+    "dayInterval": "Day Interval:",
 
 
+    "_comment_Graphs": "These are Graphs-related strings.",
 
-
-
-
-        
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
+    "Graphs": "Graphs",
+    "SelectWorkoutforGraph": "Select a Workout for Graphs",
+   
+    "No data available for the selected criteria": "No data available for the selected criteria",
+    "Combined Effort Score": "Combined Effort Score",
+    "About CES": "About CES",
+    "About 1RM": "About 1RM",
+    "CESExplanation": "CES (Combined Effort Score) measures your total workout volume accounting for weight, reps, and intensity.",
+    "1RMExplanation": "1RM (One Rep Max) estimates the maximum weight you could lift for a single repetition based on your performance.\n(This is not the actual 1RM, developer of the app is not responsible for any injuries if you use this estimate as your 1RM)",
+    "Time Frame": "Time Frame",
+    "Estimated 1RM": "Estimated 1RM",
+    "Select Exercise": "Select Exercise",
+    "Week": "Week",
+    "Month": "Month",
+    "Year": "Year",
+    "All Time": "All Time",
+    "Select an exercise": "Select an exercise",
+    "No exercises available": "No exercises available",
+    "Track a workout first to see your progress": "Track a workout first to see your progress",
+    "No workout data available for graphs": "No workout data available for graphs"
   }
   

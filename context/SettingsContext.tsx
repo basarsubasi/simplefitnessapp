@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { loadSettings, saveSettings } from '../settingsStorage';
-import i18n from '../i18n';
+import { loadSettings, saveSettings } from '../utils/settingsStorage';
+import i18n from '../utils/i18n';
 import * as Localization from 'expo-localization'; // <-- import expo-localization
+import { requestNotificationPermissions } from '../utils/notificationUtils';
 
 // 1) Create the type for your context values:
 type SettingsContextType = {
@@ -11,6 +12,9 @@ type SettingsContextType = {
   setDateFormat: (fmt: string) => void;
   weightFormat: string;
   setWeightFormat: (fmt: string) => void;
+  notificationPermissionGranted: boolean;
+  setNotificationPermissionGranted: (granted: boolean) => void;
+  requestNotificationPermission: () => Promise<boolean>;
 };
 
 // 2) Declare the actual context:
@@ -22,6 +26,14 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const [language, setLanguage] = useState('en');
   const [dateFormat, setDateFormat] = useState('dd-mm-yyyy');
   const [weightFormat, setWeightFormat] = useState('kg');
+  const [notificationPermissionGranted, setNotificationPermissionGranted] = useState(false);
+
+  // Function to request notification permission
+  const requestNotificationPermission = async (): Promise<boolean> => {
+    const granted = await requestNotificationPermissions();
+    setNotificationPermissionGranted(granted);
+    return granted;
+  };
 
   // Load settings on mount
   useEffect(() => {
@@ -31,6 +43,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         setLanguage(savedSettings.language || 'en');
         setDateFormat(savedSettings.dateFormat || 'dd-mm-yyyy');
         setWeightFormat(savedSettings.weightFormat || 'kg');
+        setNotificationPermissionGranted(savedSettings.notificationPermissionGranted || false);
       }
       else {
        const fallbackLng = 'en';
@@ -53,10 +66,15 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!isInitialized) return;
     const persistSettings = async () => {
-      await saveSettings({ language, dateFormat, weightFormat });
+      await saveSettings({ 
+        language, 
+        dateFormat, 
+        weightFormat,
+        notificationPermissionGranted,
+      });
     };
     persistSettings();
-  }, [language, dateFormat, weightFormat, isInitialized]);
+  }, [language, dateFormat, weightFormat, notificationPermissionGranted, isInitialized]);
 
   return (
     <SettingsContext.Provider
@@ -67,6 +85,9 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         setDateFormat,
         weightFormat,
         setWeightFormat,
+        notificationPermissionGranted,
+        setNotificationPermissionGranted,
+        requestNotificationPermission,
       }}
     >
       {children}

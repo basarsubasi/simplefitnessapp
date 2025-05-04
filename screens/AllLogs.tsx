@@ -25,10 +25,10 @@ export default function AllLogs() {
   const db = useSQLiteContext();
   const { weightFormat, dateFormat } = useSettings();
   const [days, setDays] = useState<
-    { workout_name:string; day_name: string; workout_date: number }[]
+    { workout_name: string; day_name: string; workout_date: number; completion_time: number | null }[]
   >([]);
   const [filteredDays, setFilteredDays] = useState<
-    { workout_name:string, day_name: string; workout_date: number }[]
+    { workout_name: string; day_name: string; workout_date: number; completion_time: number | null }[]
   >([]);
   const [expandedDays, setExpandedDays] = useState<{ [key: string]: boolean }>(
     {}
@@ -64,17 +64,20 @@ export default function AllLogs() {
         workout_name: string;
         day_name: string;
         workout_date: number;
+        completion_time: number | null;
       }>(
-        `SELECT DISTINCT Workout_Log.workout_name, Workout_Log.day_name, Workout_Log.workout_date
-         FROM Weight_Log
-         INNER JOIN Workout_Log 
-         ON Weight_Log.workout_log_id = Workout_Log.workout_log_id;`
+        `SELECT DISTINCT Workout_Log.workout_name, Workout_Log.day_name, 
+         Workout_Log.workout_date, 
+         COALESCE(Workout_Log.completion_time, MIN(Weight_Log.completion_time)) as completion_time
+         FROM Workout_Log
+         LEFT JOIN Weight_Log 
+         ON Weight_Log.workout_log_id = Workout_Log.workout_log_id
+         GROUP BY Workout_Log.workout_name, Workout_Log.day_name, Workout_Log.workout_date
+         ORDER BY Workout_Log.workout_date DESC;`
       );
 
-      const sortedDays = result.sort((a, b) => b.workout_date - a.workout_date);
-
-      setDays(sortedDays);
-      setFilteredDays(sortedDays); // Initially show all days
+      setDays(result);
+      setFilteredDays(result); // Initially show all days
     } catch (error) {
       console.error('Error fetching days:', error);
     }
@@ -82,6 +85,25 @@ export default function AllLogs() {
 
   const fetchLogsForDay = async (dayName: string, workoutDate: number) => {
     try {
+      console.log(`Fetching logs for day: ${dayName}, date: ${workoutDate}`);
+      
+      // First, try to get the workout_log_id
+      const workoutLogResult = await db.getAllAsync<{ workout_log_id: number }>(
+        `SELECT workout_log_id FROM Workout_Log 
+         WHERE day_name = ? AND workout_date = ?
+         LIMIT 1;`,
+        [dayName, workoutDate]
+      );
+      
+      if (workoutLogResult.length === 0) {
+        console.error('No workout_log_id found for the given day and date');
+        return;
+      }
+      
+      const workout_log_id = workoutLogResult[0].workout_log_id;
+      console.log(`Found workout_log_id: ${workout_log_id}`);
+      
+      // Now fetch the weight logs
       const result = await db.getAllAsync<{
         workout_name: string;
         exercise_name: string;
@@ -97,9 +119,55 @@ export default function AllLogs() {
          INNER JOIN Workout_Log 
          ON Weight_Log.workout_log_id = Workout_Log.workout_log_id
          WHERE Workout_Log.day_name = ? AND Workout_Log.workout_date = ? 
-         ORDER BY Weight_Log.logged_exercise_id ASC;`,
+         ORDER BY Weight_Log.logged_exercise_id ASC, Weight_Log.set_number ASC;`,
         [dayName, workoutDate]
       );
+      
+      console.log(`Found ${result.length} weight logs`);
+      
+      if (result.length === 0) {
+        // If no weight logs are found, check if there are logged exercises without weights
+        const exercisesResult = await db.getAllAsync<{
+          exercise_name: string;
+          logged_exercise_id: number;
+          sets: number;
+          reps: number;
+        }>(
+          `SELECT exercise_name, logged_exercise_id, sets, reps
+           FROM Logged_Exercises
+           WHERE workout_log_id = ?
+           ORDER BY logged_exercise_id ASC;`,
+          [workout_log_id]
+        );
+        
+        console.log(`Found ${exercisesResult.length} logged exercises without weights`);
+        
+        if (exercisesResult.length > 0) {
+          // Create placeholder logs for these exercises
+          const placeholderLogs: { [key: string]: { loggedExerciseId: number; exerciseName: string; sets: any[] } } = {};
+          
+          exercisesResult.forEach(exercise => {
+            const compositeKey = `${exercise.logged_exercise_id}_${exercise.exercise_name}`;
+            placeholderLogs[compositeKey] = {
+              loggedExerciseId: exercise.logged_exercise_id,
+              exerciseName: exercise.exercise_name,
+              sets: [{ 
+                set_number: 1, 
+                workout_name: 'Workout', 
+                weight_logged: 0, 
+                reps_logged: exercise.reps,
+                note: 'No weight data recorded' 
+              }]
+            };
+          });
+          
+          setLogs((prev) => ({
+            ...prev,
+            [`${dayName}_${workoutDate}`]: placeholderLogs,
+          }));
+          return;
+        }
+      }
 
       const groupedLogs = result.reduce((acc, log) => {
         const { logged_exercise_id, exercise_name, ...setDetails } = log;
@@ -190,59 +258,73 @@ export default function AllLogs() {
       : `${day}-${month}-${year}`;
   };
 
+  const formatTime = (timestamp: number | null): string => {
+    if (timestamp === null) {
+      return '';
+    }
+    
+    // Format seconds into HH:MM:SS format
+    const hrs = Math.floor(timestamp / 3600);
+    const mins = Math.floor((timestamp % 3600) / 60);
+    const secs = timestamp % 60;
+    
+    return `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+  };
+
   
 
   const renderDay = ({
     day_name,
     workout_date,
     workout_name,
+    completion_time
   }: {
     workout_name: string;
     day_name: string;
     workout_date: number;
+    completion_time: number | null;
   }) => {
     const key = `${day_name}_${workout_date}`;
     const isExpanded = expandedDays[key];
     const formattedDate = formatDate(workout_date);
+    const formattedTime = formatTime(completion_time);
 
-
-        const confirmDeleteDay = () => {
-          Alert.alert(
-            t('deleteDayTitle'),
-            t('deleteWeightLog'),
-            [
-              { text: t('alertCancel'), style: 'cancel' },
-              {
-                text: t('alertDelete'),
-                style: 'destructive',
-                onPress: async () => {
-                  await deleteDayLogs(day_name, workout_date);
-                },
-              },
-            ]
-          );
-        };
-      
-        const deleteDayLogs = async (dayName: string, workoutDate: number) => {
-          try {
-            await db.runAsync(
-              `DELETE FROM Weight_Log
-               WHERE workout_log_id IN (
-                 SELECT workout_log_id 
-                 FROM Workout_Log 
-                 WHERE day_name = ? AND workout_date = ?
-               );`,
-              [dayName, workoutDate]
-            );
-      
-            // Refresh days after deletion
-            fetchDays();
-          } catch (error) {
-            console.error('Error deleting logs for day:', error);
-          }
-        };
-      
-
+    const confirmDeleteDay = () => {
+      Alert.alert(
+        t('deleteDayTitle'),
+        t('deleteWeightLog'),
+        [
+          { text: t('alertCancel'), style: 'cancel' },
+          {
+            text: t('alertDelete'),
+            style: 'destructive',
+            onPress: async () => {
+              await deleteDayLogs(day_name, workout_date);
+            },
+          },
+        ]
+      );
+    };
+    
+    const deleteDayLogs = async (dayName: string, workoutDate: number) => {
+      try {
+        await db.runAsync(
+          `DELETE FROM Weight_Log
+           WHERE workout_log_id IN (
+             SELECT workout_log_id 
+             FROM Workout_Log 
+             WHERE day_name = ? AND workout_date = ?
+           );`,
+          [dayName, workoutDate]
+        );
+  
+        // Refresh days after deletion
+        fetchDays();
+      } catch (error) {
+        console.error('Error deleting logs for day:', error);
+      }
+    };
+    
     return (
       <View
         key={key}
@@ -254,20 +336,40 @@ export default function AllLogs() {
         <TouchableOpacity
           style={styles.logHeader}
           onPress={() => toggleDayExpansion(day_name, workout_date)}
-          onLongPress={confirmDeleteDay} // Add this line for long press functionality
-
+          onLongPress={confirmDeleteDay}
         >
+          <View style={styles.workoutTitleContainer}>
+            <View style={styles.workoutNameColumn}>
               <AutoSizeText 
-              fontSize={20}
-              numberOfLines={2}
-              mode={ResizeTextMode.max_lines}
-              style={[styles.logWorkoutName, { color: theme.text }]}>
-                {workout_name}
+                fontSize={20}
+                numberOfLines={2}
+                mode={ResizeTextMode.max_lines}
+                style={[styles.logWorkoutName, { color: theme.text }]}>
+                  {workout_name}
               </AutoSizeText>
+              
+              {completion_time && (
+                <View style={styles.timeContainer}>
+                  <Ionicons name="time-outline" size={14} color={theme.text} style={styles.timeIcon} />
+                  <AutoSizeText
+                    fontSize={14}
+                    numberOfLines={1}
+                    mode={ResizeTextMode.max_lines}
+                    style={[styles.completionTime, { color: theme.text, fontSize: 14 }]}>
+                    {formattedTime}
+                  </AutoSizeText>
+                </View>
+              )}
+            </View>
+          </View>
           
-          <Text style={[styles.logDate, { color: theme.text }]}>
+          <AutoSizeText 
+            fontSize={18}
+            numberOfLines={2}
+            mode={ResizeTextMode.max_lines}
+            style={[styles.logDate, { color: theme.text }]}>
             {formattedDate}
-          </Text>
+          </AutoSizeText>
           <Ionicons
             name={isExpanded ? 'chevron-up' : 'chevron-down'}
             size={20}
@@ -291,7 +393,7 @@ export default function AllLogs() {
                           key={index}
                           style={[styles.logDetail, { color: theme.text }]}
                         >
-                          {t('Set')} {set.set_number}: {set.weight_logged} {weightFormat} {} {set.reps_logged} {t('Reps')}
+                          {t('Set')} {set.set_number}: {set.weight_logged} {weightFormat} × {set.reps_logged} {t('Reps')}
                         </Text>
                       ))}
                     </View>
@@ -437,22 +539,54 @@ const styles = StyleSheet.create({
     zIndex: 10,
     padding: 8,
   },
-
   logHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingVertical: 10,
   },
-  logWorkoutName: { fontSize: 20, fontWeight: '900',},
-  logDayName: { fontSize: 20, fontWeight: '900', marginBottom:10},
-
-  logDate: { fontSize: 18 },
+  logWorkoutName: { 
+    fontSize: 20, 
+    fontWeight: '900',
+    marginBottom: 4,
+  },
+  logDayName: { 
+    fontSize: 20, 
+    fontWeight: '900', 
+    marginBottom: 10
+  },
+  logDate: { 
+    fontSize: 18,
+    fontWeight: 'bold',
+    maxWidth: 120,
+    textAlign: 'right',
+    marginHorizontal: 10,
+  },
   logList: { marginTop: 10 },
   logItem: { marginBottom: 10 },
   exerciseName: { fontSize: 16, fontWeight: 'bold' },
   logDetail: { fontSize: 14 },
   adContainer: { alignItems: 'center', marginTop: 20 },
   emptyText: { textAlign: 'center', fontSize: 16 },
+  workoutTitleContainer: {
+    flex: 1,
+    paddingRight: 10,
+  },
+  workoutNameColumn: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+  },
+  timeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 2,
+  },
+  timeIcon: {
+    marginRight: 3,
+  },
+  completionTime: {
+    fontSize: 14,
+    opacity: 0.8,
+  },
 });
 
