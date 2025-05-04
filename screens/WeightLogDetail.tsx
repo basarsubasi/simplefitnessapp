@@ -16,7 +16,15 @@ import { useTheme } from '../context/ThemeContext';
 import { useTranslation } from 'react-i18next';
 import { AutoSizeText, ResizeTextMode } from 'react-native-auto-size-text';
 
-
+interface WeightLog {
+  dayName: string;
+  workoutDate: number;
+  exercise: string;
+  weight_logged: number;
+  reps_logged: number;
+  set_number: number;
+  completion_time: number | null;
+}
 
 export default function WeightLogDetail() {
   const route = useRoute();
@@ -29,10 +37,10 @@ export default function WeightLogDetail() {
   const { workoutName } = route.params as { workoutName: string };
   const { weightFormat, dateFormat } = useSettings();
   const [days, setDays] = useState<
-    { day_name: string; workout_date: number }[]
+    { day_name: string; workout_date: number; completion_time: number | null }[]
   >([]);
   const [filteredDays, setFilteredDays] = useState<
-    { day_name: string; workout_date: number }[]
+    { day_name: string; workout_date: number; completion_time: number | null }[]
   >([]);
   const [expandedDays, setExpandedDays] = useState<{ [key: string]: boolean }>(
     {}
@@ -67,67 +75,135 @@ export default function WeightLogDetail() {
       const result = await db.getAllAsync<{
         day_name: string;
         workout_date: number;
+        completion_time: number | null;
       }>(
-        `SELECT DISTINCT Workout_Log.day_name, Workout_Log.workout_date
-         FROM Weight_Log
-         INNER JOIN Workout_Log 
+        `SELECT DISTINCT Workout_Log.day_name, Workout_Log.workout_date, 
+         COALESCE(Workout_Log.completion_time, MIN(Weight_Log.completion_time)) as completion_time
+         FROM Workout_Log
+         INNER JOIN Weight_Log 
          ON Weight_Log.workout_log_id = Workout_Log.workout_log_id
-         WHERE Workout_Log.workout_name = ?;`,
+         WHERE Workout_Log.workout_name = ?
+         GROUP BY Workout_Log.day_name, Workout_Log.workout_date
+         ORDER BY Workout_Log.workout_date DESC;`,
         [workoutName]
       );
-
       
-      const sortedDays = result.sort((a, b) => b.workout_date - a.workout_date);
-
-      setDays(sortedDays);
-      setFilteredDays(sortedDays); // Initially show all days
+      setDays(result);
+      setFilteredDays(result); // Initially show all days
     } catch (error) {
       console.error('Error fetching days:', error);
     }
   };
 
-  const fetchLogsForDay = async (dayName: string, workoutDate: number) => {
+  const fetchWeights = async (dayName: string, workoutDate: number) => {
     try {
+      console.log(`Fetching weights for day: ${dayName}, date: ${workoutDate}, workout: ${workoutName}`);
+      
+      // First, try to get the workout_log_id
+      const workoutLogResult = await db.getAllAsync<{ workout_log_id: number }>(
+        `SELECT workout_log_id FROM Workout_Log 
+         WHERE day_name = ? AND workout_date = ? AND workout_name = ?
+         LIMIT 1;`,
+        [dayName, workoutDate, workoutName]
+      );
+      
+      if (workoutLogResult.length === 0) {
+        console.error('No workout_log_id found for the given day, date and workout name');
+        return;
+      }
+      
+      const workout_log_id = workoutLogResult[0].workout_log_id;
+      console.log(`Found workout_log_id: ${workout_log_id}`);
+      
+      // Now fetch the weight logs
       const result = await db.getAllAsync<{
         exercise_name: string;
-        set_number: number;
         weight_logged: number;
         reps_logged: number;
+        set_number: number;
+        workout_date: number;
+        day_name: string;
         logged_exercise_id: number;
-
       }>(
-        `SELECT Weight_Log.exercise_name, Weight_Log.set_number, 
-                Weight_Log.weight_logged, Weight_Log.reps_logged, Weight_Log.logged_exercise_id
-         FROM Weight_Log
-         INNER JOIN Workout_Log 
-         ON Weight_Log.workout_log_id = Workout_Log.workout_log_id
-         WHERE Workout_Log.day_name = ? AND Workout_Log.workout_date = ? 
-         ORDER BY Weight_Log.logged_exercise_id ASC;`,
-        [dayName, workoutDate]
+        `SELECT Weight_Log.exercise_name, Weight_Log.weight_logged, Weight_Log.reps_logged, 
+        Weight_Log.set_number, Workout_Log.workout_date, Workout_Log.day_name, 
+        Weight_Log.logged_exercise_id
+        FROM Weight_Log
+        INNER JOIN Workout_Log ON Weight_Log.workout_log_id = Workout_Log.workout_log_id
+        WHERE Workout_Log.day_name = ? AND Workout_Log.workout_date = ? AND Workout_Log.workout_name = ?
+        ORDER BY Weight_Log.exercise_name, Weight_Log.set_number;`,
+        [dayName, workoutDate, workoutName]
       );
-
-      // Group sets by exercise_name
-      const groupedLogs = result.reduce((acc, log) => {
-        const { logged_exercise_id, exercise_name, ...setDetails } = log;
-        const compositeKey = `${logged_exercise_id}_${exercise_name}`;
+      
+      console.log(`Found ${result.length} weight logs`);
+      
+      if (result.length === 0) {
+        // If no weight logs are found, check if there are logged exercises without weights
+        const exercisesResult = await db.getAllAsync<{
+          exercise_name: string;
+          logged_exercise_id: number;
+          sets: number;
+          reps: number;
+        }>(
+          `SELECT exercise_name, logged_exercise_id, sets, reps
+           FROM Logged_Exercises
+           WHERE workout_log_id = ?
+           ORDER BY logged_exercise_id ASC;`,
+          [workout_log_id]
+        );
         
-        if (!acc[compositeKey]) {
-          acc[compositeKey] = {
-            loggedExerciseId: logged_exercise_id,
-            exerciseName: exercise_name,
-            sets: []
-          };
+        console.log(`Found ${exercisesResult.length} logged exercises without weights`);
+        
+        if (exercisesResult.length > 0) {
+          // Create placeholder logs for these exercises
+          const placeholderLogs: { [key: string]: { loggedExerciseId: number; exerciseName: string; sets: any[] } } = {};
+          
+          exercisesResult.forEach(exercise => {
+            const compositeKey = `${exercise.logged_exercise_id}_${exercise.exercise_name}`;
+            placeholderLogs[compositeKey] = {
+              loggedExerciseId: exercise.logged_exercise_id,
+              exerciseName: exercise.exercise_name,
+              sets: [{ 
+                set_number: 1, 
+                weight_logged: 0, 
+                reps_logged: exercise.reps,
+                note: 'No weight data recorded' 
+              }]
+            };
+          });
+          
+          setLogs((prev) => ({
+            ...prev,
+            [`${dayName}_${workoutDate}`]: placeholderLogs,
+          }));
+          return;
         }
-        acc[compositeKey].sets.push(setDetails);
-        return acc;
-      }, {} as { [key: string]: { loggedExerciseId: number; exerciseName: string; sets: any[] } });
+      }
 
-      setLogs((prev) => ({
-        ...prev,
-        [`${dayName}_${workoutDate}`]: groupedLogs,
-      }));
+      if (result.length > 0) {
+        // Group sets by exercise_name
+        const groupedLogs = result.reduce((acc, log) => {
+          const { logged_exercise_id, exercise_name, ...setDetails } = log;
+          const compositeKey = `${logged_exercise_id}_${exercise_name}`;
+          
+          if (!acc[compositeKey]) {
+            acc[compositeKey] = {
+              loggedExerciseId: logged_exercise_id,
+              exerciseName: exercise_name,
+              sets: []
+            };
+          }
+          acc[compositeKey].sets.push(setDetails);
+          return acc;
+        }, {} as { [key: string]: { loggedExerciseId: number; exerciseName: string; sets: any[] } });
+
+        setLogs((prev) => ({
+          ...prev,
+          [`${dayName}_${workoutDate}`]: groupedLogs,
+        }));
+      }
     } catch (error) {
-      console.error('Error fetching logs for day:', error);
+      console.error('Error fetching weights:', error);
     }
   };
 
@@ -140,7 +216,7 @@ export default function WeightLogDetail() {
 
     // Fetch logs if the day is being expanded and hasn't been fetched yet
     if (!logs[key]) {
-      fetchLogsForDay(dayName, workoutDate);
+      fetchWeights(dayName, workoutDate);
     }
   };
 
@@ -196,16 +272,32 @@ export default function WeightLogDetail() {
       : `${day}-${month}-${year}`;
   };
 
+  const formatTime = (timestamp: number | null): string => {
+    if (timestamp === null) {
+      return '';
+    }
+    
+    // Format seconds into HH:MM:SS format
+    const hrs = Math.floor(timestamp / 3600);
+    const mins = Math.floor((timestamp % 3600) / 60);
+    const secs = timestamp % 60;
+    
+    return `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+  };
+
   const renderDay = ({
     day_name,
     workout_date,
+    completion_time
   }: {
     day_name: string;
     workout_date: number;
+    completion_time: number | null;
   }) => {
     const key = `${day_name}_${workout_date}`;
-    const isExpanded = expandedDays[key];
+    const isExpanded = expandedDays[key] as boolean;
     const formattedDate = formatDate(workout_date);
+    const formattedTime = formatTime(completion_time);
   
     const confirmDeleteDay = () => {
       Alert.alert(
@@ -244,51 +336,72 @@ export default function WeightLogDetail() {
     };
   
     return (
-<View key={key} style={[styles.logContainer, { backgroundColor: theme.card, borderColor: theme.border }]}>
-  <TouchableOpacity
-    style={styles.logHeader}
-    onPress={() => toggleDayExpansion(day_name, workout_date)}
-    onLongPress={confirmDeleteDay} // Add this line for long press functionality
-  >
-     <AutoSizeText 
-      fontSize={20}
-      numberOfLines={2}
-      mode={ResizeTextMode.max_lines}
-    style={[styles.logDayName, { color: theme.text }]}>
-      {day_name}
-    </AutoSizeText>
+      <View key={key} style={[styles.logContainer, { backgroundColor: theme.card, borderColor: theme.border }]}>
+        <TouchableOpacity
+          style={styles.logHeader}
+          onPress={() => toggleDayExpansion(day_name, workout_date)}
+          onLongPress={confirmDeleteDay}
+        >
+          <View style={styles.titleContainer}>
+            <View style={styles.dayNameColumn}>
+              <AutoSizeText 
+                fontSize={20}
+                numberOfLines={2}
+                mode={ResizeTextMode.max_lines}
+                style={[styles.logDayName, { color: theme.text }]}>
+                {day_name}
+              </AutoSizeText>
+              
+              {completion_time && (
+                <View style={styles.timeContainer}>
+                  <Ionicons name="time-outline" size={14} color={theme.text} style={styles.timeIcon} />
+                  <AutoSizeText
+                    fontSize={14}
+                    numberOfLines={1}
+                    mode={ResizeTextMode.max_lines}
+                    style={[styles.completionTime, { color: theme.text, fontSize: 14, opacity: 0.8 }]}>
+                    {formattedTime}
+                  </AutoSizeText>
+                </View>
+              )}
+            </View>
+          </View>
 
-
-    <Text style={[styles.logDate, { color: theme.text }]}>{formattedDate}</Text>
-    <Ionicons
-      name={isExpanded ? 'chevron-up' : 'chevron-down'}
-      size={20}
-      color={theme.text}
-    />
-  </TouchableOpacity>
-  {isExpanded && logs[key] && (
-    <View style={styles.logList}>
-               {Object.values(logs[key])
-                  .sort((a, b) => a.loggedExerciseId - b.loggedExerciseId)
-                  .map(({ exerciseName, sets, loggedExerciseId }) => (
-                    <View key={`${loggedExerciseId}_${exerciseName}`} style={styles.logItem}>
-                      <Text style={[styles.exerciseName, { color: theme.text }]}>
-                        {exerciseName}
-                      </Text>
-                      {sets.map((set, index) => (
-                        <Text
-                          key={index}
-                          style={[styles.logDetail, { color: theme.text }]}
-                        >
-                          {t('Set')} {set.set_number}: {set.weight_logged} {weightFormat} {} {set.reps_logged}  {t('Reps')}
-                        </Text>
-                      ))}
-                    </View>
+          <AutoSizeText 
+            fontSize={18}
+            numberOfLines={2}
+            mode={ResizeTextMode.max_lines}
+            style={[styles.logDate, { color: theme.text }]}>
+            {formattedDate}
+          </AutoSizeText>
+          <Ionicons
+            name={isExpanded ? 'chevron-up' : 'chevron-down'}
+            size={20}
+            color={theme.text}
+          />
+        </TouchableOpacity>
+        {isExpanded && logs[key] && (
+          <View style={styles.logList}>
+            {Object.values(logs[key])
+              .sort((a, b) => a.loggedExerciseId - b.loggedExerciseId)
+              .map(({ exerciseName, sets, loggedExerciseId }) => (
+                <View key={`${loggedExerciseId}_${exerciseName}`} style={styles.logItem}>
+                  <Text style={[styles.exerciseName, { color: theme.text }]}>
+                    {exerciseName}
+                  </Text>
+                  {sets.map((set, index) => (
+                    <Text
+                      key={index}
+                      style={[styles.logDetail, { color: theme.text }]}
+                    >
+                      {t('Set')} {set.set_number}: {set.weight_logged} {weightFormat} × {set.reps_logged} {t('Reps')}
+                    </Text>
                   ))}
-    </View>
-  )}
-</View>
-
+                </View>
+              ))}
+          </View>
+        )}
+      </View>
     );
   };
   
@@ -354,8 +467,8 @@ export default function WeightLogDetail() {
           if (date) setDateRange((prev) => ({ ...prev, start: date }));
         }}
       />
-    )}
-    {datePickerVisible.end && (
+      )}
+      {datePickerVisible.end && (
       <DateTimePicker
         value={dateRange.end || new Date()}
         mode="date"
@@ -364,20 +477,21 @@ export default function WeightLogDetail() {
           setDatePickerVisible({ start: false, end: false });
           if (date) setDateRange((prev) => ({ ...prev, end: date }));
         }}
-      />
-    )}
+        />
+      )}
   
-    {/* Logs */}
-    <FlatList
-      data={filteredDays}
-      keyExtractor={(item) => `${item.day_name}_${item.workout_date}`}
-      renderItem={({ item }) => renderDay(item)}
-      ListEmptyComponent={
-        <Text style={[styles.emptyText, { color: theme.text }]}>
-          {t('noLog')}
-        </Text>
-      }
-    />
+      {/* Logs */}
+       <FlatList
+         data={filteredDays}
+         keyExtractor={(item) => `${item.day_name}_${item.workout_date}`}
+         renderItem={({ item }) => renderDay(item)}
+         ListEmptyComponent={
+           <Text style={[styles.emptyText, { color: theme.text }]}>
+             {t('noLog')}
+           </Text>
+         }
+       />
+
     </View>
   );
 }
@@ -390,7 +504,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 30,
     paddingTop: 40,
-    backgroundColor: '#FFFFFF',
   },
   adContainer: {
     alignItems: 'center',
@@ -398,7 +511,6 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 30,
     fontWeight: '900',
-    color: '#000000',
     textAlign: 'center',
     marginVertical: 20, // Adds spacing above and below the title
   },
@@ -411,7 +523,6 @@ const styles = StyleSheet.create({
   filterButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#000000',
     borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 20,
@@ -419,14 +530,12 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   filterButtonText: {
-    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: 'bold',
     marginLeft: 10,
   },
   clearButton: {
     marginBottom: 20,
-    backgroundColor: '#000000',
     borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 15,
@@ -436,7 +545,6 @@ const styles = StyleSheet.create({
     marginVertical: 0,
   },
   clearButtonText: {
-    color: '#FFFFFF',
     fontWeight: 'bold',
     fontSize: 16,
   },
@@ -448,14 +556,11 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   logContainer: {
-    backgroundColor: '#F7F7F7',
     borderRadius: 20,
     padding: 20,
     marginBottom: 15,
     borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.1)',
     elevation: 2,
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 5,
@@ -469,12 +574,14 @@ const styles = StyleSheet.create({
   logDayName: {
     fontSize: 20,
     fontWeight: '900',
-    color: '#000000',
+    marginBottom: 4,
   },
   logDate: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#000000',
+    maxWidth: 120,
+    textAlign: 'right',
+    marginHorizontal: 10,
   },
   logList: {
     marginTop: 10,
@@ -486,15 +593,32 @@ const styles = StyleSheet.create({
   exerciseName: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#000000',
   },
   logDetail: {
     fontSize: 14,
-    color: '#666666',
   },
   emptyText: {
     textAlign: 'center',
     fontSize: 16,
-    color: 'rgba(0, 0, 0, 0.5)',
+  },
+  titleContainer: {
+    flex: 1,
+    paddingRight: 10,
+  },
+  dayNameColumn: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+  },
+  timeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 2,
+  },
+  timeIcon: {
+    marginRight: 3,
+  },
+  completionTime: {
+    fontSize: 14,
+    opacity: 0.8,
   },
 });

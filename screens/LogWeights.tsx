@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { useNavigation} from '@react-navigation/native';
 import { useSQLiteContext } from 'expo-sqlite';
-import { WorkoutLog, LoggedExercise } from '../types';
+import { WorkoutLog, LoggedExercise } from '../utils/types';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useSettings } from '../context/SettingsContext';
 
@@ -275,8 +275,10 @@ export default function LogWeights() {
       enableOnAndroid={true}
     >
 
-   
-<TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}> <Ionicons name="arrow-back" size={24} color={theme.text} /> </TouchableOpacity>
+  
+<TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+    <Ionicons name="arrow-back" size={24} color={theme.text} />
+  </TouchableOpacity>
 
   <Text style={[styles.title, { color: theme.text }]}>{t('trackWeights')}</Text>
       

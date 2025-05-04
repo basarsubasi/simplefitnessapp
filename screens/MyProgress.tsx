@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -6,7 +6,6 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { WeightLogStackParamList } from '../App'; // Adjust the path to where WeightLogStackParamList is defined
 import { useSQLiteContext } from 'expo-sqlite';
 import { useFocusEffect } from '@react-navigation/native';
-
 import { useTheme } from '../context/ThemeContext';
 import { useTranslation } from 'react-i18next';
 
@@ -14,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 
 type WeightLogNavigationProp = StackNavigationProp<
   WeightLogStackParamList,
-  'LogWeights' | 'WeightLogDetail' | 'AllLogs'
+  'LogWeights' | 'WeightLogDetail' | 'AllLogs' | 'GraphsWorkoutSelection'
 >;
 
 export default function MyProgress() {
@@ -27,8 +26,56 @@ export default function MyProgress() {
 
   const [workouts, setWorkouts] = useState<string[]>([]);
 
+
+  const addColumn1 = async () => {
+    try {
+      // Check if column exists first
+      const tableInfo = await db.getAllAsync(
+        "PRAGMA table_info(Workout_Log);"
+      );
+      const columnExists = tableInfo.some(
+        (column: any) => column.name === 'completion_time'
+      );
+      
+      if (!columnExists) {
+        await db.runAsync('ALTER TABLE Workout_Log ADD COLUMN completion_time INTEGER;');
+        console.log('Column added successfully');
+      } else {
+        console.log('Column already exists, skipping');
+      }
+    } catch (error) {
+      console.error('Error managing column:', error);
+    }
+  };
+
+
+  const addColumn0 = async () => {
+    try {
+      // Check if column exists first
+      const tableInfo = await db.getAllAsync(
+        "PRAGMA table_info(Weight_Log);"
+      );
+      const columnExists = tableInfo.some(
+        (column: any) => column.name === 'completion_time'
+      );
+      
+      if (!columnExists) {
+        await db.runAsync('ALTER TABLE Weight_Log ADD COLUMN completion_time INTEGER;');
+        console.log('Column added successfully');
+      } else {
+        console.log('Column already exists, skipping');
+      }
+    } catch (error) {
+      console.error('Error managing column:', error);
+    }
+  };
+
+
+
   useFocusEffect(
     React.useCallback(() => {
+      addColumn0()
+      addColumn1()
       fetchWorkoutsWithLogs();
     }, [db])
   );
@@ -96,16 +143,50 @@ export default function MyProgress() {
   {/* Title */}
   <Text style={[styles.title, { color: theme.text }]}>{t('myProgress')}</Text>
 
-  {/* Log Weights Button */}
+  {/* Buttons Row */}
+  <View style={styles.buttonRow}>
+  
+
+    {/* Log Weights Button */}
+    <TouchableOpacity
+      style={[styles.actionButton, { backgroundColor: theme.buttonBackground }]}
+      onPress={() => navigation.navigate('LogWeights')}
+    >
+      <Ionicons name="stats-chart" size={24} color={theme.buttonText} />
+      <Text style={[styles.actionButtonText, { color: theme.buttonText }]}>
+        {t('trackAWorkout')}
+      </Text>
+    </TouchableOpacity>
+
+  {/* Graphs Button */}
   <TouchableOpacity
-    style={[styles.logWeightsButton, { backgroundColor: theme.buttonBackground }]}
-    onPress={() => navigation.navigate('LogWeights')}
-  >
-    <Ionicons name="stats-chart" size={24} color={theme.buttonText} />
-    <Text style={[styles.logWeightsButtonText, { color: theme.buttonText }]}>
-    {t('trackAWorkout')}    
-    </Text>
-  </TouchableOpacity>
+      style={[styles.actionButton, { backgroundColor: theme.buttonBackground }]}
+      onPress={() => navigation.navigate('GraphsWorkoutSelection')}
+    >
+      <Ionicons name="trending-up" size={24} color={theme.buttonText} />
+      <Text style={[styles.actionButtonText, { color: theme.buttonText }]}>
+        {t('Graphs')}
+      </Text>
+    </TouchableOpacity>
+
+
+
+
+
+  </View>
+
+  <TouchableOpacity
+        style={[styles.workoutCard, { backgroundColor: theme.card, borderColor: theme.border }]}
+        onPress={() => navigation.navigate('AllLogs')}
+        >
+        {/* Container to align the icon and text */}
+        <View style={styles.workoutCardContent}>
+          <Text style={[styles.workoutText, { color: theme.text }]}>{t('allTracks')}</Text>
+          <Ionicons name="chevron-forward" size={20} color={theme.text} />
+        </View>
+        
+      </TouchableOpacity>
+
 
   <TouchableOpacity
         style={[styles.workoutCard, { backgroundColor: theme.card, borderColor: theme.border }]}
@@ -148,11 +229,11 @@ export default function MyProgress() {
       </Text>
     }
   />
-
 <Text style={[styles.tipText, { color: theme.text }]}>
   {t('myProgressTip')}  
   </Text>
 
+  
 
 
 
@@ -179,16 +260,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#000000',
   },
-
-  tipText: {
-    marginTop: 20, // Space above the text
-    paddingBottom:20,
-    textAlign: 'center', // Center align
-    fontSize: 14, // Smaller font size
-    fontStyle: 'italic', // Italic for emphasis
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+    marginBottom: 20,
   },
-
-  logWeightsButton: {
+  actionButton: {
     backgroundColor: '#000000',
     borderRadius: 20,
     paddingVertical: 15,
@@ -196,19 +274,25 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 20,
-    marginBottom:20,
+    flex: 0.48, // Take up slightly less than half the available space
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 5,
     elevation: 5,
   },
-  logWeightsButtonText: {
+  actionButtonText: {
     color: '#FFFFFF',
     fontWeight: 'bold',
-    fontSize: 18,
-    marginLeft: 10,
+    fontSize: 16, // Slightly smaller to fit
+    marginLeft: 8,
+  },
+  tipText: {
+    marginTop: 20, // Space above the text
+    paddingBottom:20,
+    textAlign: 'center', // Center align
+    fontSize: 14, // Smaller font size
+    fontStyle: 'italic', // Italic for emphasis
   },
   workoutCard: {
     backgroundColor: '#F7F7F7',
@@ -247,5 +331,6 @@ const styles = StyleSheet.create({
   },
   adContainer: {
     alignItems: 'center',
+    
   },
 });

@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { WorkoutStackParamList } from '../App'; // Adjust path to where WorkoutStackParamList is defined
-import { Workout } from '../types';
+import { Workout } from '../utils/types';
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, ScrollView, View } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -45,6 +45,23 @@ export default function WorkoutList({
             {
               backgroundColor: theme.card,
               borderColor: theme.border,
+            },
+          ]}
+          activeOpacity={0.7}
+          onPress={() => navigation.navigate('Difficulty')}
+        >
+          <Text style={[styles.workoutText, { color: theme.text }]}>{t('navigateToDifficulty')}</Text>
+          <Ionicons name="chevron-forward" size={20} color={theme.text} />
+        </TouchableOpacity>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+          style={[
+            styles.workoutCard,
+            {
+              backgroundColor: theme.card,
+              borderColor: theme.border,
+
             },
           ]}
           activeOpacity={0.7}
@@ -132,6 +149,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     borderColor: 'rgba(0, 0, 0, 0.1)',
+    elevation: 2,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.8,

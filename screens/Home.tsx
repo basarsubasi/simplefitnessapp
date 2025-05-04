@@ -58,6 +58,7 @@ export default function Home({ navigation }: any) {
         >
           <Text style={[styles.buttonText, { color: theme.homeButtonText3 }]}>{t('homeGotoProgress')}</Text>
         </TouchableOpacity>
+        
       </View>
 
     </View>
@@ -69,8 +70,8 @@ export default function Home({ navigation }: any) {
 const styles = ScaledSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 20, // Keep fixed padding for consistency
-    paddingTop: 30, // Fixed padding
+    paddingHorizontal: 20,
+    paddingTop: 20,
   },
   headerContainer: {
     position: 'relative',
