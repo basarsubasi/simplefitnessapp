@@ -1,11 +1,11 @@
   // App.tsx
-  import React, {useState } from 'react';
-  import { View, ActivityIndicator, StatusBar, StyleSheet, Pressable } from 'react-native'; // Import Pressable here
+  import React, {useState, useEffect, useRef } from 'react';
+  import { View, ActivityIndicator, StatusBar, StyleSheet, Pressable, Text, Platform } from 'react-native'; // Import Platform
   import * as FileSystem from 'expo-file-system';
   import { SQLiteProvider} from 'expo-sqlite';
   import { Asset } from 'expo-asset';
   import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-  import { NavigationContainer } from '@react-navigation/native';
+  import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
   import Ionicons from 'react-native-vector-icons/Ionicons';
   import Home from './screens/Home'; // Assuming you have a Home screen component
   import Workouts from './screens/Workouts';
@@ -18,8 +18,15 @@
   import MyProgress from './screens/MyProgress';
   import LogWeights from './screens/LogWeights';
   import WeightLogDetail from './screens/WeightLogDetail';
-  import './i18n'; // Ensure this is present to initialize i18n
-  import i18n from './i18n'; // Import the i18n instance
+  import RecurringWorkoutOptions from './screens/RecurringWorkoutOptions';
+  import CreateRecurringWorkout from './screens/CreateRecurringWorkout';
+  import ManageRecurringWorkouts from './screens/ManageRecurringWorkouts';
+  import RecurringWorkoutDetails from './screens/RecurringWorkoutDetails';
+  import EditRecurringWorkout from './screens/EditRecurringWorkout';
+  import StartWorkout from './screens/StartWorkout';
+  import StartedWorkoutInterface from './screens/StartedWorkoutInterface';
+  import './utils/i18n'; // Ensure this is present to initialize i18n
+  import i18n from './utils/i18n'; // Import the i18n instance
   import { I18nextProvider } from 'react-i18next';
   import Settings from './screens/Settings';
   import { SettingsProvider } from './context/SettingsContext';
@@ -29,6 +36,14 @@
   import Difficulty from './screens/Difficulty';
   import Template from './screens/Template';
   import TemplateDetails from './screens/TemplateDetails';
+  import {getAllScheduledNotifications } from './utils/notificationUtils';
+  import * as Notifications from 'expo-notifications';
+  import * as TaskManager from 'expo-task-manager';
+  import * as BackgroundFetch from 'expo-background-fetch';
+  import { useRecurringWorkouts } from './utils/recurringWorkoutUtils';
+  import { AppState } from 'react-native';
+  import GraphsWorkoutSelection from './screens/GraphsWorkoutSelection';
+  import GraphsWorkoutDetails from './screens/GraphsWorkoutDetails';
 
 
 
@@ -37,6 +52,13 @@
   const WorkoutStackScreen = createNativeStackNavigator<WorkoutStackParamList>();
   const WorkoutLogStackScreen= createNativeStackNavigator<WorkoutLogStackParamList>();
   const WeightLogStackScreen= createNativeStackNavigator<WeightLogStackParamList>();
+  const StartWorkoutStackScreen = createNativeStackNavigator<StartWorkoutStackParamList>();
+
+  
+
+
+
+  
 
   
 
@@ -106,6 +128,8 @@
   };
   
 
+  
+
 
   export type WorkoutStackParamList = {
     WorkoutsList: undefined; // No parameters for this route
@@ -122,6 +146,11 @@
   export type WorkoutLogStackParamList = {
     MyCalendar: undefined; // No parameters for this route
     LogWorkout: undefined; // No parameters for this route
+    RecurringWorkoutOptions: undefined;
+    CreateRecurringWorkout: undefined;
+    ManageRecurringWorkouts: undefined;
+    RecurringWorkoutDetails: { recurring_workout_id: number };
+    EditRecurringWorkout: { recurring_workout_id: number };
   };
 
   export type WeightLogStackParamList = {
@@ -129,6 +158,13 @@
     LogWeights: undefined;
     WeightLogDetail:{ workoutName: string }
     AllLogs: undefined;
+    GraphsWorkoutSelection: undefined;
+    GraphsWorkoutDetails: { workoutName: string };
+  }
+
+  export type StartWorkoutStackParamList = {
+    StartWorkout: { fromNotification?: boolean } | undefined;
+    StartedWorkoutInterface: { workout_log_id: number };
   }
 
   function WorkoutStack() {
@@ -197,7 +233,35 @@
           component={LogWorkout}
           options={{ title: 'Log a Workout' }} // Title for the LogWorkout screen
         />
+        <WorkoutLogStackScreen.Screen
+          name="RecurringWorkoutOptions"
+          component={RecurringWorkoutOptions}
+          options={{ title: 'Recurring Workout Options' }}
+        /> 
+         <WorkoutLogStackScreen.Screen
+          name="CreateRecurringWorkout"
+          component={CreateRecurringWorkout}
+          options={{ title: 'Create Recurring Workout' }}
+        /> 
+        <WorkoutLogStackScreen.Screen
+          name="ManageRecurringWorkouts"
+          component={ManageRecurringWorkouts}
+          options={{ title: 'Manage Recurring Workouts' }}
+        /> 
+         <WorkoutLogStackScreen.Screen
+          name="RecurringWorkoutDetails"
+          component={RecurringWorkoutDetails}
+          options={{ title: 'Recurring Workout Details' }}
+        /> 
+        <WorkoutLogStackScreen.Screen
+          name="EditRecurringWorkout"
+          component={EditRecurringWorkout}
+          options={{ title: 'Edit Recurring Workout' }}
+        />
+
       </WorkoutLogStackScreen.Navigator>
+
+      
     );
   }
 
@@ -231,76 +295,149 @@
           options={{ headerShown: false }} // No header for MyCalendar screen
         />    
       
+      <WeightLogStackScreen.Screen
+        name="GraphsWorkoutSelection"
+        component={GraphsWorkoutSelection}
+        options={{ headerShown: false }}
+      />
+      <WeightLogStackScreen.Screen
+        name="GraphsWorkoutDetails"
+        component={GraphsWorkoutDetails}
+        options={{ headerShown: false }}
+      />
+      
       </WeightLogStackScreen.Navigator>
     );
   }
+
+  function StartWorkoutStack() {
+    return (
+      <StartWorkoutStackScreen.Navigator
+        screenOptions={{
+          headerShown: false, // Disable headers for all screens in this stack
+        }}
+      >
+        <StartWorkoutStackScreen.Screen
+          name="StartWorkout"
+          component={StartWorkout}
+          options={{ headerShown: false }}
+        />
+        <StartWorkoutStackScreen.Screen
+          name="StartedWorkoutInterface"
+          component={StartedWorkoutInterface}
+          options={{ headerShown: false }}
+        />
+      </StartWorkoutStackScreen.Navigator>
+    );
+  }
+
+// First, create a component that will handle the recurring workout checks
+function RecurringWorkoutManager() {
+  const { checkRecurringWorkouts } = useRecurringWorkouts();
+  const appState = useRef(AppState.currentState);
+  const initialCheckDone = useRef(false);
+
+  useEffect(() => {
+    // Function to check workouts and publish event
+    const checkAndNotify = async () => {
+      if (!initialCheckDone.current) {
+        await checkRecurringWorkouts();
+        // Publish event to notify MyCalendar to refresh
+        console.log('Initial recurring workout check triggered and event published');
+        initialCheckDone.current = true;
+      }
+    };
+    
+    checkAndNotify();
+    
+    // Set up listener for app returning to foreground
+   
+
+  }, [checkRecurringWorkouts]);
+
+  return null;
+}
+
 // Define AppContent here
 const AppContent = () => {
-  const { theme } = useTheme(); // Access the theme context
-  
+  const { theme } = useTheme();
 
   return (
     <>
-         <StatusBar   barStyle={theme.type === 'light' ? "dark-content" : "light-content"}  backgroundColor={theme.background}  />
-          <React.Suspense
-            fallback={
-              <View style={{ flex:1}}>
-                <ActivityIndicator size={'large'}/>
-              </View>
-            }
-            />
-             <SQLiteProvider databaseName="SimpleDB.db" useSuspense>
-            <Bottom.Navigator
-                screenOptions={{
-                  headerShown: false,
-                  tabBarStyle: {
-                    backgroundColor: theme.background, // Dynamically set based on theme
-                    borderTopWidth: 0, // Removes the top border of the tab bar
-                    elevation: 0, // Removes shadow on Android
-                    shadowOpacity: 0, // Removes shadow on iOS
-                    height: 60,
-                    paddingVertical: 10,
-                  },
-                  tabBarActiveTintColor: theme.text, // Active icon color
-                  tabBarInactiveTintColor: theme.inactivetint, // Inactive icon color
-                }}
-            >
-              <Bottom.Screen
-                name="Home"
-                component={Home}
-                options={{
-                  tabBarButton: (props) => (
-                    <TabButton {...props} iconName="home" />
-                  ),
-                }}
-              />
-              <Bottom.Screen
-                name="My Workouts"
-                component={WorkoutStack}
-                options={{
-                  tabBarButton: (props) => (
-                    <TabButton {...props} iconName="barbell" />
-                  ),
-                }}
-              />
-              <Bottom.Screen
-                name="My Calendar"
-                component={WorkoutLogStack}
-                options={{
-                  tabBarButton: (props) => (
-                    <TabButton {...props} iconName="calendar" />
-                  ),
-                }}
-              />
-              <Bottom.Screen
-                name="My Progress"
-                component={WeightLogStack}
-                options={{
-                  tabBarButton: (props) => (
-                    <TabButton {...props} iconName="stats-chart" />
-                  ),
-                }}
-              />
+      <StatusBar barStyle={theme.type === 'light' ? "dark-content" : "light-content"} backgroundColor={theme.background} />
+      <React.Suspense
+        fallback={
+          <View style={{ flex:1 }}>
+            <ActivityIndicator size={'large'}/>
+          </View>
+        }
+      />
+      <SQLiteProvider databaseName="SimpleDB.db" useSuspense>
+        <RecurringWorkoutManager />
+        
+        <Bottom.Navigator
+          screenOptions={{
+            headerShown: false,
+            tabBarStyle: {
+              backgroundColor: theme.background, // Dynamically set based on theme
+              borderTopWidth: 0, // Removes the top border of the tab bar
+              elevation: 0, // Removes shadow on Android
+              shadowOpacity: 0, // Removes shadow on iOS
+              height: 60,
+              paddingVertical: 10,
+            },
+            tabBarActiveTintColor: theme.text, // Active icon color
+            tabBarInactiveTintColor: theme.inactivetint, // Inactive icon color
+          }}
+        >
+          <Bottom.Screen
+            name="Home"
+            component={Home}
+            options={{
+              tabBarButton: (props) => (
+                <TabButton {...props} iconName="home" />
+              ),
+            }}
+          />
+          <Bottom.Screen
+            name="My Workouts"
+            component={WorkoutStack}
+            options={{
+              tabBarButton: (props) => (
+                <TabButton {...props} iconName="barbell" />
+              ),
+            }}
+          />
+
+          <Bottom.Screen
+            name="My Calendar"
+            component={WorkoutLogStack}
+            options={{
+              tabBarButton: (props) => (
+                <TabButton {...props} iconName="calendar" />
+              ),
+            }}
+          />
+
+          <Bottom.Screen
+            name="Start Workout"
+            component={StartWorkoutStack}
+            options={{
+              tabBarButton: (props) => (
+                <TabButton {...props} iconName="stopwatch" />
+              ),
+            }}
+          />
+
+          <Bottom.Screen
+            name="My Progress"
+            component={WeightLogStack}
+            options={{
+              tabBarButton: (props) => (
+                <TabButton {...props} iconName="stats-chart" />
+              ),
+            }}
+          />
 
        <Bottom.Screen
          name="Settings"
@@ -321,34 +458,78 @@ const AppContent = () => {
 
 
   export default function App() {
+    const [dbLoaded, setDbLoaded] = useState(false);
+    const navigationRef = useRef<NavigationContainerRef<any>>(null);
+    
+    useEffect(() => {
+      loadDatabase().then(() => setDbLoaded(true));
+      
+      // Configure notification permissions
+      const setupNotifications = async () => {
+        // Don't request permissions on app start - this will be handled when needed
+        await Notifications.setNotificationHandler({
+          handleNotification: async () => ({
+            shouldShowAlert: true,
+            shouldPlaySound: true,
+            shouldSetBadge: false,
+          }),
+        });
+        
+        // Check if device can use background fetch, but don't request permissions
+        if (Platform.OS !== 'web') {
+          try {
+            // Check if device can use background fetch
+            const backgroundFetchStatus = await BackgroundFetch.getStatusAsync();
+            
+            switch (backgroundFetchStatus) {
+              case BackgroundFetch.BackgroundFetchStatus.Available:
+                console.log("Background fetch is available");
+                break;
+              case BackgroundFetch.BackgroundFetchStatus.Restricted:
+                console.log("Background fetch is restricted");
+                break;
+              case BackgroundFetch.BackgroundFetchStatus.Denied:
+                console.log("Background fetch is denied");
+                break;
+            }
+          } catch (err) {
+            console.log("Error checking background fetch status:", err);
+          }
+        }
+      };
+      
+      setupNotifications();
+      
+      return () => {
+        // Clean up if needed
+      };
+    }, []);
 
-    const [dbLoaded, setDbLoaded] = useState<boolean>(false);
-
-  React.useEffect(() => {
-    (async () => {
-      try {
-        //await resetDatabase();
-        await loadDatabase();
-        setDbLoaded(true);
-      } catch (e) {
-        console.error("Database loading error:", e);
-      }
-    })();
-  }, []);
+    React.useEffect(() => {
+      (async () => {
+        try {
+          //await resetDatabase();
+          await loadDatabase();
+          setDbLoaded(true);
+        } catch (e) {
+          console.error("Database loading error:", e);
+        }
+      })();
+    }, []);
   
-  if (!dbLoaded) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color="black" />
-      </View>
-    );
-  }
+    if (!dbLoaded) {
+      return (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <ActivityIndicator size="large" color="black" />
+        </View>
+      );
+    }
 
 
     return (
       <ThemeProvider>
       <GestureHandlerRootView>
-        <NavigationContainer>
+        <NavigationContainer ref={navigationRef}>
           <SettingsProvider>
           <I18nextProvider i18n={i18n}>
           <AppContent/>
@@ -392,5 +573,16 @@ const AppContent = () => {
       alignItems: 'center',
       justifyContent: 'center',
       padding: 1,
+    },
+    permissionBanner: {
+      backgroundColor: '#FFF9C4',
+      padding: 12,
+      borderBottomWidth: 1,
+      borderBottomColor: '#E0E0E0',
+    },
+    permissionText: {
+      fontSize: 14,
+      color: '#333333',
+      textAlign: 'center',
     },
   });

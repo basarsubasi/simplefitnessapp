@@ -1,7 +1,7 @@
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { WorkoutStackParamList } from '../App'; // Adjust path to where WorkoutStackParamList is defined
-import { TemplateWorkouts } from '../types';
+import { TemplateWorkouts } from '../utils/types';
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, ScrollView, View } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -40,6 +40,7 @@ export default function TemplateList({
             {
               backgroundColor: theme.card,
               borderColor: theme.border,
+
             },
           ]}
           activeOpacity={0.7}
@@ -115,7 +116,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: 16,
-  
   },
   workoutText: {
     fontSize: 20, // Slightly larger

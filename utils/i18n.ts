@@ -2,22 +2,22 @@ import * as Localization from 'expo-localization';
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
-import cs from './locales/cs/translation.json';
-import de from './locales/de/translation.json';
-import en from './locales/en/translation.json';
-import es from './locales/es/translation.json';
-import fi from './locales/fi/translation.json';
-import fr from './locales/fr/translation.json';
-import it from './locales/it/translation.json';
-import nl from './locales/nl/translation.json';
-import no from './locales/no/translation.json';
-import pl from './locales/pl/translation.json';
-import pt from './locales/pt/translation.json';
-import ru from './locales/ru/translation.json';
-import sl from './locales/sl/translation.json';
-import sv from './locales/sv/translation.json';
-import tr from './locales/tr/translation.json';
-import uk from './locales/uk/translation.json';
+import cs from '../locales/cs/translation.json';
+import de from '../locales/de/translation.json';
+import en from '../locales/en/translation.json';
+import es from '../locales/es/translation.json';
+import fi from '../locales/fi/translation.json';
+import fr from '../locales/fr/translation.json';
+import it from '../locales/it/translation.json';
+import nl from '../locales/nl/translation.json';
+import no from '../locales/no/translation.json';
+import pl from '../locales/pl/translation.json';
+import pt from '../locales/pt/translation.json';
+import ru from '../locales/ru/translation.json';
+import sl from '../locales/sl/translation.json';
+import sv from '../locales/sv/translation.json';
+import tr from '../locales/tr/translation.json';
+import uk from '../locales/uk/translation.json';
 
 
 // import more languages here

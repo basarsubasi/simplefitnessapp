@@ -2,7 +2,7 @@
   "build": {
     "beta": {
       "android": {
-        "buildType": "app-bundle"
+        "buildType": "apk"
       }
     },
     "preview2": {

@@ -2,10 +2,9 @@
   "expo": {
     "name": "Simple",
     "slug": "simplefitnessappbeta",
-    "version": "1.5.0",
+    "version": "1.6.0",
     "orientation": "portrait",
     "icon": "./assets/simpleicon.png",
-    "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/simpleicon.png",
@@ -13,11 +12,12 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true,
       "bundleIdentifier": "tr.com.basarsubasi.simplefitnessapp"
     },
     "android": {
-      "versionCode": 27,
+      "versionCode": 31,
+
+
       "adaptiveIcon": {
         "foregroundImage": "./assets/simpleicon.png",
         "backgroundColor": "#ffffff"},
@@ -32,7 +32,15 @@
       }
     },
     "plugins": [
-      "expo-sqlite"
+      "expo-sqlite",
+      "expo-build-properties",
+      [
+      "expo-notifications",
+      {
+        "icon": "./assets/notificationicon.png",
+        "color": "#000000",
+        "enableBackgroundRemoteNotifications": false
+      }]
     ],
     "owner": "basarsubasi"
   }

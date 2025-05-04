@@ -2,10 +2,11 @@
 
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import { Workout } from '../types';
+import { Workout } from '../utils/types';
 import { useSQLiteContext } from 'expo-sqlite';
 import { Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
+
 import { useTheme } from '../context/ThemeContext';
 import { useTranslation } from 'react-i18next';
 import DifficultyList from '../components/DifficultyList';
@@ -13,8 +14,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { WorkoutStackParamList } from '../App';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { insertWorkouts } from '../insertWorkouts';
-import { addTables } from '../addTables';
+import { insertWorkouts } from '../utils/insertWorkouts'
+import { addTables } from '../utils/addTemplateTable';
 
 
 

@@ -197,6 +197,7 @@ export default function CreateWorkout() {
         data={days}
         keyExtractor={(item, index) => index.toString()}
         keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
         ListHeaderComponent={
           <>
             {/* Back Button */}
