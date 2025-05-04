@@ -45,22 +45,6 @@ export default function WorkoutList({
             {
               backgroundColor: theme.card,
               borderColor: theme.border,
-            },
-          ]}
-          activeOpacity={0.7}
-          onPress={() => navigation.navigate('Difficulty')}
-        >
-          <Text style={[styles.workoutText, { color: theme.text }]}>{t('navigateToDifficulty')}</Text>
-          <Ionicons name="chevron-forward" size={20} color={theme.text} />
-        </TouchableOpacity>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-          style={[
-            styles.workoutCard,
-            {
-              backgroundColor: theme.card,
-              borderColor: theme.border,
 
             },
           ]}
@@ -152,9 +136,8 @@ const styles = StyleSheet.create({
     elevation: 2,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.8,
     shadowRadius: 5,
-    elevation: 2,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
