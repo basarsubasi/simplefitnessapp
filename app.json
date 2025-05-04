@@ -16,11 +16,10 @@
     },
     "android": {
       "versionCode": 31,
-
-
       "adaptiveIcon": {
         "foregroundImage": "./assets/simpleicon.png",
-        "backgroundColor": "#ffffff"},
+        "backgroundColor": "#ffffff"
+      },
       "package": "tr.com.basarsubasi.simplefitnessapp"
     },
     "web": {
@@ -35,12 +34,15 @@
       "expo-sqlite",
       "expo-build-properties",
       [
-      "expo-notifications",
-      {
-        "icon": "./assets/notificationicon.png",
-        "color": "#000000",
-        "enableBackgroundRemoteNotifications": false
-      }]
+        "expo-notifications",
+        {
+          "icon": "./assets/notificationicon.png",
+          "color": "#000000",
+          "enableBackgroundRemoteNotifications": false
+        }
+      ],
+      "expo-asset",
+      "expo-localization"
     ],
     "owner": "basarsubasi"
   }
