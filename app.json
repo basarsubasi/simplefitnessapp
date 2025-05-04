@@ -12,7 +12,9 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "bundleIdentifier": "tr.com.basarsubasi.simplefitnessapp"
+      "supportsTablet" : false,
+      "bundleIdentifier": "com.basarsubasi.simplefitnessapp",
+      "buildNumber": "1.2.1"
     },
     "android": {
       "versionCode": 31,
