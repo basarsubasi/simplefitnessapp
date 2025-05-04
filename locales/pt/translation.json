@@ -296,7 +296,13 @@
       "Select an exercise": "Selecione um exercício",
       "No exercises available": "Nenhum exercício disponível",
       "Track a workout first to see your progress": "Siga um treino primeiro para ver seu progresso",
-      "No workout data available for graphs": "Nenhum dado de treino disponível para gráficos"
+      "No workout data available for graphs": "Nenhum dado de treino disponível para gráficos",
+
+      "workoutReminderTitle": "Lembrete de treino: {{workoutName}}",
+      "workoutReminderBody": "Hora para o seu treino {{dayName}}!",
+      "Workout in Progress": "Treino em andamento",
+      "Workout in Progress Message": "Não se esqueça de completar seu treino!"
+
         
 
     

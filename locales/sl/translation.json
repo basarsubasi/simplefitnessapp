@@ -296,7 +296,12 @@
       "Select an exercise": "Izberite vajo",
       "No exercises available": "Ni razpoložljivih vaj",
       "Track a workout first to see your progress": "Sledi vadbi, da vidite svoj napredek",
-      "No workout data available for graphs": "Ni podatkov o vadbah za grafi"
+      "No workout data available for graphs": "Ni podatkov o vadbah za grafi",
+
+      "workoutReminderTitle": "Obvestilo o vadbi: {{workoutName}}",
+      "workoutReminderBody": "Čas za vašo {{dayName}} vadbo!",
+      "Workout in Progress": "Vadba v teku",
+      "Workout in Progress Message": "Ne pozabite dokončati vaše vadbe!"
         
 
     

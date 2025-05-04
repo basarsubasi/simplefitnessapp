@@ -296,7 +296,12 @@
       "Select an exercise": "Виберіть вправу",
       "No exercises available": "Немає доступних вправ",
       "Track a workout first to see your progress": "Спочатку відстежте тренування, щоб побачити свій прогрес",
-      "No workout data available for graphs": "Немає даних про тренування для графіків"
+      "No workout data available for graphs": "Немає даних про тренування для графіків",
+
+      "workoutReminderTitle": "Нагадування про тренування: {{workoutName}}",
+      "workoutReminderBody": "Час для вашого {{dayName}} тренування!",
+      "Workout in Progress": "Тренування в процесі",
+      "Workout in Progress Message": "Не забудьте завершити своє тренування!"
       
 
     
