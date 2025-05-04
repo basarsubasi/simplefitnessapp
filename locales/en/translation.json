@@ -17,7 +17,8 @@
     "Yesterday":"Yesterday",
     "set": "Set",
 
-
+    "workoutReminderTitle": "Workout Reminder: {{workoutName}}",
+    "workoutReminderBody": "Time for your {{dayName}} workout!",
 
     "workoutNameErrorMessage": "Please enter a workout name.",
     "provideDayNamesErrorMessage": "Please provide names for all days.",

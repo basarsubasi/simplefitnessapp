@@ -46,20 +46,6 @@ TaskManager.defineTask(WORKOUT_TIMER_TASK, async () => {
     const now = Date.now();
     const elapsedSeconds = Math.floor((now - startTime) / 1000);
     
-    // Schedule a notification to update the UI when the app is foregrounded
-    // This notification is only for showing workout is still running
-    await Notifications.scheduleNotificationAsync({
-      content: {
-        title: 'Workout Timer Update',
-        body: 'Your workout is still running',
-        data: { 
-          type: 'workout_timer_update',
-          elapsedSeconds,
-          startTime
-        },
-      },
-      trigger: null,
-    });
     
     return BackgroundFetch.BackgroundFetchResult.NewData;
   } catch (error) {
@@ -301,8 +287,8 @@ export default function StartedWorkoutInterface() {
           if (timerStartTime && workoutStage !== 'completed' && enableNotifications) {
             Notifications.scheduleNotificationAsync({
               content: {
-                title: 'Workout in Progress',
-                body: `${workout?.workout_name || 'Your workout'} is still running`,
+                title: t("Workout in Progress"),
+                body: t("Workout in Progress Message"),
                 data: { 
                   startTime: timerStartTime,
                   type: 'workout_timer'
