@@ -290,7 +290,12 @@
   "No exercises available": "Keine Übungen verfügbar",
 
    "Track a workout first to see your progress": "Erfasse zuerst ein Workout, um deinen Fortschritt zu sehen",
-  "No workout data available for graphs": "Keine Workout-Daten für Diagramme verfügbar"
+  "No workout data available for graphs": "Keine Workout-Daten für Diagramme verfügbar",
+
+  "workoutReminderTitle": "Workout-Erinnerung: {{workoutName}}",
+  "workoutReminderBody": "Zeit für deinen {{dayName}} Workout!",
+  "Workout in Progress": "Workout im Gange",
+  "Workout in Progress Message": "Vergiss nicht, dein Workout zu beenden!"
 
 
 

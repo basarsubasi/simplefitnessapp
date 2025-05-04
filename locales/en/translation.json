@@ -17,8 +17,7 @@
     "Yesterday":"Yesterday",
     "set": "Set",
 
-    "workoutReminderTitle": "Workout Reminder: {{workoutName}}",
-    "workoutReminderBody": "Time for your {{dayName}} workout!",
+  
 
     "workoutNameErrorMessage": "Please enter a workout name.",
     "provideDayNamesErrorMessage": "Please provide names for all days.",
@@ -306,7 +305,7 @@
     "importSuccessMessage": "Database imported successfully. Please restart the app for changes to take effect.",
     "importFailedTitle": "Import Failed",
     "importErrorMessage": "Failed to import database",
-    "remindScheduledWorkouts": "Remind scheduled workouts",
+    "remindScheduledWorkouts": "Notify me about scheduled workouts",
     "dayInterval": "Day Interval:",
 
 
@@ -331,6 +330,10 @@
     "Select an exercise": "Select an exercise",
     "No exercises available": "No exercises available",
     "Track a workout first to see your progress": "Track a workout first to see your progress",
-    "No workout data available for graphs": "No workout data available for graphs"
+    "No workout data available for graphs": "No workout data available for graphs",
+    "workoutReminderTitle": "Workout Reminder: {{workoutName}}",
+    "workoutReminderBody": "Time for your {{dayName}} workout!",
+    "Workout in Progress": "Workout in Progress",
+    "Workout in Progress Message": "Don't forget to complete your workout!"
   }
   
