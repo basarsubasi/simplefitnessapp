@@ -291,7 +291,14 @@
       "Year": "Anno",
       "All Time": "Da sempre",
       "Select an exercise": "Seleziona un esercizio",
-      "No exercises available": "Nessun esercizio disponibile"
+      "No exercises available": "Nessun esercizio disponibile",
+      "Track a workout first to see your progress": "Registra un allenamento prima per vedere il tuo progresso",
+      "No workout data available for graphs": "Nessun dato di allenamento disponibile per i grafici",
+
+      "workoutReminderTitle": "Promemoria allenamento: {{workoutName}}",
+      "workoutReminderBody": "Ora per il tuo allenamento {{dayName}}!",
+      "Workout in Progress": "Allenamento in corso",
+      "Workout in Progress Message": "Non dimenticare di completare il tuo allenamento!"
     
         
 

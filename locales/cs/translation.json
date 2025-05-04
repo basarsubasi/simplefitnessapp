@@ -292,7 +292,19 @@
     "Year": "Rok",
     "All Time": "Celou dobu",
     "Select an exercise": "Vyberte cvičení",
-    "No exercises available": "Žádná cvičení nejsou k dispozici"
+    "No exercises available": "Žádná cvičení nejsou k dispozici",
+
+    
+   "Track a workout first to see your progress": "Nejprve zaznamenejte trénink, abyste viděli svůj pokrok",
+    "No workout data available for graphs": "Pro grafy nejsou k dispozici žádná data o trénincích",
+    
+    "workoutReminderTitle": "Připomenutí tréninku: {{workoutName}}",
+    "workoutReminderBody": "Čas pro vaši {{dayName}} trénink!",
+    "Workout in Progress": "Trénink v průběhu",
+    "Workout in Progress Message": "Nezapomeňte dokončit svůj trénink!"
+    
+    
+    
     
     
 }

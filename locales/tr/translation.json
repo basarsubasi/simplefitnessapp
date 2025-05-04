@@ -326,7 +326,14 @@
         "Year": "Yıl",
         "All Time": "Tüm Zamanlar",
         "Select an exercise": "Bir egzersiz seçin",
-        "No exercises available": "Egzersiz bulunmuyor"
+        "No exercises available": "Egzersiz bulunmuyor",
+        "Track a workout first to see your progress": "Grafikleri görmek için bir antrenman takip edin.",
+        "No workout data available for graphs": "Grafikler için antrenman verisi yok",
+
+        "workoutReminderTitle": "Antrenman Hatırlatma: {{workoutName}}",
+        "workoutReminderBody": " Bugün {{dayName}} antrenmaınız var!",
+        "Workout in Progress": "Antrenman Devam Ediyor",
+        "Workout in Progress Message": "Antrenmanınızı bitirmeyi unutmayın!"
             
         
     

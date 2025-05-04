@@ -298,7 +298,14 @@
       "Year": "År",
       "All Time": "All tid",
       "Select an exercise": "Välj en övning",
-      "No exercises available": "Inga övningar tillgängliga"
+      "No exercises available": "Inga övningar tillgängliga",
+      "Track a workout first to see your progress": "Spåra ett träningspass först för att se din utveckling",
+      "No workout data available for graphs": "Inga träningsdata tillgängliga för grafer",
+
+      "workoutReminderTitle": "Påminnelse om träning: {{workoutName}}",
+      "workoutReminderBody": "Tid för din {{dayName}} träning!",
+      "Workout in Progress": "Träning pågår",
+      "Workout in Progress Message": "Glöm inte att slutföra din träning!"
         
 
     

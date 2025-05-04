@@ -293,7 +293,14 @@
       "Year": "Год",
       "All Time": "За всё время",
       "Select an exercise": "Выберите упражнение",
-      "No exercises available": "Нет доступных упражнений"
+      "No exercises available": "Нет доступных упражнений",
+      "Track a workout first to see your progress": "Сначала отследите тренировку, чтобы увидеть свой прогресс",
+      "No workout data available for graphs": "Нет данных о тренировках для графиков",
+
+      "workoutReminderTitle": "Напоминание тренировки: {{workoutName}}",
+      "workoutReminderBody": "Время для вашей {{dayName}} тренировки!",
+      "Workout in Progress": "Тренировка в процессе",
+      "Workout in Progress Message": "Не забудьте закончить свою тренировку!"
         
 
     
