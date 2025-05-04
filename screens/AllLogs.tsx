@@ -70,7 +70,7 @@ export default function AllLogs() {
          Workout_Log.workout_date, 
          COALESCE(Workout_Log.completion_time, MIN(Weight_Log.completion_time)) as completion_time
          FROM Workout_Log
-         LEFT JOIN Weight_Log 
+         INNER JOIN Weight_Log 
          ON Weight_Log.workout_log_id = Workout_Log.workout_log_id
          GROUP BY Workout_Log.workout_name, Workout_Log.day_name, Workout_Log.workout_date
          ORDER BY Workout_Log.workout_date DESC;`
