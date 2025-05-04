@@ -1,5 +1,6 @@
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
+import i18n from './i18n'; // Import i18n
 
 // Configure the notification handler to show alerts when received
 Notifications.setNotificationHandler({
@@ -78,11 +79,11 @@ export const scheduleWorkoutNotification = async ({
       return null;
     }
 
-    // Schedule the notification Translate this to the other languages
+    // Schedule the notification with translations
     const notificationId = await Notifications.scheduleNotificationAsync({
       content: {
-        title: `Workout Reminder: ${workoutName}`,
-        body: `Time for your ${dayName} workout!`,
+        title: i18n.t('workoutReminderTitle', { workoutName: workoutName }),
+        body: i18n.t('workoutReminderBody', { dayName: dayName }),
         data: { 
           workoutName, 
           dayName, 
