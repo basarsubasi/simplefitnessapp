@@ -8,10 +8,10 @@ An easy to use fitness app that lets you create, schedule and track your workout
 
 ## 📸 **Screenshots**
 
-<div align="center"> <img src="https://github.com/user-attachments/assets/476c4d88-103b-49e9-bf50-dba2141e2223" width="200"/>
-<img src="https://github.com/user-attachments/assets/11d53362-a10a-4058-87aa-11b774fd91e2" width="200"/>
-<img src="https://github.com/user-attachments/assets/71534f7a-6d31-4664-b53e-4068ef44ab00" width="200"/> 
-<img src="https://github.com/user-attachments/assets/308ac5c5-9060-48be-8938-102970fcf801" width="200"/>  </div> 
+<div align="center"> <img src="https://github.com/user-attachments/assets/d04a192f-836e-439e-aa0a-6fd8010cb13a" width="200"/>
+<img src="https://github.com/user-attachments/assets/0bd94a1f-bca0-41ab-a67d-5745ed4d8599" width="200"/>
+<img src="https://github.com/user-attachments/assets/7011f5ae-c0d7-444e-9bdc-1023d4bfd546" width="200"/> 
+<img src="https://github.com/user-attachments/assets/de2a6493-ec9e-4935-a49b-c33dd9f66829" width="200"/>  </div> 
 
 
 ## 🚀 **Features**
@@ -28,7 +28,7 @@ An easy to use fitness app that lets you create, schedule and track your workout
 - Plan your fitness journey by scheduling workouts on specific days.  
 
 📊 **Track Your Progress**  
-- Log your weights and reps to monitor your progress over time.  
+- Log your weights and reps to monitor your progress over time with graphical data.  
 
 📆 **Customizable Date and Weight Formats**  
 - Choose between `dd-mm-yyyy` or `mm-dd-yyyy` date formats and toggle between `kg` or `lbs` for weights.  
