@@ -37,8 +37,6 @@ interface RecurringWorkout {
   day_name: string;
   recurring_interval: number;
   recurring_days: string | null;
-  notification_enabled: number;
-  notification_time: string | null;
 }
 
 export default function RecurringWorkoutDetails() {
@@ -65,9 +63,7 @@ export default function RecurringWorkoutDetails() {
           workout_name, 
           day_name, 
           recurring_interval, 
-          recurring_days,
-          notification_enabled,
-          notification_time
+          recurring_days
         FROM Recurring_Workouts 
         WHERE recurring_workout_id = ?`,
         [recurring_workout_id]
@@ -212,13 +208,6 @@ export default function RecurringWorkoutDetails() {
             <Text style={[styles.infoValue, { color: theme.text }]}>{getWeekdaysDisplay()}</Text>
           </>
         )}
-        
-        <Text style={[styles.infoLabel, { color: theme.text }]}>{t('notifications')}:</Text>
-        <Text style={[styles.infoValue, { color: theme.text }]}>
-          {workout.notification_enabled === 1 
-            ? `${t('Notifications enabled')} (${workout.notification_time})` 
-            : t('Notificationsdisabled')}
-        </Text>
       </View>
 
       <View style={styles.buttonContainer}>

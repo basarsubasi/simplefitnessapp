@@ -17,7 +17,7 @@ import { useSettings } from '../context/SettingsContext';
 
 import { useTheme } from '../context/ThemeContext';
 import { useTranslation } from 'react-i18next';
-import { useRecurringWorkouts } from '../utils/recurringWorkoutUtils';
+import { checkAndScheduleRecurringWorkouts, useRecurringWorkouts } from '../utils/recurringWorkoutUtils';
 
 
 
@@ -69,6 +69,7 @@ export default function MyCalendar() {
         console.log('MyCalendar: Checking recurring workouts');
         // First check and schedule any recurring workouts
         await checkRecurringWorkouts();
+        await checkAndScheduleRecurringWorkouts(db);
         
         // Then fetch the workouts to display the latest data
         fetchWorkouts();

@@ -8,7 +8,6 @@ import { useTranslation } from 'react-i18next';
 import { WorkoutLogStackParamList } from '../App';
 import { useSQLiteContext } from 'expo-sqlite';
 import { useRecurringWorkouts } from '../utils/recurringWorkoutUtils';
-import DateTimePicker from '@react-native-community/datetimepicker';
 
 // Add this to your WorkoutLogStackParamList in App.tsx
 // EditRecurringWorkout: { recurring_workout_id: number };
@@ -30,8 +29,6 @@ interface RecurringWorkout {
   day_name: string;
   recurring_interval: number;
   recurring_days: string | null;
-  notification_enabled: number;
-  notification_time: string | null;
 }
 
 export default function EditRecurringWorkout() {
@@ -84,8 +81,6 @@ export default function EditRecurringWorkout() {
           day_name, 
           recurring_interval, 
           recurring_days,
-          notification_enabled,
-          notification_time
         FROM Recurring_Workouts 
         WHERE recurring_workout_id = ?`,
         [recurring_workout_id]
@@ -198,8 +193,6 @@ export default function EditRecurringWorkout() {
       const updates = {
         recurring_interval: recurringInterval,
         recurring_days: recurringDays,
-        notification_enabled: false,
-        notification_time: undefined
       };
       
       console.log('DEBUG: Updating recurring workout with parameters:', updates);
@@ -554,16 +547,6 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   selectionSection: {
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  notificationSection: {
     padding: 16,
     borderRadius: 12,
     marginBottom: 16,

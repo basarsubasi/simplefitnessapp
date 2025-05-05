@@ -5,11 +5,11 @@ import {
   StyleSheet, 
   TouchableOpacity, 
   ScrollView, 
-  Switch, 
+   
   TextInput,
-  Platform,
+  
   Modal,
-  Alert,
+  
   Keyboard,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -194,8 +194,6 @@ export default function CreateRecurringWorkout() {
         day_name: selectedDayName,
         recurring_interval: recurringInterval,
         recurring_days: recurringDays,
-        notification_enabled: false,
-        notification_time: undefined
       });
       
       // Create recurring workout
@@ -205,8 +203,6 @@ export default function CreateRecurringWorkout() {
         day_name: selectedDayName,
         recurring_interval: recurringInterval,
         recurring_days: recurringDays,
-        notification_enabled: false,
-        notification_time: undefined
       });
 
       if (success) {
@@ -575,16 +571,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   selectionSection: {
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  notificationSection: {
     padding: 16,
     borderRadius: 12,
     marginBottom: 16,

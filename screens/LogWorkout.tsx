@@ -34,7 +34,6 @@ export default function LogWorkout() {
   useFocusEffect(
     useCallback(() => {
       const setup = async () => {
-        await addColumn();
         await fetchWorkouts();
       };
       
@@ -46,26 +45,6 @@ export default function LogWorkout() {
     }, [])
   );
 
-  const addColumn = async () => {
-    try {
-      // Check if column exists first
-      const tableInfo = await db.getAllAsync(
-        "PRAGMA table_info(Workout_Log);"
-      );
-      const columnExists = tableInfo.some(
-        (column: any) => column.name === 'notification_id'
-      );
-      
-      if (!columnExists) {
-        await db.runAsync('ALTER TABLE Workout_Log ADD COLUMN notification_id TEXT;');
-        console.log('Column added successfully');
-      } else {
-        console.log('Column already exists, skipping');
-      }
-    } catch (error) {
-      console.error('Error managing column:', error);
-    }
-  };
 
   // Fetch the list of available workouts
   const fetchWorkouts = async () => {
@@ -160,10 +139,10 @@ export default function LogWorkout() {
 
       const { workout_name } = workoutResult;
 
-      // Insert the workout log into the database with notification_id if available
+      // Insert the workout log into the database
       const { lastInsertRowId: workoutLogId } = await db.runAsync(
-        'INSERT INTO Workout_Log (workout_date, day_name, workout_name, notification_id) VALUES (?, ?, ?, ?);',
-        [workoutDate, selectedDayName, workout_name, null]
+        'INSERT INTO Workout_Log (workout_date, day_name, workout_name) VALUES (?, ?, ?);',
+        [workoutDate, selectedDayName, workout_name]
       );
 
       // Fetch all exercises associated with the selected day

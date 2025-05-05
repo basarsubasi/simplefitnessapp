@@ -153,7 +153,7 @@
   }
 
   export type StartWorkoutStackParamList = {
-    StartWorkout: { fromNotification?: boolean } | undefined;
+    StartWorkout: undefined;
     StartedWorkoutInterface: { workout_log_id: number };
   }
 

@@ -10,9 +10,6 @@ export const addRecurringTable = async (db: any) => {
             recurring_start_date INTEGER NOT NULL,
             recurring_interval INTEGER NOT NULL,
             recurring_days TEXT,
-            notification_id TEXT,
-            notification_enabled BOOLEAN NOT NULL,
-            notification_time TEXT,
             FOREIGN KEY (workout_id) REFERENCES Workouts(workout_id) ON DELETE CASCADE,
             UNIQUE (workout_id, day_name)
           );`

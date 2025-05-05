@@ -1,7 +1,6 @@
 // utils/recurringWorkoutUtils.ts
 
 import { useSQLiteContext } from 'expo-sqlite';
-import { useNotifications } from './useNotifications';
 
 // Constants
 const DAY_IN_SECONDS = 86400; // 24 hours in seconds
@@ -15,8 +14,6 @@ interface RecurringWorkout {
   recurring_start_date: number;
   recurring_interval: number;
   recurring_days: string | null;
-  notification_enabled: number;
-  notification_time: string | null;
 }
 
 interface Exercise {
@@ -31,8 +28,7 @@ interface Exercise {
  */
 export const checkAndScheduleRecurringWorkouts = async (
   db: any, 
-  scheduleNotification: any,
-  notificationPermissionGranted: boolean
+
 ) => {
   try {
     console.log("RECURRING CHECK STARTED");
@@ -80,7 +76,7 @@ export const checkAndScheduleRecurringWorkouts = async (
       
       // This specific occurrence isn't scheduled yet - schedule it now
       console.log(`SCHEDULING - New workout for ${nextDate}`);
-      await scheduleWorkout(db, workout, nextOccurrence, scheduleNotification, notificationPermissionGranted);
+      await scheduleWorkout(db, workout, nextOccurrence);
     }
     
     console.log("RECURRING CHECK COMPLETED");
@@ -194,53 +190,16 @@ const scheduleWorkout = async (
   db: any, 
   workout: RecurringWorkout, 
   scheduledDate: number,
-  scheduleNotification: any,
-  notificationPermissionGranted: boolean
 ) => {
-  try {
-    let notificationId = null;
-    
+  try {    
     // First, insert the workout into the log
     const { lastInsertRowId: workoutLogId } = await db.runAsync(
-      'INSERT INTO Workout_Log (workout_date, day_name, workout_name, notification_id) VALUES (?, ?, ?, ?);',
-      [scheduledDate, workout.day_name, workout.workout_name, null] // Initially set notification_id to null
+      'INSERT INTO Workout_Log (workout_date, day_name, workout_name) VALUES (?, ?, ?);',
+      [scheduledDate, workout.day_name, workout.workout_name] 
     );
     
     console.log(`Successfully inserted workout into log with ID: ${workoutLogId}`);
     
-    // Only schedule notification AFTER successfully adding workout to the database
-    if (workout.notification_enabled && workout.notification_time && notificationPermissionGranted) {
-      console.log(`Scheduling notification for workout`);
-      
-      // Parse notification time (HH:MM format)
-      const [hours, minutes] = workout.notification_time.split(':').map(Number);
-      
-      // Create notification time Date object
-      const notificationTime = new Date();
-      notificationTime.setHours(hours, minutes, 0, 0);
-      
-      // Convert scheduledDate to Date object
-      const workoutDate = new Date(scheduledDate * 1000);
-      
-      // Schedule the notification
-      notificationId = await scheduleNotification({
-        workoutName: workout.workout_name,
-        dayName: workout.day_name,
-        scheduledDate: workoutDate,
-        notificationTime: notificationTime
-      });
-      
-      // Update the workout log with the notification ID if one was created
-      if (notificationId) {
-        console.log(`Notification scheduled with ID: ${notificationId}, updating workout log`);
-        await db.runAsync(
-          'UPDATE Workout_Log SET notification_id = ? WHERE workout_log_id = ?',
-          [notificationId, workoutLogId]
-        );
-      }
-    } else {
-      console.log(`No notification scheduled for this workout (enabled: ${workout.notification_enabled}, time: ${workout.notification_time}, permissions: ${notificationPermissionGranted})`);
-    }
     
     // Get exercises for this day
     const dayId = await getDayId(db, workout.workout_id, workout.day_name);
@@ -297,29 +256,23 @@ const getDayId = async (db: any, workoutId: number, dayName: string): Promise<nu
  */
 export const useRecurringWorkouts = () => {
   const db = useSQLiteContext();
-  const { 
-    scheduleNotification, 
-    notificationPermissionGranted,
-    checkNotificationPermission
-  } = useNotifications();
+
   
   // Check and schedule recurring workouts
   const checkRecurringWorkouts = async () => {
     // Get the latest permission status before checking workouts
-    let currentPermissionStatus = notificationPermissionGranted;
+
     
     try {
       // Double-check permissions are up-to-date
-      currentPermissionStatus = await checkNotificationPermission();
-      console.log(`Current notification permission status: ${currentPermissionStatus}`);
+    
+      console.log(`checked recurring workouts`);
     } catch (error) {
-      console.error('Error checking notification permissions:', error);
+      console.error('Error:', error);
     }
     
     return await checkAndScheduleRecurringWorkouts(
-      db, 
-      scheduleNotification,
-      currentPermissionStatus
+      db
     );
   };
   
@@ -330,8 +283,6 @@ export const useRecurringWorkouts = () => {
     day_name: string;
     recurring_interval: number;
     recurring_days?: string;
-    notification_enabled?: boolean;
-    notification_time?: string;
   }) => {
     try {
       const startDate = Math.floor(new Date().getTime() / 1000);
@@ -339,8 +290,8 @@ export const useRecurringWorkouts = () => {
       await db.runAsync(
         `INSERT INTO Recurring_Workouts (
           workout_id, workout_name, day_name, recurring_start_date, 
-          recurring_interval, recurring_days, notification_enabled, notification_time
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?);`,
+          recurring_interval, recurring_days
+        ) VALUES (?, ?, ?, ?, ?, ?);`,
         [
           data.workout_id,
           data.workout_name,
@@ -348,8 +299,7 @@ export const useRecurringWorkouts = () => {
           startDate,
           data.recurring_interval,
           data.recurring_days || null,
-          data.notification_enabled ? 1 : 0,
-          data.notification_time || null
+
         ]
       );
       
@@ -366,8 +316,7 @@ export const useRecurringWorkouts = () => {
     updates: {
       recurring_interval?: number;
       recurring_days?: string;
-      notification_enabled?: boolean;
-      notification_time?: string;
+  
     }
   ) => {
     try {
@@ -385,16 +334,7 @@ export const useRecurringWorkouts = () => {
         params.push(updates.recurring_days);
       }
       
-      if (updates.notification_enabled !== undefined) {
-        updateFields.push('notification_enabled = ?');
-        params.push(updates.notification_enabled ? 1 : 0);
-      }
-      
-      if (updates.notification_time !== undefined) {
-        updateFields.push('notification_time = ?');
-        params.push(updates.notification_time);
-      }
-      
+    
       if (updateFields.length === 0) {
         return false; // Nothing to update
       }
