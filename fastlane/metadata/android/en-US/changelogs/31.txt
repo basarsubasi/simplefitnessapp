@@ -1,5 +1,7 @@
 Main Changes:
 
+    (Notifications aren't implemented on the F-Droid builds due to expo-notifications package incompatibility with F-Droid)
+    
     Minor bugfixes
     Notifications are here (always off by default)
     Now you can plan recurring (automatically scheduled) workouts, it will always schedule your workout to the next instance of your preferred interval. (you need to be visiting the app at least once for this)
