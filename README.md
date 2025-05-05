@@ -10,8 +10,7 @@ An easy to use fitness app that lets you create, schedule and track your workout
 
 <div align="center"> <img src="https://github.com/user-attachments/assets/d04a192f-836e-439e-aa0a-6fd8010cb13a" width="200"/>
 <img src="https://github.com/user-attachments/assets/0bd94a1f-bca0-41ab-a67d-5745ed4d8599" width="200"/>
-<img src="https://github.com/user-attachments/assets/7011f5ae-c0d7-444e-9bdc-1023d4bfd546" width="200"/> 
-<img src="https://github.com/user-attachments/assets/de2a6493-ec9e-4935-a49b-c33dd9f66829" width="200"/>  </div> 
+<img src="https://github.com/user-attachments/assets/7011f5ae-c0d7-444e-9bdc-1023d4bfd546" width="200"/>   </div> 
 
 
 ## 🚀 **Features**
@@ -46,6 +45,8 @@ An easy to use fitness app that lets you create, schedule and track your workout
 3. **Schedule Workouts**: Plan your fitness routine by selecting a date.  
 
 4. **Track Progress**: Log weights and reps you have done during your workouts to see your improvement.  
+
+(Notifications aren't implemented on the F-Droid builds due to expo-notifications package incompatibility with F-Droid)
 
 
 
