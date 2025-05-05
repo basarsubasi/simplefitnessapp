@@ -8,7 +8,9 @@ import {
   ActivityIndicator,
   TextInput,
   Alert,
-  FlatList
+  FlatList,
+  Vibration,
+  Switch
 } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -16,6 +18,7 @@ import { useTheme } from '../context/ThemeContext';
 import { useTranslation } from 'react-i18next';
 import { useSQLiteContext } from 'expo-sqlite';
 import { StartWorkoutStackParamList } from '../App';
+import { useSettings } from '../context/SettingsContext';
 
 type StartedWorkoutRouteProps = RouteProp<
   StartWorkoutStackParamList,
@@ -50,6 +53,7 @@ export default function StartedWorkoutInterface() {
   const { theme } = useTheme();
   const { t } = useTranslation();
   const db = useSQLiteContext();
+  const { weightFormat, setWeightFormat } = useSettings();
   
   const { workout_log_id } = route.params;
   
@@ -66,6 +70,10 @@ export default function StartedWorkoutInterface() {
   const [workoutStage, setWorkoutStage] = useState<WorkoutStage>('overview');
   const [restTime, setRestTime] = useState('30');
   const [workoutStarted, setWorkoutStarted] = useState(false);
+  
+  // User preference toggles
+  const [enableVibration, setEnableVibration] = useState(true);
+
   
   // Sets data for tracking workout
   const [allSets, setAllSets] = useState<ExerciseSet[]>([]);
@@ -180,6 +188,12 @@ export default function StartedWorkoutInterface() {
           stopRestTimer();
           setCurrentSetIndex(currentSetIndex + 1);
           setWorkoutStage('exercise');
+          
+          // Vibrate only if enabled
+          if (enableVibration) {
+            Vibration.vibrate([500, 300, 500]);
+          }
+          
           return 0;
         }
         return prevTime - 1;
@@ -207,7 +221,7 @@ export default function StartedWorkoutInterface() {
     // Validate rest time
     const restSeconds = parseInt(restTime);
     if (isNaN(restSeconds) || restSeconds < 0) {
-      Alert.alert('Invalid Rest Time', 'Please enter a valid number of seconds');
+      Alert.alert(t('invalidRestTime'), t('pleaseEnterValidSeconds'));
       return;
     }
     
@@ -215,6 +229,7 @@ export default function StartedWorkoutInterface() {
     setWorkoutStage('exercise');
     startWorkoutTimer();
   };
+  
   
   // Render functions for different workout stages
   const renderOverview = () => {
@@ -226,13 +241,13 @@ export default function StartedWorkoutInterface() {
           <View style={styles.workoutStats}>
             <View style={styles.statItem}>
               <Text style={[styles.statValue, { color: theme.text }]}>{exercises.length}</Text>
-              <Text style={[styles.statLabel, { color: theme.text }]}>Exercises</Text>
+              <Text style={[styles.statLabel, { color: theme.text }]}>{t('exercises')}</Text>
             </View>
             <View style={styles.statItem}>
               <Text style={[styles.statValue, { color: theme.text }]}>
                 {allSets.length}
               </Text>
-              <Text style={[styles.statLabel, { color: theme.text }]}>Total Sets</Text>
+              <Text style={[styles.statLabel, { color: theme.text }]}>{t('totalSets')}</Text>
             </View>
           </View>
         </View>
@@ -245,7 +260,7 @@ export default function StartedWorkoutInterface() {
             <View style={[styles.exerciseItem, { backgroundColor: theme.card, borderColor: theme.border }]}>
               <Text style={[styles.exerciseName, { color: theme.text }]}>{item.exercise_name}</Text>
               <Text style={[styles.exerciseDetails, { color: theme.text }]}>
-                {item.sets} sets × {item.reps} reps
+                {item.sets} {t('sets')} × {item.reps} {t('reps')}
               </Text>
             </View>
           )}
@@ -254,7 +269,7 @@ export default function StartedWorkoutInterface() {
         />
         
         <View style={styles.setupSection}>
-          <Text style={[styles.setupLabel, { color: theme.text }]}>Rest time between sets (seconds):</Text>
+          <Text style={[styles.setupLabel, { color: theme.text }]}>{t('restTimeBetweenSets')}</Text>
           <TextInput
             style={[styles.restTimeInput, { 
               backgroundColor: theme.card,
@@ -268,12 +283,28 @@ export default function StartedWorkoutInterface() {
             placeholderTextColor={theme.type === 'dark' ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)'}
           />
           
+          {/* Toggle switch for vibration */}
+          <Text style={[styles.setupLabel, { color: theme.text, marginTop: 15 }]}>{t('workoutSettings')}</Text>
+          
+          <View style={[styles.toggleRow, { 
+            backgroundColor: theme.type === 'dark' ? '#121212' : '#f0f0f0',
+            borderColor: theme.type === 'dark' ? '#000000' : '#e0e0e0'
+          }]}>
+            <Text style={[styles.toggleText, { color: theme.text }]}>{t('vibration')}</Text>
+            <Switch
+              value={enableVibration}
+              onValueChange={setEnableVibration}
+              trackColor={{ false: theme.type === 'dark' ? '#444' : '#ccc', true: theme.buttonBackground }}
+              thumbColor={enableVibration ? (theme.type === 'dark' ? '#fff' : '#fff') : (theme.type === 'dark' ? '#888' : '#f4f3f4')}
+            />
+          </View>
+          
           <TouchableOpacity
             style={[styles.startButton, { backgroundColor: theme.buttonBackground }]}
             onPress={startWorkout}
           >
             <Ionicons name="play" size={20} color={theme.buttonText} style={styles.buttonIcon} />
-            <Text style={[styles.buttonText, { color: theme.buttonText }]}>Start Workout</Text>
+            <Text style={[styles.buttonText, { color: theme.buttonText }]}>{t('startWorkout')}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -290,7 +321,7 @@ export default function StartedWorkoutInterface() {
       <View style={styles.exerciseScreenContainer}>
         {/* Main timer display */}
         <View style={[styles.timerDisplay, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <Text style={[styles.timerLabel, { color: theme.text }]}>Workout Time</Text>
+          <Text style={[styles.timerLabel, { color: theme.text }]}>{t('workoutTime')}</Text>
           <Text style={[styles.workoutTimerText, { color: theme.text }]}>
             {formatTime(workoutTime)}
           </Text>
@@ -302,16 +333,16 @@ export default function StartedWorkoutInterface() {
             {currentSet.exercise_name}
           </Text>
           <Text style={[styles.setInfo, { color: theme.text }]}>
-            Set {currentSet.set_number} of {currentSet.total_sets}
+            {t('Set')} {currentSet.set_number} {t('of')} {currentSet.total_sets}
           </Text>
           <Text style={[styles.repInfo, { color: theme.text }]}>
-            Goal: {currentSet.reps_goal} reps
+            {t('goal')}: {currentSet.reps_goal} {t('reps')}
           </Text>
           
           {/* Input fields for tracking */}
           <View style={styles.inputContainer}>
             <View style={styles.inputGroup}>
-              <Text style={[styles.inputLabel, { color: theme.text }]}>Reps Done</Text>
+              <Text style={[styles.inputLabel, { color: theme.text }]}>{t('repsDone')}</Text>
               <TextInput
                 style={[styles.input, { 
                   backgroundColor: theme.card,
@@ -337,7 +368,7 @@ export default function StartedWorkoutInterface() {
             </View>
             
             <View style={styles.inputGroup}>
-              <Text style={[styles.inputLabel, { color: theme.text }]}>Weight (kg/lbs)</Text>
+              <Text style={[styles.inputLabel, { color: theme.text }]}>{t('weightKgLbs')}</Text>
               <TextInput
                 style={[styles.input, { 
                   backgroundColor: theme.card,
@@ -376,7 +407,7 @@ export default function StartedWorkoutInterface() {
                 allSets[currentSetIndex].reps_done <= 0 || 
                 allSets[currentSetIndex].weight === ''
               ) {
-                Alert.alert('Missing Information', 'Please enter both reps and weight before continuing.');
+                Alert.alert(t('missingInformation'), t('enterRepsAndWeight'));
                 return;
               }
               
@@ -392,6 +423,11 @@ export default function StartedWorkoutInterface() {
                 // This is the last set, finish the workout
                 setWorkoutStage('completed');
                 stopWorkoutTimer();
+                
+                // Vibrate to celebrate workout completion (if enabled)
+                if (enableVibration) {
+                  Vibration.vibrate([300, 200, 300, 200, 600]);
+                }
               } else {
                 // Move to rest period before next set
                 setWorkoutStage('rest');
@@ -401,7 +437,7 @@ export default function StartedWorkoutInterface() {
             disabled={allSets[currentSetIndex].reps_done <= 0 || allSets[currentSetIndex].weight === ''}
           >
             <Text style={[styles.buttonText, { color: theme.buttonText }]}>
-              {isLastSet ? 'Finish Workout' : 'Complete Set & Rest'}
+              {isLastSet ? t('finishWorkout') : t('completeSet')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -409,7 +445,7 @@ export default function StartedWorkoutInterface() {
         {/* Progress indicator */}
         <View style={styles.progressContainer}>
           <Text style={[styles.progressText, { color: theme.text }]}>
-            {currentSetIndex + 1} of {allSets.length} sets
+            {currentSetIndex + 1} {t('of')} {allSets.length} {t('sets')}
           </Text>
           <View style={[styles.progressBar, { backgroundColor: theme.border }]}>
             <View 
@@ -435,35 +471,35 @@ export default function StartedWorkoutInterface() {
     return (
       <View style={styles.restScreenContainer}>
         <View style={[styles.restCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <Text style={[styles.restTitle, { color: theme.text }]}>Rest Time</Text>
+          <Text style={[styles.restTitle, { color: theme.text }]}>{t('restTime')}</Text>
           
           <View style={styles.restTimerContainer}>
             <Text style={[styles.restTimerText, { color: theme.text }]}>
               {restTimeRemaining}
             </Text>
-            <Text style={[styles.restTimerUnit, { color: theme.text }]}>sec</Text>
+            <Text style={[styles.restTimerUnit, { color: theme.text }]}>{t('sec')}</Text>
           </View>
           
           <TouchableOpacity
             style={[styles.addTimeButton, { backgroundColor: theme.type === 'dark' ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.1)' }]}
             onPress={() => setRestTimeRemaining(prev => prev + 15)}
           >
-            <Text style={[styles.addTimeButtonText, { color: theme.text }]}>+15s</Text>
+            <Text style={[styles.addTimeButtonText, { color: theme.text }]}>{t('addTime')}</Text>
           </TouchableOpacity>
           
           <Text style={[styles.restMessage, { color: theme.text }]}>
-            Take a breath and prepare for your next set
+            {t('takeBreath')}
           </Text>
         </View>
         
         {nextSet && (
           <View style={[styles.upNextCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-            <Text style={[styles.upNextLabel, { color: theme.text }]}>Up Next</Text>
+            <Text style={[styles.upNextLabel, { color: theme.text }]}>{t('upNext')}</Text>
             <Text style={[styles.upNextExercise, { color: theme.text }]}>
               {nextSet.exercise_name}
             </Text>
             <Text style={[styles.upNextSetInfo, { color: theme.text }]}>
-              Set {nextSet.set_number} of {nextSet.total_sets} • {nextSet.reps_goal} reps
+              {t('upcomingSet')}: {nextSet.set_number}
             </Text>
           </View>
         )}
@@ -474,9 +510,13 @@ export default function StartedWorkoutInterface() {
             stopRestTimer();
             setCurrentSetIndex(currentSetIndex + 1);
             setWorkoutStage('exercise');
+            // Add vibration when manually skipping rest (if enabled)
+            if (enableVibration) {
+              Vibration.vibrate([200, 100, 200]);
+            }
           }}
         >
-          <Text style={[styles.buttonText, { color: theme.buttonText }]}>Skip Rest</Text>
+          <Text style={[styles.buttonText, { color: theme.buttonText }]}>{t('skipRest')}</Text>
         </TouchableOpacity>
       </View>
     );
@@ -531,17 +571,17 @@ export default function StartedWorkoutInterface() {
         console.log('Workout save completed successfully!');
         
         Alert.alert(
-          'Workout Saved',
-          'Your workout has been successfully logged!',
-          [{ text: 'OK', onPress: () => navigation.goBack() }]
+          t('workoutSaved'),
+          t('workoutSavedMessage'),
+          [{ text: t('OK'), onPress: () => navigation.goBack() }]
         );
       } catch (error) {
         // If there's an error, rollback the transaction
         await db.runAsync('ROLLBACK;');
         console.error('Error saving workout:', error);
         Alert.alert(
-          'Error',
-          'There was an error saving your workout. Please try again.'
+          t('Error'),
+          t('There was an error saving your workout data.')
         );
       }
     };
@@ -550,7 +590,7 @@ export default function StartedWorkoutInterface() {
       <View style={styles.completedContainer}>
         <Ionicons name="checkmark-circle" size={80} color={theme.buttonBackground} style={styles.completedIcon} />
         
-        <Text style={[styles.completedTitle, { color: theme.text }]}>Workout Completed!</Text>
+        <Text style={[styles.completedTitle, { color: theme.text }]}>{t('workoutCompleted')}</Text>
         
         <View style={[styles.completedCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
           <Text style={[styles.completedWorkoutName, { color: theme.text }]}>
@@ -562,18 +602,14 @@ export default function StartedWorkoutInterface() {
               <Text style={[styles.completedStatValue, { color: theme.text }]}>
                 {formatTime(workoutTime)}
               </Text>
-              <Text style={[styles.completedStatLabel, { color: theme.text }]}>
-                Total Time
-              </Text>
+              <Text style={[styles.completedStatLabel, { color: theme.text }]}>{t('totalTime')}</Text>
             </View>
             
             <View style={styles.completedStatItem}>
               <Text style={[styles.completedStatValue, { color: theme.text }]}>
                 {completedSets.length}
               </Text>
-              <Text style={[styles.completedStatLabel, { color: theme.text }]}>
-                Sets Completed
-              </Text>
+              <Text style={[styles.completedStatLabel, { color: theme.text }]}>{t('setsCompleted')}</Text>
             </View>
           </View>
         </View>
@@ -583,7 +619,7 @@ export default function StartedWorkoutInterface() {
           onPress={saveWorkout}
         >
           <Text style={[styles.buttonText, { color: theme.buttonText }]}>
-            Complete Workout
+            {t('completeWorkout')}
           </Text>
         </TouchableOpacity>
       </View>
@@ -594,7 +630,7 @@ export default function StartedWorkoutInterface() {
     return (
       <View style={[styles.loadingContainer, { backgroundColor: theme.background }]}>
         <ActivityIndicator size="large" color={theme.text} />
-        <Text style={[styles.loadingText, { color: theme.text }]}>Loading workout...</Text>
+        <Text style={[styles.loadingText, { color: theme.text }]}>{t('loadingWorkout')}</Text>
       </View>
     );
   }
@@ -608,11 +644,11 @@ export default function StartedWorkoutInterface() {
             if (workoutStarted) {
               // Confirm exit during workout
               Alert.alert(
-                'Exit Workout?',
-                'Are you sure you want to exit? Your progress will be lost.',
+                t('exitWorkout'),
+                t('exitWorkoutMessage'),
                 [
-                  { text: 'Cancel', style: 'cancel' },
-                  { text: 'Exit', style: 'destructive', onPress: () => navigation.goBack() }
+                  { text: t('Cancel'), style: 'cancel' },
+                  { text: t('exit'), style: 'destructive', onPress: () => navigation.goBack() }
                 ]
               );
             } else {
@@ -623,7 +659,7 @@ export default function StartedWorkoutInterface() {
           <Ionicons name="arrow-back" size={24} color={theme.text} />
         </TouchableOpacity>
         <Text style={[styles.title, { color: theme.text }]}>
-          {workoutStarted ? (workout ? `${workout.workout_name} - ${workout.day_name}` : 'Workout') : 'Start Workout'}
+          {workoutStarted ? (workout ? `${workout.workout_name} - ${workout.day_name}` : t('Workout')) : t('startWorkout')}
         </Text>
       </View>
       
@@ -685,6 +721,22 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
     justifyContent: 'center',
     flex: 1
+  },
+  
+  // Toggle styles
+  toggleRow: { 
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
+    alignItems: 'center', 
+    paddingVertical: 10, 
+    paddingHorizontal: 15, 
+    borderRadius: 8, 
+    borderWidth: 1, 
+    marginBottom: 10 
+  },
+  toggleText: { 
+    fontSize: 16, 
+    fontWeight: '600' 
   },
   
   // Overview screen styles
