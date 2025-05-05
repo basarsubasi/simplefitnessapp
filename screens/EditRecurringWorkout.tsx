@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Switch, TextInput, Platform, Modal, Alert, ActivityIndicator, Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Platform, Modal, Alert, ActivityIndicator, Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -8,7 +8,6 @@ import { useTranslation } from 'react-i18next';
 import { WorkoutLogStackParamList } from '../App';
 import { useSQLiteContext } from 'expo-sqlite';
 import { useRecurringWorkouts } from '../utils/recurringWorkoutUtils';
-import { useSettings } from '../context/SettingsContext';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 // Add this to your WorkoutLogStackParamList in App.tsx
@@ -23,8 +22,6 @@ type RouteProps = RouteProp<
   WorkoutLogStackParamList,
   'EditRecurringWorkout'
 >;
-
-
 
 interface RecurringWorkout {
   recurring_workout_id: number;
@@ -44,20 +41,17 @@ export default function EditRecurringWorkout() {
   const { t } = useTranslation();
   const db = useSQLiteContext();
   const { updateRecurringWorkout } = useRecurringWorkouts();
-  const { notificationPermissionGranted } = useSettings();
 
-
-    // Using t() for day names inside the component
-    const DAYS_OF_WEEK = [
-        { id: 1, name: t('Monday') },
-        { id: 2, name: t('Tuesday') },
-        { id: 3, name: t('Wednesday') },
-        { id: 4, name: t('Thursday') },
-        { id: 5, name: t('Friday') },
-        { id: 6, name: t('Saturday') },
-        { id: 0, name: t('Sunday') },
-      ];
-    
+  // Using t() for day names inside the component
+  const DAYS_OF_WEEK = [
+    { id: 1, name: t('Monday') },
+    { id: 2, name: t('Tuesday') },
+    { id: 3, name: t('Wednesday') },
+    { id: 4, name: t('Thursday') },
+    { id: 5, name: t('Friday') },
+    { id: 6, name: t('Saturday') },
+    { id: 0, name: t('Sunday') },
+  ];
 
   // State
   const [recurringWorkout, setRecurringWorkout] = useState<RecurringWorkout | null>(null);
@@ -68,16 +62,9 @@ export default function EditRecurringWorkout() {
   const [intervalType, setIntervalType] = useState<'everyday' | 'custom' | 'weekly'>('everyday');
   const [customDaysInterval, setCustomDaysInterval] = useState('2');
   const [selectedWeekdays, setSelectedWeekdays] = useState<number[]>([]);
-  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
-  const [notificationTime, setNotificationTime] = useState<Date>(() => {
-    const date = new Date();
-    date.setHours(8, 0, 0, 0);
-    return date;
-  });
   
   // UI state
   const [showWeekdaySelector, setShowWeekdaySelector] = useState(false);
-  const [showTimePicker, setShowTimePicker] = useState(false);
 
   // Get recurring workout ID from route params
   const recurring_workout_id = route.params?.recurring_workout_id;
@@ -148,28 +135,12 @@ export default function EditRecurringWorkout() {
       setIntervalType('custom');
       setCustomDaysInterval(workout.recurring_interval.toString());
     }
-    
-    // Handle notifications
-    setNotificationsEnabled(workout.notification_enabled === 1);
-    
-    // Handle notification time
-    if (workout.notification_time) {
-      const [hours, minutes] = workout.notification_time.split(':').map(Number);
-      const date = new Date();
-      date.setHours(hours, minutes, 0, 0);
-      setNotificationTime(date);
-    }
   };
 
   // Load data when component mounts
   useEffect(() => {
     fetchRecurringWorkout();
   }, [fetchRecurringWorkout]);
-  
-  // Format time for display
-  const formatTime = (date: Date): string => {
-    return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
-  };
 
   // Toggle weekday selection
   const toggleWeekday = (dayId: number) => {
@@ -177,14 +148,6 @@ export default function EditRecurringWorkout() {
       setSelectedWeekdays(selectedWeekdays.filter(d => d !== dayId));
     } else {
       setSelectedWeekdays([...selectedWeekdays, dayId]);
-    }
-  };
-
-  // Handle time change from picker
-  const handleTimeChange = (event: any, selectedTime?: Date) => {
-    setShowTimePicker(Platform.OS === 'ios');
-    if (selectedTime) {
-      setNotificationTime(selectedTime);
     }
   };
 
@@ -210,30 +173,6 @@ export default function EditRecurringWorkout() {
     return undefined;
   };
 
-  // Check if notification permissions are granted before enabling
-  const handleNotificationToggle = (value: boolean) => {
-    if (value && !notificationPermissionGranted) {
-      // User is trying to enable notifications but doesn't have permission
-      Alert.alert(
-        t('notificationPermissions'),
-        t('notificationPermissionsRequired'),
-        [
-          {
-            text: t('cancel'),
-            style: 'cancel'
-          },
-          {
-            text: t('goToSettings'),
-            onPress: () => navigation.navigate('Settings' as never)
-          }
-        ]
-      );
-    } else {
-      // Either turning off notifications or has permission
-      setNotificationsEnabled(value);
-    }
-  };
-
   // Save updated workout
   const saveChanges = async () => {
     if (!recurringWorkout) return;
@@ -255,22 +194,12 @@ export default function EditRecurringWorkout() {
       } else if (intervalType === 'custom') {
         console.log(`DEBUG: Custom Days Interval: ${customDaysInterval}`);
       }
-
-      // Format notification time as string (HH:MM)
-      const timeString = notificationsEnabled 
-        ? formatTime(notificationTime) 
-        : undefined;
-      
-      console.log(`DEBUG: Notifications Enabled: ${notificationsEnabled}`);
-      if (notificationsEnabled) {
-        console.log(`DEBUG: Notification Time: ${timeString}`);
-      }
       
       const updates = {
         recurring_interval: recurringInterval,
         recurring_days: recurringDays,
-        notification_enabled: notificationsEnabled,
-        notification_time: timeString
+        notification_enabled: false,
+        notification_time: undefined
       };
       
       console.log('DEBUG: Updating recurring workout with parameters:', updates);
@@ -545,47 +474,6 @@ export default function EditRecurringWorkout() {
               </View>
             </View>
           </Modal>
-        </View>
-        
-        {/* Notification Settings */}
-        <View style={[styles.notificationSection, { backgroundColor: theme.card }]}>
-          <Text style={[styles.sectionTitle, { color: theme.text }]}>
-            {t('notifications')}
-          </Text>
-          
-          <View style={styles.switchRow}>
-            <Text style={[styles.switchLabel, { color: theme.text }]}>
-              {t('enableNotifications')}
-            </Text>
-            <Switch
-              value={notificationsEnabled}
-              onValueChange={handleNotificationToggle}
-              trackColor={{ false: '#767577', true: theme.buttonBackground }}
-              thumbColor={'#f4f3f4'}
-            />
-          </View>
-          
-          {notificationsEnabled && (
-            <TouchableOpacity 
-              style={styles.timeSelector}
-              onPress={() => setShowTimePicker(true)}
-            >
-              <Text style={[styles.timeSelectorText, { color: theme.text }]}>
-                {t('notificationTime')}: {formatTime(notificationTime)}
-              </Text>
-              <Ionicons name="time-outline" size={22} color={theme.text} />
-            </TouchableOpacity>
-          )}
-          
-          {showTimePicker && (
-            <DateTimePicker
-              value={notificationTime}
-              mode="time"
-              is24Hour={true}
-              display="default"
-              onChange={handleTimeChange}
-            />
-          )}
         </View>
 
         {/* Save Button */}

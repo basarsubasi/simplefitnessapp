@@ -16,14 +16,12 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useSettings } from '../context/SettingsContext';
 import { useTheme } from '../context/ThemeContext';
 import { useTranslation } from 'react-i18next';
-import { useNotifications } from '../utils/useNotifications';
 
 export default function LogWorkout() {
   const db = useSQLiteContext();
   const navigation = useNavigation();
   const { theme } = useTheme(); 
   const { t } = useTranslation(); // Initialize translations
-  const { notificationPermissionGranted, scheduleNotification } = useNotifications();
   const { dateFormat } = useSettings();
   
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -32,15 +30,6 @@ export default function LogWorkout() {
   const [selectedWorkout, setSelectedWorkout] = useState<number | null>(null);
   const [days, setDays] = useState<{ day_id: number; day_name: string }[]>([]);
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
-  
-  // Notification related states
-  const [notifyMe, setNotifyMe] = useState(false);
-  const [showTimePicker, setShowTimePicker] = useState(false);
-  const [notificationTime, setNotificationTime] = useState<Date>(() => {
-    const defaultTime = new Date();
-    defaultTime.setHours(8, 0, 0, 0); // Default to 8:00 AM
-    return defaultTime;
-  });
 
   useFocusEffect(
     useCallback(() => {
@@ -112,11 +101,6 @@ export default function LogWorkout() {
     return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime() / 1000; // Midnight timestamp
   };
 
-  // Format time for display (24h format)
-  const formatTime = (date: Date): string => {
-    return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
-  };
-
   // Log the workout and prevent duplication
   const logWorkout = async () => {
     if (!selectedDate) {
@@ -176,21 +160,10 @@ export default function LogWorkout() {
 
       const { workout_name } = workoutResult;
 
-      // Schedule notification if selected
-      let notificationId = null;
-      if (notifyMe && notificationPermissionGranted) {
-        notificationId = await scheduleNotification({
-          workoutName: workout_name,
-          dayName: selectedDayName,
-          scheduledDate: new Date(workoutDate * 1000),
-          notificationTime: notificationTime
-        });
-      }
-
       // Insert the workout log into the database with notification_id if available
       const { lastInsertRowId: workoutLogId } = await db.runAsync(
         'INSERT INTO Workout_Log (workout_date, day_name, workout_name, notification_id) VALUES (?, ?, ?, ?);',
-        [workoutDate, selectedDayName, workout_name, notificationId]
+        [workoutDate, selectedDayName, workout_name, null]
       );
 
       // Fetch all exercises associated with the selected day
@@ -351,89 +324,8 @@ export default function LogWorkout() {
         </>
       )}
 
-      {/* Notification Option - only show if a day is selected */}
-      {selectedDay && (
-        <>
-          <Text style={[styles.sectionTitle, { color: theme.text }]}>Notify me on the workout date</Text>
-          <FlatList
-            data={[
-              { id: 'yes', label: 'Yes', value: true },
-              { id: 'no', label: 'No', value: false }
-            ]}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                style={[
-                  styles.listItem,
-                  { backgroundColor: theme.card, borderColor: theme.border },
-                  notifyMe === item.value && { backgroundColor: theme.buttonBackground },
-                ]}
-                onPress={() => {
-                  if (item.value && !notificationPermissionGranted) {
-                    Alert.alert(
-                      'Notifications Disabled',
-                      'You need to enable notifications in Settings first.',
-                      [
-                        { text: 'Cancel', style: 'cancel' },
-                        { 
-                          text: 'Go to Settings', 
-                          onPress: () => navigation.navigate('Settings' as never)
-                        }
-                      ]
-                    );
-                  } else {
-                    setNotifyMe(item.value);
-                  }
-                }}
-              >
-                <Text
-                  style={[
-                    styles.listItemText,
-                    { color: theme.text },
-                    notifyMe === item.value && { color: theme.buttonText },
-                  ]}
-                >
-                  {item.label}
-                </Text>
-              </TouchableOpacity>
-            )}
-            nestedScrollEnabled={true}
-            style={{ maxHeight: 200 }}
-          />
-        </>
-      )}
-
-      {/* Time Picker - only show if notification is enabled */}
-      {selectedDay && notifyMe && notificationPermissionGranted && (
-        <>
-          <Text style={[styles.sectionTitle, { color: theme.text }]}>Select time for the notification</Text>
-          <TouchableOpacity
-            style={[styles.input, { backgroundColor: theme.card, borderColor: theme.border }]}
-            onPress={() => setShowTimePicker(true)}
-          >
-            <Text style={[styles.inputText, { color: theme.text }]}>
-              {formatTime(notificationTime)}
-            </Text>
-          </TouchableOpacity>
-          {showTimePicker && (
-            <DateTimePicker
-              value={notificationTime}
-              mode="time"
-              is24Hour={true}
-              display="default"
-              onChange={(event, date) => {
-                setShowTimePicker(false);
-                if (date) {
-                  setNotificationTime(date);
-                }
-              }}
-            />
-          )}
-        </>
-      )}
-
-            {/* Save Button */}
-            <TouchableOpacity
+      {/* Save Button */}
+      <TouchableOpacity
         style={[styles.saveButton, { backgroundColor: theme.buttonBackground }]}
         onPress={logWorkout}
       >

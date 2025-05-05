@@ -35,14 +35,7 @@
     },
     "plugins": [
       "expo-sqlite",
-      "expo-build-properties",
-      [
-      "expo-notifications",
-      {
-        "icon": "./assets/notificationicon.png",
-        "color": "#000000",
-        "enableBackgroundRemoteNotifications": false
-      }]
+      "expo-build-properties"
     ],
     "owner": "basarsubasi"
   }

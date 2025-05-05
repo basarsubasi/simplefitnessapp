@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Switch, ScrollView, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { FlatList } from 'react-native-gesture-handler';
 import { useSettings } from '../context/SettingsContext';
 import { useTheme } from '../context/ThemeContext';
 import { useTranslation } from 'react-i18next';
-import { useNotifications } from '../utils/useNotifications';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import * as DocumentPicker from 'expo-document-picker';
@@ -19,17 +18,9 @@ export default function Settings() {
     setWeightFormat, 
     language, 
     setLanguage,
-    notificationPermissionGranted,
-    setNotificationPermissionGranted
   } = useSettings();
   const { theme, toggleTheme } = useTheme();
   const { t } = useTranslation(); // for translations
-  
-  // Use the notifications hook to access all notification-related functionality
-  const { 
-    requestNotificationPermission,
-    cancelAllNotifications
-  } = useNotifications();
 
   // Manages whether the language dropdown is visible
   const [languageDropdownVisible, setLanguageDropdownVisible] = useState(false);
@@ -74,36 +65,6 @@ export default function Settings() {
 
   const handleWeightFormatChange = (format: string) => {
     setWeightFormat(format);
-  };
-
-  // Handle notification main toggle change
-  const handleNotificationToggle = async (value: boolean) => {
-    if (value) {
-      // Request permission when toggle is turned on
-      const granted = await requestNotificationPermission();
-      setNotificationPermissionGranted(granted);
-    } else {
-      // Show confirmation alert when turning off
-      Alert.alert(
-        t('notificationsDisableTitle') || 'Disable Notifications', 
-        t('notificationsDisableMessage') || 'Turning off notifications will cancel all scheduled workout reminders. Are you sure?',
-        [
-          {
-            text: t('cancel') || 'Cancel',
-            style: 'cancel',
-          },
-          { 
-            text: t('confirm') || 'Confirm', 
-            onPress: async () => {
-              // Cancel all notifications and update settings
-              await cancelAllNotifications();
-              setNotificationPermissionGranted(false);
-            }
-          },
-        ],
-        { cancelable: true }
-      );
-    }
   };
 
   // Renders the button that toggles the language dropdown
@@ -318,33 +279,6 @@ export default function Settings() {
           )}
         </View>
 
-{/* Notification Settings Section / Translate this to the other languages */}
-<View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.text }]}>{t('notifications')}</Text>
-          
-          {/* Main Notification Toggle */}
-          <View style={styles.toggleRow}>
-            <Text style={[styles.toggleText, { color: '#FFFFFF' }]}>{t('remindScheduledWorkouts')}</Text>
-            <Switch
-              value={notificationPermissionGranted}
-              onValueChange={handleNotificationToggle}
-              trackColor={{ false: '#767577', true: '#FFFFFF' }}
-              thumbColor={notificationPermissionGranted ? '#ffffff' : '#f4f3f4'}
-            />
-          </View>
-        </View>
-
-
-
-
-
-
-
-
-
-
-
-
         {/* Date Format Section */}
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: theme.text }]}>{t('settingsDateFormat')}</Text>
@@ -362,8 +296,6 @@ export default function Settings() {
             {renderButton('lbs', weightFormat, () => handleWeightFormatChange('lbs'))}
           </View>
         </View>
-
-        
 
         {/* Theme Section */}
         <View style={styles.section}>

@@ -36,10 +36,6 @@
   import Difficulty from './screens/Difficulty';
   import Template from './screens/Template';
   import TemplateDetails from './screens/TemplateDetails';
-  import {getAllScheduledNotifications } from './utils/notificationUtils';
-  import * as Notifications from 'expo-notifications';
-  import * as TaskManager from 'expo-task-manager';
-  import * as BackgroundFetch from 'expo-background-fetch';
   import { useRecurringWorkouts } from './utils/recurringWorkoutUtils';
   import { AppState } from 'react-native';
   import GraphsWorkoutSelection from './screens/GraphsWorkoutSelection';
@@ -455,50 +451,6 @@ const AppContent = () => {
     const [dbLoaded, setDbLoaded] = useState(false);
     const navigationRef = useRef<NavigationContainerRef<any>>(null);
     
-    useEffect(() => {
-      loadDatabase().then(() => setDbLoaded(true));
-      
-      // Configure notification permissions
-      const setupNotifications = async () => {
-        // Don't request permissions on app start - this will be handled when needed
-        await Notifications.setNotificationHandler({
-          handleNotification: async () => ({
-            shouldShowAlert: true,
-            shouldPlaySound: true,
-            shouldSetBadge: false,
-          }),
-        });
-        
-        // Check if device can use background fetch, but don't request permissions
-        if (Platform.OS !== 'web') {
-          try {
-            // Check if device can use background fetch
-            const backgroundFetchStatus = await BackgroundFetch.getStatusAsync();
-            
-            switch (backgroundFetchStatus) {
-              case BackgroundFetch.BackgroundFetchStatus.Available:
-                console.log("Background fetch is available");
-                break;
-              case BackgroundFetch.BackgroundFetchStatus.Restricted:
-                console.log("Background fetch is restricted");
-                break;
-              case BackgroundFetch.BackgroundFetchStatus.Denied:
-                console.log("Background fetch is denied");
-                break;
-            }
-          } catch (err) {
-            console.log("Error checking background fetch status:", err);
-          }
-        }
-      };
-      
-      setupNotifications();
-      
-      return () => {
-        // Clean up if needed
-      };
-    }, []);
-
     React.useEffect(() => {
       (async () => {
         try {

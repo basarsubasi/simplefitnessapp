@@ -22,7 +22,6 @@ import { WorkoutLogStackParamList } from '../App';
 import { useSQLiteContext } from 'expo-sqlite';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useRecurringWorkouts } from '../utils/recurringWorkoutUtils';
-import { useSettings } from '../context/SettingsContext';
 
 type NavigationProp = StackNavigationProp<
   WorkoutLogStackParamList,
@@ -45,7 +44,6 @@ export default function CreateRecurringWorkout() {
   const { t } = useTranslation();
   const db = useSQLiteContext();
   const { createRecurringWorkout } = useRecurringWorkouts();
-  const { notificationPermissionGranted } = useSettings();
 
   // Using t() for day names inside the component
   const DAYS_OF_WEEK = [
@@ -71,15 +69,6 @@ export default function CreateRecurringWorkout() {
   const [customDaysInterval, setCustomDaysInterval] = useState<string>('2');
   const [selectedWeekdays, setSelectedWeekdays] = useState<number[]>([]);
   const [showWeekdaySelector, setShowWeekdaySelector] = useState<boolean>(false);
-  
-  // Notification states
-  const [notificationsEnabled, setNotificationsEnabled] = useState<boolean>(false);
-  const [notificationTime, setNotificationTime] = useState<Date>(() => {
-    const date = new Date();
-    date.setHours(8, 0, 0, 0); // Default 08:00
-    return date;
-  });
-  const [showTimePicker, setShowTimePicker] = useState<boolean>(false);
   
   // UI states
   const [showWorkoutList, setShowWorkoutList] = useState<boolean>(false);
@@ -141,25 +130,12 @@ export default function CreateRecurringWorkout() {
     }
   }, [selectedDay, days]);
 
-  // Format time for display
-  const formatTime = (date: Date): string => {
-    return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
-  };
-
   // Toggle weekday selection
   const toggleWeekday = (dayId: number) => {
     if (selectedWeekdays.includes(dayId)) {
       setSelectedWeekdays(selectedWeekdays.filter(d => d !== dayId));
     } else {
       setSelectedWeekdays([...selectedWeekdays, dayId]);
-    }
-  };
-
-  // Handle time change from picker
-  const handleTimeChange = (event: any, selectedTime?: Date) => {
-    setShowTimePicker(Platform.OS === 'ios');
-    if (selectedTime) {
-      setNotificationTime(selectedTime);
     }
   };
 
@@ -211,16 +187,6 @@ export default function CreateRecurringWorkout() {
       } else if (intervalType === 'custom') {
         console.log(`DEBUG: Custom Days Interval: ${customDaysInterval}`);
       }
-
-      // Format notification time as string (HH:MM)
-      const timeString = notificationsEnabled 
-        ? formatTime(notificationTime) 
-        : undefined;
-      
-      console.log(`DEBUG: Notifications Enabled: ${notificationsEnabled}`);
-      if (notificationsEnabled) {
-        console.log(`DEBUG: Notification Time: ${timeString}`);
-      }
       
       console.log('DEBUG: Creating recurring workout with parameters:', {
         workout_id: selectedWorkout,
@@ -228,8 +194,8 @@ export default function CreateRecurringWorkout() {
         day_name: selectedDayName,
         recurring_interval: recurringInterval,
         recurring_days: recurringDays,
-        notification_enabled: notificationsEnabled,
-        notification_time: timeString
+        notification_enabled: false,
+        notification_time: undefined
       });
       
       // Create recurring workout
@@ -239,8 +205,8 @@ export default function CreateRecurringWorkout() {
         day_name: selectedDayName,
         recurring_interval: recurringInterval,
         recurring_days: recurringDays,
-        notification_enabled: notificationsEnabled,
-        notification_time: timeString
+        notification_enabled: false,
+        notification_time: undefined
       });
 
       if (success) {
@@ -271,29 +237,6 @@ export default function CreateRecurringWorkout() {
     }
 
     return true;
-  };
-
-  const handleNotificationToggle = (value: boolean) => {
-    if (value && !notificationPermissionGranted) {
-      // User is trying to enable notifications but doesn't have permission
-      Alert.alert(
-        t('notificationPermissions'),
-        t('notificationPermissionsRequired'),
-        [
-          {
-            text: t('cancel'),
-            style: 'cancel'
-          },
-          {
-            text: t('goToSettings'),
-            onPress: () => navigation.navigate('Settings' as never)
-          }
-        ]
-      );
-    } else {
-      // Either turning off notifications or has permission
-      setNotificationsEnabled(value);
-    }
   };
 
   return (
@@ -586,49 +529,6 @@ export default function CreateRecurringWorkout() {
                 </View>
               </View>
             </Modal>
-          </View>
-        )}
-        
-        {/* Notification Settings - only show if interval is selected */}
-        {selectedDay && (
-          <View style={[styles.notificationSection, { backgroundColor: theme.card }]}>
-            <Text style={[styles.sectionTitle, { color: theme.text }]}>
-              {t('notifications')}
-            </Text>
-            
-            <View style={styles.switchRow}>
-              <Text style={[styles.switchLabel, { color: theme.text }]}>
-                {t('enableNotifications')}
-              </Text>
-              <Switch
-                value={notificationsEnabled}
-                onValueChange={handleNotificationToggle}
-                trackColor={{ false: '#767577', true: theme.buttonBackground }}
-                thumbColor={'#f4f3f4'}
-              />
-            </View>
-            
-            {notificationsEnabled && (
-              <TouchableOpacity 
-                style={styles.timeSelector}
-                onPress={() => setShowTimePicker(true)}
-              >
-                <Text style={[styles.timeSelectorText, { color: theme.text }]}>
-                  {t('notificationTime')}: {formatTime(notificationTime)}
-                </Text>
-                <Ionicons name="time-outline" size={22} color={theme.text} />
-              </TouchableOpacity>
-            )}
-            
-            {showTimePicker && (
-              <DateTimePicker
-                value={notificationTime}
-                mode="time"
-                is24Hour={true}
-                display="default"
-                onChange={handleTimeChange}
-              />
-            )}
           </View>
         )}
 

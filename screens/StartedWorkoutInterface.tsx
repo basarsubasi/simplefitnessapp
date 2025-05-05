@@ -8,12 +8,7 @@ import {
   ActivityIndicator,
   TextInput,
   Alert,
-  FlatList,
-  Vibration,
-  AppState,
-  AppStateStatus,
-  Platform,
-  Switch
+  FlatList
 } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -21,82 +16,6 @@ import { useTheme } from '../context/ThemeContext';
 import { useTranslation } from 'react-i18next';
 import { useSQLiteContext } from 'expo-sqlite';
 import { StartWorkoutStackParamList } from '../App';
-import * as Notifications from 'expo-notifications';
-import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
-import * as TaskManager from 'expo-task-manager';
-import * as BackgroundFetch from 'expo-background-fetch';
-import { useSettings } from '../context/SettingsContext';
-
-
-// Define background task names
-const WORKOUT_TIMER_TASK = 'WORKOUT_TIMER_TASK';
-const REST_TIMER_TASK = 'REST_TIMER_TASK';
-
-// Define task handlers outside of the component
-TaskManager.defineTask(WORKOUT_TIMER_TASK, async () => {
-  try {
-    // Get stored data from AsyncStorage
-    const workoutTimerData = await Notifications.getLastNotificationResponseAsync();
-    if (!workoutTimerData) {
-      return BackgroundFetch.BackgroundFetchResult.NoData;
-    }
-    
-    // Update workout time in AsyncStorage for later retrieval
-    const { startTime } = workoutTimerData.notification.request.content.data as { startTime: number };
-    const now = Date.now();
-    const elapsedSeconds = Math.floor((now - startTime) / 1000);
-    
-    
-    return BackgroundFetch.BackgroundFetchResult.NewData;
-  } catch (error) {
-    console.error("Error in workout timer background task:", error);
-    return BackgroundFetch.BackgroundFetchResult.Failed;
-  }
-});
-
-TaskManager.defineTask(REST_TIMER_TASK, async () => {
-  try {
-    // Get stored data from the notification response
-    const restTimerData = await Notifications.getLastNotificationResponseAsync();
-    if (!restTimerData) {
-      return BackgroundFetch.BackgroundFetchResult.NoData;
-    }
-    
-    const { startTime, duration, exerciseName, setNumber, totalSets, enableVibration } = 
-      restTimerData.notification.request.content.data as { 
-        startTime: number, 
-        duration: number,
-        exerciseName: string,
-        setNumber: number,
-        totalSets: number,
-        enableVibration: boolean
-      };
-    
-    const now = Date.now();
-    const elapsedSeconds = Math.floor((now - startTime) / 1000);
-    const remainingSeconds = Math.max(0, duration - elapsedSeconds);
-    
-    // Check if rest time has completed or is about to complete very soon
-    if (remainingSeconds <= 1) {
-      // Rest time completed - vibrate only if enabled
-      if (enableVibration) {
-        Vibration.vibrate([500, 300, 500]);
-      }
-      
-      // No notification for rest timer completion anymore
-      
-      // Cancel the background task since rest is complete
-      await BackgroundFetch.unregisterTaskAsync(REST_TIMER_TASK);
-      
-      return BackgroundFetch.BackgroundFetchResult.NewData;
-    }
-    
-    return BackgroundFetch.BackgroundFetchResult.NoData;
-  } catch (error) {
-    console.error("Error in rest timer background task:", error);
-    return BackgroundFetch.BackgroundFetchResult.Failed;
-  }
-});
 
 type StartedWorkoutRouteProps = RouteProp<
   StartWorkoutStackParamList,
@@ -131,7 +50,6 @@ export default function StartedWorkoutInterface() {
   const { theme } = useTheme();
   const { t } = useTranslation();
   const db = useSQLiteContext();
-  const { notificationPermissionGranted, requestNotificationPermission, weightFormat, setWeightFormat } = useSettings();
   
   const { workout_log_id } = route.params;
   
@@ -149,20 +67,6 @@ export default function StartedWorkoutInterface() {
   const [restTime, setRestTime] = useState('30');
   const [workoutStarted, setWorkoutStarted] = useState(false);
   
-  // User preference toggles
-  const [enableVibration, setEnableVibration] = useState(true);
-  const [enableNotifications, setEnableNotifications] = useState(false);
-  
-  // Update enableNotifications only if permission is granted and user hasn't manually set it
-  useEffect(() => {
-    // Only set to true if permission is granted, never auto-enable
-    if (notificationPermissionGranted && !enableNotifications) {
-      // Optional: enable notifications by default if permission is granted
-      // Comment this line to require explicit user toggling
-      // setEnableNotifications(true);
-    }
-  }, [notificationPermissionGranted]);
-  
   // Sets data for tracking workout
   const [allSets, setAllSets] = useState<ExerciseSet[]>([]);
   const [currentSetIndex, setCurrentSetIndex] = useState(0);
@@ -170,204 +74,16 @@ export default function StartedWorkoutInterface() {
   // Timer states
   const [workoutTime, setWorkoutTime] = useState(0);
   const [restTimeRemaining, setRestTimeRemaining] = useState(0);
-  const [timerStartTime, setTimerStartTime] = useState<number | null>(null);
-  const [restTimerStartTime, setRestTimerStartTime] = useState<number | null>(null);
   const workoutTimerRef = useRef<NodeJS.Timeout | null>(null);
   const restTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const appState = useRef(AppState.currentState);
-  const [appStateVisible, setAppStateVisible] = useState(appState.current);
-  
-  // Setup notification handling for background timer completion
-  useEffect(() => {
-    // Configure notifications for timers
-    const configureNotifications = async () => {
-      await Notifications.setNotificationHandler({
-        handleNotification: async () => ({
-          shouldShowAlert: true,
-          shouldPlaySound: false,
-          shouldSetBadge: false,
-        }),
-      });
-    };
-    
-    // Setup notification response handler
-    const setupNotificationHandlers = async () => {
-      // Remove any existing notification subscriptions
-      await Notifications.dismissAllNotificationsAsync();
-      
-      // Set up notification response handler
-      const subscription = Notifications.addNotificationResponseReceivedListener(
-        (response) => {
-          const data = response.notification.request.content.data;
-          if (!data) return;
-          
-          // Always dismiss all notifications when user interacts with one
-          Notifications.dismissAllNotificationsAsync().catch(err => 
-            console.error("Error dismissing notifications:", err)
-          );
-          
-          if (data.type === 'rest_timer_completed') {
-            // Rest timer completed from background
-            stopRestTimer();
-            setCurrentSetIndex(currentSetIndex + 1);
-            setWorkoutStage('exercise');
-            Vibration.vibrate([500, 300, 500]);
-          } else if (data.type === 'workout_timer_update') {
-            // Workout timer update from background
-            if (data.elapsedSeconds) {
-              setWorkoutTime(data.elapsedSeconds);
-              if (data.startTime) {
-                setTimerStartTime(data.startTime);
-              }
-            }
-          }
-        }
-      );
-      
-      return subscription;
-    };
-    
-    configureNotifications();
-    const notificationSubscription = setupNotificationHandlers();
-    
-    // Keep the app awake while workout is in progress
-    if (workoutStarted) {
-      activateKeepAwakeAsync();
-    }
-    
-    return () => {
-      // Clean up subscriptions and keep awake when component unmounts
-      if (notificationSubscription) {
-        notificationSubscription.then(sub => sub.remove());
-      }
-      deactivateKeepAwake();
-      
-      // Clean up background tasks
-      BackgroundFetch.unregisterTaskAsync(WORKOUT_TIMER_TASK).catch(() => {});
-      BackgroundFetch.unregisterTaskAsync(REST_TIMER_TASK).catch(() => {});
-    };
-  }, [workoutStarted, currentSetIndex]);
-  
-  // Register background tasks when needed
-  const registerBackgroundTasks = async () => {
-    // Check if tasks are already registered
-    const workoutTaskRegistered = await TaskManager.isTaskRegisteredAsync(WORKOUT_TIMER_TASK);
-    const restTaskRegistered = await TaskManager.isTaskRegisteredAsync(REST_TIMER_TASK);
-    
-    // Register workout timer task if not already registered
-    if (!workoutTaskRegistered) {
-      await BackgroundFetch.registerTaskAsync(WORKOUT_TIMER_TASK, {
-        minimumInterval: 60, // update every minute
-        stopOnTerminate: false,
-        startOnBoot: true,
-      });
-    }
-    
-    // Register rest timer task if not already registered
-    if (!restTaskRegistered) {
-      await BackgroundFetch.registerTaskAsync(REST_TIMER_TASK, {
-        minimumInterval: 15, // check more frequently for rest timer
-        stopOnTerminate: false,
-        startOnBoot: true,
-      });
-    }
-  };
-  
-  // Handle AppState changes to manage timers in background
-  useEffect(() => {
-    const subscription = AppState.addEventListener('change', nextAppState => {
-      if (appState.current.match(/active/) && nextAppState.match(/inactive|background/)) {
-        // App is going to background
-        if (workoutStarted) {
-          // Start background tasks for timers
-          registerBackgroundTasks().catch(err => console.error("Error registering background tasks:", err));
-          
-          // Always show the workout running notification when app is backgrounded, 
-          // regardless of whether user is resting or not, BUT ONLY if notifications are enabled
-          if (timerStartTime && workoutStage !== 'completed' && enableNotifications) {
-            Notifications.scheduleNotificationAsync({
-              content: {
-                title: t("Workout in Progress"),
-                body: t("Workout in Progress Message"),
-                data: { 
-                  startTime: timerStartTime,
-                  type: 'workout_timer'
-                },
-              },
-              trigger: null,
-            });
-          }
-          
-          // No more special notification for rest timer completion
-        }
-      } else if (appState.current.match(/inactive|background/) && nextAppState === 'active') {
-        // App has come to the foreground - dismiss all notifications
-        Notifications.dismissAllNotificationsAsync().catch(err => 
-          console.error("Error dismissing notifications:", err)
-        );
-        
-        // Cancel any scheduled notifications as well
-        Notifications.getAllScheduledNotificationsAsync()
-          .then(notifications => {
-            notifications.forEach(notification => {
-              Notifications.cancelScheduledNotificationAsync(notification.identifier);
-            });
-          })
-          .catch(err => console.error("Error cancelling scheduled notifications:", err));
-        
-        // Recalculate workout time based on elapsed time
-        if (workoutStarted && timerStartTime && workoutStage !== 'completed') {
-          const now = Date.now();
-          const elapsedSeconds = Math.floor((now - timerStartTime) / 1000);
-          setWorkoutTime(elapsedSeconds);
-          stopWorkoutTimer();
-          startWorkoutTimer();
-        }
-        
-        if (workoutStage === 'rest' && restTimerStartTime) {
-          // Recalculate rest time based on elapsed time
-          const now = Date.now();
-          const elapsedSeconds = Math.floor((now - restTimerStartTime) / 1000);
-          const newRestTime = Math.max(0, parseInt(restTime) - elapsedSeconds);
-          
-          setRestTimeRemaining(newRestTime);
-          
-          if (newRestTime <= 0) {
-            // Rest time has already completed while in background
-            stopRestTimer();
-            setCurrentSetIndex(currentSetIndex + 1);
-            setWorkoutStage('exercise');
-          } else {
-            // Continue rest timer
-            stopRestTimer();
-            startRestTimer(newRestTime);
-          }
-        }
-      }
-      
-      appState.current = nextAppState;
-      setAppStateVisible(nextAppState);
-    });
-    
-    return () => {
-      subscription.remove();
-    };
-  }, [workoutStarted, timerStartTime, restTimerStartTime, workoutStage, currentSetIndex, restTime, allSets, workout, enableNotifications, enableVibration]);
   
   useEffect(() => {
     // Check if completion_time column exists, add it if not
     checkAndAddCompletionTimeColumn();
     fetchWorkoutDetails()    
     return () => {
-      // Clean up resources
       stopWorkoutTimer();
       stopRestTimer();
-      deactivateKeepAwake();
-      
-      // Dismiss any remaining notifications
-      Notifications.dismissAllNotificationsAsync().catch(err => 
-        console.error("Error dismissing notifications on unmount:", err)
-      );
     };
   }, []);
   
@@ -442,9 +158,8 @@ export default function StartedWorkoutInterface() {
     }
   };
   
-  // Timer functions (updated for background support)
+  // Timer functions
   const startWorkoutTimer = () => {
-    setTimerStartTime(Date.now() - (workoutTime * 1000)); // Account for existing time
     workoutTimerRef.current = setInterval(() => {
       setWorkoutTime(prevTime => prevTime + 1);
     }, 1000);
@@ -459,19 +174,12 @@ export default function StartedWorkoutInterface() {
   
   const startRestTimer = (seconds: number) => {
     setRestTimeRemaining(seconds);
-    setRestTimerStartTime(Date.now());
     restTimerRef.current = setInterval(() => {
       setRestTimeRemaining(prevTime => {
         if (prevTime <= 1) {
           stopRestTimer();
           setCurrentSetIndex(currentSetIndex + 1);
           setWorkoutStage('exercise');
-          
-          // Vibrate only if enabled
-          if (enableVibration) {
-            Vibration.vibrate([500, 300, 500]);
-          }
-          
           return 0;
         }
         return prevTime - 1;
@@ -484,7 +192,6 @@ export default function StartedWorkoutInterface() {
       clearInterval(restTimerRef.current);
       restTimerRef.current = null;
     }
-    setRestTimerStartTime(null);
   };
   
   const formatTime = (seconds: number): string => {
@@ -500,42 +207,13 @@ export default function StartedWorkoutInterface() {
     // Validate rest time
     const restSeconds = parseInt(restTime);
     if (isNaN(restSeconds) || restSeconds < 0) {
-      Alert.alert(t('invalidRestTime'), t('pleaseEnterValidSeconds'));
+      Alert.alert('Invalid Rest Time', 'Please enter a valid number of seconds');
       return;
     }
     
     setWorkoutStarted(true);
     setWorkoutStage('exercise');
     startWorkoutTimer();
-  };
-  
-  // Handle notification toggle with permission check
-  const handleNotificationToggle = async () => {
-    if (!enableNotifications) {
-      // User is trying to enable notifications
-      if (!notificationPermissionGranted) {
-        // Permission not granted, navigate to settings
-        Alert.alert(
-          'Permission Required',
-          'Notification permission is required. Please enable notifications in the Settings page.',
-          [
-            { text: 'Cancel', style: 'cancel' },
-            { 
-              text: 'Go to Settings', 
-              onPress: () => navigation.navigate('Settings' as never),
-              style: 'default' 
-            },
-          ]
-        );
-        return;
-      }
-      
-      // Permission already granted, enable notifications
-      setEnableNotifications(true);
-    } else {
-      // User is turning off notifications - simply disable
-      setEnableNotifications(false);
-    }
   };
   
   // Render functions for different workout stages
@@ -548,18 +226,18 @@ export default function StartedWorkoutInterface() {
           <View style={styles.workoutStats}>
             <View style={styles.statItem}>
               <Text style={[styles.statValue, { color: theme.text }]}>{exercises.length}</Text>
-              <Text style={[styles.statLabel, { color: theme.text }]}>{t('exercises')}</Text>
+              <Text style={[styles.statLabel, { color: theme.text }]}>Exercises</Text>
             </View>
             <View style={styles.statItem}>
               <Text style={[styles.statValue, { color: theme.text }]}>
                 {allSets.length}
               </Text>
-              <Text style={[styles.statLabel, { color: theme.text }]}>{t('totalSets')}</Text>
+              <Text style={[styles.statLabel, { color: theme.text }]}>Total Sets</Text>
             </View>
           </View>
         </View>
         
-        <Text style={[styles.sectionTitle, { color: theme.text }]}>{t('exercises')}</Text>
+        <Text style={[styles.sectionTitle, { color: theme.text }]}>Exercises</Text>
         <FlatList
           data={exercises}
           keyExtractor={(item) => item.logged_exercise_id.toString()}
@@ -567,7 +245,7 @@ export default function StartedWorkoutInterface() {
             <View style={[styles.exerciseItem, { backgroundColor: theme.card, borderColor: theme.border }]}>
               <Text style={[styles.exerciseName, { color: theme.text }]}>{item.exercise_name}</Text>
               <Text style={[styles.exerciseDetails, { color: theme.text }]}>
-                {item.sets} {t('Sets')} × {item.reps} {t('Reps')}
+                {item.sets} sets × {item.reps} reps
               </Text>
             </View>
           )}
@@ -576,7 +254,7 @@ export default function StartedWorkoutInterface() {
         />
         
         <View style={styles.setupSection}>
-          <Text style={[styles.setupLabel, { color: theme.text }]}>{t('restTimeBetweenSets')}:</Text>
+          <Text style={[styles.setupLabel, { color: theme.text }]}>Rest time between sets (seconds):</Text>
           <TextInput
             style={[styles.restTimeInput, { 
               backgroundColor: theme.card,
@@ -590,41 +268,12 @@ export default function StartedWorkoutInterface() {
             placeholderTextColor={theme.type === 'dark' ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)'}
           />
           
-          {/* Toggle switches for user preferences */}
-          <Text style={[styles.setupLabel, { color: theme.text, marginTop: 15 }]}>{t('workoutSettings')}:</Text>
-          
-          <View style={[styles.toggleRow, { 
-            backgroundColor: theme.type === 'dark' ? '#121212' : '#f0f0f0',
-            borderColor: theme.type === 'dark' ? '#000000' : '#e0e0e0'
-          }]}>
-            <Text style={[styles.toggleText, { color: theme.text }]}>{t('vibration')}</Text>
-            <Switch
-              value={enableVibration}
-              onValueChange={setEnableVibration}
-              trackColor={{ false: theme.type === 'dark' ? '#444' : '#ccc', true: theme.buttonBackground }}
-              thumbColor={enableVibration ? (theme.type === 'dark' ? '#fff' : '#fff') : (theme.type === 'dark' ? '#888' : '#f4f3f4')}
-            />
-          </View>
-          
-          <View style={[styles.toggleRow, { 
-            backgroundColor: theme.type === 'dark' ? '#121212' : '#f0f0f0',
-            borderColor: theme.type === 'dark' ? '#000000' : '#e0e0e0'
-          }]}>
-            <Text style={[styles.toggleText, { color: theme.text }]}>{t('notifications')}</Text>
-            <Switch
-              value={enableNotifications}
-              onValueChange={() => handleNotificationToggle()}
-              trackColor={{ false: theme.type === 'dark' ? '#444' : '#ccc', true: theme.buttonBackground }}
-              thumbColor={enableNotifications ? (theme.type === 'dark' ? '#fff' : '#fff') : (theme.type === 'dark' ? '#888' : '#f4f3f4')}
-            />
-          </View>
-          
           <TouchableOpacity
             style={[styles.startButton, { backgroundColor: theme.buttonBackground }]}
             onPress={startWorkout}
           >
             <Ionicons name="play" size={20} color={theme.buttonText} style={styles.buttonIcon} />
-            <Text style={[styles.buttonText, { color: theme.buttonText }]}>{t('startWorkout')}</Text>
+            <Text style={[styles.buttonText, { color: theme.buttonText }]}>Start Workout</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -641,7 +290,7 @@ export default function StartedWorkoutInterface() {
       <View style={styles.exerciseScreenContainer}>
         {/* Main timer display */}
         <View style={[styles.timerDisplay, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <Text style={[styles.timerLabel, { color: theme.text }]}>{t('workoutTime')}</Text>
+          <Text style={[styles.timerLabel, { color: theme.text }]}>Workout Time</Text>
           <Text style={[styles.workoutTimerText, { color: theme.text }]}>
             {formatTime(workoutTime)}
           </Text>
@@ -653,16 +302,16 @@ export default function StartedWorkoutInterface() {
             {currentSet.exercise_name}
           </Text>
           <Text style={[styles.setInfo, { color: theme.text }]}>
-            {t('set')} {currentSet.set_number}
+            Set {currentSet.set_number} of {currentSet.total_sets}
           </Text>
           <Text style={[styles.repInfo, { color: theme.text }]}>
-            {t('goal')}: {currentSet.reps_goal} {t('Reps')}
+            Goal: {currentSet.reps_goal} reps
           </Text>
           
           {/* Input fields for tracking */}
           <View style={styles.inputContainer}>
             <View style={styles.inputGroup}>
-              <Text style={[styles.inputLabel, { color: theme.text }]}>{t('repsDone')}</Text>
+              <Text style={[styles.inputLabel, { color: theme.text }]}>Reps Done</Text>
               <TextInput
                 style={[styles.input, { 
                   backgroundColor: theme.card,
@@ -688,7 +337,7 @@ export default function StartedWorkoutInterface() {
             </View>
             
             <View style={styles.inputGroup}>
-              <Text style={[styles.inputLabel, { color: theme.text }]}> {t('Weight')} ({weightFormat})</Text>
+              <Text style={[styles.inputLabel, { color: theme.text }]}>Weight (kg/lbs)</Text>
               <TextInput
                 style={[styles.input, { 
                   backgroundColor: theme.card,
@@ -727,7 +376,7 @@ export default function StartedWorkoutInterface() {
                 allSets[currentSetIndex].reps_done <= 0 || 
                 allSets[currentSetIndex].weight === ''
               ) {
-                Alert.alert(t('missingInformation'), t('enterRepsAndWeight'));
+                Alert.alert('Missing Information', 'Please enter both reps and weight before continuing.');
                 return;
               }
               
@@ -752,7 +401,7 @@ export default function StartedWorkoutInterface() {
             disabled={allSets[currentSetIndex].reps_done <= 0 || allSets[currentSetIndex].weight === ''}
           >
             <Text style={[styles.buttonText, { color: theme.buttonText }]}>
-              {isLastSet ? t('finishWorkout') : t('completeSet')}
+              {isLastSet ? 'Finish Workout' : 'Complete Set & Rest'}
             </Text>
           </TouchableOpacity>
         </View>
@@ -760,7 +409,7 @@ export default function StartedWorkoutInterface() {
         {/* Progress indicator */}
         <View style={styles.progressContainer}>
           <Text style={[styles.progressText, { color: theme.text }]}>
-            {t('totalSets')}: {allSets.length}
+            {currentSetIndex + 1} of {allSets.length} sets
           </Text>
           <View style={[styles.progressBar, { backgroundColor: theme.border }]}>
             <View 
@@ -786,35 +435,35 @@ export default function StartedWorkoutInterface() {
     return (
       <View style={styles.restScreenContainer}>
         <View style={[styles.restCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <Text style={[styles.restTitle, { color: theme.text }]}>{t('restTime')}</Text>
+          <Text style={[styles.restTitle, { color: theme.text }]}>Rest Time</Text>
           
           <View style={styles.restTimerContainer}>
             <Text style={[styles.restTimerText, { color: theme.text }]}>
               {restTimeRemaining}
             </Text>
-            <Text style={[styles.restTimerUnit, { color: theme.text }]}>{t('sec')}</Text>
+            <Text style={[styles.restTimerUnit, { color: theme.text }]}>sec</Text>
           </View>
           
           <TouchableOpacity
-            style={[styles.addTimeButton, { backgroundColor: theme.type === 'dark' ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.2)' }]}
+            style={[styles.addTimeButton, { backgroundColor: theme.type === 'dark' ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.1)' }]}
             onPress={() => setRestTimeRemaining(prev => prev + 15)}
           >
-            <Text style={[styles.addTimeButtonText, { color: theme.text }]}>{t('addTime')}</Text>
+            <Text style={[styles.addTimeButtonText, { color: theme.text }]}>+15s</Text>
           </TouchableOpacity>
           
           <Text style={[styles.restMessage, { color: theme.text }]}>
-            {t('takeBreath')}
+            Take a breath and prepare for your next set
           </Text>
         </View>
         
         {nextSet && (
           <View style={[styles.upNextCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-            <Text style={[styles.upNextLabel, { color: theme.text }]}>{t('upNext')}</Text>
+            <Text style={[styles.upNextLabel, { color: theme.text }]}>Up Next</Text>
             <Text style={[styles.upNextExercise, { color: theme.text }]}>
               {nextSet.exercise_name}
             </Text>
             <Text style={[styles.upNextSetInfo, { color: theme.text }]}>
-              {t('upcomingSet')}: {nextSet.set_number}
+              Set {nextSet.set_number} of {nextSet.total_sets} • {nextSet.reps_goal} reps
             </Text>
           </View>
         )}
@@ -827,7 +476,7 @@ export default function StartedWorkoutInterface() {
             setWorkoutStage('exercise');
           }}
         >
-          <Text style={[styles.buttonText, { color: theme.buttonText }]}>{t('skipRest')}</Text>
+          <Text style={[styles.buttonText, { color: theme.buttonText }]}>Skip Rest</Text>
         </TouchableOpacity>
       </View>
     );
@@ -882,9 +531,9 @@ export default function StartedWorkoutInterface() {
         console.log('Workout save completed successfully!');
         
         Alert.alert(
-          t('workoutSaved'),
-          t('workoutSavedMessage'),
-          [{ text: t('OK'), onPress: () => navigation.goBack() }]
+          'Workout Saved',
+          'Your workout has been successfully logged!',
+          [{ text: 'OK', onPress: () => navigation.goBack() }]
         );
       } catch (error) {
         // If there's an error, rollback the transaction
@@ -901,7 +550,7 @@ export default function StartedWorkoutInterface() {
       <View style={styles.completedContainer}>
         <Ionicons name="checkmark-circle" size={80} color={theme.buttonBackground} style={styles.completedIcon} />
         
-        <Text style={[styles.completedTitle, { color: theme.text }]}>{t('workoutCompleted')}</Text>
+        <Text style={[styles.completedTitle, { color: theme.text }]}>Workout Completed!</Text>
         
         <View style={[styles.completedCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
           <Text style={[styles.completedWorkoutName, { color: theme.text }]}>
@@ -913,14 +562,18 @@ export default function StartedWorkoutInterface() {
               <Text style={[styles.completedStatValue, { color: theme.text }]}>
                 {formatTime(workoutTime)}
               </Text>
-              <Text style={[styles.completedStatLabel, { color: theme.text }]}>{t('totalTime')}</Text>
+              <Text style={[styles.completedStatLabel, { color: theme.text }]}>
+                Total Time
+              </Text>
             </View>
             
             <View style={styles.completedStatItem}>
               <Text style={[styles.completedStatValue, { color: theme.text }]}>
                 {completedSets.length}
               </Text>
-              <Text style={[styles.completedStatLabel, { color: theme.text }]}>{t('setsCompleted')}</Text>
+              <Text style={[styles.completedStatLabel, { color: theme.text }]}>
+                Sets Completed
+              </Text>
             </View>
           </View>
         </View>
@@ -930,7 +583,7 @@ export default function StartedWorkoutInterface() {
           onPress={saveWorkout}
         >
           <Text style={[styles.buttonText, { color: theme.buttonText }]}>
-            {t('completeWorkout')}
+            Complete Workout
           </Text>
         </TouchableOpacity>
       </View>
@@ -941,7 +594,7 @@ export default function StartedWorkoutInterface() {
     return (
       <View style={[styles.loadingContainer, { backgroundColor: theme.background }]}>
         <ActivityIndicator size="large" color={theme.text} />
-        <Text style={[styles.loadingText, { color: theme.text }]}>{t('loadingWorkout')}</Text>
+        <Text style={[styles.loadingText, { color: theme.text }]}>Loading workout...</Text>
       </View>
     );
   }
@@ -955,11 +608,11 @@ export default function StartedWorkoutInterface() {
             if (workoutStarted) {
               // Confirm exit during workout
               Alert.alert(
-                t('exitWorkout'),
-                t('exitWorkoutMessage'),
+                'Exit Workout?',
+                'Are you sure you want to exit? Your progress will be lost.',
                 [
-                  { text: t('Cancel'), style: 'cancel' },
-                  { text: t('exit'), style: 'destructive', onPress: () => navigation.goBack() }
+                  { text: 'Cancel', style: 'cancel' },
+                  { text: 'Exit', style: 'destructive', onPress: () => navigation.goBack() }
                 ]
               );
             } else {
@@ -970,7 +623,7 @@ export default function StartedWorkoutInterface() {
           <Ionicons name="arrow-back" size={24} color={theme.text} />
         </TouchableOpacity>
         <Text style={[styles.title, { color: theme.text }]}>
-          {workoutStarted ? (workout ? `${workout.workout_name} - ${workout.day_name}` : 'Workout') : t("startWorkout")}
+          {workoutStarted ? (workout ? `${workout.workout_name} - ${workout.day_name}` : 'Workout') : 'Start Workout'}
         </Text>
       </View>
       
@@ -1032,22 +685,6 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
     justifyContent: 'center',
     flex: 1
-  },
-  
-  // Toggle styles
-  toggleRow: { 
-    flexDirection: 'row', 
-    justifyContent: 'space-between', 
-    alignItems: 'center', 
-    paddingVertical: 10, 
-    paddingHorizontal: 15, 
-    borderRadius: 8, 
-    borderWidth: 1, 
-    marginBottom: 10 
-  },
-  toggleText: { 
-    fontSize: 16, 
-    fontWeight: '600' 
   },
   
   // Overview screen styles
