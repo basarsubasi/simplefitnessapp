@@ -1,0 +1,6 @@
+Main Changes:
+
+- Fixed the bug related to back buttons and gestures ignoring the goback alert on started workouts
+- Added a button to see where you are in your workout in Started workout screen
+- improved the importing data logic
+- minor styling changes
