@@ -160,7 +160,6 @@ export default function Settings() {
       const dbName = "SimpleDB.db";
       const dbFilePath = `${FileSystem.documentDirectory}SQLite/${dbName}`;
       
-      // Check if the database file exists
       const fileInfo = await FileSystem.getInfoAsync(dbFilePath);
       
       if (!fileInfo.exists) {
@@ -172,14 +171,12 @@ export default function Settings() {
         return;
       }
       
-      // Create a copy of the database to share
       const tempExportPath = `${FileSystem.cacheDirectory}${dbName}`;
       await FileSystem.copyAsync({
         from: dbFilePath,
         to: tempExportPath
       });
       
-      // Check if sharing is available on this device
       const isAvailable = await Sharing.isAvailableAsync();
       
       if (!isAvailable) {
@@ -191,83 +188,113 @@ export default function Settings() {
         return;
       }
       
-      // Share the database file
       await Sharing.shareAsync(tempExportPath, {
-        mimeType: 'application/x-sqlite3',
+        mimeType: 'application/x-sqlite3', // Standard MIME type
         dialogTitle: t('exportDatabaseTitle') || 'Export Workout Database',
-        UTI: 'public.database'  // iOS file type
+        UTI: 'public.database'
       });
       
     } catch (error) {
       console.error("Error exporting database:", error);
       Alert.alert(
         t('exportFailedTitle') || 'Export Failed',
-        t('exportErrorMessage') || 'Failed to export database',
+        t('exportErrorMessage') || 'Failed to export database. Please try again.',
         [{ text: 'OK' }]
       );
     }
   };
   
   const importDatabase = async () => {
-    try {
-      // Show a confirmation dialog before importing
-      Alert.alert(
-        t('importConfirmTitle') || 'Import Database',
-        t('importConfirmMessage') || 'Importing a database will replace your current data. This action cannot be undone. Continue?',
-        [
-          {
-            text: t('cancel') || 'Cancel',
-            style: 'cancel',
-          },
-          { 
-            text: t('confirm') || 'Confirm', 
-            onPress: async () => {
-              try {
-                // Pick the document to import
-                const result = await DocumentPicker.getDocumentAsync({
-                  type: ['application/x-sqlite3', 'application/octet-stream'],
-                  copyToCacheDirectory: true
-                });
-                
-                if (result.canceled) {
-                  return;
-                }
-                
-                const dbName = "SimpleDB.db";
-                const dbFilePath = `${FileSystem.documentDirectory}SQLite/${dbName}`;
-                
-                // Replace the current database with the imported one
-                await FileSystem.copyAsync({
-                  from: result.assets[0].uri,
-                  to: dbFilePath
-                });
-                
-                Alert.alert(
-                  t('importSuccessTitle') || 'Import Successful',
-                  t('importSuccessMessage') || 'Database imported successfully. Please restart the app for changes to take effect.',
-                  [{ text: 'OK' }]
-                );
-              } catch (error) {
-                console.error("Error during import process:", error);
+    Alert.alert(
+      t('importConfirmTitle') || 'Import Database',
+      t('importConfirmMessage') || 'Importing a database will replace your current data. This action cannot be undone. Continue?',
+      [
+        { text: t('cancel') || 'Cancel', style: 'cancel' },
+        {
+          text: t('confirm') || 'Confirm',
+          onPress: async () => {
+            const dbName = "SimpleDB.db";
+            const dbDirectory = `${FileSystem.documentDirectory}SQLite/`;
+            const dbFilePath = `${dbDirectory}${dbName}`;
+            const backupDbFilePath = `${dbFilePath}.backup`;
+
+            let documentPickerResult;
+            try {
+              documentPickerResult = await DocumentPicker.getDocumentAsync({
+                type: ['application/x-sqlite3', 'application/octet-stream', 'application/vnd.sqlite3'],
+                copyToCacheDirectory: true,
+              });
+
+              if (documentPickerResult.canceled || !documentPickerResult.assets || documentPickerResult.assets.length === 0 || !documentPickerResult.assets[0].uri) {
                 Alert.alert(
                   t('importFailedTitle') || 'Import Failed',
-                  t('importErrorMessage') || 'Failed to import database',
-                  [{ text: 'OK' }]
+                  t('fileNotSelectedError') || 'No file was selected or the file is invalid.'
                 );
+                return;
               }
+            } catch (pickerError) {
+              console.error("DocumentPicker error:", pickerError);
+              Alert.alert(
+                t('importFailedTitle') || 'Import Failed',
+                t('filePickerError') || 'An error occurred while selecting the file. Please try again.'
+              );
+              return;
+            }
+
+            const sourceUri = documentPickerResult.assets[0].uri;
+            let originalDbExists = false;
+            let backupSuccessfullyCreated = false;
+
+            try {
+              const originalDbInfo = await FileSystem.getInfoAsync(dbFilePath);
+              originalDbExists = originalDbInfo.exists;
+
+              if (originalDbExists) {
+                await FileSystem.copyAsync({ from: dbFilePath, to: backupDbFilePath });
+                backupSuccessfullyCreated = true;
+              }
+
+              await FileSystem.deleteAsync(dbFilePath, { idempotent: true });
+              await FileSystem.copyAsync({ from: sourceUri, to: dbFilePath });
+
+              Alert.alert(
+                t('importSuccessTitle') || 'Import Successful',
+                t('importSuccessMessage') || 'Database imported successfully. Please restart the app for changes to take effect.',
+                [{ text: 'OK' }]
+              );
+
+              if (backupSuccessfullyCreated) {
+                await FileSystem.deleteAsync(backupDbFilePath, { idempotent: true });
+              }
+
+            } catch (error) {
+              console.error("Error during database replacement:", error);
+              let finalAlertMessage = t('importErrorMessageDefault') || 'Database import failed. An unexpected error occurred.';
+
+              if (backupSuccessfullyCreated) {
+                try {
+                  await FileSystem.deleteAsync(dbFilePath, { idempotent: true });
+                  await FileSystem.copyAsync({ from: backupDbFilePath, to: dbFilePath });
+                  finalAlertMessage = t('importFailedRestoreSuccess') || 'Import failed, but your original data has been successfully restored.';
+                  await FileSystem.deleteAsync(backupDbFilePath, { idempotent: true });
+                } catch (restoreError) {
+                  console.error("CRITICAL: Error restoring database from backup:", restoreError);
+                  const baseMsg = t('importFailedRestoreErrorBase') || 'Import failed. CRITICAL: Could not restore original data. Backup may be available at: ';
+                  finalAlertMessage = baseMsg + backupDbFilePath;
+                  // IMPORTANT: Do NOT delete backupDbFilePath in this critical failure case.
+                }
+              } else if (originalDbExists) {
+                finalAlertMessage = t('importFailedOriginalIntact') || 'Import failed (error during backup step). Your original data should be intact.';
+              } else {
+                finalAlertMessage = t('importFailedNewFileError') || 'Import failed while copying the new database. No prior data existed.';
+              }
+              Alert.alert(t('importFailedTitle') || 'Import Failed', finalAlertMessage, [{ text: 'OK' }]);
             }
           },
-        ],
-        { cancelable: true }
-      );
-    } catch (error) {
-      console.error("Error importing database:", error);
-      Alert.alert(
-        t('importFailedTitle') || 'Import Failed',
-        t('importErrorMessage') || 'Failed to import database',
-        [{ text: 'OK' }]
-      );
-    }
+        },
+      ],
+      { cancelable: true }
+    );
   };
 
   return (
