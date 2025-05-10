@@ -10,7 +10,11 @@ import {
   Alert,
   FlatList,
   Vibration,
-  Switch
+  AppState,
+  AppStateStatus,
+  Platform,
+  Switch,
+  Modal
 } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -70,6 +74,7 @@ export default function StartedWorkoutInterface() {
   const [workoutStage, setWorkoutStage] = useState<WorkoutStage>('overview');
   const [restTime, setRestTime] = useState('30');
   const [workoutStarted, setWorkoutStarted] = useState(false);
+  const [isExerciseListModalVisible, setIsExerciseListModalVisible] = useState(false);
   
   // User preference toggles
   const [enableVibration, setEnableVibration] = useState(true);
@@ -333,7 +338,7 @@ export default function StartedWorkoutInterface() {
             {currentSet.exercise_name}
           </Text>
           <Text style={[styles.setInfo, { color: theme.text }]}>
-            {t('Set')} {currentSet.set_number} {t('of')} {currentSet.total_sets}
+           {currentSet.set_number}/{currentSet.total_sets}
           </Text>
           <Text style={[styles.repInfo, { color: theme.text }]}>
             {t('goal')}: {currentSet.reps_goal} {t('reps')}
@@ -626,6 +631,76 @@ export default function StartedWorkoutInterface() {
     );
   };
   
+  const renderExerciseListModal = () => {
+    const currentExerciseNameFromSet = allSets[currentSetIndex]?.exercise_name;
+
+    return (
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={isExerciseListModalVisible}
+        onRequestClose={() => {
+          setIsExerciseListModalVisible(false);
+        }}
+      >
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPressOut={() => setIsExerciseListModalVisible(false)}
+        >
+          <View 
+            style={[styles.modalContainer, { backgroundColor: theme.card, borderColor: theme.border }]}
+            onStartShouldSetResponder={() => true}
+          >
+            <View style={[styles.modalHeader, { borderBottomColor: theme.border }]}>
+              <Text style={[styles.modalTitle, { color: theme.text }]}>{workout?.day_name }</Text>
+              <TouchableOpacity onPress={() => setIsExerciseListModalVisible(false)} style={styles.modalCloseButton}>
+                <Ionicons name="close-outline" size={28} color={theme.text} />
+              </TouchableOpacity>
+            </View>
+            <FlatList
+              data={exercises}
+              keyExtractor={(item) => item.logged_exercise_id.toString()}
+              renderItem={({ item }) => {
+                const isCurrent = item.exercise_name === currentExerciseNameFromSet;
+                const itemStyle = [
+                  styles.modalExerciseItem,
+                  { borderColor: theme.border },
+                  isCurrent
+                    ? { 
+                        backgroundColor: theme.buttonBackground,
+                      }
+                    : { backgroundColor: theme.card }
+                ];
+                const nameStyle = [
+                  styles.modalExerciseName,
+                  isCurrent
+                    ? { color: theme.buttonText }
+                    : { color: theme.text }
+                ];
+                const detailStyle = [
+                  styles.modalExerciseDetails,
+                  isCurrent
+                    ? { color: theme.buttonText }
+                    : { color: theme.text }
+                ];
+
+                return (
+                  <View style={itemStyle}>
+                    <Text style={nameStyle}>{item.exercise_name}</Text>
+                    <Text style={detailStyle}>
+                      {item.sets} {t('Sets')} × {item.reps} {t('Reps')}
+                    </Text>
+                  </View>
+                );
+              }}
+            />
+          </View>
+        </TouchableOpacity>
+      </Modal>
+    );
+  };
+  
   if (loading) {
     return (
       <View style={[styles.loadingContainer, { backgroundColor: theme.background }]}>
@@ -661,6 +736,14 @@ export default function StartedWorkoutInterface() {
         <Text style={[styles.title, { color: theme.text }]}>
           {workoutStarted ? (workout ? `${workout.workout_name} - ${workout.day_name}` : t('Workout')) : t('startWorkout')}
         </Text>
+        {workoutStarted && (
+          <TouchableOpacity 
+            onPress={() => setIsExerciseListModalVisible(true)} 
+            style={styles.headerListIcon}
+          >
+            <Ionicons name="help" size={23} color={theme.text} />
+          </TouchableOpacity>
+        )}
       </View>
       
       <ScrollView 
@@ -676,6 +759,7 @@ export default function StartedWorkoutInterface() {
         {workoutStage === 'rest' && renderRestScreen()}
         {workoutStage === 'completed' && renderCompletedScreen()}
       </ScrollView>
+      {renderExerciseListModal()}
     </View>
   );
 }
@@ -702,11 +786,16 @@ const styles = StyleSheet.create({
   },
   backButton: {
     padding: 5,
+    marginRight: 15,
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
     flex: 1,
+    textAlign: 'center',
+  },
+  headerListIcon: {
+    padding: 5,
     marginLeft: 15,
   },
   content: {
@@ -1055,5 +1144,54 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 40,
     marginTop: 20,
+  },
+  // Modal Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContainer: {
+    width: '90%',
+    maxHeight: '70%',
+    borderRadius: 15,
+    borderWidth: 1,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingBottom: 15,
+    marginBottom: 15,
+    borderBottomWidth: 1,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  modalCloseButton: {
+    padding: 5,
+  },
+  modalExerciseItem: {
+    paddingVertical: 12,
+    paddingHorizontal: 15,
+    marginBottom: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+  },
+  modalExerciseName: {
+    fontSize: 17,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  modalExerciseDetails: {
+    fontSize: 14,
   },
 }); 
