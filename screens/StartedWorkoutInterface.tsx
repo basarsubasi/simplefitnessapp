@@ -84,6 +84,7 @@ export default function StartedWorkoutInterface() {
   const [allSets, setAllSets] = useState<ExerciseSet[]>([]);
   const [currentSetIndex, setCurrentSetIndex] = useState(0);
   
+  
   // Timer states
   const [workoutTime, setWorkoutTime] = useState(0);
   const [restTimeRemaining, setRestTimeRemaining] = useState(0);
@@ -234,6 +235,101 @@ export default function StartedWorkoutInterface() {
     setWorkoutStage('exercise');
     startWorkoutTimer();
   };
+
+
+
+
+
+
+
+
+   // Handle back press and gestures when workout is started
+
+
+   useEffect(() => {
+
+
+    const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+
+
+      // If workout hasn't started, or it's already completed, allow navigation
+
+
+      if (!workoutStarted || workoutStage === 'completed') {
+
+
+        return;
+
+
+      }
+
+
+
+
+
+      // Prevent default behavior of leaving the screen
+
+
+      e.preventDefault();
+
+
+
+
+
+      // Show confirmation alert
+
+
+      Alert.alert(
+
+
+        t('exitWorkout'),
+
+
+        t('exitWorkoutMessage'),
+
+
+        [
+
+
+          { text: t('Cancel'), style: 'cancel', onPress: () => {} },
+
+
+          {
+
+
+            text: t('exit'),
+
+
+            style: 'destructive',
+
+
+            // If the user confirms, dispatch the action that initiated the go back.
+
+
+            onPress: () => navigation.dispatch(e.data.action),
+
+
+          },
+
+
+        ]
+
+
+      );
+
+
+    });
+
+
+
+
+
+    return unsubscribe;
+
+
+  }, [navigation, workoutStarted, workoutStage, t]); // Added t to dependencies for Alert messages
+
+
   
   
   // Render functions for different workout stages
