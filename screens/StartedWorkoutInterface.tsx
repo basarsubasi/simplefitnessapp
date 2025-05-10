@@ -832,13 +832,19 @@ export default function StartedWorkoutInterface() {
         <Text style={[styles.title, { color: theme.text }]}>
           {workoutStarted ? (workout ? `${workout.workout_name} - ${workout.day_name}` : t('Workout')) : t('startWorkout')}
         </Text>
-        {workoutStarted && (
+        {workoutStarted ? (
           <TouchableOpacity 
             onPress={() => setIsExerciseListModalVisible(true)} 
             style={styles.headerListIcon}
           >
             <Ionicons name="help" size={23} color={theme.text} />
           </TouchableOpacity>
+        ) : (
+          // Placeholder to balance the backButton for centering the title when workout has not started
+          // The width is calculated based on the help icon's size (23) and its TouchableOpacity padding (styles.headerListIcon.padding * 2)
+          // styles.headerListIcon = { padding: 5, marginLeft: 15 }, so padding is 5.
+          // Width = 23 + (5 * 2) = 33. marginLeft is 15.
+          <View style={{ width: 23 + (styles.headerListIcon.padding * 2), marginLeft: styles.headerListIcon.marginLeft }} />
         )}
       </View>
       
