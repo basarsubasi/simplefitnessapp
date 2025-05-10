@@ -1272,7 +1272,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingBottom: 15,
     marginBottom: 15,
-    borderBottomWidth: 1,
   },
   modalTitle: {
     fontSize: 20,
