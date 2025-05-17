@@ -40,6 +40,7 @@ export default function Settings() {
   const languages = [
     { code: 'cs', label: 'Čeština' },
     { code: 'de', label: 'Deutsch' },
+    { code: 'dk', label: 'Dansk' },
     { code: 'en', label: 'English' },
     { code: 'es', label: 'Español' },
     { code: 'fi', label: 'Suomi' },
@@ -51,6 +52,7 @@ export default function Settings() {
     { code: 'no', label: 'Norsk' },
     { code: 'pl', label: 'Polski' },
     { code: 'pt', label: 'Português' },
+    { code: 'ro', label: 'Română' },
     { code: 'ru', label: 'Русский' },
     { code: 'sl', label: 'Slovenščina' },
     { code: 'sv', label: 'Svenska' },
