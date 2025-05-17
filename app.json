@@ -18,8 +18,6 @@
     },
     "android": {
       "versionCode": 32,
-
-
       "adaptiveIcon": {
         "foregroundImage": "./assets/simpleicon.png",
         "backgroundColor": "#ffffff"
@@ -37,12 +35,14 @@
       "expo-sqlite",
       "expo-build-properties",
       [
-      "expo-notifications",
-      {
-        "icon": "./assets/notificationicon.png",
-        "color": "#000000",
-        "enableBackgroundRemoteNotifications": false
-      }]
+        "expo-notifications",
+        {
+          "icon": "./assets/notificationicon.png",
+          "color": "#000000",
+          "enableBackgroundRemoteNotifications": false
+        }
+      ],
+      "expo-font"
     ],
     "owner": "basarsubasi"
   }

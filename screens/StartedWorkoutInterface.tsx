@@ -1081,7 +1081,7 @@ export default function StartedWorkoutInterface() {
             onPress={() => setIsExerciseListModalVisible(true)} 
             style={styles.headerListIcon}
           >
-            <Ionicons name="help" size={23} color={theme.text} />
+            <Ionicons name="reorder-three-outline" size={23} color={theme.text} />
           </TouchableOpacity>
         ) : (
           // Placeholder to balance the backButton for centering the title when workout has not started
