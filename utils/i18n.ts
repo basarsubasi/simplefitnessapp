@@ -9,6 +9,8 @@ import es from '../locales/es/translation.json';
 import fi from '../locales/fi/translation.json';
 import fr from '../locales/fr/translation.json';
 import it from '../locales/it/translation.json';
+import ja from '../locales/ja/translation.json';
+import ko from '../locales/ko/translation.json';
 import nl from '../locales/nl/translation.json';
 import no from '../locales/no/translation.json';
 import pl from '../locales/pl/translation.json';
@@ -18,6 +20,7 @@ import sl from '../locales/sl/translation.json';
 import sv from '../locales/sv/translation.json';
 import tr from '../locales/tr/translation.json';
 import uk from '../locales/uk/translation.json';
+import zh from '../locales/zh/translation.json';
 
 
 // import more languages here
@@ -37,6 +40,8 @@ i18n
       fi: { translation: fi },
       fr: { translation: fr },
       it: { translation: it },
+      ja: { translation: ja },
+      ko: { translation: ko },
       nl: { translation: nl },
       no: { translation: no },
       pl: { translation: pl },
@@ -46,6 +51,7 @@ i18n
       sv: { translation: sv },
       tr: { translation: tr },
       uk: { translation: uk },
+      zh: { translation: zh },
       // add more languages here #1
     },
     

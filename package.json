@@ -9,6 +9,9 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@expo-google-fonts/noto-sans-jp": "^0.3.0",
+    "@expo-google-fonts/noto-sans-kr": "^0.3.0",
+    "@expo-google-fonts/noto-sans-sc": "^0.3.0",
     "@react-native-community/datetimepicker": "8.2.0",
     "@react-native-picker/picker": "2.9.0",
     "@react-navigation/bottom-tabs": "^7.2.0",
@@ -18,7 +21,7 @@
     "expo": "~52.0.46",
     "expo-asset": "~11.0.5",
     "expo-background-fetch": "~13.0.6",
-    "expo-build-properties": "~0.13.2",
+    "expo-build-properties": "~0.13.3",
     "expo-device": "~7.0.3",
     "expo-document-picker": "~13.0.3",
     "expo-file-system": "~18.0.12",
