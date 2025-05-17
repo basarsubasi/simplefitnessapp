@@ -546,7 +546,7 @@ export default function StartedWorkoutInterface() {
         {/* Progress indicator */}
         <View style={styles.progressContainer}>
           <Text style={[styles.progressText, { color: theme.text }]}>
-            {currentSetIndex + 1} {t('of')} {allSets.length} {t('sets')}
+            {Math.round(((currentSetIndex + 1) / allSets.length) * 100)}%
           </Text>
           <View style={[styles.progressBar, { backgroundColor: theme.border }]}>
             <View 
@@ -812,19 +812,7 @@ export default function StartedWorkoutInterface() {
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => {
-            if (workoutStarted) {
-              // Confirm exit during workout
-              Alert.alert(
-                t('exitWorkout'),
-                t('exitWorkoutMessage'),
-                [
-                  { text: t('Cancel'), style: 'cancel' },
-                  { text: t('exit'), style: 'destructive', onPress: () => navigation.goBack() }
-                ]
-              );
-            } else {
-              navigation.goBack();
-            }
+            navigation.goBack();
           }}
         >
           <Ionicons name="arrow-back" size={24} color={theme.text} />
