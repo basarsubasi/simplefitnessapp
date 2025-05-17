@@ -398,7 +398,7 @@ export default function EditWorkout() {
                   renderItem={(props) => renderExerciseItem(props, day)}
                   keyExtractor={(item) => item.exercise_id.toString()}
                   onDragEnd={({ data }) => handleExerciseReorder(day.day_id, data)}
-                  activationDistance={10}
+                  activationDistance={3}
                   containerStyle={styles.draggableListContainer}
                 />
               </View>
@@ -456,7 +456,7 @@ const styles = StyleSheet.create({
   dayContainer: { 
     padding: 20, 
     borderRadius: 15, 
-    marginBottom: 25, 
+    marginBottom: 99, 
     borderWidth: 1, 
     backgroundColor: 'transparent',
     borderColor: 'transparent',
