@@ -1,0 +1,341 @@
+{
+    
+  
+   "_comment_global": "These are global strings.",
+
+
+    "alertCancel" : "キャンセル",
+    "alertDelete": "削除",
+    "errorTitle": "エラー",
+    "Cancel":"キャンセル",
+    "Delete":"削除",
+    "Save":"保存",
+    "Sets":"セット",
+    "Reps":"回数",
+    "Today":"今日",
+    "Tomorrow":"明日",
+    "Yesterday":"昨日",
+    "set": "セット",
+
+  
+
+    "workoutNameErrorMessage": "ワークアウト名を入力してください。",
+    "provideDayNamesErrorMessage": "すべての日に名前を付けてください。",
+    "fillExercisesErrorMessage": "すべてのエクササイズに有効なデータを入力してください。",
+    "failedToCreateWorkoutErrorMessage": "ワークアウトの作成に失敗しました。もう一度お試しください。",
+
+
+    "workoutNamePlaceholder": "ワークアウト名",
+    "dayNamePlaceholder": "曜日名",
+    "exerciseNamePlaceholder": "エクササイズ名",
+
+    "setsPlaceholder": "セット数",
+    "repsPlaceholder": "回数",
+
+
+    "_comment_settings": "These are settings-related strings.",
+  
+
+
+    "settingsTitle": "設定",
+    "settingsLanguage": "言語",
+    "settingsDateFormat": "日付形式",
+    "settingsWeightFormat": "重量単位",
+    "settingsTheme": "テーマ",
+    "settingsSwitchDark": "ダークモードに切替",
+    "settingsSwitchLight": "ライトモードに切替",
+
+
+
+
+
+    "_comment_homepage": "These are homepage-related strings.",
+
+
+    "homeCreateWorkout": "ワークアウトを\n作成",
+    "homeGotoWorkouts": "マイワークアウトへ",
+    "homeScheduleWorkouts": "ワークアウトを\n予定",
+    "homeGotoCalendar": "マイカレンダーへ",
+    "homeTrackProgress": "進捗を\n記録",
+    "homeGotoProgress": "マイ進捗へ",
+
+
+    "_comment_workoutlist": "These are workoutlist-related strings.",
+
+    "MyWorkouts": "マイワークアウト",
+    "CreateAWorkout" : "新規\nワークアウト",
+    "CreateAWorkoutButton" : "新しいワークアウトを作成",
+    "WorkoutListTip" : "ヒント：長押しで多くのアイテムを削除できます。機会があったら試してみてください！",
+
+
+    "_comment_myworkoutspage": "These are myworkoutspage-related strings.",
+
+    "deleteWorkoutTitle": "Deleting {{workoutName}}",
+    "deleteWorkoutMessage": "Are you sure you want to delete \"{{workoutName}}\"? This action won't affect existing logs.",
+
+
+    "_comment_createWorkout": "These are create-workout-related strings.",
+
+    "deleteDayTitle": "Delete Day",
+    "deleteDayMessage": "Are you sure you want to delete this day?",
+
+    "deleteExerciseTitle": "Delete Exercise",
+    "deleteExerciseMessage": "Are you sure you want to delete this exercise?",
+    "addExercise": "+ Add Exercise",
+    "addDay": "+ Add Day",
+    "saveWorkout":"Save Workout",
+
+
+
+    "_comment_workoutDetails": "These are workot-details-related strings.",
+
+    "noExercises":"No exercises on this day",
+    "addExerciseFromDetails": "Add Exercise",
+    "addDayFromDetails":"Add Day",
+    "emptyWorkoutDetails":" No days or exercises available for this workout.",
+
+    "deleteDayTitleDetails": "Delete Day",
+    "deleteDayMessageDetails": "Are you sure you want to delete this day? This action will also delete the days from the upcoming planned workouts",
+    "deleteExerciseTitleDetails": "Delete Exercise",
+    "deleteExerciseMessageDetails": "Are you sure you want to delete this exercise? This action will also delete the exercise from the upcoming planned workouts",
+
+    "repsValidationError": "Reps must be a number greater than 0.",
+    "setsValidationError": "Sets must be a number greater than 0.",
+    "exerciseNameValidationError": "Exercise name cannot be empty.",
+    "dayNameValidationError": "Day name cannot be empty.",
+
+
+
+    "_comment_editWorkout": "These are edit-workout-related strings.",
+    
+    "fetchWorkoutDetailsError": "Failed to update workout details.",
+    "isSaving": "Saving...",
+    "saveChanges": "Save Changes",
+    "daysAndExercises": "Days and Exercises",
+    "editWorkout": "Edit Workout",
+
+
+    "_comment_myCalendar": "These are my-calendar-related strings.",
+
+  
+    "scheduleTip": "Tip: You need to schedule your workouts here to track them on the My Progress screen!",
+    "noUpcomingWorkouts": "No upcoming workouts scheduled.",
+    "upcomingWorkouts": "Upcoming Workouts",
+    "noUntrackedWorkouts": "No untracked workouts found.",
+    "untrackedWorkouts": "Untracked Workouts",
+    "noWorkoutToday": "No workout scheduled for today.",
+    "todaysWorkout": "Today's Workout",
+    "scheduleWorkout": "Schedule a Workout",
+    "myCalendar": "My Calendar",
+    "noExerciseLogged":" No exercises logged.",
+    "failedToDeleteWorkoutLog": "Failed to delete workout log.",
+
+
+    "_comment_LogWorkouts": "These are Log-Workouts-related strings.",
+    
+    
+    "noDatePicked": "Please select a date.",
+    "selectAWorkout":"Please select a workout.",
+    "selectADay":"Please select a day.",
+    "duplicateLogTitle": "Duplicate Log",
+    "duplicateLogMessage": "There is already a log present for this workout at the picked date.",
+    "selectDate":"Select Date",
+    "selectADate":"Select a Date",
+    "selectWorkout":"Select Workout",
+    "selectDay":"Select Day",
+    "emptyWorkoutLog":"Create a workout to track!",
+    "noDaysAvailable":"This workout has no days!",
+    "scheduleWorkoutLog":"Schedule Workout",
+
+
+    "_comment_MyProgress": "These are My-Progress-related strings.",
+
+    "deleteLogsTitle": "Delete Logs",
+    "deleteLogsMessage": "Are you sure you want to delete all logs associated with this workout?",
+    "failedToDeleteDays": "Failed to delete associated days.",
+    "myProgress":"My Progress",
+    "trackAWorkout":"Track a Workout",
+    "notTracking":"You are not tracking any workouts.",
+    "myProgressTip": "Tip: You can track the exercises at the workouts you've done. Down to the every. single. detail.",
+    "allTracks": "All Logs",
+
+
+    "_comment_LogWeights": "These are Log-Weights-related strings.",
+
+    "failedToLogWeights": "Failed to log weights.",
+    "Set":"Set",
+    "Weight":"Weight",
+    "noWorkoutScheduled": "You need to schedule a workout to track it!",
+    "trackWeights":"Track Weights",
+
+
+
+    "_comment_WeightLogDetails": "These are Weight-Log-Details-related strings.",
+
+    "deleteWeightLog": "Are you sure you want to delete all logs for this day on this date?",
+    "weightLog": "logs",
+    "dateFrom": "Date From:",
+    "pickStartDate": "Pick a start date",
+    "dateTo": "Date To:",
+    "pickEndDate": "Pick an end date",
+    "clearSelection":"Clear Selection",
+    "noLog":"No logs available between the selected dates.",
+
+
+
+    "navigateToDifficulty": "Featured Workouts",
+    "Difficulty": "Workout Difficulty",
+    "Beginner": "Beginner",
+    "Intermediate": "Intermediate",
+    "Advanced": "Advanced",
+    "featuredWorkouts":"Featured Workouts",
+    "templateListTip":"Tip: You can customize featured workouts after adding them to your workout list.",
+    "addTemplate":"Add to My Workouts",
+
+
+    "recurringWorkouts":"定期的ワークアウト",
+
+    "_comment_recurringWorkouts": "These are Recurring Workouts-related strings.",
+
+    "createRecurringWorkout": "定期的ワークアウトを作成",
+    "manageRecurringWorkouts": "定期的ワークアウトを管理",
+    "recurringWorkoutsExplanation": "定期的な間隔でカレンダーに自動的にスケジュールされるワークアウトを設定します。",
+    "everyXDays": "{{count}}日ごと",
+    "everyday": "毎日",
+    "weekly": "毎週",
+    "every": "毎",
+    "days": "日",
+    "Monday": "月曜日",
+    "Tuesday": "火曜日",
+    "Wednesday": "水曜日",
+    "Thursday": "木曜日",
+    "Friday": "金曜日",
+    "Saturday": "土曜日",
+    "Sunday": "日曜日",
+    "deleteRecurringWorkout": "定期的ワークアウトを削除",
+    "deleteRecurringWorkoutMessage": "\"{{workout}}\"の\"{{day}}\"の定期的ワークアウトを削除してもよろしいですか？",
+    "failedToDeleteRecurringWorkout": "定期的ワークアウトの削除に失敗しました。",
+    "noRecurringWorkoutsFound": "定期的ワークアウトが見つかりません。",
+    "createRecurringWorkoutToSeeHere": "定期的ワークアウトを作成して、ここに表示します。",
+    "workoutDetails": "ワークアウトの詳細",
+    "workout": "ワークアウト",
+    "day": "日",
+    "recurringInterval": "定期的な間隔",
+    "selectDaysOfWeek": "曜日を選択",
+    "selectedDays": "選択された日",
+    "notifications": "通知",
+    "enableNotifications": "通知を有効にする",
+    "notificationTime": "通知時間",
+    "notificationPermissions": "通知権限",
+    "notificationPermissionsRequired": "通知を有効にするには通知権限が必要です。設定で有効にしてください。",
+    "goToSettings": "設定に移動",
+    "creating": "作成中...",
+    "saving": "保存中...",
+    "done": "完了",
+    "editRecurringWorkout": "定期的ワークアウトを編集",
+    "recurringWorkoutNotFound": "定期的ワークアウトが見つかりません。",
+    "errorLoadingRecurringWorkout": "定期的ワークアウトの読み込み中にエラーが発生しました。",
+    "failedToUpdateRecurringWorkout": "定期的ワークアウトの更新に失敗しました。",
+    "anErrorOccurred": "エラーが発生しました。",
+    "workoutNotFound": "ワークアウトが見つかりません。",
+    "goBack": "戻る",
+    "specificDaysOfWeek": "特定の曜日",
+    "confirm": "確認",
+    "recurringWorkoutDetails": "定期的ワークアウトの詳細",
+    "Notifications enabled": "通知が有効",
+    "Notificationsdisabled": "通知が無効",
+    "confirmDelete": "削除の確認",
+    "confirmDeleteRecurringWorkout": "この定期的ワークアウトを削除してもよろしいですか？",
+    "edit": "編集",
+    "errorLoadingWorkout": "ワークアウトの読み込み中にエラーが発生しました。",
+
+    "_comment_startWorkout": "These are Start Workout-related strings.",
+
+    "startWorkout": "ワークアウト開始",
+    "invalidRestTime": "無効な休憩時間",
+    "pleaseEnterValidSeconds": "有効な秒数を入力してください。",
+    "missingInformation": "情報不足",
+    "enterRepsAndWeight": "続行する前に、回数と重量の両方を入力してください。",
+    "exitWorkout": "ワークアウトを終了しますか？",
+    "exitWorkoutMessage": "本当に終了しますか？進捗が失われます。",
+    "exit": "終了",
+    "workoutCompleted": "ワークアウト完了！",
+    "totalTime": "合計時間",
+    "setsCompleted": "完了したセット",
+    "completeWorkout": "ワークアウト完了",
+    "workoutTime": "ワークアウト時間",
+    "restTime": "休憩時間",
+    "sec": "秒",
+    "addTime": "+15秒",
+    "takeBreath": "一息ついて、次のセットの準備をしてください",
+    "upNext": "次は",
+    "skipRest": "休憩をスキップ",
+    "goal": "目標",
+    "repsDone": "完了した回数",
+    "weightKgLbs": "重量 (kg/lbs)",
+    "finishWorkout": "ワークアウト完了",
+    "completeSetRest": "セット完了 & 休憩",
+    "completeSet": "セット完了",
+    "upcomingSet": "次のセット",
+    "OK": "OK",
+    "workoutSaved": "ワークアウト保存済",
+    "workoutSavedMessage": "ワークアウトが正常に記録されました！",
+    "loadingWorkout": "ワークアウト読み込み中...",
+    "exercises": "エクササイズ",
+    "totalSets": "合計セット数",
+    "restTimeBetweenSets": "セット間の休憩時間 (秒)",
+    "workoutSettings": "ワークアウト設定",
+    "vibration": "バイブレーション",
+
+    "_comment_settings1": "These are Settings-related strings.",
+
+    "dataManagement": "データ管理",
+    "exportData": "データのエクスポート",
+    "importData": "データのインポート",
+    "notificationsDisableTitle": "通知を無効にする",
+    "notificationsDisableMessage": "通知をオフにすると、すべてのスケジュールされたワークアウトリマインダーがキャンセルされます。よろしいですか？",
+    "exportFailedTitle": "エクスポート失敗",
+    "databaseNotFound": "データベースファイルが見つかりません",
+    "sharingNotAvailable": "この端末では共有できません",
+    "exportDatabaseTitle": "ワークアウトデータベースをエクスポート",
+    "exportErrorMessage": "データベースのエクスポートに失敗しました",
+    "importConfirmTitle": "データベースのインポート",
+    "importConfirmMessage": "データベースをインポートすると、現在のデータが置き換えられます。この操作は元に戻せません。続行しますか？",
+    "importSuccessTitle": "インポート成功",
+    "importSuccessMessage": "データベースが正常にインポートされました。変更を反映するためにアプリを再起動してください。",
+    "importFailedTitle": "インポート失敗",
+    "importErrorMessage": "データベースのインポートに失敗しました",
+    "remindScheduledWorkouts": "予定されたワークアウトを通知する",
+    "dayInterval": "日間隔：",
+    
+    "notifications": "通知",
+    "remindScheduledWorkouts": "スケジュールされたワークアウトを通知する",
+
+    "_comment_Graphs": "These are Graphs-related strings.",
+
+    "Graphs": "グラフ",
+    "SelectWorkoutforGraph": "グラフ用のワークアウトを選択",
+   
+    "No data available for the selected criteria": "選択された条件で利用可能なデータがありません",
+    "Combined Effort Score": "総合努力スコア",
+    "About CES": "CESについて",
+    "About 1RM": "1RMについて",
+    "CESExplanation": "CES（総合努力スコア）は、重量、回数、強度を考慮した総合的なワークアウト量を測定します。",
+    "1RMExplanation": "1RM（ワンレップマックス）は、あなたのパフォーマンスに基づいて、1回で持ち上げられる最大の重量を推定します。\n（これは実際の1RMではなく、この推定値を1RMとして使用した場合、アプリ開発者は怪我に責任を負いません）",
+    "Time Frame": "期間",
+    "Estimated 1RM": "推定1RM",
+    "Select Exercise": "エクササイズを選択",
+    "Week": "週",
+    "Month": "月",
+    "Year": "年",
+    "All Time": "全期間",
+    "Select an exercise": "エクササイズを選択",
+    "No exercises available": "利用可能なエクササイズがありません",
+    "Track a workout first to see your progress": "進捗を確認するには、まずワークアウトを記録してください",
+    "No workout data available for graphs": "グラフ用のワークアウトデータがありません",
+    "workoutReminderTitle": "ワークアウトリマインダー: {{workoutName}}",
+    "workoutReminderBody": "{{dayName}}のワークアウトの時間です！",
+    "Workout in Progress": "ワークアウト進行中",
+    "Workout in Progress Message": "ワークアウトの完了を忘れないでください！"
+  }
+  

@@ -40,6 +40,7 @@
   import { AppState } from 'react-native';
   import GraphsWorkoutSelection from './screens/GraphsWorkoutSelection';
   import GraphsWorkoutDetails from './screens/GraphsWorkoutDetails';
+  import { FontProvider } from './context/FontContext';
 
 
 
@@ -477,9 +478,11 @@ const AppContent = () => {
       <GestureHandlerRootView>
         <NavigationContainer ref={navigationRef}>
           <SettingsProvider>
+          <FontProvider>
           <I18nextProvider i18n={i18n}>
           <AppContent/>
           </I18nextProvider>
+          </FontProvider>
           </SettingsProvider>
          
         </NavigationContainer>

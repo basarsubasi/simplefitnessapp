@@ -5,6 +5,7 @@ import { FlatList } from 'react-native-gesture-handler';
 import { useSettings } from '../context/SettingsContext';
 import { useTheme } from '../context/ThemeContext';
 import { useTranslation } from 'react-i18next';
+import { useFont } from '../context/FontContext';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import * as DocumentPicker from 'expo-document-picker';
@@ -21,6 +22,8 @@ export default function Settings() {
   } = useSettings();
   const { theme, toggleTheme } = useTheme();
   const { t } = useTranslation(); // for translations
+  const { getCJKFontStyle } = useFont(); // Get font style function
+  
 
   // Manages whether the language dropdown is visible
   const [languageDropdownVisible, setLanguageDropdownVisible] = useState(false);
@@ -34,6 +37,8 @@ export default function Settings() {
     { code: 'fi', label: 'Suomi' },
     { code: 'fr', label: 'Français' },
     { code: 'it', label: 'Italiano' },
+    { code: 'ja', label: '日本語' },
+    { code: 'ko', label: '한국어' },
     { code: 'nl', label: 'Nederlands' },
     { code: 'no', label: 'Norsk' },
     { code: 'pl', label: 'Polski' },
@@ -43,6 +48,7 @@ export default function Settings() {
     { code: 'sv', label: 'Svenska' },
     { code: 'tr', label: 'Türkçe' },
     { code: 'uk', label: 'Українська' },
+    { code: 'zh', label: '中文' },
     // add more languages here #2
   ];
   
@@ -70,7 +76,7 @@ export default function Settings() {
   // Renders the button that toggles the language dropdown
   const renderLanguageButton = () => (
     <TouchableOpacity
-      style={styles.dropdownButton}
+      style={[styles.dropdownButton, { minWidth: 180 }]}
       onPress={() => setLanguageDropdownVisible((prev) => !prev)}
     >
       <Text style={[styles.buttonText, { color: 'white' }]}>
@@ -264,12 +270,12 @@ export default function Settings() {
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         {/* Title */}
-        <Text style={[styles.title, { color: theme.text }]}>{t('settingsTitle')}</Text>
+        <Text style={[styles.title, { color: theme.text }, getCJKFontStyle()]}>{t('settingsTitle')}</Text>
 
 
         {/* Language Selection */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.text }]}>{t('settingsLanguage')}</Text>
+          <Text style={[styles.sectionTitle, { color: theme.text }, getCJKFontStyle()]}>{t('settingsLanguage')}</Text>
           {renderLanguageButton()}
           {languageDropdownVisible && (
             <FlatList
@@ -306,9 +312,20 @@ export default function Settings() {
           )}
         </View>
 
+
+
+
+
+
+
+
+
+
+
+
         {/* Date Format Section */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.text }]}>{t('settingsDateFormat')}</Text>
+          <Text style={[styles.sectionTitle, { color: theme.text }, getCJKFontStyle()]}>{t('settingsDateFormat')}</Text>
           <View style={styles.buttonGroup}>
             {renderButton('dd-mm-yyyy', dateFormat, () => handleDateFormatChange('dd-mm-yyyy'))}
             {renderButton('mm-dd-yyyy', dateFormat, () => handleDateFormatChange('mm-dd-yyyy'))}
@@ -317,7 +334,7 @@ export default function Settings() {
 
         {/* Weight Format Section */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.text }]}>{t('settingsWeightFormat')}</Text>
+          <Text style={[styles.sectionTitle, { color: theme.text }, getCJKFontStyle()]}>{t('settingsWeightFormat')}</Text>
           <View style={styles.buttonGroup}>
             {renderButton('kg', weightFormat, () => handleWeightFormatChange('kg'))}
             {renderButton('lbs', weightFormat, () => handleWeightFormatChange('lbs'))}
@@ -326,19 +343,20 @@ export default function Settings() {
 
         {/* Theme Section */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.text }]}>{t('settingsTheme')}</Text>
+          <Text style={[styles.sectionTitle, { color: theme.text }, getCJKFontStyle()]}>{t('settingsTheme')}</Text>
           <View style={styles.buttonGroup}>
             <TouchableOpacity
               style={[
                 styles.button,
                 theme.background === '#FFFFFF' && styles.activeButton,
+                { minWidth: 150 }
               ]}
               onPress={toggleTheme}
             >
               <Text
                 style={[
                   styles.buttonText,
-                  theme.background === '#FFFFFF' && styles.activeButtonText,
+                  theme.background === '#FFFFFF' && styles.activeButtonText
                 ]}
               >
                 {theme.background === '#FFFFFF' ? t('settingsSwitchDark') : t('settingsSwitchLight')}
@@ -349,7 +367,7 @@ export default function Settings() {
 
         {/* Data Management Section */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.text }]}>{t('dataManagement') || 'Data Management'}</Text>
+          <Text style={[styles.sectionTitle, { color: theme.text }, getCJKFontStyle()]}>{t('dataManagement') || 'Data Management'}</Text>
           
           <View style={styles.dataManagementButtonGroup}>
             {/* Export Database Button */}
@@ -370,7 +388,8 @@ export default function Settings() {
                 <Text 
                   style={[
                     styles.dataManagementButtonText, 
-                    { color:'#FFFFFF' }
+                    { color:'#FFFFFF' },
+                    getCJKFontStyle()
                   ]}
                   numberOfLines={2}
                 >
@@ -397,7 +416,8 @@ export default function Settings() {
                 <Text 
                   style={[
                     styles.dataManagementButtonText, 
-                    { color:'#000000' }
+                    { color:'#000000' },
+                    getCJKFontStyle()
                   ]}
                   numberOfLines={2}
                 >
