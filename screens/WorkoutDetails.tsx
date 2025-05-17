@@ -9,6 +9,7 @@ import { useTheme } from '../context/ThemeContext';
 import { WorkoutStackParamList } from '../App';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useTranslation } from 'react-i18next';
+import { useFont } from '../context/FontContext';
 
 
 
@@ -30,6 +31,7 @@ export default function WorkoutDetails() {
 
   const { theme } = useTheme();
   const { t } = useTranslation(); // Initialize translations
+  const { getCJKFontStyle } = useFont(); // Get font style function
   
   
   const { workout_id } = route.params as { workout_id: number };
@@ -540,6 +542,9 @@ export default function WorkoutDetails() {
             opacity: fadeAnim,
             transform: [{ scale: scaleAnim }],
             backgroundColor: theme.card,
+            borderWidth: 1,
+            borderColor: theme.border,
+            borderRadius: 20,
           }
         ]}
       >
@@ -549,8 +554,7 @@ export default function WorkoutDetails() {
           style={[
             styles.dayContainer, 
             { 
-              backgroundColor: theme.card, 
-              borderColor: theme.border
+              padding: 20, 
             }
           ]}
       >
@@ -613,20 +617,19 @@ export default function WorkoutDetails() {
             >
    <AutoSizeText
                 fontSize={18}
-                numberOfLines={2}
+                numberOfLines={3}
                 mode={ResizeTextMode.max_lines}
                 style={[styles.exerciseName, { color: theme.text }]}
               >
                 {exercise.exercise_name}
               </AutoSizeText>
-              <AutoSizeText
-                fontSize={16}
-                numberOfLines={3}
-                mode={ResizeTextMode.max_lines}
-                style={[styles.exerciseDetails, { color: theme.text }]}
-              >
-                {exercise.sets} {t('Sets')} {'\n'} {exercise.reps} {t('Reps')} 
-              </AutoSizeText>
+              <View style={styles.exerciseDetails}>
+                <Text style={{ color: theme.text, fontSize: 16, textAlign: 'right' }}>
+                  {exercise.sets} <Text style={getCJKFontStyle()}>{t('Sets')}</Text>
+                  {' • '}
+                  {exercise.reps} <Text style={getCJKFontStyle()}>{t('Reps')}</Text>
+                </Text>
+              </View>
             </TouchableOpacity>
           ))
         ) : (
@@ -770,17 +773,7 @@ const styles = StyleSheet.create({
       color: '#000000',
     },
     dayContainer: {
-      backgroundColor: '#FFFFFF',
-      borderRadius: 20,
       padding: 20,
-      marginBottom: 20,
-      borderWidth: 1,
-      borderColor: 'rgba(0, 0, 0, 0.2)',
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 4,
-      elevation: 2,
     },
     dayHeader: {
       flexDirection: 'row',
@@ -823,9 +816,8 @@ const styles = StyleSheet.create({
       color: '#000000',
     },
     exerciseDetails: {
-      fontSize: 16,
-      color: '#000000',
-      textAlign: 'right',
+      minWidth: 70,
+      alignItems: 'flex-end',
     },
     
     noExercisesText: {
@@ -908,6 +900,11 @@ const styles = StyleSheet.create({
       marginBottom: 20,
       borderRadius: 20,
       overflow: 'hidden',
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 2,
     },
   });
   
