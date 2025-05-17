@@ -17,7 +17,7 @@
       "buildNumber": "1.4.2"
     },
     "android": {
-      "versionCode": 32,
+      "versionCode": 33,
       "adaptiveIcon": {
         "foregroundImage": "./assets/simpleicon.png",
         "backgroundColor": "#ffffff"
@@ -41,8 +41,7 @@
           "color": "#000000",
           "enableBackgroundRemoteNotifications": false
         }
-      ],
-      "expo-font"
+      ]
     ],
     "owner": "basarsubasi"
   }
