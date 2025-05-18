@@ -1,0 +1,4 @@
+- New Languages: Chinese, Japanese, Korean, Danish and Romanian!
+- Minor bug fixes on the started workout screen
+- Minor Styling changes on the Workout Details
+- Edit Workout screen is less buggy
