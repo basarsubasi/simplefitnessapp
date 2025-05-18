@@ -5,7 +5,6 @@ import { FlatList } from 'react-native-gesture-handler';
 import { useSettings } from '../context/SettingsContext';
 import { useTheme } from '../context/ThemeContext';
 import { useTranslation } from 'react-i18next';
-import { useFont } from '../context/FontContext';
 import { useNotifications } from '../utils/useNotifications';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
@@ -25,8 +24,7 @@ export default function Settings() {
   } = useSettings();
   const { theme, toggleTheme } = useTheme();
   const { t } = useTranslation(); // for translations
-  const { getCJKFontStyle } = useFont(); // Get font style function
-  
+
   // Use the notifications hook to access all notification-related functionality
   const { 
     requestNotificationPermission,
@@ -310,12 +308,12 @@ export default function Settings() {
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         {/* Title */}
-        <Text style={[styles.title, { color: theme.text }, getCJKFontStyle()]}>{t('settingsTitle')}</Text>
+        <Text style={[styles.title, { color: theme.text }]}>{t('settingsTitle')}</Text>
 
 
         {/* Language Selection */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.text }, getCJKFontStyle()]}>{t('settingsLanguage')}</Text>
+          <Text style={[styles.sectionTitle, { color: theme.text }]}>{t('settingsLanguage')}</Text>
           {renderLanguageButton()}
           {languageDropdownVisible && (
             <FlatList
@@ -354,7 +352,7 @@ export default function Settings() {
 
 {/* Notification Settings Section / Translate this to the other languages */}
 <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.text }, getCJKFontStyle()]}>{t('notifications')}</Text>
+          <Text style={[styles.sectionTitle, { color: theme.text }]}>{t('notifications')}</Text>
           
           {/* Main Notification Toggle */}
           <View style={styles.toggleRow}>
@@ -389,7 +387,7 @@ export default function Settings() {
 
         {/* Date Format Section */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.text }, getCJKFontStyle()]}>{t('settingsDateFormat')}</Text>
+          <Text style={[styles.sectionTitle, { color: theme.text }]}>{t('settingsDateFormat')}</Text>
           <View style={styles.buttonGroup}>
             {renderButton('dd-mm-yyyy', dateFormat, () => handleDateFormatChange('dd-mm-yyyy'))}
             {renderButton('mm-dd-yyyy', dateFormat, () => handleDateFormatChange('mm-dd-yyyy'))}
@@ -398,7 +396,7 @@ export default function Settings() {
 
         {/* Weight Format Section */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.text }, getCJKFontStyle()]}>{t('settingsWeightFormat')}</Text>
+          <Text style={[styles.sectionTitle, { color: theme.text }]}>{t('settingsWeightFormat')}</Text>
           <View style={styles.buttonGroup}>
             {renderButton('kg', weightFormat, () => handleWeightFormatChange('kg'))}
             {renderButton('lbs', weightFormat, () => handleWeightFormatChange('lbs'))}
@@ -409,7 +407,7 @@ export default function Settings() {
 
         {/* Theme Section */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.text }, getCJKFontStyle()]}>{t('settingsTheme')}</Text>
+          <Text style={[styles.sectionTitle, { color: theme.text }]}>{t('settingsTheme')}</Text>
           <View style={styles.buttonGroup}>
             <TouchableOpacity
               style={[
@@ -433,7 +431,7 @@ export default function Settings() {
 
         {/* Data Management Section */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.text }, getCJKFontStyle()]}>{t('dataManagement') || 'Data Management'}</Text>
+          <Text style={[styles.sectionTitle, { color: theme.text }]}>{t('dataManagement') || 'Data Management'}</Text>
           
           <View style={styles.dataManagementButtonGroup}>
             {/* Export Database Button */}
@@ -455,7 +453,6 @@ export default function Settings() {
                   style={[
                     styles.dataManagementButtonText, 
                     { color:'#FFFFFF' },
-                    getCJKFontStyle()
                   ]}
                   numberOfLines={2}
                 >
@@ -482,8 +479,7 @@ export default function Settings() {
                 <Text 
                   style={[
                     styles.dataManagementButtonText, 
-                    { color:'#000000' },
-                    getCJKFontStyle()
+                    { color:'#000000' }
                   ]}
                   numberOfLines={2}
                 >
