@@ -188,19 +188,6 @@ export default function MyProgress() {
       </TouchableOpacity>
 
 
-  <TouchableOpacity
-        style={[styles.workoutCard, { backgroundColor: theme.card, borderColor: theme.border }]}
-        onPress={() => navigation.navigate('AllLogs')}
-        >
-        {/* Container to align the icon and text */}
-        <View style={styles.workoutCardContent}>
-          <Text style={[styles.workoutText, { color: theme.text }]}>{t('allTracks')}</Text>
-          <Ionicons name="chevron-forward" size={20} color={theme.text} />
-        </View>
-        
-      </TouchableOpacity>
-
-
   {/* List of Workouts with Logs */}
   <FlatList
     data={workouts}
