@@ -9,9 +9,6 @@
     "web": "expo start --web"
   },
   "dependencies": {
-    "@expo-google-fonts/noto-sans-jp": "^0.3.0",
-    "@expo-google-fonts/noto-sans-kr": "^0.3.0",
-    "@expo-google-fonts/noto-sans-sc": "^0.3.0",
     "@react-native-community/datetimepicker": "8.2.0",
     "@react-native-picker/picker": "2.9.0",
     "@react-navigation/bottom-tabs": "^7.2.0",
