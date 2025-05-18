@@ -9,7 +9,6 @@ import { useTheme } from '../context/ThemeContext';
 import { WorkoutStackParamList } from '../App';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useTranslation } from 'react-i18next';
-import { useFont } from '../context/FontContext';
 
 
 
@@ -31,7 +30,6 @@ export default function WorkoutDetails() {
 
   const { theme } = useTheme();
   const { t } = useTranslation(); // Initialize translations
-  const { getCJKFontStyle } = useFont(); // Get font style function
   
   
   const { workout_id } = route.params as { workout_id: number };
@@ -625,9 +623,9 @@ export default function WorkoutDetails() {
               </AutoSizeText>
               <View style={styles.exerciseDetails}>
                 <Text style={{ color: theme.text, fontSize: 16, textAlign: 'right' }}>
-                  {exercise.sets} <Text style={getCJKFontStyle()}>{t('Sets')}</Text>
+                  {exercise.sets} <Text>{t('Sets')}</Text>
                   {' • '}
-                  {exercise.reps} <Text style={getCJKFontStyle()}>{t('Reps')}</Text>
+                  {exercise.reps} <Text>{t('Reps')}</Text>
                 </Text>
               </View>
             </TouchableOpacity>
