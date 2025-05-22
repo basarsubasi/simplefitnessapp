@@ -247,6 +247,7 @@
     "exercises": "Vaje",
     "totalSets": "Skupno sklopov",
     "restTimeBetweenSets": "Čas počitka med sklopi (sekunde)",
+    "restTimeBetweenExercises": "Čas počitka med vajami (sekunde)",
     "workoutSettings": "Nastavitve treninga",
     "vibration": "Vibracija",
     "_comment_settings1": "Ti nizi so povezani z nastavitvami.",

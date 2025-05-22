@@ -256,6 +256,7 @@
     "exercises": "Øvelser",
     "totalSets": "Totalt sett",
     "restTimeBetweenSets": "Hviletid mellom sett (sekunder)",
+    "restTimeBetweenExercises": "Hviletid mellom øvelser (sekunder)",
     "workoutSettings": "Øktinnstillinger",
     "vibration": "Vibrasjon",
     "_comment_settings1": "Disse strengene gjelder innstillinger.",

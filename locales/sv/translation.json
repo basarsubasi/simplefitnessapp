@@ -252,6 +252,7 @@
     "exercises": "Övningar",
     "totalSets": "Totalt antal set",
     "restTimeBetweenSets": "Vilotid mellan set (sekunder)",
+    "restTimeBetweenExercises": "Vilotid mellan övningar (sekunder)",
     "workoutSettings": "Passinställningar",
     "vibration": "Vibration",
     "_comment_settings1": "Dessa strängar gäller inställningar.",

@@ -252,6 +252,7 @@
   "exercises": "练习",
   "totalSets": "总组数",
   "restTimeBetweenSets": "组间休息时间（秒）",
+  "restTimeBetweenExercises": "练习间休息时间（秒）",
   "workoutSettings": "锻炼设置",
   "vibration": "振动",
 
