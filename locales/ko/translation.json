@@ -252,6 +252,7 @@
   "exercises": "운동",
   "totalSets": "총 세트 수",
   "restTimeBetweenSets": "세트 간 휴식 시간(초)",
+  "restTimeBetweenExercises": "운동 간 휴식 시간(초)",
   "workoutSettings": "운동 설정",
   "vibration": "진동",
 

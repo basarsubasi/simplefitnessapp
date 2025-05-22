@@ -250,6 +250,7 @@
     "exercises": "Oefeningen",
     "totalSets": "Totaal aantal sets",
     "restTimeBetweenSets": "Rusttijd tussen sets (seconden)",
+    "restTimeBetweenExercises": "Rusttijd tussen oefeningen (seconden)",
     "workoutSettings": "Trainingsinstellingen",
     "vibration": "Trilling",
     "_comment_settings1": "Dit zijn tekenreeksen voor instellingen.",

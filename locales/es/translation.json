@@ -17,7 +17,7 @@
   "provideDayNamesErrorMessage": "Por favor, asigna nombres para todos los días.",
   "fillExercisesErrorMessage": "Por favor, completa todos los ejercicios con datos válidos.",
   "failedToCreateWorkoutErrorMessage": "Error al crear el entrenamiento. Por favor, inténtalo de nuevo.",
-
+  
   "workoutNamePlaceholder": "Nombre del entrenamiento",
   "dayNamePlaceholder": "Nombre del día",
   "exerciseNamePlaceholder": "Nombre del ejercicio",
@@ -248,6 +248,7 @@
     "exercises": "Ejercicios",
     "totalSets": "Series totales",
     "restTimeBetweenSets": "Tiempo de descanso entre series (segundos)",
+    "restTimeBetweenExercises": "Tiempo de descanso entre ejercicios (segundos)",
     "workoutSettings": "Configuración del entrenamiento",
     "vibration": "Vibración",
     "_comment_settings1": "Estas cadenas están relacionadas con la configuración.",
