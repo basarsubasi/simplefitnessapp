@@ -23,6 +23,7 @@ import { useTranslation } from 'react-i18next';
 import { useSQLiteContext } from 'expo-sqlite';
 import { StartWorkoutStackParamList } from '../App';
 import { useSettings } from '../context/SettingsContext';
+import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
 
 type StartedWorkoutRouteProps = RouteProp<
   StartWorkoutStackParamList,
@@ -73,8 +74,10 @@ export default function StartedWorkoutInterface() {
   // Workout flow states
   const [workoutStage, setWorkoutStage] = useState<WorkoutStage>('overview');
   const [restTime, setRestTime] = useState('30');
+  const [exerciseRestTime, setExerciseRestTime] = useState('60'); // New state for between-exercise rest time
   const [workoutStarted, setWorkoutStarted] = useState(false);
   const [isExerciseListModalVisible, setIsExerciseListModalVisible] = useState(false);
+  const [isExerciseRest, setIsExerciseRest] = useState(false); // Flag to track if current rest is between exercises
   
   // User preference toggles
   const [enableVibration, setEnableVibration] = useState(true);
@@ -91,6 +94,21 @@ export default function StartedWorkoutInterface() {
   const workoutTimerRef = useRef<NodeJS.Timeout | null>(null);
   const restTimerRef = useRef<NodeJS.Timeout | null>(null);
   
+  // Keep screen awake during workout
+  useEffect(() => {
+    // Activate keep awake when workout starts
+    if (workoutStarted) {
+      activateKeepAwakeAsync().catch(err => 
+        console.error("Error activating keep awake:", err)
+      );
+    }
+    
+    return () => {
+      // Deactivate keep awake when component unmounts
+      deactivateKeepAwake();
+    };
+  }, [workoutStarted]);
+  
   useEffect(() => {
     // Check if completion_time column exists, add it if not
     checkAndAddCompletionTimeColumn();
@@ -98,6 +116,7 @@ export default function StartedWorkoutInterface() {
     return () => {
       stopWorkoutTimer();
       stopRestTimer();
+      deactivateKeepAwake();
     };
   }, []);
   
@@ -194,6 +213,7 @@ export default function StartedWorkoutInterface() {
           stopRestTimer();
           setCurrentSetIndex(currentSetIndex + 1);
           setWorkoutStage('exercise');
+          setIsExerciseRest(false);
           
           // Vibrate only if enabled
           if (enableVibration) {
@@ -224,10 +244,17 @@ export default function StartedWorkoutInterface() {
   
   // Workout flow functions
   const startWorkout = () => {
-    // Validate rest time
-    const restSeconds = parseInt(restTime);
-    if (isNaN(restSeconds) || restSeconds < 0) {
+    // Validate rest times
+    const setRestSeconds = parseInt(restTime);
+    const exerciseRestSeconds = parseInt(exerciseRestTime);
+    
+    if (isNaN(setRestSeconds) || setRestSeconds < 0) {
       Alert.alert(t('invalidRestTime'), t('pleaseEnterValidSeconds'));
+      return;
+    }
+    
+    if (isNaN(exerciseRestSeconds) || exerciseRestSeconds < 0) {
+      Alert.alert(t('invalidExerciseRestTime'), t('pleaseEnterValidSeconds'));
       return;
     }
     
@@ -235,14 +262,7 @@ export default function StartedWorkoutInterface() {
     setWorkoutStage('exercise');
     startWorkoutTimer();
   };
-
-
-
-
-
-
-
-
+  
    // Handle back press and gestures when workout is started
 
 
@@ -328,9 +348,12 @@ export default function StartedWorkoutInterface() {
 
 
   }, [navigation, workoutStarted, workoutStage, t]); // Added t to dependencies for Alert messages
-
-
   
+  // Determine if the next set is for a different exercise
+  const isDifferentExercise = (currentIndex: number, nextIndex: number): boolean => {
+    if (nextIndex >= allSets.length) return false;
+    return allSets[currentIndex].exercise_name !== allSets[nextIndex].exercise_name;
+  };
   
   // Render functions for different workout stages
   const renderOverview = () => {
@@ -379,6 +402,20 @@ export default function StartedWorkoutInterface() {
             }]}
             value={restTime}
             onChangeText={setRestTime}
+            keyboardType="number-pad"
+            maxLength={3}
+            placeholderTextColor={theme.type === 'dark' ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)'}
+          />
+          
+          <Text style={[styles.setupLabel, { color: theme.text }]}>{t('restTimeBetweenExercises')}</Text>
+          <TextInput
+            style={[styles.restTimeInput, { 
+              backgroundColor: theme.card,
+              color: theme.text,
+              borderColor: theme.border
+            }]}
+            value={exerciseRestTime}
+            onChangeText={setExerciseRestTime}
             keyboardType="number-pad"
             maxLength={3}
             placeholderTextColor={theme.type === 'dark' ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)'}
@@ -530,9 +567,20 @@ export default function StartedWorkoutInterface() {
                   Vibration.vibrate([300, 200, 300, 200, 600]);
                 }
               } else {
+                // Check if next set is for a different exercise
+                const nextSetIndex = currentSetIndex + 1;
+                const differentExercise = isDifferentExercise(currentSetIndex, nextSetIndex);
+                
                 // Move to rest period before next set
                 setWorkoutStage('rest');
-                startRestTimer(parseInt(restTime));
+                setIsExerciseRest(differentExercise);
+                
+                // Use appropriate rest time based on whether we're changing exercises
+                const restSeconds = differentExercise 
+                  ? parseInt(exerciseRestTime) 
+                  : parseInt(restTime);
+                
+                startRestTimer(restSeconds);
               }
             }}
             disabled={allSets[currentSetIndex].reps_done <= 0 || allSets[currentSetIndex].weight === ''}
@@ -611,6 +659,7 @@ export default function StartedWorkoutInterface() {
             stopRestTimer();
             setCurrentSetIndex(currentSetIndex + 1);
             setWorkoutStage('exercise');
+            setIsExerciseRest(false);
             // Add vibration when manually skipping rest (if enabled)
             if (enableVibration) {
               Vibration.vibrate([200, 100, 200]);
@@ -828,10 +877,6 @@ export default function StartedWorkoutInterface() {
             <Ionicons name="reorder-three-outline" size={23} color={theme.text} />
           </TouchableOpacity>
         ) : (
-          // Placeholder to balance the backButton for centering the title when workout has not started
-          // The width is calculated based on the help icon's size (23) and its TouchableOpacity padding (styles.headerListIcon.padding * 2)
-          // styles.headerListIcon = { padding: 5, marginLeft: 15 }, so padding is 5.
-          // Width = 23 + (5 * 2) = 33. marginLeft is 15.
           <View style={{ width: 23 + (styles.headerListIcon.padding * 2), marginLeft: styles.headerListIcon.marginLeft }} />
         )}
       </View>
@@ -840,7 +885,6 @@ export default function StartedWorkoutInterface() {
         style={styles.content} 
         contentContainerStyle={[
           styles.scrollContent,
-          // Adjust styling based on stage
           workoutStage === 'rest' && styles.restScrollContent
         ]}
       >
@@ -993,7 +1037,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 15,
     fontSize: 18,
-    marginBottom: 25,
+    marginBottom: 15,
   },
   startButton: {
     flexDirection: 'row',
