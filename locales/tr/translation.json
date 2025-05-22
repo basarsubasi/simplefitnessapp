@@ -281,6 +281,7 @@
       "exercises": "Egzersizler",
       "totalSets": "Toplam Set",
       "restTimeBetweenSets": "Setler Arası Dinlenme (sn)",
+      "restTimeBetweenExercises": "Egzersizler Arası Dinlenme (sn)",
       "workoutSettings": "Antrenman Ayarları",
       "vibration": "Titreşim",
       "_comment_settings1": "Bunlar Ayarlar ile ilgili metinlerdir.",

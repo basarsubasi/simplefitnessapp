@@ -249,6 +249,7 @@
     "exercises": "Вправи",
     "totalSets": "Загальна кількість підходів",
     "restTimeBetweenSets": "Час відпочинку між підходами (секунди)",
+    "restTimeBetweenExercises": "Час відпочинку між вправами (секунди)",
     "workoutSettings": "Налаштування тренування",
     "vibration": "Вібрація",
     "dayInterval": "Інтервал днів:",

@@ -285,6 +285,8 @@
     "exercises": "Exercises",
     "totalSets": "Total Sets",
     "restTimeBetweenSets": "Rest time between sets (seconds)",
+    "restTimeBetweenExercises": "Rest time between exercises (seconds)",
+
     "workoutSettings": "Workout Settings",
     "vibration": "Vibration",
 

@@ -252,6 +252,7 @@
     "exercises": "Exerciții",
     "totalSets": "Total Seturi",
     "restTimeBetweenSets": "Timp odihnă între seturi (secunde)",
+    "restTimeBetweenExercises": "Timp odihnă între exerciții (secunde)",
     "workoutSettings": "Setări Antrenament",
     "vibration": "Vibrație",
   

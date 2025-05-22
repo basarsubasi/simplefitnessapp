@@ -249,6 +249,7 @@
     "exercises": "Ćwiczenia",
     "totalSets": "Całkowita liczba serii",
     "restTimeBetweenSets": "Czas odpoczynku między seriami (sekundy)",
+    "restTimeBetweenExercises": "Czas odpoczynku między ćwiczeniami (sekundy)",
     "workoutSettings": "Ustawienia treningu",
     "vibration": "Wibracje",
     "_comment_settings1": "Te ciągi znaków dotyczą ustawień.",

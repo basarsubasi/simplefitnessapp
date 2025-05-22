@@ -252,6 +252,7 @@
   "exercises": "エクササイズ",
   "totalSets": "合計セット数",
   "restTimeBetweenSets": "セット間の休憩時間（秒）",
+  "restTimeBetweenExercises": "エクササイズ間の休憩時間（秒）",
   "workoutSettings": "ワークアウト設定",
   "vibration": "バイブレーション",
 
