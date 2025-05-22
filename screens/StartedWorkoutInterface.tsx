@@ -63,14 +63,15 @@ TaskManager.defineTask(REST_TIMER_TASK, async () => {
       return BackgroundFetch.BackgroundFetchResult.NoData;
     }
     
-    const { startTime, duration, exerciseName, setNumber, totalSets, enableVibration } = 
+    const { startTime, duration, exerciseName, setNumber, totalSets, enableVibration, isExerciseRest } = 
       restTimerData.notification.request.content.data as { 
         startTime: number, 
         duration: number,
         exerciseName: string,
         setNumber: number,
         totalSets: number,
-        enableVibration: boolean
+        enableVibration: boolean,
+        isExerciseRest: boolean
       };
     
     const now = Date.now();
@@ -148,8 +149,10 @@ export default function StartedWorkoutInterface() {
   // Workout flow states
   const [workoutStage, setWorkoutStage] = useState<WorkoutStage>('overview');
   const [restTime, setRestTime] = useState('30');
+  const [exerciseRestTime, setExerciseRestTime] = useState('60'); // New state for between-exercise rest time
   const [workoutStarted, setWorkoutStarted] = useState(false);
   const [isExerciseListModalVisible, setIsExerciseListModalVisible] = useState(false);
+  const [isExerciseRest, setIsExerciseRest] = useState(false); // Flag to track if current rest is between exercises
   
   // User preference toggles
   const [enableVibration, setEnableVibration] = useState(true);
@@ -362,7 +365,8 @@ export default function StartedWorkoutInterface() {
           // Recalculate rest time based on elapsed time
           const now = Date.now();
           const elapsedSeconds = Math.floor((now - restTimerStartTime) / 1000);
-          const newRestTime = Math.max(0, parseInt(restTime) - elapsedSeconds);
+          const restDuration = isExerciseRest ? parseInt(exerciseRestTime) : parseInt(restTime);
+          const newRestTime = Math.max(0, restDuration - elapsedSeconds);
           
           setRestTimeRemaining(newRestTime);
           
@@ -371,6 +375,7 @@ export default function StartedWorkoutInterface() {
             stopRestTimer();
             setCurrentSetIndex(currentSetIndex + 1);
             setWorkoutStage('exercise');
+            setIsExerciseRest(false);
           } else {
             // Continue rest timer
             stopRestTimer();
@@ -386,7 +391,7 @@ export default function StartedWorkoutInterface() {
     return () => {
       subscription.remove();
     };
-  }, [workoutStarted, timerStartTime, restTimerStartTime, workoutStage, currentSetIndex, restTime, allSets, workout, enableNotifications, enableVibration]);
+  }, [workoutStarted, timerStartTime, restTimerStartTime, workoutStage, currentSetIndex, restTime, exerciseRestTime, allSets, workout, enableNotifications, enableVibration, isExerciseRest]);
   
   useEffect(() => {
     // Check if completion_time column exists, add it if not
@@ -500,6 +505,7 @@ export default function StartedWorkoutInterface() {
           stopRestTimer();
           setCurrentSetIndex(currentSetIndex + 1);
           setWorkoutStage('exercise');
+          setIsExerciseRest(false);
           
           // Vibrate only if enabled
           if (enableVibration) {
@@ -532,9 +538,16 @@ export default function StartedWorkoutInterface() {
   // Workout flow functions
   const startWorkout = () => {
     // Validate rest time
-    const restSeconds = parseInt(restTime);
-    if (isNaN(restSeconds) || restSeconds < 0) {
+    const setRestSeconds = parseInt(restTime);
+    const exerciseRestSeconds = parseInt(exerciseRestTime);
+    
+    if (isNaN(setRestSeconds) || setRestSeconds < 0) {
       Alert.alert(t('invalidRestTime'), t('pleaseEnterValidSeconds'));
+      return;
+    }
+    
+    if (isNaN(exerciseRestSeconds) || exerciseRestSeconds < 0) {
+      Alert.alert(t('invalidExerciseRestTime'), t('pleaseEnterValidSeconds'));
       return;
     }
     
@@ -570,6 +583,12 @@ export default function StartedWorkoutInterface() {
       // User is turning off notifications - simply disable
       setEnableNotifications(false);
     }
+  };
+  
+  // Determine if the next set is for a different exercise
+  const isDifferentExercise = (currentIndex: number, nextIndex: number): boolean => {
+    if (nextIndex >= allSets.length) return false;
+    return allSets[currentIndex].exercise_name !== allSets[nextIndex].exercise_name;
   };
   
   // Render functions for different workout stages
@@ -619,6 +638,20 @@ export default function StartedWorkoutInterface() {
             }]}
             value={restTime}
             onChangeText={setRestTime}
+            keyboardType="number-pad"
+            maxLength={3}
+            placeholderTextColor={theme.type === 'dark' ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)'}
+          />
+          
+          <Text style={[styles.setupLabel, { color: theme.text }]}>{t('restTimeBetweenExercises')}:</Text>
+          <TextInput
+            style={[styles.restTimeInput, { 
+              backgroundColor: theme.card,
+              color: theme.text,
+              borderColor: theme.border
+            }]}
+            value={exerciseRestTime}
+            onChangeText={setExerciseRestTime}
             keyboardType="number-pad"
             maxLength={3}
             placeholderTextColor={theme.type === 'dark' ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)'}
@@ -778,9 +811,20 @@ export default function StartedWorkoutInterface() {
                 setWorkoutStage('completed');
                 stopWorkoutTimer();
               } else {
+                // Check if next set is for a different exercise
+                const nextSetIndex = currentSetIndex + 1;
+                const differentExercise = isDifferentExercise(currentSetIndex, nextSetIndex);
+                
                 // Move to rest period before next set
                 setWorkoutStage('rest');
-                startRestTimer(parseInt(restTime));
+                setIsExerciseRest(differentExercise);
+                
+                // Use appropriate rest time based on whether we're changing exercises
+                const restSeconds = differentExercise 
+                  ? parseInt(exerciseRestTime) 
+                  : parseInt(restTime);
+                
+                startRestTimer(restSeconds);
               }
             }}
             disabled={allSets[currentSetIndex].reps_done <= 0 || allSets[currentSetIndex].weight === ''}
@@ -794,7 +838,7 @@ export default function StartedWorkoutInterface() {
         {/* Progress indicator */}
         <View style={styles.progressContainer}>
           <Text style={[styles.progressText, { color: theme.text }]}>
-            {Math.round(((currentSetIndex + 1) / allSets.length) * 100)}%
+          %{Math.round(((currentSetIndex + 1) / allSets.length) * 100)}
           </Text>
           <View style={[styles.progressBar, { backgroundColor: theme.border }]}>
             <View 
@@ -859,6 +903,7 @@ export default function StartedWorkoutInterface() {
             stopRestTimer();
             setCurrentSetIndex(currentSetIndex + 1);
             setWorkoutStage('exercise');
+            setIsExerciseRest(false);
           }}
         >
           <Text style={[styles.buttonText, { color: theme.buttonText }]}>{t('skipRest')}</Text>
@@ -1237,7 +1282,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 15,
     fontSize: 18,
-    marginBottom: 25,
+    marginBottom: 15,
   },
   startButton: {
     flexDirection: 'row',
