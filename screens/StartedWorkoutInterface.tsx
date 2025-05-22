@@ -594,7 +594,7 @@ export default function StartedWorkoutInterface() {
         {/* Progress indicator */}
         <View style={styles.progressContainer}>
           <Text style={[styles.progressText, { color: theme.text }]}>
-            {Math.round(((currentSetIndex + 1) / allSets.length) * 100)}%
+          %{Math.round(((currentSetIndex + 1) / allSets.length) * 100)}
           </Text>
           <View style={[styles.progressBar, { backgroundColor: theme.border }]}>
             <View 
