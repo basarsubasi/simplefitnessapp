@@ -252,6 +252,7 @@
     "exercises": "Øvelser",
     "totalSets": "Samlede sæt",
     "restTimeBetweenSets": "Hviletid mellem sæt (sekunder)",
+    "restTimeBetweenExercises": "Hviletid mellem øvelser (sekunder)",
     "workoutSettings": "Træningsindstillinger",
     "vibration": "Vibration",
   

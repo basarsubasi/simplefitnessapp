@@ -248,6 +248,7 @@
     "exercises": "Cvičení",
     "totalSets": "Celkem sérií",
     "restTimeBetweenSets": "Čas odpočinku mezi sériemi (sekundy)",
+    "restTimeBetweenExercises": "Čas odpočinku mezi cviky (sekundy)",
     "workoutSettings": "Nastavení tréninku",
     "vibration": "Vibrace",
     "_comment_settings1": "Tyto řetězce souvisejí s nastavením.",

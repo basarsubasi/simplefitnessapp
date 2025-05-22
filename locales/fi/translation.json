@@ -249,6 +249,7 @@
     "exercises": "Harjoitukset",
     "totalSets": "Sarjojen määrä",
     "restTimeBetweenSets": "Taukoaika sarjojen välillä (sekunteja)",
+    "restTimeBetweenExercises": "Taukoaika harjoitusten välillä (sekunteja)",
     "workoutSettings": "Harjoitusasetukset",
     "vibration": "Tärinä",
     "_comment_settings1": "Nämä merkkijonot liittyvät asetuksiin.",

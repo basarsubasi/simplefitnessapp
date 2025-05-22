@@ -246,6 +246,7 @@
   "exercises": "Übungen",
   "totalSets": "Gesamtanzahl Sätze",
   "restTimeBetweenSets": "Pause zwischen den Sätzen (Sekunden)",
+  "restTimeBetweenExercises": "Pause zwischen den Übungen (Sekunden)",
   "workoutSettings": "Workout-Einstellungen",
   "vibration": "Vibration",
   "_comment_settings1": "Dies sind Zeichenketten für Einstellungen.",

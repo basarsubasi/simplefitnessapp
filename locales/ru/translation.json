@@ -248,6 +248,7 @@
     "exercises": "Упражнения",
     "totalSets": "Всего подходов",
     "restTimeBetweenSets": "Время отдыха между подходами (секунды)",
+    "restTimeBetweenExercises": "Время отдыха между упражнениями (секунды)",
     "workoutSettings": "Настройки тренировки",
     "vibration": "Вибрация",
     "_comment_settings1": "Эти строки связаны с настройками.",
