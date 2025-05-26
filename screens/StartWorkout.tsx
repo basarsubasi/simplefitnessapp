@@ -23,9 +23,9 @@ export default function StartWorkout() {
   const { dateFormat } = useSettings();
 
   // State for workouts
-  const [todayWorkout, setTodayWorkout] = useState<
-    { workout_name: string; workout_date: number; day_name: string; workout_log_id: number } | null
-  >(null);
+  const [todayWorkouts, setTodayWorkouts] = useState<
+    { workout_name: string; workout_date: number; day_name: string; workout_log_id: number }[]
+  >([]);
   const [untrackedWorkouts, setUntrackedWorkouts] = useState<
     { workout_name: string; workout_date: number; day_name: string; workout_log_id: number }[]
   >([]);
@@ -105,7 +105,7 @@ export default function StartWorkout() {
 
       const endOfDayTimestamp = startOfDayTimestamp + 86400 - 1;
 
-      // Fetch today's workout - modified to exclude logged workouts
+      // Fetch today's workouts - modified to get all workouts for today and exclude logged workouts
       const todayResult = await db.getAllAsync<{
         workout_name: string;
         workout_date: number;
@@ -114,10 +114,11 @@ export default function StartWorkout() {
       }>(
         `SELECT * FROM Workout_Log 
          WHERE workout_date BETWEEN ? AND ?
-           AND workout_log_id NOT IN (SELECT DISTINCT workout_log_id FROM Weight_Log);`,
+           AND workout_log_id NOT IN (SELECT DISTINCT workout_log_id FROM Weight_Log)
+         ORDER BY workout_date ASC;`,
         [startOfDayTimestamp, endOfDayTimestamp]
       );
-      setTodayWorkout(todayResult[0] || null);
+      setTodayWorkouts(todayResult);
 
       // Fetch past workouts not logged in Weight_Log
       const untrackedResult = await db.getAllAsync<{
@@ -261,8 +262,12 @@ export default function StartWorkout() {
           <Text style={[styles.sectionTitle, { color: theme.text }]}>
             {t('todaysWorkout')}
           </Text>
-          {todayWorkout ? (
-            renderWorkoutCard(todayWorkout)
+          {todayWorkouts.length > 0 ? (
+            todayWorkouts.map((workout) => (
+              <View key={workout.workout_log_id}>
+                {renderWorkoutCard(workout)}
+              </View>
+            ))
           ) : (
             <Text style={[styles.emptyText, { color: theme.text }]}>
               {t('noWorkoutToday')}
@@ -371,4 +376,4 @@ const styles = StyleSheet.create({
   icon: {
     marginRight: 10,
   },
-}); 
+});

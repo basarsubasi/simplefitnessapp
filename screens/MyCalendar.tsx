@@ -1,4 +1,4 @@
-import React, {useState } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -20,9 +20,6 @@ import { useTranslation } from 'react-i18next';
 import { useNotifications } from '../utils/useNotifications';
 import { useRecurringWorkouts } from '../utils/recurringWorkoutUtils';
 
-
-
-
 type MyCalendarNavigationProp = StackNavigationProp<
   WorkoutLogStackParamList,
   'MyCalendar'
@@ -32,33 +29,53 @@ export default function MyCalendar() {
   const db = useSQLiteContext();
   const navigation = useNavigation<MyCalendarNavigationProp>();
 
-    const { theme } = useTheme(); 
-    const { t } = useTranslation(); // Initialize translations
-    
+  const { theme } = useTheme();
+  const { t } = useTranslation(); // Initialize translations
 
-  const [todayWorkout, setTodayWorkout] = useState<
-    { workout_name: string; workout_date: number; day_name: string; workout_log_id: number } | null
-  >(null);
+  const [todayWorkouts, setTodayWorkouts] = useState<
+    {
+      workout_name: string;
+      workout_date: number;
+      day_name: string;
+      workout_log_id: number;
+    }[]
+  >([]);
   const [pastWorkouts, setPastWorkouts] = useState<
-    { workout_name: string; workout_date: number; day_name: string; workout_log_id: number }[]
+    {
+      workout_name: string;
+      workout_date: number;
+      day_name: string;
+      workout_log_id: number;
+    }[]
   >([]);
   const [futureWorkouts, setFutureWorkouts] = useState<
-    { workout_name: string; workout_date: number; day_name: string; workout_log_id: number }[]
+    {
+      workout_name: string;
+      workout_date: number;
+      day_name: string;
+      workout_log_id: number;
+    }[]
   >([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedWorkout, setSelectedWorkout] = useState<
-    { workout_name: string; workout_date: number; day_name: string; workout_log_id: number } | null
+    {
+      workout_name: string;
+      workout_date: number;
+      day_name: string;
+      workout_log_id: number;
+    } | null
   >(null);
   const [exercises, setExercises] = useState<
     { exercise_name: string; sets: number; reps: number }[]
   >([]);
 
   const today = new Date();
-  const todayTimestamp = new Date(
-    today.getFullYear(),
-    today.getMonth(),
-    today.getDate()
-  ).getTime() / 1000; // Start of today in seconds
+  const todayTimestamp =
+    new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate()
+    ).getTime() / 1000; // Start of today in seconds
 
   const { cancelNotification } = useNotifications();
   const { checkRecurringWorkouts } = useRecurringWorkouts();
@@ -70,17 +87,14 @@ export default function MyCalendar() {
         console.log('MyCalendar: Checking recurring workouts');
         // First check and schedule any recurring workouts
         await checkRecurringWorkouts();
-        
+
         // Then fetch the workouts to display the latest data
         fetchWorkouts();
       };
-      
+
       checkAndFetchWorkouts();
-      
-     
-      
-      return () => {
-      };
+
+      return () => {};
     }, [])
   );
 
@@ -94,7 +108,7 @@ export default function MyCalendar() {
 
       const endOfDayTimestamp = startOfDayTimestamp + 86400 - 1;
 
-      // Fetch today's workout - modified to exclude logged workouts
+      // Fetch today's workouts - modified to get all workouts for today and exclude logged workouts
       const todayResult = await db.getAllAsync<{
         workout_name: string;
         workout_date: number;
@@ -103,17 +117,19 @@ export default function MyCalendar() {
       }>(
         `SELECT * FROM Workout_Log 
          WHERE workout_date BETWEEN ? AND ?
-           AND workout_log_id NOT IN (SELECT DISTINCT workout_log_id FROM Weight_Log);`,
+           AND workout_log_id NOT IN (SELECT DISTINCT workout_log_id FROM Weight_Log)
+         ORDER BY workout_date ASC;`,
         [startOfDayTimestamp, endOfDayTimestamp]
       );
-      setTodayWorkout(todayResult[0] || null);
+      setTodayWorkouts(todayResult);
 
       // Fetch past workouts not logged in Weight_Log
       const pastResult = await db.getAllAsync<{
         workout_name: string;
         workout_date: number;
         day_name: string;
-        workout_log_id: number }>(
+        workout_log_id: number;
+      }>(
         `SELECT * FROM Workout_Log 
          WHERE workout_date < ? 
            AND workout_log_id NOT IN (SELECT DISTINCT workout_log_id FROM Weight_Log)
@@ -127,7 +143,8 @@ export default function MyCalendar() {
         workout_name: string;
         workout_date: number;
         day_name: string;
-        workout_log_id: number }>(
+        workout_log_id: number;
+      }>(
         `SELECT * FROM Workout_Log 
          WHERE workout_date > ? 
          ORDER BY workout_date ASC;`,
@@ -173,16 +190,16 @@ export default function MyCalendar() {
     const today = new Date();
     const yesterday = new Date();
     const tomorrow = new Date();
-  
+
     yesterday.setDate(today.getDate() - 1); // Yesterday's date
     tomorrow.setDate(today.getDate() + 1); // Tomorrow's date
-  
+
     // Helper to compare dates without time
     const isSameDay = (d1: Date, d2: Date) =>
       d1.getDate() === d2.getDate() &&
       d1.getMonth() === d2.getMonth() &&
       d1.getFullYear() === d2.getFullYear();
-  
+
     // Check if the date matches today, yesterday, or tomorrow
     if (isSameDay(date, today)) {
       return t('Today');
@@ -191,12 +208,12 @@ export default function MyCalendar() {
     } else if (isSameDay(date, tomorrow)) {
       return t('Tomorrow');
     }
-  
+
     // Default date formatting based on user-selected format
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
-  
+
     return dateFormat === 'mm-dd-yyyy'
       ? `${month}-${day}-${year}`
       : `${day}-${month}-${year}`;
@@ -214,209 +231,251 @@ export default function MyCalendar() {
     workout_log_id: number;
   }) => {
     return (
-<TouchableOpacity
-  style={[styles.logContainer, { backgroundColor: theme.card, borderColor: theme.border }]}
-  onPress={() =>
-    handleWorkoutPress({
-      workout_name,
-      workout_date,
-      day_name,
-      workout_log_id,
-    })
-  }
-  onLongPress={() =>
-    Alert.alert(
-      t('deleteDayTitle'),
-      t('deleteDayMessage'),
-      [
-        { text: t('alertCancel'), style: 'cancel' },
-        {
-          text: t('alertDelete'),
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              // First, get the notification_id if it exists
-              const [workoutNotification] = await db.getAllAsync<{ notification_id: string | null }>(
-                'SELECT notification_id FROM Workout_Log WHERE workout_log_id = ?;',
-                [workout_log_id]
-              );
-              
-              // If notification_id exists, cancel the notification
-              if (workoutNotification && workoutNotification.notification_id) {
-                await cancelNotification(workoutNotification.notification_id);
-              }
-              
-              // Then proceed with database deletions as before
-              await db.runAsync(
-                `DELETE FROM Workout_Log WHERE workout_log_id = ?;`,
-                [workout_log_id]
-              );
-              await db.runAsync(
-                `DELETE FROM Weight_Log WHERE workout_log_id = ?;`,
-                [workout_log_id]
-              );
-              await db.runAsync(
-                `DELETE FROM Logged_Exercises WHERE workout_log_id = ?;`,
-                [workout_log_id]
-              );
-              fetchWorkouts(); // Refresh the list
-            } catch (error) {
-              console.error('Error deleting workout log:', error);
-              Alert.alert(t('errorTitle'), t('failedToDeleteWorkoutLog'));
-            }
-          },
-        },
-      ]
-    )
-  }
->
-  <Text style={[styles.logDate, { color: theme.text }]}>{formatDate(workout_date)}</Text>
-  <Text style={[styles.logWorkoutName, { color: theme.text }]}>{workout_name}</Text>
-  <Text style={[styles.logDayName, { color: theme.text }]}>{day_name}</Text>
-</TouchableOpacity>
+      <TouchableOpacity
+        style={[
+          styles.logContainer,
+          { backgroundColor: theme.card, borderColor: theme.border },
+        ]}
+        onPress={() =>
+          handleWorkoutPress({
+            workout_name,
+            workout_date,
+            day_name,
+            workout_log_id,
+          })
+        }
+        onLongPress={() =>
+          Alert.alert(t('deleteDayTitle'), t('deleteDayMessage'), [
+            { text: t('alertCancel'), style: 'cancel' },
+            {
+              text: t('alertDelete'),
+              style: 'destructive',
+              onPress: async () => {
+                try {
+                  // First, get the notification_id if it exists
+                  const [workoutNotification] = await db.getAllAsync<{
+                    notification_id: string | null;
+                  }>(
+                    'SELECT notification_id FROM Workout_Log WHERE workout_log_id = ?;',
+                    [workout_log_id]
+                  );
 
+                  // If notification_id exists, cancel the notification
+                  if (
+                    workoutNotification &&
+                    workoutNotification.notification_id
+                  ) {
+                    await cancelNotification(
+                      workoutNotification.notification_id
+                    );
+                  }
+
+                  // Then proceed with database deletions as before
+                  await db.runAsync(
+                    `DELETE FROM Workout_Log WHERE workout_log_id = ?;`,
+                    [workout_log_id]
+                  );
+                  await db.runAsync(
+                    `DELETE FROM Weight_Log WHERE workout_log_id = ?;`,
+                    [workout_log_id]
+                  );
+                  await db.runAsync(
+                    `DELETE FROM Logged_Exercises WHERE workout_log_id = ?;`,
+                    [workout_log_id]
+                  );
+                  fetchWorkouts(); // Refresh the list
+                } catch (error) {
+                  console.error('Error deleting workout log:', error);
+                  Alert.alert(t('errorTitle'), t('failedToDeleteWorkoutLog'));
+                }
+              },
+            },
+          ])
+        }
+      >
+        <Text style={[styles.logDate, { color: theme.text }]}>
+          {formatDate(workout_date)}
+        </Text>
+        <Text style={[styles.logWorkoutName, { color: theme.text }]}>
+          {workout_name}
+        </Text>
+        <Text style={[styles.logDayName, { color: theme.text }]}>
+          {day_name}
+        </Text>
+      </TouchableOpacity>
     );
   };
-  
 
   return (
     <ScrollView
-    style={{ flex: 1, backgroundColor: theme.background }}
-    contentContainerStyle={[styles.contentContainer, { paddingTop: 70 }]}
-  >
-    <Text style={[styles.title, { color: theme.text }]}>{t('myCalendar')}</Text>
-  
-    {/* Schedule Buttons Row */}
-    <View style={styles.buttonRow}>
-      {/* Schedule a Workout Button */}
-      <TouchableOpacity
-        style={[styles.actionButton, { backgroundColor: theme.buttonBackground }]}
-        onPress={() => navigation.navigate('LogWorkout')}
-      >
-        <Ionicons
-          name="calendar"
-          size={22}
-          color={theme.buttonText}
-          style={styles.icon}
-        />
-        <Text style={[styles.actionButtonText, { color: theme.buttonText }]}>
-          {t('scheduleWorkout')}
-        </Text>
-      </TouchableOpacity>
-
-      {/* Recurring Workouts Button */}
-      <TouchableOpacity
-        style={[styles.actionButton, { backgroundColor: theme.buttonBackground }]}
-        onPress={() => navigation.navigate('RecurringWorkoutOptions')}
-      >
-        <Ionicons
-          name="time"
-          size={22}
-          color={theme.buttonText}
-          style={styles.icon}
-        />
-        <Text style={[styles.actionButtonText, { color: theme.buttonText }]}>
-          {t('recurringWorkouts')}
-        </Text>
-      </TouchableOpacity>
-    </View>
-  
-    {/* Today's Workout Section */}
-    <View style={styles.section}>
-      <Text style={[styles.sectionTitle, { color: theme.text }]}>
-      {t('todaysWorkout')}
-      </Text>
-      {todayWorkout ? (
-        renderWorkoutCard(todayWorkout)
-      ) : (
-        <Text style={[styles.emptyText, { color: theme.text }]}>
-          {t('noWorkoutToday')}
-        </Text>
-      )}
-    </View>
-  
-    <View style={styles.section}>
-      <Text style={[styles.sectionTitle, { color: theme.text }]}>
-      {t('untrackedWorkouts')}
-      </Text>
-      {pastWorkouts.length > 0 ? (
-        pastWorkouts.map((item) => (
-          <View key={item.workout_log_id}>{renderWorkoutCard(item)}</View>
-        ))
-      ) : (
-        <Text style={[styles.emptyText, { color: theme.text }]}>
-          {t('noUntrackedWorkouts')}
-        </Text>
-      )}
-    </View>
-  
-    <View style={styles.section}>
-      <Text style={[styles.sectionTitle, { color: theme.text }]}>
-      {t('upcomingWorkouts')}
-      </Text>
-      {futureWorkouts.length > 0 ? (
-        futureWorkouts.map((item) => (
-          <View key={item.workout_log_id}>{renderWorkoutCard(item)}</View>
-        ))
-      ) : (
-        <Text style={[styles.emptyText, { color: theme.text }]}>
-          {t('noUpcomingWorkouts')}
-        </Text>
-      )}
-          <Text style={[styles.tipText, { color: theme.text }]}>
-          {t('scheduleTip')}
-          </Text>
-    </View>
-  
-    {/* Modal for Workout Details */}
-    <Modal
-      visible={modalVisible}
-      animationType="slide"
-      transparent={true}
-      onRequestClose={() => setModalVisible(false)}
+      style={{ flex: 1, backgroundColor: theme.background }}
+      contentContainerStyle={[styles.contentContainer, { paddingTop: 70 }]}
     >
-      <View style={[styles.modalContainer, { backgroundColor: 'rgba(0, 0, 0, 0.5)' }]}>
-        <View style={[styles.modalContent, { backgroundColor: theme.card }]}>
-          <TouchableOpacity
-            style={styles.modalCloseButton}
-            onPress={() => setModalVisible(false)}
+      <Text style={[styles.title, { color: theme.text }]}>
+        {t('myCalendar')}
+      </Text>
+
+      {/* Schedule Buttons Row */}
+      <View style={styles.buttonRow}>
+        {/* Schedule a Workout Button */}
+        <TouchableOpacity
+          style={[
+            styles.actionButton,
+            { backgroundColor: theme.buttonBackground },
+          ]}
+          onPress={() => navigation.navigate('LogWorkout')}
+        >
+          <Ionicons
+            name="calendar"
+            size={22}
+            color={theme.buttonText}
+            style={styles.icon}
+          />
+          <Text
+            style={[styles.actionButtonText, { color: theme.buttonText }]}
           >
-            <Ionicons name="close" size={24} color={theme.text} />
-          </TouchableOpacity>
-          {selectedWorkout && (
-            <>
-              <Text style={[styles.modalTitle, { color: theme.text }]}>
-                {selectedWorkout.workout_name}
-              </Text>
-              <Text style={[styles.modalSubtitle, { color: theme.text }]}>
-                {selectedWorkout.day_name} | {formatDate(selectedWorkout.workout_date)}
-              </Text>
-              {exercises.length > 0 ? (
-                exercises.map((exercise, index) => (
-                  <View key={index} style={styles.modalExercise}>
-                    <Text style={[styles.modalExerciseName, { color: theme.text }]}>
-                      {exercise.exercise_name}
-                    </Text>
-                    <Text style={[styles.modalExerciseDetails, { color: theme.text }]}>
-                      {exercise.sets} {t('Sets')} x {exercise.reps} {t('Reps')}
-                    </Text>
-                  </View>
-                ))
-              ) : (
-                <Text style={[styles.emptyText, { color: theme.text }]}>
-                  {t('noExerciseLogged')}
-                </Text>
-              )}
-            </>
-          )}
-        </View>
+            {t('scheduleWorkout')}
+          </Text>
+        </TouchableOpacity>
+
+        {/* Recurring Workouts Button */}
+        <TouchableOpacity
+          style={[
+            styles.actionButton,
+            { backgroundColor: theme.buttonBackground },
+          ]}
+          onPress={() => navigation.navigate('RecurringWorkoutOptions')}
+        >
+          <Ionicons
+            name="time"
+            size={22}
+            color={theme.buttonText}
+            style={styles.icon}
+          />
+          <Text
+            style={[styles.actionButtonText, { color: theme.buttonText }]}
+          >
+            {t('recurringWorkouts')}
+          </Text>
+        </TouchableOpacity>
       </View>
-    </Modal>
-  </ScrollView>
-  
+
+      {/* Today's Workouts Section */}
+      <View style={styles.section}>
+        <Text style={[styles.sectionTitle, { color: theme.text }]}>
+          {t('todaysWorkout')}
+        </Text>
+        {todayWorkouts.length > 0 ? (
+          todayWorkouts.map((workout) => (
+            <View key={workout.workout_log_id}>
+              {renderWorkoutCard(workout)}
+            </View>
+          ))
+        ) : (
+          <Text style={[styles.emptyText, { color: theme.text }]}>
+            {t('noWorkoutToday')}
+          </Text>
+        )}
+      </View>
+
+      <View style={styles.section}>
+        <Text style={[styles.sectionTitle, { color: theme.text }]}>
+          {t('untrackedWorkouts')}
+        </Text>
+        {pastWorkouts.length > 0 ? (
+          pastWorkouts.map((item) => (
+            <View key={item.workout_log_id}>{renderWorkoutCard(item)}</View>
+          ))
+        ) : (
+          <Text style={[styles.emptyText, { color: theme.text }]}>
+            {t('noUntrackedWorkouts')}
+          </Text>
+        )}
+      </View>
+
+      <View style={styles.section}>
+        <Text style={[styles.sectionTitle, { color: theme.text }]}>
+          {t('upcomingWorkouts')}
+        </Text>
+        {futureWorkouts.length > 0 ? (
+          futureWorkouts.map((item) => (
+            <View key={item.workout_log_id}>{renderWorkoutCard(item)}</View>
+          ))
+        ) : (
+          <Text style={[styles.emptyText, { color: theme.text }]}>
+            {t('noUpcomingWorkouts')}
+          </Text>
+        )}
+        <Text style={[styles.tipText, { color: theme.text }]}>
+          {t('scheduleTip')}
+        </Text>
+      </View>
+
+      {/* Modal for Workout Details */}
+      <Modal
+        visible={modalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View
+          style={[
+            styles.modalContainer,
+            { backgroundColor: 'rgba(0, 0, 0, 0.5)' },
+          ]}
+        >
+          <View
+            style={[styles.modalContent, { backgroundColor: theme.card }]}
+          >
+            <TouchableOpacity
+              style={styles.modalCloseButton}
+              onPress={() => setModalVisible(false)}
+            >
+              <Ionicons name="close" size={24} color={theme.text} />
+            </TouchableOpacity>
+            {selectedWorkout && (
+              <>
+                <Text style={[styles.modalTitle, { color: theme.text }]}>
+                  {selectedWorkout.workout_name}
+                </Text>
+                <Text style={[styles.modalSubtitle, { color: theme.text }]}>
+                  {selectedWorkout.day_name} |{' '}
+                  {formatDate(selectedWorkout.workout_date)}
+                </Text>
+                {exercises.length > 0 ? (
+                  exercises.map((exercise, index) => (
+                    <View key={index} style={styles.modalExercise}>
+                      <Text
+                        style={[
+                          styles.modalExerciseName,
+                          { color: theme.text },
+                        ]}
+                      >
+                        {exercise.exercise_name}
+                      </Text>
+                      <Text
+                        style={[
+                          styles.modalExerciseDetails,
+                          { color: theme.text },
+                        ]}
+                      >
+                        {exercise.sets} {t('Sets')} x {exercise.reps} {t('Reps')}
+                      </Text>
+                    </View>
+                  ))
+                ) : (
+                  <Text style={[styles.emptyText, { color: theme.text }]}>
+                    {t('noExerciseLogged')}
+                  </Text>
+                )}
+              </>
+            )}
+          </View>
+        </View>
+      </Modal>
+    </ScrollView>
   );
 }
-
 
 // MyCalendar.tsx
 
@@ -463,7 +522,7 @@ const styles = StyleSheet.create({
   adContainer: {
     alignItems: 'center',
     position: 'absolute',
-    marginBottom:10,
+    marginBottom: 10,
   },
   tipText: {
     marginTop: 20, // Space above the text
@@ -494,10 +553,24 @@ const styles = StyleSheet.create({
     color: '#000000',
     textAlign: 'center',
   },
-  logWorkoutName: { fontSize: 20, fontWeight: '900', marginBottom: 8, textAlign: 'center' },
+  logWorkoutName: {
+    fontSize: 20,
+    fontWeight: '900',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
   logDayName: { fontSize: 18, fontWeight: '700', textAlign: 'center' },
-  emptyText: { fontSize: 16, textAlign: 'center', color: 'rgba(0, 0, 0, 0.5)' },
-  modalContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' },
+  emptyText: {
+    fontSize: 16,
+    textAlign: 'center',
+    color: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
   modalContent: {
     backgroundColor: '#FFFFFF',
     borderRadius: 20,
@@ -507,9 +580,27 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalCloseButton: { position: 'absolute', top: 10, right: 10 },
-  modalTitle: { fontSize: 24, fontWeight: '900', marginBottom: 10, textAlign: 'center' },
-  modalSubtitle: { fontSize: 18, fontWeight: '700', marginBottom: 20, textAlign: 'center' },
+  modalTitle: {
+    fontSize: 24,
+    fontWeight: '900',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  modalSubtitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
   modalExercise: { marginBottom: 15 },
-  modalExerciseName: { fontSize: 20, fontWeight: '800', textAlign: 'center' },
-  modalExerciseDetails: { fontSize: 16, textAlign: 'center', color: '#666' },
+  modalExerciseName: {
+    fontSize: 20,
+    fontWeight: '800',
+    textAlign: 'center',
+  },
+  modalExerciseDetails: {
+    fontSize: 16,
+    textAlign: 'center',
+    color: '#666',
+  },
 });
