@@ -24,6 +24,33 @@ import { useSQLiteContext } from 'expo-sqlite';
 import { StartWorkoutStackParamList } from '../App';
 import { useSettings } from '../context/SettingsContext';
 import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
+import * as TaskManager from 'expo-task-manager';
+import * as BackgroundFetch from 'expo-background-fetch';
+
+// Define background task names
+const WORKOUT_TIMER_TASK = 'WORKOUT_TIMER_TASK';
+const REST_TIMER_TASK = 'REST_TIMER_TASK';
+
+// Define task handlers outside of the component
+TaskManager.defineTask(WORKOUT_TIMER_TASK, async () => {
+  try {
+    // Background workout timer task
+    return BackgroundFetch.BackgroundFetchResult.NewData;
+  } catch (error) {
+    console.error("Error in workout timer background task:", error);
+    return BackgroundFetch.BackgroundFetchResult.Failed;
+  }
+});
+
+TaskManager.defineTask(REST_TIMER_TASK, async () => {
+  try {
+    // Background rest timer task
+    return BackgroundFetch.BackgroundFetchResult.NewData;
+  } catch (error) {
+    console.error("Error in rest timer background task:", error);
+    return BackgroundFetch.BackgroundFetchResult.Failed;
+  }
+});
 
 type StartedWorkoutRouteProps = RouteProp<
   StartWorkoutStackParamList,
@@ -82,17 +109,19 @@ export default function StartedWorkoutInterface() {
   // User preference toggles
   const [enableVibration, setEnableVibration] = useState(true);
 
-  
   // Sets data for tracking workout
   const [allSets, setAllSets] = useState<ExerciseSet[]>([]);
   const [currentSetIndex, setCurrentSetIndex] = useState(0);
   
-  
   // Timer states
   const [workoutTime, setWorkoutTime] = useState(0);
   const [restTimeRemaining, setRestTimeRemaining] = useState(0);
+  const [timerStartTime, setTimerStartTime] = useState<number | null>(null);
+  const [restTimerStartTime, setRestTimerStartTime] = useState<number | null>(null);
   const workoutTimerRef = useRef<NodeJS.Timeout | null>(null);
   const restTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const appState = useRef(AppState.currentState);
+  const [appStateVisible, setAppStateVisible] = useState(appState.current);
   
   // Keep screen awake during workout
   useEffect(() => {
@@ -106,8 +135,120 @@ export default function StartedWorkoutInterface() {
     return () => {
       // Deactivate keep awake when component unmounts
       deactivateKeepAwake();
+      
+      // Clean up background tasks
+      BackgroundFetch.unregisterTaskAsync(WORKOUT_TIMER_TASK).catch(() => {});
+      BackgroundFetch.unregisterTaskAsync(REST_TIMER_TASK).catch(() => {});
     };
   }, [workoutStarted]);
+
+  // Handle back press and gestures when workout is started
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+      // If workout hasn't started, or it's already completed, allow navigation
+      if (!workoutStarted || workoutStage === 'completed') {
+        return;
+      }
+
+      // Prevent default behavior of leaving the screen
+      e.preventDefault();
+
+      // Show confirmation alert
+      Alert.alert(
+        t('exitWorkout'),
+        t('exitWorkoutMessage'),
+        [
+          { text: t('Cancel'), style: 'cancel', onPress: () => {} },
+          {
+            text: t('exit'),
+            style: 'destructive',
+            // If the user confirms, dispatch the action that initiated the go back.
+            onPress: () => navigation.dispatch(e.data.action),
+          },
+        ]
+      );
+    });
+
+    return unsubscribe;
+  }, [navigation, workoutStarted, workoutStage, t]); // Added t to dependencies for Alert messages
+  
+  // Register background tasks when needed
+  const registerBackgroundTasks = async () => {
+    // Check if tasks are already registered
+    const workoutTaskRegistered = await TaskManager.isTaskRegisteredAsync(WORKOUT_TIMER_TASK);
+    const restTaskRegistered = await TaskManager.isTaskRegisteredAsync(REST_TIMER_TASK);
+    
+    // Register workout timer task if not already registered
+    if (!workoutTaskRegistered) {
+      await BackgroundFetch.registerTaskAsync(WORKOUT_TIMER_TASK, {
+        minimumInterval: 60, // update every minute
+        stopOnTerminate: false,
+        startOnBoot: true,
+      });
+    }
+    
+    // Register rest timer task if not already registered
+    if (!restTaskRegistered) {
+      await BackgroundFetch.registerTaskAsync(REST_TIMER_TASK, {
+        minimumInterval: 15, // check more frequently for rest timer
+        stopOnTerminate: false,
+        startOnBoot: true,
+      });
+    }
+  };
+  
+  // Handle AppState changes to manage timers in background
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', nextAppState => {
+      if (appState.current.match(/active/) && nextAppState.match(/inactive|background/)) {
+        // App is going to background
+        if (workoutStarted) {
+          // Start background tasks for timers
+          registerBackgroundTasks().catch(err => console.error("Error registering background tasks:", err));
+        }
+      } else if (appState.current.match(/inactive|background/) && nextAppState === 'active') {
+        // App has come to the foreground
+        
+        // Recalculate workout time based on elapsed time
+        if (workoutStarted && timerStartTime && workoutStage !== 'completed') {
+          const now = Date.now();
+          const elapsedSeconds = Math.floor((now - timerStartTime) / 1000);
+          setWorkoutTime(elapsedSeconds);
+          stopWorkoutTimer();
+          startWorkoutTimer();
+        }
+        
+        if (workoutStage === 'rest' && restTimerStartTime) {
+          // Recalculate rest time based on elapsed time
+          const now = Date.now();
+          const elapsedSeconds = Math.floor((now - restTimerStartTime) / 1000);
+          const restDuration = isExerciseRest ? parseInt(exerciseRestTime) : parseInt(restTime);
+          const newRestTime = Math.max(0, restDuration - elapsedSeconds);
+          
+          setRestTimeRemaining(newRestTime);
+          
+          if (newRestTime <= 0) {
+            // Rest time has already completed while in background
+            stopRestTimer();
+            setCurrentSetIndex(currentSetIndex + 1);
+            setWorkoutStage('exercise');
+            setIsExerciseRest(false);
+          } else {
+            // Continue rest timer
+            stopRestTimer();
+            startRestTimer(newRestTime);
+          }
+        }
+      }
+      
+      appState.current = nextAppState;
+      setAppStateVisible(nextAppState);
+    });
+    
+    return () => {
+      subscription.remove();
+    };
+  }, [workoutStarted, timerStartTime, restTimerStartTime, workoutStage, currentSetIndex, restTime, exerciseRestTime, isExerciseRest]);
   
   useEffect(() => {
     // Check if completion_time column exists, add it if not
@@ -191,8 +332,9 @@ export default function StartedWorkoutInterface() {
     }
   };
   
-  // Timer functions
+  // Timer functions (updated for background support)
   const startWorkoutTimer = () => {
+    setTimerStartTime(Date.now() - (workoutTime * 1000)); // Account for existing time
     workoutTimerRef.current = setInterval(() => {
       setWorkoutTime(prevTime => prevTime + 1);
     }, 1000);
@@ -207,6 +349,7 @@ export default function StartedWorkoutInterface() {
   
   const startRestTimer = (seconds: number) => {
     setRestTimeRemaining(seconds);
+    setRestTimerStartTime(Date.now());
     restTimerRef.current = setInterval(() => {
       setRestTimeRemaining(prevTime => {
         if (prevTime <= 1) {
@@ -232,6 +375,7 @@ export default function StartedWorkoutInterface() {
       clearInterval(restTimerRef.current);
       restTimerRef.current = null;
     }
+    setRestTimerStartTime(null);
   };
   
   const formatTime = (seconds: number): string => {
@@ -262,8 +406,8 @@ export default function StartedWorkoutInterface() {
     setWorkoutStage('exercise');
     startWorkoutTimer();
   };
-  
-   // Handle back press and gestures when workout is started
+
+  // Handle back press and gestures when workout is started
 
 
    useEffect(() => {
@@ -348,6 +492,7 @@ export default function StartedWorkoutInterface() {
 
 
   }, [navigation, workoutStarted, workoutStage, t]); // Added t to dependencies for Alert messages
+  
   
   // Determine if the next set is for a different exercise
   const isDifferentExercise = (currentIndex: number, nextIndex: number): boolean => {
@@ -561,7 +706,6 @@ export default function StartedWorkoutInterface() {
                 // This is the last set, finish the workout
                 setWorkoutStage('completed');
                 stopWorkoutTimer();
-                
                 // Vibrate to celebrate workout completion (if enabled)
                 if (enableVibration) {
                   Vibration.vibrate([300, 200, 300, 200, 600]);
@@ -663,7 +807,7 @@ export default function StartedWorkoutInterface() {
             // Add vibration when manually skipping rest (if enabled)
             if (enableVibration) {
               Vibration.vibrate([200, 100, 200]);
-            }
+            }            
           }}
         >
           <Text style={[styles.buttonText, { color: theme.buttonText }]}>{t('skipRest')}</Text>
@@ -730,7 +874,7 @@ export default function StartedWorkoutInterface() {
         await db.runAsync('ROLLBACK;');
         console.error('Error saving workout:', error);
         Alert.alert(
-          t('Error'),
+             t('Error'),
           t('There was an error saving your workout data.')
         );
       }
@@ -867,7 +1011,7 @@ export default function StartedWorkoutInterface() {
           <Ionicons name="arrow-back" size={24} color={theme.text} />
         </TouchableOpacity>
         <Text style={[styles.title, { color: theme.text }]}>
-          {workoutStarted ? (workout ? `${workout.workout_name} - ${workout.day_name}` : t('Workout')) : t('startWorkout')}
+          {workoutStarted ? (workout ? `${workout.workout_name} - ${workout.day_name}` :  t('Workout')) : t('startWorkout')}
         </Text>
         {workoutStarted ? (
           <TouchableOpacity 
@@ -877,6 +1021,10 @@ export default function StartedWorkoutInterface() {
             <Ionicons name="reorder-three-outline" size={23} color={theme.text} />
           </TouchableOpacity>
         ) : (
+          // Placeholder to balance the backButton for centering the title when workout has not started
+          // The width is calculated based on the help icon's size (23) and its TouchableOpacity padding (styles.headerListIcon.padding * 2)
+          // styles.headerListIcon = { padding: 5, marginLeft: 15 }, so padding is 5.
+          // Width = 23 + (5 * 2) = 33. marginLeft is 15.
           <View style={{ width: 23 + (styles.headerListIcon.padding * 2), marginLeft: styles.headerListIcon.marginLeft }} />
         )}
       </View>
@@ -885,6 +1033,7 @@ export default function StartedWorkoutInterface() {
         style={styles.content} 
         contentContainerStyle={[
           styles.scrollContent,
+          // Adjust styling based on stage
           workoutStage === 'rest' && styles.restScrollContent
         ]}
       >
@@ -1327,4 +1476,4 @@ const styles = StyleSheet.create({
   modalExerciseDetails: {
     fontSize: 14,
   },
-}); 
+});
