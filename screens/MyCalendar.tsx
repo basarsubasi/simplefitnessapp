@@ -35,9 +35,30 @@ export default function MyCalendar() {
     const { t } = useTranslation(); // Initialize translations
     
 
-  const [todayWorkout, setTodayWorkout] = useState<
-    { workout_name: string; workout_date: number; day_name: string; workout_log_id: number } | null
-  >(null);
+  
+  const [todayWorkouts, setTodayWorkouts] = useState<
+
+
+    {
+
+
+      workout_name: string;
+
+
+      workout_date: number;
+
+
+      day_name: string;
+
+
+      workout_log_id: number;
+
+
+    }[]
+
+
+  >([]);
+  
   const [pastWorkouts, setPastWorkouts] = useState<
     { workout_name: string; workout_date: number; day_name: string; workout_log_id: number }[]
   >([]);
@@ -68,9 +89,8 @@ export default function MyCalendar() {
       const checkAndFetchWorkouts = async () => {
         console.log('MyCalendar: Checking recurring workouts');
         // First check and schedule any recurring workouts
-        await checkRecurringWorkouts();
-        await checkAndScheduleRecurringWorkouts(db);
-        
+        await checkRecurringWorkouts();        
+
         // Then fetch the workouts to display the latest data
         fetchWorkouts();
       };
@@ -103,10 +123,12 @@ export default function MyCalendar() {
       }>(
         `SELECT * FROM Workout_Log 
          WHERE workout_date BETWEEN ? AND ?
-           AND workout_log_id NOT IN (SELECT DISTINCT workout_log_id FROM Weight_Log);`,
+          AND workout_log_id NOT IN (SELECT DISTINCT workout_log_id FROM Weight_Log)
+          ORDER BY workout_date ASC;`,
+
         [startOfDayTimestamp, endOfDayTimestamp]
       );
-      setTodayWorkout(todayResult[0] || null);
+      setTodayWorkouts(todayResult);
 
       // Fetch past workouts not logged in Weight_Log
       const pastResult = await db.getAllAsync<{
@@ -316,28 +338,54 @@ export default function MyCalendar() {
       <Text style={[styles.sectionTitle, { color: theme.text }]}>
       {t('todaysWorkout')}
       </Text>
-      {todayWorkout ? (
-        renderWorkoutCard(todayWorkout)
-      ) : (
-        <Text style={[styles.emptyText, { color: theme.text }]}>
-          {t('noWorkoutToday')}
+ {todayWorkouts.length > 0 ? (
+
+
+
+          todayWorkouts.map((workout) => (
+
+
+            <View key={workout.workout_log_id}>
+
+
+              {renderWorkoutCard(workout)}
+
+
+            </View>
+
+
+          ))
+
+
+        ) : (
+
+
+          <Text style={[styles.emptyText, { color: theme.text }]}>
+
+
+            {t('noWorkoutToday')}
+
+
+          </Text>
+
+
+        )}
+
+
+      </View>
+
+
+
+
+
+      <View style={styles.section}>
+
+
+        <Text style={[styles.sectionTitle, { color: theme.text }]}>
+
+
+          {t('untrackedWorkouts')}
         </Text>
-      )}
-    </View>
-  
-    <View style={styles.section}>
-      <Text style={[styles.sectionTitle, { color: theme.text }]}>
-      {t('untrackedWorkouts')}
-      </Text>
-      {pastWorkouts.length > 0 ? (
-        pastWorkouts.map((item) => (
-          <View key={item.workout_log_id}>{renderWorkoutCard(item)}</View>
-        ))
-      ) : (
-        <Text style={[styles.emptyText, { color: theme.text }]}>
-          {t('noUntrackedWorkouts')}
-        </Text>
-      )}
     </View>
   
     <View style={styles.section}>
