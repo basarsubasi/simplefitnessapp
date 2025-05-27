@@ -10,8 +10,6 @@ import {
   Alert,
   FlatList,
   Vibration,
-  AppState,
-  AppStateStatus,
   Platform,
   Switch,
   Modal
@@ -24,14 +22,15 @@ import { useSQLiteContext } from 'expo-sqlite';
 import { StartWorkoutStackParamList } from '../App';
 import * as Notifications from 'expo-notifications';
 import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSettings } from '../context/SettingsContext';
 import { loadRestTimerPreferences, saveRestTimerPreferences } from '../utils/restTimerUtils';
-
-// Define AsyncStorage keys
-const WORKOUT_TIMER_KEY = '@workout_timer';
-const REST_TIMER_KEY = '@rest_timer';
-const WORKOUT_STATE_KEY = '@workout_state';
+import { 
+  useTimerPersistence, 
+  createTimerState, 
+  updateTimerState, 
+  timerCalculations,
+  TimerState 
+} from '../utils/timerPersistenceUtils';
 
 type StartedWorkoutRouteProps = RouteProp<
   StartWorkoutStackParamList,
@@ -57,16 +56,13 @@ interface ExerciseSet {
   completed: boolean;
 }
 
-// Define workout states
-type WorkoutStage = 'overview' | 'exercise' | 'rest' | 'completed';
-
 export default function StartedWorkoutInterface() {
   const navigation = useNavigation();
   const route = useRoute<StartedWorkoutRouteProps>();
   const { theme } = useTheme();
   const { t } = useTranslation();
   const db = useSQLiteContext();
-  const { notificationPermissionGranted, requestNotificationPermission, weightFormat, setWeightFormat } = useSettings();
+  const { notificationPermissionGranted, weightFormat } = useSettings();
   
   const { workout_log_id } = route.params;
   
@@ -80,40 +76,90 @@ export default function StartedWorkoutInterface() {
   const [exercises, setExercises] = useState<Exercise[]>([]);
   
   // Workout flow states
-  const [workoutStage, setWorkoutStage] = useState<WorkoutStage>('overview');
   const [restTime, setRestTime] = useState('30');
-  const [exerciseRestTime, setExerciseRestTime] = useState('60'); // New state for between-exercise rest time
-  const [workoutStarted, setWorkoutStarted] = useState(false);
+  const [exerciseRestTime, setExerciseRestTime] = useState('60');
   const [isExerciseListModalVisible, setIsExerciseListModalVisible] = useState(false);
-  const [isExerciseRest, setIsExerciseRest] = useState(false); // Flag to track if current rest is between exercises
   
   // User preference toggles
   const [enableVibration, setEnableVibration] = useState(true);
   const [enableNotifications, setEnableNotifications] = useState(false);
   
-  // Update enableNotifications only if permission is granted and user hasn't manually set it
+  // Sets data for tracking workout
+  const [allSets, setAllSets] = useState<ExerciseSet[]>([]);
+  
+  // Timer state using the new utility
+  const [timerState, setTimerState] = useState<TimerState>(createTimerState());
+  
+  // Timer refs for intervals
+  const workoutTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const restTimerRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // Handle timer restoration from background
+  const handleTimerRestore = (savedState: TimerState, elapsedSeconds: number) => {
+    console.log('=== RESTORING TIMER STATE ===');
+    console.log('Saved state:', savedState);
+    console.log('Elapsed seconds:', elapsedSeconds);
+    
+    // Restore workout timer
+    if (savedState.workoutStartTime) {
+      const newDuration = savedState.workoutDuration + elapsedSeconds;
+      const newStartTime = Date.now() - (newDuration * 1000);
+      
+      setTimerState(prev => updateTimerState(prev, {
+        workoutDuration: newDuration,
+        workoutStartTime: newStartTime,
+        currentSetIndex: savedState.currentSetIndex,
+        workoutStage: savedState.workoutStage,
+        workoutStarted: savedState.workoutStarted
+      }));
+      
+      // Restart workout timer
+      stopWorkoutTimer();
+      startWorkoutTimer();
+    }
+    
+    // Restore rest timer if needed
+    if (savedState.isResting && savedState.restRemaining > 0) {
+      const newRestTime = Math.max(0, savedState.restRemaining - elapsedSeconds);
+      
+      if (newRestTime <= 0) {
+        // Rest completed in background
+        console.log('Rest completed during background');
+        handleRestComplete(savedState.isExerciseRest);
+      } else {
+        // Continue rest timer
+        setTimerState(prev => updateTimerState(prev, {
+          restRemaining: newRestTime,
+          isResting: true,
+          isExerciseRest: savedState.isExerciseRest,
+          restStartTime: Date.now()
+        }));
+        
+        stopRestTimer();
+        startRestTimer(newRestTime);
+      }
+    }
+  };
+  
+  // Setup timer persistence
+  useTimerPersistence(timerState, {
+    onRestore: handleTimerRestore,
+    onError: (error) => {
+      console.error('Timer persistence error:', error);
+      Alert.alert('Timer Error', 'There was an issue with timer persistence.');
+    }
+  }, {
+    enabled: timerState.workoutStarted,
+    debugMode: __DEV__
+  });
+  
+  // Update enableNotifications only if permission is granted
   useEffect(() => {
-    // Only set to true if permission is granted, never auto-enable
     if (notificationPermissionGranted && !enableNotifications) {
       // Optional: enable notifications by default if permission is granted
-      // Comment this line to require explicit user toggling
       // setEnableNotifications(true);
     }
   }, [notificationPermissionGranted]);
-  
-  // Sets data for tracking workout
-  const [allSets, setAllSets] = useState<ExerciseSet[]>([]);
-  const [currentSetIndex, setCurrentSetIndex] = useState(0);
-  
-  // Timer states
-  const [workoutTime, setWorkoutTime] = useState(0);
-  const [restTimeRemaining, setRestTimeRemaining] = useState(0);
-  const [timerStartTime, setTimerStartTime] = useState<number | null>(null);
-  const [restTimerStartTime, setRestTimerStartTime] = useState<number | null>(null);
-  const workoutTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const restTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const appState = useRef(AppState.currentState);
-  const [appStateVisible, setAppStateVisible] = useState(appState.current);
   
   // Load rest timer preferences when component mounts
   useEffect(() => {
@@ -130,46 +176,56 @@ export default function StartedWorkoutInterface() {
     loadPreferences();
   }, []);
 
-  // Setup notification handling for background timer completion
+  // Setup notification handling and keep awake
   useEffect(() => {
-    // Configure notifications for timers
     const configureNotifications = async () => {
       await Notifications.setNotificationHandler({
         handleNotification: async () => ({
-          shouldShowAlert: true, // Don't show popup alert
+          shouldShowAlert: true,
           shouldPlaySound: false,
           shouldSetBadge: false,
         }),
       });
     };
     
-    // Keep the app awake while workout is in progress
-    if (workoutStarted) {
+    if (timerState.workoutStarted) {
       activateKeepAwakeAsync();
-      configureNotifications(); // Configure notifications when workout starts
+      configureNotifications();
+      
+      // Schedule notification if enabled
+      if (enableNotifications) {
+        Notifications.scheduleNotificationAsync({
+          content: {
+            title: t("Workout in Progress"),
+            body: t("Workout in Progress Message"),
+            priority: 'min',
+            data: { 
+              startTime: timerState.workoutStartTime,
+              type: 'workout_timer'
+            },
+          },
+          trigger: null,
+        });
+      }
     }
     
     return () => {
       deactivateKeepAwake();
-      
-      // Clean up stored timer states
-      AsyncStorage.multiRemove([WORKOUT_TIMER_KEY, REST_TIMER_KEY, WORKOUT_STATE_KEY])
-        .catch(err => console.error("Error cleaning up stored timer states:", err));
+      if (enableNotifications) {
+        Notifications.dismissAllNotificationsAsync();
+      }
     };
-  }, [workoutStarted]);
+  }, [timerState.workoutStarted, enableNotifications]);
 
-   // Handle back press and gestures when workout is started
-   useEffect(() => {
+  // Handle back press when workout is started
+  useEffect(() => {
     const unsubscribe = navigation.addListener('beforeRemove', (e) => {
-      // If workout hasn't started, or it's already completed, allow navigation
-      if (!workoutStarted || workoutStage === 'completed') {
+      if (!timerState.workoutStarted || timerState.workoutStage === 'completed') {
         return;
       }
 
-      // Prevent default behavior of leaving the screen
       e.preventDefault();
 
-      // Show confirmation alert
       Alert.alert(
         t('exitWorkout'),
         t('exitWorkoutMessage'),
@@ -178,7 +234,6 @@ export default function StartedWorkoutInterface() {
           {
             text: t('exit'),
             style: 'destructive',
-            // If the user confirms, dispatch the action that initiated the go back.
             onPress: () => navigation.dispatch(e.data.action),
           },
         ]
@@ -186,145 +241,25 @@ export default function StartedWorkoutInterface() {
     });
 
     return unsubscribe;
-  }, [navigation, workoutStarted, workoutStage, t]); // Added t to dependencies for Alert messages
-  
-  // Handle AppState changes to manage timers in background
-  useEffect(() => {
-    const subscription = AppState.addEventListener('change', nextAppState => {
-      if (appState.current.match(/active/) && nextAppState.match(/inactive|background/)) {
-        // App is going to background
-        if (workoutStarted && workoutStage !== 'completed' && enableNotifications) {
-          Notifications.scheduleNotificationAsync({
-            content: {
-              title: t("Workout in Progress"),
-              body: t("Workout in Progress Message"),
-              priority: 'min',
-              data: { 
-                startTime: timerStartTime,
-                type: 'workout_timer'
-              },
-            },
-            trigger: null,
-          });
-          // Store workout timer state
-          if (timerStartTime) {
-            AsyncStorage.setItem(WORKOUT_TIMER_KEY, JSON.stringify({
-              startTime: timerStartTime,
-              workoutTime: workoutTime,
-              timestamp: Date.now()
-            }));
-          }
-          
-          // Store rest timer state if in rest stage
-          if (workoutStage === 'rest' && restTimerStartTime) {
-            AsyncStorage.setItem(REST_TIMER_KEY, JSON.stringify({
-              startTime: restTimerStartTime,
-              restTimeRemaining: restTimeRemaining,
-              isExerciseRest: isExerciseRest,
-              timestamp: Date.now()
-            }));
-          }
-          
-          // Store workout state
-          AsyncStorage.setItem(WORKOUT_STATE_KEY, JSON.stringify({
-            workoutStage,
-            currentSetIndex,
-            isExerciseRest
-          }));
-        }
-      } else if (appState.current.match(/inactive|background/) && nextAppState === 'active') {
-        // App has come to the foreground
-        if (workoutStarted) {
-          // Clean up any existing notifications
-          Notifications.dismissAllNotificationsAsync().catch(err => 
-            console.error("Error dismissing notifications:", err)
-          );
-
-          // Restore workout timer state
-          AsyncStorage.getItem(WORKOUT_TIMER_KEY).then(storedWorkoutTimer => {
-            if (storedWorkoutTimer) {
-              const { startTime, workoutTime: storedWorkoutTime, timestamp } = JSON.parse(storedWorkoutTimer);
-              const now = Date.now();
-              const additionalSeconds = Math.floor((now - timestamp) / 1000);
-              setWorkoutTime(storedWorkoutTime + additionalSeconds);
-              setTimerStartTime(startTime);
-              stopWorkoutTimer();
-              startWorkoutTimer();
-            }
-          });
-          
-          // Restore rest timer state if needed
-          AsyncStorage.getItem(REST_TIMER_KEY).then(storedRestTimer => {
-            if (storedRestTimer && workoutStage === 'rest') {
-              const { startTime, restTimeRemaining: storedRestTime, isExerciseRest: storedIsExerciseRest, timestamp } = JSON.parse(storedRestTimer);
-              const now = Date.now();
-              const elapsedSeconds = Math.floor((now - timestamp) / 1000);
-              const newRestTime = Math.max(0, storedRestTime - elapsedSeconds);
-              
-              setRestTimeRemaining(newRestTime);
-              setRestTimerStartTime(startTime);
-              setIsExerciseRest(storedIsExerciseRest);
-              
-              if (newRestTime <= 0) {
-                // Rest time has already completed while in background
-                stopRestTimer();
-                setCurrentSetIndex(currentSetIndex + 1);
-                setWorkoutStage('exercise');
-                setIsExerciseRest(false);
-                if (enableVibration) {
-                  Vibration.vibrate([500, 300, 500]);
-                }
-              } else {
-                // Continue rest timer
-                stopRestTimer();
-                startRestTimer(newRestTime);
-              }
-            }
-          });
-          
-          // Clean up stored timer states
-          AsyncStorage.multiRemove([WORKOUT_TIMER_KEY, REST_TIMER_KEY, WORKOUT_STATE_KEY]);
-        }
-      }
-      
-      appState.current = nextAppState;
-      setAppStateVisible(nextAppState);
-    });
-    
-    return () => {
-      subscription.remove();
-      // Clean up any notifications when component unmounts
-      Notifications.dismissAllNotificationsAsync().catch(err => 
-        console.error("Error dismissing notifications:", err)
-      );
-    };
-  }, [workoutStarted, timerStartTime, restTimerStartTime, workoutStage, currentSetIndex, restTime, exerciseRestTime, allSets, workout, enableNotifications, enableVibration, isExerciseRest, t]);
+  }, [navigation, timerState.workoutStarted, timerState.workoutStage, t]);
   
   useEffect(() => {
-    // Check if completion_time column exists, add it if not
     checkAndAddCompletionTimeColumn();
     fetchWorkoutDetails();
     
     return () => {
-      // Clean up resources
       stopWorkoutTimer();
       stopRestTimer();
       deactivateKeepAwake();
-      
-      // Clean up any stored timer states
-      AsyncStorage.multiRemove([WORKOUT_TIMER_KEY, REST_TIMER_KEY, WORKOUT_STATE_KEY])
-        .catch(err => console.error("Error cleaning up stored timer states:", err));
     };
   }, []);
   
   // Function to check and add completion_time column if needed
   const checkAndAddCompletionTimeColumn = async () => {
     try {
-      // Try to check if the column exists
       await db.runAsync(`
         ALTER TABLE Workout_Log ADD COLUMN completion_time INTEGER;
       `).catch(error => {
-        // Column might already exist, ignore error
         console.log('Column might already exist, continuing execution');
       });
     } catch (error) {
@@ -336,7 +271,6 @@ export default function StartedWorkoutInterface() {
     try {
       setLoading(true);
       
-      // Fetch workout details
       const workoutResult = await db.getAllAsync<{
         workout_name: string;
         workout_date: number;
@@ -351,7 +285,6 @@ export default function StartedWorkoutInterface() {
       if (workoutResult.length > 0) {
         setWorkout(workoutResult[0]);
         
-        // Fetch exercises for this workout
         const exercisesResult = await db.getAllAsync<Exercise>(
           `SELECT exercise_name, sets, reps, logged_exercise_id 
            FROM Logged_Exercises 
@@ -390,9 +323,13 @@ export default function StartedWorkoutInterface() {
   
   // Timer functions
   const startWorkoutTimer = () => {
-    setTimerStartTime(Date.now() - (workoutTime * 1000)); // Account for existing time
+    const startTime = Date.now() - (timerState.workoutDuration * 1000);
+    setTimerState(prev => updateTimerState(prev, { workoutStartTime: startTime }));
+    
     workoutTimerRef.current = setInterval(() => {
-      setWorkoutTime(prevTime => prevTime + 1);
+      setTimerState(prev => updateTimerState(prev, {
+        workoutDuration: prev.workoutDuration + 1
+      }));
     }, 1000);
   };
   
@@ -404,24 +341,27 @@ export default function StartedWorkoutInterface() {
   };
   
   const startRestTimer = (seconds: number) => {
-    setRestTimeRemaining(seconds);
-    setRestTimerStartTime(Date.now());
+    setTimerState(prev => updateTimerState(prev, {
+      restRemaining: seconds,
+      restStartTime: Date.now(),
+      isResting: true
+    }));
+    
     restTimerRef.current = setInterval(() => {
-      setRestTimeRemaining(prevTime => {
-        if (prevTime <= 1) {
+      setTimerState(prev => {
+        const newRestTime = prev.restRemaining - 1;
+        
+        if (newRestTime <= 0) {
           stopRestTimer();
-          setCurrentSetIndex(currentSetIndex + 1);
-          setWorkoutStage('exercise');
-          setIsExerciseRest(false);
-          
-          // Vibrate only if enabled
-          if (enableVibration) {
-            Vibration.vibrate([500, 300, 500]);
-          }
-          
-          return 0;
+          handleRestComplete(prev.isExerciseRest);
+          return updateTimerState(prev, {
+            restRemaining: 0,
+            isResting: false,
+            isExerciseRest: false
+          });
         }
-        return prevTime - 1;
+        
+        return updateTimerState(prev, { restRemaining: newRestTime });
       });
     }, 1000);
   };
@@ -431,20 +371,24 @@ export default function StartedWorkoutInterface() {
       clearInterval(restTimerRef.current);
       restTimerRef.current = null;
     }
-    setRestTimerStartTime(null);
   };
   
-  const formatTime = (seconds: number): string => {
-    const hrs = Math.floor(seconds / 3600);
-    const mins = Math.floor((seconds % 3600) / 60);
-    const secs = seconds % 60;
+  const handleRestComplete = (wasExerciseRest: boolean) => {
+    setTimerState(prev => updateTimerState(prev, {
+      currentSetIndex: prev.currentSetIndex + 1,
+      workoutStage: 'exercise',
+      isResting: false,
+      isExerciseRest: false,
+      restStartTime: null
+    }));
     
-    return `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    if (enableVibration) {
+      Vibration.vibrate([500, 300, 500]);
+    }
   };
   
   // Workout flow functions
   const startWorkout = async () => {
-    // Validate rest time
     const setRestSeconds = parseInt(restTime);
     const exerciseRestSeconds = parseInt(exerciseRestTime);
     
@@ -458,7 +402,6 @@ export default function StartedWorkoutInterface() {
       return;
     }
 
-    // Save rest timer preferences when starting workout
     try {
       await saveRestTimerPreferences({
         restTimeBetweenSets: restTime,
@@ -466,20 +409,19 @@ export default function StartedWorkoutInterface() {
       });
     } catch (error) {
       console.error('Error saving rest timer preferences:', error);
-      // Continue with workout even if save fails
     }
     
-    setWorkoutStarted(true);
-    setWorkoutStage('exercise');
+    setTimerState(prev => updateTimerState(prev, {
+      workoutStarted: true,
+      workoutStage: 'exercise'
+    }));
+    
     startWorkoutTimer();
   };
   
-  // Handle notification toggle with permission check
   const handleNotificationToggle = async () => {
     if (!enableNotifications) {
-      // User is trying to enable notifications
       if (!notificationPermissionGranted) {
-        // Permission not granted, navigate to settings
         Alert.alert(
           t('Permission Required'),
           t('Notification permission is required. Please enable notifications in the Settings page.'),
@@ -494,22 +436,18 @@ export default function StartedWorkoutInterface() {
         );
         return;
       }
-      
-      // Permission already granted, enable notifications
       setEnableNotifications(true);
     } else {
-      // User is turning off notifications - simply disable
       setEnableNotifications(false);
     }
   };
   
-  // Determine if the next set is for a different exercise
   const isDifferentExercise = (currentIndex: number, nextIndex: number): boolean => {
     if (nextIndex >= allSets.length) return false;
     return allSets[currentIndex].exercise_name !== allSets[nextIndex].exercise_name;
   };
   
-  // Render functions for different workout stages
+  // Render functions remain the same, but update references to use timerState
   const renderOverview = () => {
     return (
       <View style={styles.overviewContainer}>
@@ -575,7 +513,6 @@ export default function StartedWorkoutInterface() {
             placeholderTextColor={theme.type === 'dark' ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)'}
           />
           
-          {/* Toggle switches for user preferences */}
           <Text style={[styles.setupLabel, { color: theme.text, marginTop: 15 }]}>{t('workoutSettings')}:</Text>
           
           <View style={[styles.toggleRow, { 
@@ -617,22 +554,20 @@ export default function StartedWorkoutInterface() {
   };
   
   const renderExerciseScreen = () => {
-    const currentSet = allSets[currentSetIndex];
+    const currentSet = allSets[timerState.currentSetIndex];
     if (!currentSet) return null;
     
-    const isLastSet = currentSetIndex === allSets.length - 1;
+    const isLastSet = timerState.currentSetIndex === allSets.length - 1;
     
     return (
       <View style={styles.exerciseScreenContainer}>
-        {/* Main timer display */}
         <View style={[styles.timerDisplay, { backgroundColor: theme.card, borderColor: theme.border }]}>
           <Text style={[styles.timerLabel, { color: theme.text }]}>{t('workoutTime')}</Text>
           <Text style={[styles.workoutTimerText, { color: theme.text }]}>
-            {formatTime(workoutTime)}
+            {timerCalculations.formatTime(timerState.workoutDuration)}
           </Text>
         </View>
         
-        {/* Exercise information */}
         <View style={[styles.currentExerciseCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
           <Text style={[styles.currentExerciseName, { color: theme.text }]}>
             {currentSet.exercise_name}
@@ -644,7 +579,6 @@ export default function StartedWorkoutInterface() {
             {t('goal')}: {currentSet.reps_goal} {t('Reps')}
           </Text>
           
-          {/* Input fields for tracking */}
           <View style={styles.inputContainer}>
             <View style={styles.inputGroup}>
               <Text style={[styles.inputLabel, { color: theme.text }]}>{t('repsDone')}</Text>
@@ -660,8 +594,8 @@ export default function StartedWorkoutInterface() {
                   if (isNaN(reps)) return;
                   
                   const updatedSets = [...allSets];
-                  updatedSets[currentSetIndex] = {
-                    ...updatedSets[currentSetIndex],
+                  updatedSets[timerState.currentSetIndex] = {
+                    ...updatedSets[timerState.currentSetIndex],
                     reps_done: reps
                   };
                   setAllSets(updatedSets);
@@ -683,8 +617,8 @@ export default function StartedWorkoutInterface() {
                 value={currentSet.weight}
                 onChangeText={(text) => {
                   const updatedSets = [...allSets];
-                  updatedSets[currentSetIndex] = {
-                    ...updatedSets[currentSetIndex],
+                  updatedSets[timerState.currentSetIndex] = {
+                    ...updatedSets[timerState.currentSetIndex],
                     weight: text
                   };
                   setAllSets(updatedSets);
@@ -697,47 +631,43 @@ export default function StartedWorkoutInterface() {
           </View>
         </View>
         
-        {/* Controls */}
         <View style={styles.controlsContainer}>
           <TouchableOpacity
             style={[styles.completeButton, { 
               backgroundColor: 
-                allSets[currentSetIndex].reps_done <= 0 || 
-                allSets[currentSetIndex].weight === '' 
+                allSets[timerState.currentSetIndex].reps_done <= 0 || 
+                allSets[timerState.currentSetIndex].weight === '' 
                   ? theme.inactivetint 
                   : theme.buttonBackground
             }]}
             onPress={() => {
               if (
-                allSets[currentSetIndex].reps_done <= 0 || 
-                allSets[currentSetIndex].weight === ''
+                allSets[timerState.currentSetIndex].reps_done <= 0 || 
+                allSets[timerState.currentSetIndex].weight === ''
               ) {
                 Alert.alert(t('missingInformation'), t('enterRepsAndWeight'));
                 return;
               }
               
-              // Mark current set as completed
               const updatedSets = [...allSets];
-              updatedSets[currentSetIndex] = {
-                ...updatedSets[currentSetIndex],
+              updatedSets[timerState.currentSetIndex] = {
+                ...updatedSets[timerState.currentSetIndex],
                 completed: true
               };
               setAllSets(updatedSets);
               
               if (isLastSet) {
-                // This is the last set, finish the workout
-                setWorkoutStage('completed');
+                setTimerState(prev => updateTimerState(prev, { workoutStage: 'completed' }));
                 stopWorkoutTimer();
               } else {
-                // Check if next set is for a different exercise
-                const nextSetIndex = currentSetIndex + 1;
-                const differentExercise = isDifferentExercise(currentSetIndex, nextSetIndex);
+                const nextSetIndex = timerState.currentSetIndex + 1;
+                const differentExercise = isDifferentExercise(timerState.currentSetIndex, nextSetIndex);
                 
-                // Move to rest period before next set
-                setWorkoutStage('rest');
-                setIsExerciseRest(differentExercise);
+                setTimerState(prev => updateTimerState(prev, {
+                  workoutStage: 'rest',
+                  isExerciseRest: differentExercise
+                }));
                 
-                // Use appropriate rest time based on whether we're changing exercises
                 const restSeconds = differentExercise 
                   ? parseInt(exerciseRestTime) 
                   : parseInt(restTime);
@@ -745,7 +675,7 @@ export default function StartedWorkoutInterface() {
                 startRestTimer(restSeconds);
               }
             }}
-            disabled={allSets[currentSetIndex].reps_done <= 0 || allSets[currentSetIndex].weight === ''}
+            disabled={allSets[timerState.currentSetIndex].reps_done <= 0 || allSets[timerState.currentSetIndex].weight === ''}
           >
             <Text style={[styles.buttonText, { color: theme.buttonText }]}>
               {isLastSet ? t('finishWorkout') : t('completeSet')}
@@ -753,10 +683,9 @@ export default function StartedWorkoutInterface() {
           </TouchableOpacity>
         </View>
         
-        {/* Progress indicator */}
         <View style={styles.progressContainer}>
           <Text style={[styles.progressText, { color: theme.text }]}>
-          %{Math.round(((currentSetIndex + 1) / allSets.length) * 100)}
+          %{Math.round(((timerState.currentSetIndex + 1) / allSets.length) * 100)}
           </Text>
           <View style={[styles.progressBar, { backgroundColor: theme.border }]}>
             <View 
@@ -764,7 +693,7 @@ export default function StartedWorkoutInterface() {
                 styles.progressFill, 
                 { 
                   backgroundColor: theme.buttonBackground,
-                  width: `${((currentSetIndex + 1) / allSets.length) * 100}%`
+                  width: `${((timerState.currentSetIndex + 1) / allSets.length) * 100}%`
                 }
               ]} 
             />
@@ -775,8 +704,8 @@ export default function StartedWorkoutInterface() {
   };
   
   const renderRestScreen = () => {
-    const nextSet = currentSetIndex + 1 < allSets.length 
-      ? allSets[currentSetIndex + 1] 
+    const nextSet = timerState.currentSetIndex + 1 < allSets.length 
+      ? allSets[timerState.currentSetIndex + 1] 
       : null;
     
     return (
@@ -786,14 +715,14 @@ export default function StartedWorkoutInterface() {
           
           <View style={styles.restTimerContainer}>
             <Text style={[styles.restTimerText, { color: theme.text }]}>
-              {restTimeRemaining}
+              {timerState.restRemaining}
             </Text>
             <Text style={[styles.restTimerUnit, { color: theme.text }]}>{t('sec')}</Text>
           </View>
           
           <TouchableOpacity
             style={[styles.addTimeButton, { backgroundColor: theme.type === 'dark' ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.2)' }]}
-            onPress={() => setRestTimeRemaining(prev => prev + 15)}
+            onPress={() => setTimerState(prev => updateTimerState(prev, { restRemaining: prev.restRemaining + 15 }))}
           >
             <Text style={[styles.addTimeButtonText, { color: theme.text }]}>{t('addTime')}</Text>
           </TouchableOpacity>
@@ -819,9 +748,12 @@ export default function StartedWorkoutInterface() {
           style={[styles.skipRestButton, { backgroundColor: theme.buttonBackground }]}
           onPress={() => {
             stopRestTimer();
-            setCurrentSetIndex(currentSetIndex + 1);
-            setWorkoutStage('exercise');
-            setIsExerciseRest(false);
+            setTimerState(prev => updateTimerState(prev, {
+              currentSetIndex: prev.currentSetIndex + 1,
+              workoutStage: 'exercise',
+              isResting: false,
+              isExerciseRest: false
+            }));
           }}
         >
           <Text style={[styles.buttonText, { color: theme.buttonText }]}>{t('skipRest')}</Text>
@@ -831,26 +763,22 @@ export default function StartedWorkoutInterface() {
   };
   
   const renderCompletedScreen = () => {
-    // Filter only completed sets with data
     const completedSets = allSets.filter(set => set.completed);
     
     const saveWorkout = async () => {
       try {
         console.log('Starting workout save process...');
         
-        // Start a transaction
         await db.runAsync('BEGIN TRANSACTION;');
         
-        // Update Workout_Log with completion time
-        console.log('Saving completion time to Workout_Log:', workoutTime);
+        console.log('Saving completion time to Workout_Log:', timerState.workoutDuration);
         await db.runAsync(
           `UPDATE Workout_Log 
            SET completion_time = ? 
            WHERE workout_log_id = ?;`,
-          [workoutTime, workout_log_id]
+          [timerState.workoutDuration, workout_log_id]
         );
         
-        // For each completed set, save to Weight_Log
         console.log('Saving completed sets:', completedSets.length);
         for (let i = 0; i < completedSets.length; i++) {
           const set = completedSets[i];
@@ -874,7 +802,6 @@ export default function StartedWorkoutInterface() {
           );
         }
         
-        // Commit transaction
         await db.runAsync('COMMIT;');
         console.log('Workout save completed successfully!');
         
@@ -884,7 +811,6 @@ export default function StartedWorkoutInterface() {
           [{ text: t('OK'), onPress: () => navigation.goBack() }]
         );
       } catch (error) {
-        // If there's an error, rollback the transaction
         await db.runAsync('ROLLBACK;');
         console.error('Error saving workout:', error);
         Alert.alert(
@@ -908,7 +834,7 @@ export default function StartedWorkoutInterface() {
           <View style={styles.completedStats}>
             <View style={styles.completedStatItem}>
               <Text style={[styles.completedStatValue, { color: theme.text }]}>
-                {formatTime(workoutTime)}
+                {timerCalculations.formatTime(timerState.workoutDuration)}
               </Text>
               <Text style={[styles.completedStatLabel, { color: theme.text }]}>{t('totalTime')}</Text>
             </View>
@@ -935,7 +861,7 @@ export default function StartedWorkoutInterface() {
   };
   
   const renderExerciseListModal = () => {
-    const currentExerciseNameFromSet = allSets[currentSetIndex]?.exercise_name;
+    const currentExerciseNameFromSet = allSets[timerState.currentSetIndex]?.exercise_name;
 
     return (
       <Modal
@@ -1025,9 +951,9 @@ export default function StartedWorkoutInterface() {
           <Ionicons name="arrow-back" size={24} color={theme.text} />
         </TouchableOpacity>
         <Text style={[styles.title, { color: theme.text }]}>
-          {workoutStarted ? (workout ? `${workout.workout_name} - ${workout.day_name}` : 'Workout') : t("startWorkout")}
+          {timerState.workoutStarted ? (workout ? `${workout.workout_name} - ${workout.day_name}` : 'Workout') : t("startWorkout")}
         </Text>
-        {workoutStarted ? (
+        {timerState.workoutStarted ? (
           <TouchableOpacity 
             onPress={() => setIsExerciseListModalVisible(true)} 
             style={styles.headerListIcon}
@@ -1035,10 +961,6 @@ export default function StartedWorkoutInterface() {
             <Ionicons name="reorder-three-outline" size={23} color={theme.text} />
           </TouchableOpacity>
         ) : (
-          // Placeholder to balance the backButton for centering the title when workout has not started
-          // The width is calculated based on the help icon's size (23) and its TouchableOpacity padding (styles.headerListIcon.padding * 2)
-          // styles.headerListIcon = { padding: 5, marginLeft: 15 }, so padding is 5.
-          // Width = 23 + (5 * 2) = 33. marginLeft is 15.
           <View style={{ width: 23 + (styles.headerListIcon.padding * 2), marginLeft: styles.headerListIcon.marginLeft }} />
         )}
       </View>
@@ -1047,19 +969,19 @@ export default function StartedWorkoutInterface() {
         style={styles.content} 
         contentContainerStyle={[
           styles.scrollContent,
-          // Adjust styling based on stage
-          workoutStage === 'rest' && styles.restScrollContent
+          timerState.workoutStage === 'rest' && styles.restScrollContent
         ]}
       >
-        {workoutStage === 'overview' && renderOverview()}
-        {workoutStage === 'exercise' && renderExerciseScreen()}
-        {workoutStage === 'rest' && renderRestScreen()}
-        {workoutStage === 'completed' && renderCompletedScreen()}
+        {timerState.workoutStage === 'overview' && renderOverview()}
+        {timerState.workoutStage === 'exercise' && renderExerciseScreen()}
+        {timerState.workoutStage === 'rest' && renderRestScreen()}
+        {timerState.workoutStage === 'completed' && renderCompletedScreen()}
       </ScrollView>
       {renderExerciseListModal()}
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
