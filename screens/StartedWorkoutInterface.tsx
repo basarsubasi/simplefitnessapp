@@ -81,7 +81,6 @@ export default function StartedWorkoutInterface() {
   
   // User preference toggles
   const [enableVibration, setEnableVibration] = useState(true);
-  const [enableNotifications, setEnableNotifications] = useState(false);
   
   // Sets data for tracking workout
   const [allSets, setAllSets] = useState<ExerciseSet[]>([]);
@@ -168,7 +167,6 @@ export default function StartedWorkoutInterface() {
     loadPreferences();
   }, []);
 
-  // Setup notification handling and keep awake
   useEffect(() => {
     
     if (timerState.workoutStarted) {
@@ -177,7 +175,7 @@ export default function StartedWorkoutInterface() {
     return () => {
       deactivateKeepAwake();
     };
-  }, [timerState.workoutStarted, enableNotifications]);
+  }, [timerState.workoutStarted]);
 
   // Handle back press when workout is started
   useEffect(() => {
