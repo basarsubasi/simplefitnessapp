@@ -16,6 +16,7 @@
     },
 
     "android": {
+      "blockedPermissions": ["android.permission.INTERNET"],
       "versionCode": 33,
       "adaptiveIcon": {
         "foregroundImage": "./assets/simpleicon.png",

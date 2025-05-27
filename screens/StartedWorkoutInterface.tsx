@@ -22,35 +22,14 @@ import { useTheme } from '../context/ThemeContext';
 import { useTranslation } from 'react-i18next';
 import { useSQLiteContext } from 'expo-sqlite';
 import { StartWorkoutStackParamList } from '../App';
-import { useSettings } from '../context/SettingsContext';
 import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
-import * as TaskManager from 'expo-task-manager';
-import * as BackgroundFetch from 'expo-background-fetch';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useSettings } from '../context/SettingsContext';
 
-// Define background task names
-const WORKOUT_TIMER_TASK = 'WORKOUT_TIMER_TASK';
-const REST_TIMER_TASK = 'REST_TIMER_TASK';
-
-// Define task handlers outside of the component
-TaskManager.defineTask(WORKOUT_TIMER_TASK, async () => {
-  try {
-    // Background workout timer task
-    return BackgroundFetch.BackgroundFetchResult.NewData;
-  } catch (error) {
-    console.error("Error in workout timer background task:", error);
-    return BackgroundFetch.BackgroundFetchResult.Failed;
-  }
-});
-
-TaskManager.defineTask(REST_TIMER_TASK, async () => {
-  try {
-    // Background rest timer task
-    return BackgroundFetch.BackgroundFetchResult.NewData;
-  } catch (error) {
-    console.error("Error in rest timer background task:", error);
-    return BackgroundFetch.BackgroundFetchResult.Failed;
-  }
-});
+// Define AsyncStorage keys
+const WORKOUT_TIMER_KEY = '@workout_timer';
+const REST_TIMER_KEY = '@rest_timer';
+const WORKOUT_STATE_KEY = '@workout_state';
 
 type StartedWorkoutRouteProps = RouteProp<
   StartWorkoutStackParamList,
@@ -85,7 +64,7 @@ export default function StartedWorkoutInterface() {
   const { theme } = useTheme();
   const { t } = useTranslation();
   const db = useSQLiteContext();
-  const { weightFormat, setWeightFormat } = useSettings();
+  const {weightFormat, setWeightFormat } = useSettings();
   
   const { workout_log_id } = route.params;
   
@@ -108,7 +87,10 @@ export default function StartedWorkoutInterface() {
   
   // User preference toggles
   const [enableVibration, setEnableVibration] = useState(true);
+  const [enableNotifications, setEnableNotifications] = useState(false);
+  
 
+  
   // Sets data for tracking workout
   const [allSets, setAllSets] = useState<ExerciseSet[]>([]);
   const [currentSetIndex, setCurrentSetIndex] = useState(0);
@@ -123,27 +105,27 @@ export default function StartedWorkoutInterface() {
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
   
-  // Keep screen awake during workout
+  // Setup notification handling for background timer completion
   useEffect(() => {
-    // Activate keep awake when workout starts
+    
+    // Keep the app awake while workout is in progress
     if (workoutStarted) {
-      activateKeepAwakeAsync().catch(err => 
-        console.error("Error activating keep awake:", err)
-      );
+      activateKeepAwakeAsync();
     }
     
     return () => {
-      // Deactivate keep awake when component unmounts
       deactivateKeepAwake();
       
-      // Clean up background tasks
-      BackgroundFetch.unregisterTaskAsync(WORKOUT_TIMER_TASK).catch(() => {});
-      BackgroundFetch.unregisterTaskAsync(REST_TIMER_TASK).catch(() => {});
+      // Clean up stored timer states
+      AsyncStorage.multiRemove([WORKOUT_TIMER_KEY, REST_TIMER_KEY, WORKOUT_STATE_KEY])
+        .catch(err => console.error("Error cleaning up stored timer states:", err));
     };
   }, [workoutStarted]);
 
-  // Handle back press and gestures when workout is started
-  useEffect(() => {
+
+
+   // Handle back press and gestures when workout is started
+   useEffect(() => {
     const unsubscribe = navigation.addListener('beforeRemove', (e) => {
       // If workout hasn't started, or it's already completed, allow navigation
       if (!workoutStarted || workoutStage === 'completed') {
@@ -172,72 +154,89 @@ export default function StartedWorkoutInterface() {
     return unsubscribe;
   }, [navigation, workoutStarted, workoutStage, t]); // Added t to dependencies for Alert messages
   
-  // Register background tasks when needed
-  const registerBackgroundTasks = async () => {
-    // Check if tasks are already registered
-    const workoutTaskRegistered = await TaskManager.isTaskRegisteredAsync(WORKOUT_TIMER_TASK);
-    const restTaskRegistered = await TaskManager.isTaskRegisteredAsync(REST_TIMER_TASK);
-    
-    // Register workout timer task if not already registered
-    if (!workoutTaskRegistered) {
-      await BackgroundFetch.registerTaskAsync(WORKOUT_TIMER_TASK, {
-        minimumInterval: 60, // update every minute
-        stopOnTerminate: true,
-        startOnBoot: true,
-      });
-    }
-    
-    // Register rest timer task if not already registered
-    if (!restTaskRegistered) {
-      await BackgroundFetch.registerTaskAsync(REST_TIMER_TASK, {
-        minimumInterval: 15, // check more frequently for rest timer
-        stopOnTerminate: false,
-        startOnBoot: true,
-      });
-    }
-  };
+
   
   // Handle AppState changes to manage timers in background
   useEffect(() => {
     const subscription = AppState.addEventListener('change', nextAppState => {
       if (appState.current.match(/active/) && nextAppState.match(/inactive|background/)) {
         // App is going to background
-        if (workoutStarted) {
-          // Start background tasks for timers
-          registerBackgroundTasks().catch(err => console.error("Error registering background tasks:", err));
+        if (workoutStarted && workoutStage !== 'completed' && enableNotifications) {
+          
+          // Store workout timer state
+          if (timerStartTime) {
+            AsyncStorage.setItem(WORKOUT_TIMER_KEY, JSON.stringify({
+              startTime: timerStartTime,
+              workoutTime: workoutTime,
+              timestamp: Date.now()
+            }));
+          }
+          
+          // Store rest timer state if in rest stage
+          if (workoutStage === 'rest' && restTimerStartTime) {
+            AsyncStorage.setItem(REST_TIMER_KEY, JSON.stringify({
+              startTime: restTimerStartTime,
+              restTimeRemaining: restTimeRemaining,
+              isExerciseRest: isExerciseRest,
+              timestamp: Date.now()
+            }));
+          }
+          
+          // Store workout state
+          AsyncStorage.setItem(WORKOUT_STATE_KEY, JSON.stringify({
+            workoutStage,
+            currentSetIndex,
+            isExerciseRest
+          }));
         }
       } else if (appState.current.match(/inactive|background/) && nextAppState === 'active') {
         // App has come to the foreground
-        
-        // Recalculate workout time based on elapsed time
-        if (workoutStarted && timerStartTime && workoutStage !== 'completed') {
-          const now = Date.now();
-          const elapsedSeconds = Math.floor((now - timerStartTime) / 1000);
-          setWorkoutTime(elapsedSeconds);
-          stopWorkoutTimer();
-          startWorkoutTimer();
-        }
-        
-        if (workoutStage === 'rest' && restTimerStartTime) {
-          // Recalculate rest time based on elapsed time
-          const now = Date.now();
-          const elapsedSeconds = Math.floor((now - restTimerStartTime) / 1000);
-          const restDuration = isExerciseRest ? parseInt(exerciseRestTime) : parseInt(restTime);
-          const newRestTime = Math.max(0, restDuration - elapsedSeconds);
+        if (workoutStarted) {
+
+          // Restore workout timer state
+          AsyncStorage.getItem(WORKOUT_TIMER_KEY).then(storedWorkoutTimer => {
+            if (storedWorkoutTimer) {
+              const { startTime, workoutTime: storedWorkoutTime, timestamp } = JSON.parse(storedWorkoutTimer);
+              const now = Date.now();
+              const additionalSeconds = Math.floor((now - timestamp) / 1000);
+              setWorkoutTime(storedWorkoutTime + additionalSeconds);
+              setTimerStartTime(startTime);
+              stopWorkoutTimer();
+              startWorkoutTimer();
+            }
+          });
           
-          setRestTimeRemaining(newRestTime);
+          // Restore rest timer state if needed
+          AsyncStorage.getItem(REST_TIMER_KEY).then(storedRestTimer => {
+            if (storedRestTimer && workoutStage === 'rest') {
+              const { startTime, restTimeRemaining: storedRestTime, isExerciseRest: storedIsExerciseRest, timestamp } = JSON.parse(storedRestTimer);
+              const now = Date.now();
+              const elapsedSeconds = Math.floor((now - timestamp) / 1000);
+              const newRestTime = Math.max(0, storedRestTime - elapsedSeconds);
+              
+              setRestTimeRemaining(newRestTime);
+              setRestTimerStartTime(startTime);
+              setIsExerciseRest(storedIsExerciseRest);
+              
+              if (newRestTime <= 0) {
+                // Rest time has already completed while in background
+                stopRestTimer();
+                setCurrentSetIndex(currentSetIndex + 1);
+                setWorkoutStage('exercise');
+                setIsExerciseRest(false);
+                if (enableVibration) {
+                  Vibration.vibrate([500, 300, 500]);
+                }
+              } else {
+                // Continue rest timer
+                stopRestTimer();
+                startRestTimer(newRestTime);
+              }
+            }
+          });
           
-          if (newRestTime <= 0) {
-            // Rest time has already completed while in background
-            stopRestTimer();
-            setCurrentSetIndex(currentSetIndex + 1);
-            setWorkoutStage('exercise');
-            setIsExerciseRest(false);
-          } else {
-            // Continue rest timer
-            stopRestTimer();
-            startRestTimer(newRestTime);
-          }
+          // Clean up stored timer states
+          AsyncStorage.multiRemove([WORKOUT_TIMER_KEY, REST_TIMER_KEY, WORKOUT_STATE_KEY]);
         }
       }
       
@@ -248,16 +247,22 @@ export default function StartedWorkoutInterface() {
     return () => {
       subscription.remove();
     };
-  }, [workoutStarted, timerStartTime, restTimerStartTime, workoutStage, currentSetIndex, restTime, exerciseRestTime, isExerciseRest]);
+  }, [workoutStarted, timerStartTime, restTimerStartTime, workoutStage, currentSetIndex, restTime, exerciseRestTime, allSets, workout, enableNotifications, enableVibration, isExerciseRest, t]);
   
   useEffect(() => {
     // Check if completion_time column exists, add it if not
     checkAndAddCompletionTimeColumn();
-    fetchWorkoutDetails()    
+    fetchWorkoutDetails();
+    
     return () => {
+      // Clean up resources
       stopWorkoutTimer();
       stopRestTimer();
       deactivateKeepAwake();
+      
+      // Clean up any stored timer states
+      AsyncStorage.multiRemove([WORKOUT_TIMER_KEY, REST_TIMER_KEY, WORKOUT_STATE_KEY])
+        .catch(err => console.error("Error cleaning up stored timer states:", err));
     };
   }, []);
   
@@ -332,7 +337,7 @@ export default function StartedWorkoutInterface() {
     }
   };
   
-  // Timer functions (updated for background support)
+  // Timer functions
   const startWorkoutTimer = () => {
     setTimerStartTime(Date.now() - (workoutTime * 1000)); // Account for existing time
     workoutTimerRef.current = setInterval(() => {
@@ -388,7 +393,7 @@ export default function StartedWorkoutInterface() {
   
   // Workout flow functions
   const startWorkout = () => {
-    // Validate rest times
+    // Validate rest time
     const setRestSeconds = parseInt(restTime);
     const exerciseRestSeconds = parseInt(exerciseRestTime);
     
@@ -406,93 +411,8 @@ export default function StartedWorkoutInterface() {
     setWorkoutStage('exercise');
     startWorkoutTimer();
   };
-
-  // Handle back press and gestures when workout is started
-
-
-   useEffect(() => {
-
-
-    const unsubscribe = navigation.addListener('beforeRemove', (e) => {
-
-
-      // If workout hasn't started, or it's already completed, allow navigation
-
-
-      if (!workoutStarted || workoutStage === 'completed') {
-
-
-        return;
-
-
-      }
-
-
-
-
-
-      // Prevent default behavior of leaving the screen
-
-
-      e.preventDefault();
-
-
-
-
-
-      // Show confirmation alert
-
-
-      Alert.alert(
-
-
-        t('exitWorkout'),
-
-
-        t('exitWorkoutMessage'),
-
-
-        [
-
-
-          { text: t('Cancel'), style: 'cancel', onPress: () => {} },
-
-
-          {
-
-
-            text: t('exit'),
-
-
-            style: 'destructive',
-
-
-            // If the user confirms, dispatch the action that initiated the go back.
-
-
-            onPress: () => navigation.dispatch(e.data.action),
-
-
-          },
-
-
-        ]
-
-
-      );
-
-
-    });
-
-
-
-
-
-    return unsubscribe;
-
-
-  }, [navigation, workoutStarted, workoutStage, t]); // Added t to dependencies for Alert messages
   
+
   
   // Determine if the next set is for a different exercise
   const isDifferentExercise = (currentIndex: number, nextIndex: number): boolean => {
@@ -521,7 +441,7 @@ export default function StartedWorkoutInterface() {
           </View>
         </View>
         
-        <Text style={[styles.sectionTitle, { color: theme.text }]}>Exercises</Text>
+        <Text style={[styles.sectionTitle, { color: theme.text }]}>{t('exercises')}</Text>
         <FlatList
           data={exercises}
           keyExtractor={(item) => item.logged_exercise_id.toString()}
@@ -529,7 +449,7 @@ export default function StartedWorkoutInterface() {
             <View style={[styles.exerciseItem, { backgroundColor: theme.card, borderColor: theme.border }]}>
               <Text style={[styles.exerciseName, { color: theme.text }]}>{item.exercise_name}</Text>
               <Text style={[styles.exerciseDetails, { color: theme.text }]}>
-                {item.sets} {t('sets')} × {item.reps} {t('reps')}
+                {item.sets} {t('Sets')} × {item.reps} {t('Reps')}
               </Text>
             </View>
           )}
@@ -538,7 +458,7 @@ export default function StartedWorkoutInterface() {
         />
         
         <View style={styles.setupSection}>
-          <Text style={[styles.setupLabel, { color: theme.text }]}>{t('restTimeBetweenSets')}</Text>
+          <Text style={[styles.setupLabel, { color: theme.text }]}>{t('restTimeBetweenSets')}:</Text>
           <TextInput
             style={[styles.restTimeInput, { 
               backgroundColor: theme.card,
@@ -552,7 +472,7 @@ export default function StartedWorkoutInterface() {
             placeholderTextColor={theme.type === 'dark' ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)'}
           />
           
-          <Text style={[styles.setupLabel, { color: theme.text }]}>{t('restTimeBetweenExercises')}</Text>
+          <Text style={[styles.setupLabel, { color: theme.text }]}>{t('restTimeBetweenExercises')}:</Text>
           <TextInput
             style={[styles.restTimeInput, { 
               backgroundColor: theme.card,
@@ -566,8 +486,8 @@ export default function StartedWorkoutInterface() {
             placeholderTextColor={theme.type === 'dark' ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)'}
           />
           
-          {/* Toggle switch for vibration */}
-          <Text style={[styles.setupLabel, { color: theme.text, marginTop: 15 }]}>{t('workoutSettings')}</Text>
+          {/* Toggle switches for user preferences */}
+          <Text style={[styles.setupLabel, { color: theme.text, marginTop: 15 }]}>{t('workoutSettings')}:</Text>
           
           <View style={[styles.toggleRow, { 
             backgroundColor: theme.type === 'dark' ? '#121212' : '#f0f0f0',
@@ -619,7 +539,7 @@ export default function StartedWorkoutInterface() {
            {currentSet.set_number}/{currentSet.total_sets}
           </Text>
           <Text style={[styles.repInfo, { color: theme.text }]}>
-            {t('goal')}: {currentSet.reps_goal} {t('reps')}
+            {t('goal')}: {currentSet.reps_goal} {t('Reps')}
           </Text>
           
           {/* Input fields for tracking */}
@@ -651,7 +571,7 @@ export default function StartedWorkoutInterface() {
             </View>
             
             <View style={styles.inputGroup}>
-              <Text style={[styles.inputLabel, { color: theme.text }]}>{t('weightKgLbs')}</Text>
+              <Text style={[styles.inputLabel, { color: theme.text }]}> {t('Weight')} ({weightFormat})</Text>
               <TextInput
                 style={[styles.input, { 
                   backgroundColor: theme.card,
@@ -706,10 +626,6 @@ export default function StartedWorkoutInterface() {
                 // This is the last set, finish the workout
                 setWorkoutStage('completed');
                 stopWorkoutTimer();
-                // Vibrate to celebrate workout completion (if enabled)
-                if (enableVibration) {
-                  Vibration.vibrate([300, 200, 300, 200, 600]);
-                }
               } else {
                 // Check if next set is for a different exercise
                 const nextSetIndex = currentSetIndex + 1;
@@ -774,7 +690,7 @@ export default function StartedWorkoutInterface() {
           </View>
           
           <TouchableOpacity
-            style={[styles.addTimeButton, { backgroundColor: theme.type === 'dark' ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.1)' }]}
+            style={[styles.addTimeButton, { backgroundColor: theme.type === 'dark' ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.2)' }]}
             onPress={() => setRestTimeRemaining(prev => prev + 15)}
           >
             <Text style={[styles.addTimeButtonText, { color: theme.text }]}>{t('addTime')}</Text>
@@ -804,10 +720,6 @@ export default function StartedWorkoutInterface() {
             setCurrentSetIndex(currentSetIndex + 1);
             setWorkoutStage('exercise');
             setIsExerciseRest(false);
-            // Add vibration when manually skipping rest (if enabled)
-            if (enableVibration) {
-              Vibration.vibrate([200, 100, 200]);
-            }            
           }}
         >
           <Text style={[styles.buttonText, { color: theme.buttonText }]}>{t('skipRest')}</Text>
@@ -874,8 +786,8 @@ export default function StartedWorkoutInterface() {
         await db.runAsync('ROLLBACK;');
         console.error('Error saving workout:', error);
         Alert.alert(
-             t('Error'),
-          t('There was an error saving your workout data.')
+          'Error',
+          'There was an error saving your workout. Please try again.'
         );
       }
     };
@@ -1011,7 +923,7 @@ export default function StartedWorkoutInterface() {
           <Ionicons name="arrow-back" size={24} color={theme.text} />
         </TouchableOpacity>
         <Text style={[styles.title, { color: theme.text }]}>
-          {workoutStarted ? (workout ? `${workout.workout_name} - ${workout.day_name}` :  t('Workout')) : t('startWorkout')}
+          {workoutStarted ? (workout ? `${workout.workout_name} - ${workout.day_name}` : 'Workout') : t("startWorkout")}
         </Text>
         {workoutStarted ? (
           <TouchableOpacity 
@@ -1476,4 +1388,4 @@ const styles = StyleSheet.create({
   modalExerciseDetails: {
     fontSize: 14,
   },
-});
+}); 
