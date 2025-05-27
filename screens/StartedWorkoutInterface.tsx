@@ -25,6 +25,7 @@ import { StartWorkoutStackParamList } from '../App';
 import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSettings } from '../context/SettingsContext';
+import { loadRestTimerPreferences, saveRestTimerPreferences } from '../utils/restTimerUtils';
 
 // Define AsyncStorage keys
 const WORKOUT_TIMER_KEY = '@workout_timer';
@@ -105,6 +106,21 @@ export default function StartedWorkoutInterface() {
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
   
+  // Load rest timer preferences when component mounts
+  useEffect(() => {
+    const loadPreferences = async () => {
+      try {
+        const preferences = await loadRestTimerPreferences();
+        setRestTime(preferences.restTimeBetweenSets);
+        setExerciseRestTime(preferences.restTimeBetweenExercises);
+      } catch (error) {
+        console.error('Error loading rest timer preferences:', error);
+      }
+    };
+    
+    loadPreferences();
+  }, []);
+
   // Setup notification handling for background timer completion
   useEffect(() => {
     
@@ -121,8 +137,6 @@ export default function StartedWorkoutInterface() {
         .catch(err => console.error("Error cleaning up stored timer states:", err));
     };
   }, [workoutStarted]);
-
-
 
    // Handle back press and gestures when workout is started
    useEffect(() => {
@@ -392,7 +406,7 @@ export default function StartedWorkoutInterface() {
   };
   
   // Workout flow functions
-  const startWorkout = () => {
+  const startWorkout = async () => {
     // Validate rest time
     const setRestSeconds = parseInt(restTime);
     const exerciseRestSeconds = parseInt(exerciseRestTime);
@@ -405,6 +419,17 @@ export default function StartedWorkoutInterface() {
     if (isNaN(exerciseRestSeconds) || exerciseRestSeconds < 0) {
       Alert.alert(t('invalidExerciseRestTime'), t('pleaseEnterValidSeconds'));
       return;
+    }
+
+    // Save rest timer preferences when starting workout
+    try {
+      await saveRestTimerPreferences({
+        restTimeBetweenSets: restTime,
+        restTimeBetweenExercises: exerciseRestTime
+      });
+    } catch (error) {
+      console.error('Error saving rest timer preferences:', error);
+      // Continue with workout even if save fails
     }
     
     setWorkoutStarted(true);
