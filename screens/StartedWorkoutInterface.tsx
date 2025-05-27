@@ -12,7 +12,8 @@ import {
   Vibration,
   Platform,
   Switch,
-  Modal
+  Modal,
+  AppState
 } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -153,6 +154,73 @@ export default function StartedWorkoutInterface() {
     debugMode: __DEV__
   });
   
+  // Handle AppState changes for notifications
+  useEffect(() => {
+    const handleAppStateChange = async (nextAppState: string) => {
+      // Going to background - schedule notification if workout is active and notifications are enabled
+      if (nextAppState === 'background' || nextAppState === 'inactive') {
+        if (timerState.workoutStarted && 
+            timerState.workoutStage !== 'completed' && 
+            enableNotifications && 
+            notificationPermissionGranted) {
+          
+          console.log('App going to background - scheduling notification');
+          
+          try {
+            // Clear any existing notifications first
+            await Notifications.dismissAllNotificationsAsync();
+            
+            // Schedule workout progress notification
+            await Notifications.scheduleNotificationAsync({
+              content: {
+                title: t("Workout in Progress"),
+                body: t("Workout in Progress Message"),
+                priority: 'min',
+                data: { 
+                  startTime: timerState.workoutStartTime,
+                  type: 'workout_timer'
+                },
+              },
+              trigger: null,
+            });
+            
+
+
+            
+          } catch (error) {
+            console.error('Error scheduling notifications:', error);
+          }
+        }
+      } 
+      // Coming to foreground - clear notifications
+      else if (nextAppState === 'active') {
+        if (enableNotifications) {
+          console.log('App returning to foreground - clearing notifications');
+          try {
+            await Notifications.dismissAllNotificationsAsync();
+          } catch (error) {
+            console.error('Error clearing notifications:', error);
+          }
+        }
+      }
+    };
+    
+    const subscription = AppState.addEventListener('change', handleAppStateChange);
+    
+    return () => {
+      subscription.remove();
+    };
+  }, [
+    timerState.workoutStarted, 
+    timerState.workoutStage, 
+    timerState.restRemaining,
+    timerState.currentSetIndex,
+    enableNotifications, 
+    notificationPermissionGranted,
+    workout_log_id,
+    t
+  ]);
+  
   // Update enableNotifications only if permission is granted
   useEffect(() => {
     if (notificationPermissionGranted && !enableNotifications) {
@@ -176,43 +244,33 @@ export default function StartedWorkoutInterface() {
     loadPreferences();
   }, []);
 
-  // Setup notification handling and keep awake
+  // Setup notification handler and keep awake
   useEffect(() => {
     const configureNotifications = async () => {
       await Notifications.setNotificationHandler({
-        handleNotification: async () => ({
-          shouldShowAlert: true,
-          shouldPlaySound: false,
-          shouldSetBadge: false,
-        }),
+        handleNotification: async (notification) => {
+          // Handle different notification types
+          const notificationType = notification.request.content.data?.type;
+          
+          return {
+            shouldShowAlert: true,
+            shouldPlaySound: notificationType === 'rest_complete',
+            shouldSetBadge: false,
+          };
+        },
       });
     };
     
     if (timerState.workoutStarted) {
       activateKeepAwakeAsync();
       configureNotifications();
-      
-      // Schedule notification if enabled
-      if (enableNotifications) {
-        Notifications.scheduleNotificationAsync({
-          content: {
-            title: t("Workout in Progress"),
-            body: t("Workout in Progress Message"),
-            priority: 'min',
-            data: { 
-              startTime: timerState.workoutStartTime,
-              type: 'workout_timer'
-            },
-          },
-          trigger: null,
-        });
-      }
     }
     
     return () => {
       deactivateKeepAwake();
+      // Clear notifications when component unmounts
       if (enableNotifications) {
-        Notifications.dismissAllNotificationsAsync();
+        Notifications.dismissAllNotificationsAsync().catch(console.error);
       }
     };
   }, [timerState.workoutStarted, enableNotifications]);
@@ -439,6 +497,12 @@ export default function StartedWorkoutInterface() {
       setEnableNotifications(true);
     } else {
       setEnableNotifications(false);
+      // Clear any existing notifications when disabling
+      try {
+        await Notifications.dismissAllNotificationsAsync();
+      } catch (error) {
+        console.error('Error clearing notifications:', error);
+      }
     }
   };
   
@@ -447,7 +511,7 @@ export default function StartedWorkoutInterface() {
     return allSets[currentIndex].exercise_name !== allSets[nextIndex].exercise_name;
   };
   
-  // Render functions remain the same, but update references to use timerState
+  // Rest of the render functions remain the same...
   const renderOverview = () => {
     return (
       <View style={styles.overviewContainer}>
@@ -552,6 +616,8 @@ export default function StartedWorkoutInterface() {
       </View>
     );
   };
+  
+  // ... (rest of the render functions remain the same)
   
   const renderExerciseScreen = () => {
     const currentSet = allSets[timerState.currentSetIndex];
@@ -982,7 +1048,7 @@ export default function StartedWorkoutInterface() {
   );
 }
 
-
+// Styles remain the same...
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -1412,4 +1478,4 @@ const styles = StyleSheet.create({
   modalExerciseDetails: {
     fontSize: 14,
   },
-}); 
+});
