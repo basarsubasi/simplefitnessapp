@@ -83,9 +83,6 @@ export const timerStateUtils = {
     try {
       await AsyncStorage.removeItem(TIMER_STATE_KEY);
       
-      if (__DEV__) {
-        console.log('Timer state cleared');
-      }
     } catch (error) {
       console.error('Error clearing timer state:', error);
     }
