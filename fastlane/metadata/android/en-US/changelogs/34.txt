@@ -1,0 +1,5 @@
+- Background Tasks removed
+- Improved the timer persistence logic
+- Now it reuses last workouts rest timer imput instead of the default value
+- Seperate timers when switching to a new exercise
+- Now it displays multiple workouts even if they are on the same day
