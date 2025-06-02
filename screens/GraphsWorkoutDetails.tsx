@@ -526,17 +526,18 @@ export default function GraphsWorkoutDetails() {
         borderRadius: 16
       },
       propsForDots: {
-        r: '4',
-        strokeWidth: '2'
+        r: '6',
+        strokeWidth: '2',
+        stroke: '#ffa726'
       },
-      fillShadowGradientFrom: 'rgba(0, 0, 0, 0)',
-      fillShadowGradientTo: 'rgba(0, 0, 0, 0)',
-      fillShadowGradientFromOpacity: 0,
-      fillShadowGradientToOpacity: 0,
-      useShadowColorFromDataset: false,
-      withShadow: false,
-      withInnerLines: false,
-      withOuterLines: false
+      fillShadowGradientFrom: `rgba(0, 123, 255, 0.15)`,
+      fillShadowGradientTo: `rgba(0, 123, 255, 0.02)`,
+      fillShadowGradientFromOpacity: 0.5,
+      fillShadowGradientToOpacity: 0.1,
+      useShadowColorFromDataset: true,
+      withShadow: true,
+      withInnerLines: true,
+      withOuterLines: true
     };
 
     return (
@@ -807,7 +808,7 @@ export default function GraphsWorkoutDetails() {
         </TouchableOpacity>
         
         {dayDropdownVisible && days.length > 0 && (
-          <View style={[styles.dropdownListContainer, { borderColor: theme.border }]}>
+          <View style={[styles.dropdownListContainer, { backgroundColor: theme.card, borderColor: theme.border }]}>
             <FlatList
               data={days}
               keyExtractor={(item) => item.value}
@@ -815,8 +816,8 @@ export default function GraphsWorkoutDetails() {
                 <TouchableOpacity
                   style={[
                     styles.dropdownItem,
-                    selectedDay === item.value && styles.dropdownItemActive,
-                    { backgroundColor: selectedDay === item.value ? theme.buttonBackground : theme.card }
+                    { backgroundColor: theme.card },
+                    selectedDay === item.value && { backgroundColor: theme.buttonBackground }
                   ]}
                   onPress={() => {
                     setSelectedDay(item.value);
@@ -826,7 +827,6 @@ export default function GraphsWorkoutDetails() {
                   <Text
                     style={[
                       styles.dropdownItemText,
-                      selectedDay === item.value && styles.dropdownItemTextActive,
                       { color: selectedDay === item.value ? theme.buttonText : theme.text }
                     ]}
                   >
@@ -891,7 +891,7 @@ export default function GraphsWorkoutDetails() {
         </TouchableOpacity>
         
         {exerciseDropdownVisible && exercises.length > 0 && (
-          <View style={[styles.dropdownListContainer, { borderColor: theme.border }]}>
+          <View style={[styles.dropdownListContainer, { backgroundColor: theme.card, borderColor: theme.border }]}>
             <FlatList
               data={exercises}
               keyExtractor={(item) => item.value}
@@ -899,8 +899,8 @@ export default function GraphsWorkoutDetails() {
                 <TouchableOpacity
                   style={[
                     styles.dropdownItem,
-                    selectedExercise === item.value && styles.dropdownItemActive,
-                    { backgroundColor: selectedExercise === item.value ? theme.buttonBackground : theme.card }
+                    { backgroundColor: theme.card },
+                    selectedExercise === item.value && { backgroundColor: theme.buttonBackground }
                   ]}
                   onPress={() => {
                     setSelectedExercise(item.value);
@@ -910,7 +910,6 @@ export default function GraphsWorkoutDetails() {
                   <Text
                     style={[
                       styles.dropdownItemText,
-                      selectedExercise === item.value && styles.dropdownItemTextActive,
                       { color: selectedExercise === item.value ? theme.buttonText : theme.text }
                     ]}
                   >
@@ -1235,8 +1234,6 @@ const styles = StyleSheet.create({
   },
   tooltipSetItem: {
     paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0, 0, 0, 0.1)',
   },
   tooltipSetText: {
     fontSize: 15,
