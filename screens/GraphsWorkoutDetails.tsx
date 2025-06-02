@@ -526,10 +526,17 @@ export default function GraphsWorkoutDetails() {
         borderRadius: 16
       },
       propsForDots: {
-        r: '6',
-        strokeWidth: '2',
-        stroke: '#ffa726'
-      }
+        r: '4',
+        strokeWidth: '2'
+      },
+      fillShadowGradientFrom: 'rgba(0, 0, 0, 0)',
+      fillShadowGradientTo: 'rgba(0, 0, 0, 0)',
+      fillShadowGradientFromOpacity: 0,
+      fillShadowGradientToOpacity: 0,
+      useShadowColorFromDataset: false,
+      withShadow: false,
+      withInnerLines: false,
+      withOuterLines: false
     };
 
     return (
@@ -567,19 +574,36 @@ export default function GraphsWorkoutDetails() {
     });
     const sortedDates = Array.from(allDates).sort();
 
-    // Create datasets for each set
-    const datasets = setsData.map(setData => {
+    // Create datasets for each set with offset for overlapping dots
+    const datasets = setsData.map((setData, setIndex) => {
       // Create data array that matches all dates, filling with null for missing dates
       const dataArray = sortedDates.map(date => {
         const point = setData.data.find(p => p.x === date);
-        return point ? point.y : null;
+        if (point) {
+          // Check for overlapping values on the same date
+          let offsetValue = point.y;
+          const overlappingCount = setsData.filter((otherSetData, otherIndex) => {
+            if (otherIndex >= setIndex) return false; // Only check previous sets
+            const otherPoint = otherSetData.data.find(p => p.x === date);
+            return otherPoint && Math.abs(otherPoint.y - point.y) < 0.1; // Same weight (within 0.1kg)
+          }).length;
+          
+          // Apply small offset if there are overlapping dots (0.05kg per overlap)
+          if (overlappingCount > 0) {
+            offsetValue = point.y + (overlappingCount * 0.8);
+          }
+          
+          return offsetValue;
+        }
+        return null;
       }).filter(val => val !== null) as number[];
 
       return {
         data: dataArray,
-        color: (opacity = 1) => setData.color.replace('1)', `${opacity})`),
+        color: (opacity = 1) => setData.color,
         strokeWidth: 2,
-        withDots: true
+        withDots: true,
+        withFill: false
       };
     });
 
@@ -605,20 +629,27 @@ export default function GraphsWorkoutDetails() {
       propsForDots: {
         r: '4',
         strokeWidth: '2'
-      }
+      },
+      fillShadowGradientFrom: 'rgba(0, 0, 0, 0)',
+      fillShadowGradientTo: 'rgba(0, 0, 0, 0)',
+      fillShadowGradientFromOpacity: 0,
+      fillShadowGradientToOpacity: 0,
+      useShadowColorFromDataset: false,
+      withShadow: false,
+      withInnerLines: false,
+      withOuterLines: false
     };
-
     return (
       <View style={styles.chartContainer}>
-        <LineChart
-          data={data}
-          width={screenWidth}
-          height={dynamicHeight}
-          chartConfig={chartConfig}
-          style={styles.chart}
-          verticalLabelRotation={30}
-          onDataPointClick={handleDataPointClick}
-        />
+<LineChart
+  data={data}
+  width={screenWidth}
+  height={dynamicHeight}
+  chartConfig={chartConfig}
+  style={styles.chart}
+  verticalLabelRotation={30}
+  onDataPointClick={handleDataPointClick}
+/>
         
         {/* Legend for sets */}
         <View style={[styles.legendContainer, { backgroundColor: theme.card, borderColor: theme.border }]}>
