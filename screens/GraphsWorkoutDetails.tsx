@@ -38,12 +38,19 @@ type LogData = {
   logged_exercise_id: number;
 };
 type TimeFrame = 'week' | 'month' | 'year' | 'all';
-type CalculationType = 'CES' | '1RM';
+type CalculationType = 'CES' | '1RM' | 'Sets';
 type ProcessedDataPoint = {
   x: string; // Date string for display
   y: number; // Value (CES or 1RM)
   timestamp: number; // Raw timestamp for sorting
   originalData: LogData[]; // Store original data for tooltip
+};
+
+// Add new data structure for sets
+type SetProgressData = {
+  setNumber: number;
+  data: ProcessedDataPoint[];
+  color: string;
 };
 
 export default function GraphsWorkoutDetails() {
@@ -56,6 +63,20 @@ export default function GraphsWorkoutDetails() {
   const { dateFormat, weightFormat } = useSettings();
   const screenWidth = Dimensions.get('window').width - 40; // Account for padding
 
+  // Add colors for different sets
+  const setColors = [
+    'rgba(255, 99, 132, 1)',   // Red
+    'rgba(54, 162, 235, 1)',   // Blue  
+    'rgba(255, 205, 86, 1)',   // Yellow
+    'rgba(75, 192, 192, 1)',   // Teal
+    'rgba(153, 102, 255, 1)',  // Purple
+    'rgba(255, 159, 64, 1)',   // Orange
+    'rgba(199, 199, 199, 1)',  // Grey
+    'rgba(83, 102, 146, 1)',   // Dark Blue
+    'rgba(255, 99, 255, 1)',   // Pink
+    'rgba(99, 255, 132, 1)',   // Green
+  ];
+
   // State variables
   const [days, setDays] = useState<DayOption[]>([]);
   const [selectedDay, setSelectedDay] = useState<string>('');
@@ -66,6 +87,7 @@ export default function GraphsWorkoutDetails() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [logData, setLogData] = useState<LogData[]>([]);
   const [chartData, setChartData] = useState<ProcessedDataPoint[]>([]);
+  const [setsData, setSetsData] = useState<SetProgressData[]>([]);
 
   // Dropdown visibility state
   const [dayDropdownVisible, setDayDropdownVisible] = useState<boolean>(false);
@@ -240,7 +262,16 @@ export default function GraphsWorkoutDetails() {
     return `${weight.toFixed(1)} ${weightFormat}`;
   };
 
+  // Update processDataForChart to handle different calculation types
   const processDataForChart = () => {
+    if (calculationType === 'Sets') {
+      processDataForSetsChart();
+    } else {
+      processDataForRegularChart();
+    }
+  };
+
+  const processDataForRegularChart = () => {
     // Group logs by date
     const logsByDate = logData.reduce((acc, log) => {
       const date = log.date;
@@ -283,6 +314,73 @@ export default function GraphsWorkoutDetails() {
     setChartData(sortedData);
   };
 
+  const processDataForSetsChart = () => {
+    // Group logs by date first
+    const logsByDate = logData.reduce((acc, log) => {
+      const date = log.date;
+      if (!acc[date]) {
+        acc[date] = [];
+      }
+      acc[date].push(log);
+      return acc;
+    }, {} as Record<number, LogData[]>);
+
+    // Get all unique set numbers across all dates
+    const allSetNumbers = new Set<number>();
+    logData.forEach(log => allSetNumbers.add(log.set_number));
+    const maxSetNumber = Math.max(...Array.from(allSetNumbers));
+
+    // Process data for each set
+    const setsProgressData: SetProgressData[] = [];
+
+    for (let setNum = 1; setNum <= maxSetNumber; setNum++) {
+      const setData: ProcessedDataPoint[] = [];
+
+      Object.entries(logsByDate).forEach(([dateStr, logs]) => {
+        const date = new Date(parseInt(dateStr) * 1000);
+        
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const formattedDate = dateFormat === 'mm-dd-yyyy'
+          ? `${month}/${day}`
+          : `${day}/${month}`;
+
+        // Find the log for this specific set number
+        const setLog = logs.find(log => log.set_number === setNum);
+        
+        if (setLog) {
+          setData.push({
+            x: formattedDate,
+            y: setLog.weight_logged,
+            timestamp: parseInt(dateStr),
+            originalData: [setLog]
+          });
+        }
+      });
+
+      // Sort by timestamp and filter out empty data points
+      const sortedSetData = setData
+        .sort((a, b) => a.timestamp - b.timestamp)
+        .filter(point => point.originalData.length > 0)
+        .slice(-10);
+
+      if (sortedSetData.length > 0) {
+        setsProgressData.push({
+          setNumber: setNum,
+          data: sortedSetData,
+          color: setColors[(setNum - 1) % setColors.length]
+        });
+      }
+    }
+
+    setSetsData(setsProgressData);
+    
+    // Also set chart data to the first set for compatibility with existing tooltip logic
+    if (setsProgressData.length > 0) {
+      setChartData(setsProgressData[0].data);
+    }
+  };
+
   const handleDataPointClick = (data: any) => {
     // Find the data point that was clicked
     if (data.index !== undefined && chartData[data.index]) {
@@ -296,65 +394,86 @@ export default function GraphsWorkoutDetails() {
     setSelectedPoint(null);
   };
 
-  // Render tooltip
-  const renderTooltip = () => {
-    if (!selectedPoint) return null;
-
-    const formattedDate = formatDate(selectedPoint.timestamp);
-    
+  // Update calculation type toggle to include Sets
+  const renderCalculationTypeToggle = () => {
     return (
-      <Modal
-        transparent={true}
-        visible={tooltipVisible}
-        onRequestClose={closeTooltip}
-        animationType="fade"
-      >
+      <View style={styles.toggleContainer}>
         <TouchableOpacity 
-          style={styles.tooltipOverlay} 
-          activeOpacity={1} 
-          onPress={closeTooltip}
+          style={[
+            styles.toggleButton, 
+            calculationType === 'CES' && styles.toggleButtonActive,
+            { backgroundColor: calculationType === 'CES' ? theme.buttonBackground : theme.card }
+          ]}
+          onPress={() => setCalculationType('CES')}
         >
-          <View style={[styles.tooltipContainer, { backgroundColor: theme.card, borderColor: theme.border }]}>
-            <View style={styles.tooltipHeader}>
-              <Text style={[styles.tooltipTitle, { color: theme.text }]}>
-                {selectedExercise} - {formattedDate}
-              </Text>
-              <TouchableOpacity onPress={closeTooltip}>
-                <Ionicons name="close" size={24} color={theme.text} />
-              </TouchableOpacity>
-            </View>
-            
-            <Text style={[styles.tooltipSubtitle, { color: theme.text }]}>
-              {calculationType === 'CES' 
-                ? `${t('CES')}: ${selectedPoint.y.toFixed(1)}`
-                : `${t('1RM')}: ${formatWeight(selectedPoint.y)}`
-              }
-            </Text>
-            
-            <View style={styles.tooltipSetsList}>
-              <Text style={[styles.tooltipSetsHeader, { color: theme.text }]}>
-                {t('Sets')}:
-              </Text>
-              <FlatList
-                data={selectedPoint.originalData}
-                keyExtractor={(item, index) => `${item.logged_exercise_id}_${index}`}
-                renderItem={({ item }) => (
-                  <View style={styles.tooltipSetItem}>
-                    <Text style={[styles.tooltipSetText, { color: theme.text }]}>
-                      {t('Set')} {item.set_number}: {formatWeight(item.weight_logged)} × {item.reps_logged} {t('Reps')}
-                    </Text>
-                  </View>
-                )}
-              />
-            </View>
-          </View>
+          <Ionicons 
+            name="fitness" 
+            size={20} 
+            color={calculationType === 'CES' ? theme.buttonText : theme.text} 
+          />
+          <Text style={[
+            styles.toggleText, 
+            { color: calculationType === 'CES' ? theme.buttonText : theme.text }
+          ]}>
+            {t('CES')}
+          </Text>
         </TouchableOpacity>
-      </Modal>
+        
+        <TouchableOpacity 
+          style={[
+            styles.toggleButton, 
+            calculationType === '1RM' && styles.toggleButtonActive,
+            { backgroundColor: calculationType === '1RM' ? theme.buttonBackground : theme.card }
+          ]}
+          onPress={() => setCalculationType('1RM')}
+        >
+          <Ionicons 
+            name="barbell" 
+            size={20} 
+            color={calculationType === '1RM' ? theme.buttonText : theme.text} 
+          />
+          <Text style={[
+            styles.toggleText, 
+            { color: calculationType === '1RM' ? theme.buttonText : theme.text }
+          ]}>
+            {t('1RM')}
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity 
+          style={[
+            styles.toggleButton, 
+            calculationType === 'Sets' && styles.toggleButtonActive,
+            { backgroundColor: calculationType === 'Sets' ? theme.buttonBackground : theme.card }
+          ]}
+          onPress={() => setCalculationType('Sets')}
+        >
+          <Ionicons 
+            name="analytics" 
+            size={20} 
+            color={calculationType === 'Sets' ? theme.buttonText : theme.text} 
+          />
+          <Text style={[
+            styles.toggleText, 
+            { color: calculationType === 'Sets' ? theme.buttonText : theme.text }
+          ]}>
+            {t('Sets')}
+          </Text>
+        </TouchableOpacity>
+      </View>
     );
   };
 
-  // Render the chart
+  // Update chart rendering to handle different calculation types
   const renderChart = () => {
+    if (calculationType === 'Sets') {
+      return renderSetsChart();
+    } else {
+      return renderRegularChart();
+    }
+  };
+
+  const renderRegularChart = () => {
     if (chartData.length === 0) {
       return (
         <View style={styles.noDataContainer}>
@@ -426,6 +545,162 @@ export default function GraphsWorkoutDetails() {
           onDataPointClick={handleDataPointClick}
         />
       </View>
+    );
+  };
+
+  const renderSetsChart = () => {
+    if (setsData.length === 0) {
+      return (
+        <View style={styles.noDataContainer}>
+          <Ionicons name="analytics-outline" size={60} color={theme.text} style={{ opacity: 0.5 }} />
+          <Text style={[styles.noDataText, { color: theme.text }]}>
+            {t('No data available for the selected criteria')}
+          </Text>
+        </View>
+      );
+    }
+
+    // Get all unique dates from all sets
+    const allDates = new Set<string>();
+    setsData.forEach(setData => {
+      setData.data.forEach(point => allDates.add(point.x));
+    });
+    const sortedDates = Array.from(allDates).sort();
+
+    // Create datasets for each set
+    const datasets = setsData.map(setData => {
+      // Create data array that matches all dates, filling with null for missing dates
+      const dataArray = sortedDates.map(date => {
+        const point = setData.data.find(p => p.x === date);
+        return point ? point.y : null;
+      }).filter(val => val !== null) as number[];
+
+      return {
+        data: dataArray,
+        color: (opacity = 1) => setData.color.replace('1)', `${opacity})`),
+        strokeWidth: 2,
+        withDots: true
+      };
+    });
+
+    const data = {
+      labels: sortedDates,
+      datasets: datasets,
+      legend: setsData.map(setData => `${t('Set')} ${setData.setNumber}`)
+    };
+
+    // Calculate dynamic height based on number of sets
+    const dynamicHeight = Math.max(220, 180 + (setsData.length * 10));
+
+    const chartConfig = {
+      backgroundColor: theme.card,
+      backgroundGradientFrom: theme.card,
+      backgroundGradientTo: theme.card,
+      decimalPlaces: 1,
+      color: (opacity = 1) => `rgba(0, 123, 255, ${opacity})`,
+      labelColor: (opacity = 1) => theme.text,
+      style: {
+        borderRadius: 16
+      },
+      propsForDots: {
+        r: '4',
+        strokeWidth: '2'
+      }
+    };
+
+    return (
+      <View style={styles.chartContainer}>
+        <LineChart
+          data={data}
+          width={screenWidth}
+          height={dynamicHeight}
+          chartConfig={chartConfig}
+          style={styles.chart}
+          verticalLabelRotation={30}
+          onDataPointClick={handleDataPointClick}
+        />
+        
+        {/* Legend for sets */}
+        <View style={[styles.legendContainer, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <Text style={[styles.legendTitle, { color: theme.text }]}>
+            {t('Sets Legend')}
+          </Text>
+          <View style={styles.legendItems}>
+            {setsData.map(setData => (
+              <View key={setData.setNumber} style={styles.legendItem}>
+                <View 
+                  style={[
+                    styles.legendColor, 
+                    { backgroundColor: setData.color }
+                  ]} 
+                />
+                <Text style={[styles.legendText, { color: theme.text }]}>
+                  {t('Set')} {setData.setNumber}
+                </Text>
+              </View>
+            ))}
+          </View>
+        </View>
+      </View>
+    );
+  };
+
+  // Render tooltip
+  const renderTooltip = () => {
+    if (!selectedPoint) return null;
+
+    const formattedDate = formatDate(selectedPoint.timestamp);
+    
+    return (
+      <Modal
+        transparent={true}
+        visible={tooltipVisible}
+        onRequestClose={closeTooltip}
+        animationType="fade"
+      >
+        <TouchableOpacity 
+          style={styles.tooltipOverlay} 
+          activeOpacity={1} 
+          onPress={closeTooltip}
+        >
+          <View style={[styles.tooltipContainer, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <View style={styles.tooltipHeader}>
+              <Text style={[styles.tooltipTitle, { color: theme.text }]}>
+                {selectedExercise} - {formattedDate}
+              </Text>
+              <TouchableOpacity onPress={closeTooltip}>
+                <Ionicons name="close" size={24} color={theme.text} />
+              </TouchableOpacity>
+            </View>
+            
+            <Text style={[styles.tooltipSubtitle, { color: theme.text }]}>
+              {calculationType === 'CES' 
+                ? `${t('CES')}: ${selectedPoint.y.toFixed(1)}`
+                : calculationType === '1RM'
+                ? `${t('1RM')}: ${formatWeight(selectedPoint.y)}`
+                : `${t('Weight')}: ${formatWeight(selectedPoint.y)}`
+              }
+            </Text>
+            
+            <View style={styles.tooltipSetsList}>
+              <Text style={[styles.tooltipSetsHeader, { color: theme.text }]}>
+                {t('Sets')}:
+              </Text>
+              <FlatList
+                data={selectedPoint.originalData}
+                keyExtractor={(item, index) => `${item.logged_exercise_id}_${index}`}
+                renderItem={({ item }) => (
+                  <View style={styles.tooltipSetItem}>
+                    <Text style={[styles.tooltipSetText, { color: theme.text }]}>
+                      {t('Set')} {item.set_number}: {formatWeight(item.weight_logged)} × {item.reps_logged} {t('Reps')}
+                    </Text>
+                  </View>
+                )}
+              />
+            </View>
+          </View>
+        </TouchableOpacity>
+      </Modal>
     );
   };
 
@@ -648,49 +923,7 @@ export default function GraphsWorkoutDetails() {
       </Text>
       
       {/* Calculation Type Toggle */}
-      <View style={styles.toggleContainer}>
-        <TouchableOpacity 
-          style={[
-            styles.toggleButton, 
-            calculationType === 'CES' && styles.toggleButtonActive,
-            { backgroundColor: calculationType === 'CES' ? theme.buttonBackground : theme.card }
-          ]}
-          onPress={() => setCalculationType('CES')}
-        >
-          <Ionicons 
-            name="fitness" 
-            size={20} 
-            color={calculationType === 'CES' ? theme.buttonText : theme.text} 
-          />
-          <Text style={[
-            styles.toggleText, 
-            { color: calculationType === 'CES' ? theme.buttonText : theme.text }
-          ]}>
-            {t('CES')}
-          </Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity 
-          style={[
-            styles.toggleButton, 
-            calculationType === '1RM' && styles.toggleButtonActive,
-            { backgroundColor: calculationType === '1RM' ? theme.buttonBackground : theme.card }
-          ]}
-          onPress={() => setCalculationType('1RM')}
-        >
-          <Ionicons 
-            name="barbell" 
-            size={20} 
-            color={calculationType === '1RM' ? theme.buttonText : theme.text} 
-          />
-          <Text style={[
-            styles.toggleText, 
-            { color: calculationType === '1RM' ? theme.buttonText : theme.text }
-          ]}>
-            {t('1RM')}
-          </Text>
-        </TouchableOpacity>
-      </View>
+      {renderCalculationTypeToggle()}
       
       {/* Day and Exercise Selectors */}
       <View style={[styles.selectionContainer, (dayDropdownVisible || exerciseDropdownVisible) && styles.expandedSelectionContainer]}>
@@ -702,7 +935,11 @@ export default function GraphsWorkoutDetails() {
       {/* Graph Area */}
       <View style={styles.graphSection}>
         <Text style={[styles.sectionTitle, { color: theme.text }]}>
-          {calculationType === 'CES' ? t('Combined Effort Score') : t('Estimated 1RM')}
+          {calculationType === 'CES' 
+            ? t('Combined Effort Score') 
+            : calculationType === '1RM' 
+            ? t('Estimated 1RM')
+            : t('Weight Progression by Sets')}
         </Text>
         
         {isLoading ? (
@@ -714,12 +951,18 @@ export default function GraphsWorkoutDetails() {
         {/* Info about calculation */}
         <View style={[styles.infoBox, { backgroundColor: theme.card, borderColor: theme.border }]}>
           <Text style={[styles.infoTitle, { color: theme.text }]}>
-            {calculationType === 'CES' ? t('About CES') : t('About 1RM')}
+            {calculationType === 'CES' 
+              ? t('About CES') 
+              : calculationType === '1RM' 
+              ? t('About 1RM')
+              : t('About Sets Progression')}
           </Text>
           <Text style={[styles.infoText, { color: theme.text }]}>
             {calculationType === 'CES' 
               ? t('CESExplanation')
-              : t('1RMExplanation')}
+              : calculationType === '1RM'
+              ? t('1RMExplanation')
+              : t('This graph shows the weight progression for each set position over time. Each line represents a different set number (Set 1, Set 2, etc.), allowing you to track how your performance changes throughout your workout sessions.')}
           </Text>
         </View>
       </View>
@@ -757,6 +1000,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     marginBottom: 20,
+    flexWrap: 'wrap',
   },
   toggleButton: {
     flexDirection: 'row',
@@ -765,6 +1009,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderRadius: 20,
     marginHorizontal: 5,
+    marginVertical: 2,
   },
   toggleButtonActive: {
     elevation: 2,
@@ -965,4 +1210,37 @@ const styles = StyleSheet.create({
   tooltipSetText: {
     fontSize: 15,
   },
-}); 
+  // New styles for sets legend
+  legendContainer: {
+    marginTop: 15,
+    padding: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+  },
+  legendTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  legendItems: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+  },
+  legendItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 8,
+    marginVertical: 4,
+  },
+  legendColor: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    marginRight: 6,
+  },
+  legendText: {
+    fontSize: 14,
+  },
+});
