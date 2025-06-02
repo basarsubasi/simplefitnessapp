@@ -651,31 +651,9 @@ export default function GraphsWorkoutDetails() {
   verticalLabelRotation={30}
   onDataPointClick={handleDataPointClick}
 />
-        
-        {/* Legend for sets */}
-        <View style={[styles.legendContainer, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <Text style={[styles.legendTitle, { color: theme.text }]}>
-            {t('Sets Legend')}
-          </Text>
-          <View style={styles.legendItems}>
-            {setsData.map(setData => (
-              <View key={setData.setNumber} style={styles.legendItem}>
-                <View 
-                  style={[
-                    styles.legendColor, 
-                    { backgroundColor: setData.color }
-                  ]} 
-                />
-                <Text style={[styles.legendText, { color: theme.text }]}>
-                  {t('Set')} {setData.setNumber}
-                </Text>
-              </View>
-            ))}
-          </View>
-        </View>
-      </View>
-    );
-  };
+</View>
+);
+};
 
   // Render tooltip
   const renderTooltip = () => {
