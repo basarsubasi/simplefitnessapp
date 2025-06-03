@@ -43,7 +43,7 @@ const StickyYAxis: React.FC<StickyYAxisProps> = ({
                 color: labelColor(),
                 fontSize: fontSize,
                 position: 'absolute',
-                top: yPosition - (fontSize / 1.5), // Adjust for vertical centering
+                top: yPosition + (fontSize) + 22, // Adjusted to shift labels down
                 right: 5,
                 left: 0, // Ensure it takes up space for textAlign
               },
