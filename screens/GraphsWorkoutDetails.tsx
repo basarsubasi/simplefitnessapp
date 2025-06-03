@@ -800,9 +800,9 @@ export default function GraphsWorkoutDetails() {
         borderRadius: 16
       },
       propsForDots: {
-        r: '6',
+        r: '4',
         strokeWidth: '2',
-        stroke: '#ff9f40' // Orange outline
+        stroke: '#ff9f40' // Orange color for dot outline
       },
       fillShadowGradientFrom: `rgba(255, 159, 64, 0.15)`, // Orange gradient
       fillShadowGradientTo: `rgba(255, 159, 64, 0.02)`,
@@ -901,9 +901,11 @@ export default function GraphsWorkoutDetails() {
         borderRadius: 16
       },
       propsForDots: {
-        r: '6',
+        r: '4',
         strokeWidth: '2',
-        stroke: '#ffa726' // Orange outline for both modes
+        stroke: calculationType === '1RM'
+          ? `rgba(0, 168, 132, 1)` // Same color as the line for 1RM
+          : `rgba(0, 123, 255, 1)` // Same color as the line for CES
       },
       fillShadowGradientFrom: calculationType === '1RM' 
         ? `rgba(0, 168, 132, 0.15)` // Jade green gradient for 1RM
