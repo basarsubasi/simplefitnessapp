@@ -8,7 +8,8 @@ import {
   ActivityIndicator,
   Dimensions,
   FlatList,
-  Modal
+  Modal,
+  
 } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { useSQLiteContext } from 'expo-sqlite';
@@ -1487,6 +1488,11 @@ export default function GraphsWorkoutDetails() {
       {/* Timeframe selector */}
       {renderTimeFrameButtons()}
       
+      {/* Tip Text */}
+      <Text style={[styles.tipText, { color: theme.text }]}>
+        {t('graphTipText')}
+      </Text>
+
       {/* Tooltip Modal */}
       {renderTooltip()}
     </ScrollView>
@@ -1794,4 +1800,9 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     marginRight: 8,
   },
+  tipText: {
+    textAlign: 'center',
+    fontSize: 14,
+    fontStyle: 'italic',
+  }
 });
