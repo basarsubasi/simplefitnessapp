@@ -38,13 +38,15 @@ type LogData = {
   logged_exercise_id: number;
 };
 type TimeFrame = 'week' | 'month' | 'year' | 'all';
-type CalculationType = 'CES' | '1RM' | 'Sets';
+type CalculationType = 'CES' | '1RM' | 'Sets' | 'Time';
 type ProcessedDataPoint = {
   x: string; // Date string for display
-  y: number; // Value (CES or 1RM)
+  y: number; // Value (CES, 1RM, or time in seconds)
   timestamp: number; // Raw timestamp for sorting
   originalData: LogData[]; // Store original data for tooltip
   originalWeight?: number; // Original weight before offset adjustment
+  workoutLogId?: number; // For time data
+  dayName?: string; // For time data
 };
 
 // Add new data structure for sets
@@ -61,6 +63,23 @@ type SetDataPoint = {
   weight: number;
   color: string;
   reps: number;
+};
+
+// Add new type for time data
+type TimeLogData = {
+  workout_log_id: number;
+  workout_date: number;
+  day_name: string;
+  completion_time: number;
+};
+
+// Add new type for workout session exercises
+type WorkoutSessionExercise = {
+  day_name: string;
+  exercise_name: string;
+  weight_logged: number;
+  reps_logged: number;
+  set_number: number;
 };
 
 export default function GraphsWorkoutDetails() {
@@ -96,6 +115,7 @@ export default function GraphsWorkoutDetails() {
   const [calculationType, setCalculationType] = useState<CalculationType>('Sets');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [logData, setLogData] = useState<LogData[]>([]);
+  const [timeLogData, setTimeLogData] = useState<TimeLogData[]>([]);
   const [chartData, setChartData] = useState<ProcessedDataPoint[]>([]);
   const [setsData, setSetsData] = useState<SetProgressData[]>([]);
 
@@ -106,6 +126,7 @@ export default function GraphsWorkoutDetails() {
   // Tooltip state
   const [tooltipVisible, setTooltipVisible] = useState<boolean>(false);
   const [selectedPoint, setSelectedPoint] = useState<ProcessedDataPoint | null>(null);
+  const [workoutSessionExercises, setWorkoutSessionExercises] = useState<WorkoutSessionExercise[]>([]);
 
   // Smart data sampling functions
   const getOptimalDataPoints = (data: ProcessedDataPoint[], timeFrame: TimeFrame): ProcessedDataPoint[] => {
@@ -161,6 +182,26 @@ export default function GraphsWorkoutDetails() {
     return Math.max(minWidth, calculatedWidth);
   };
 
+  // Add time formatting functions
+  const formatTimeFromSeconds = (seconds: number): string => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const remainingSeconds = seconds % 60;
+    
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+  };
+
+  const formatTimeForChart = (seconds: number): string => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    
+    if (hours > 0) {
+      return `${hours}:${minutes.toString().padStart(2, '0')}h`;
+    } else {
+      return `${minutes}m`;
+    }
+  };
+
   // Fetch days for the selected workout
   useEffect(() => {
     fetchDays();
@@ -175,17 +216,21 @@ export default function GraphsWorkoutDetails() {
 
   // Fetch and process data when exercise, timeframe, or calculation type changes
   useEffect(() => {
-    if (selectedExercise) {
+    if (calculationType === 'Time') {
+      fetchTimeData();
+    } else if (selectedExercise) {
       fetchData();
     }
   }, [selectedExercise, timeFrame, calculationType]);
 
   // Process log data into chart data
   useEffect(() => {
-    if (logData.length > 0) {
+    if (calculationType === 'Time' && timeLogData.length > 0) {
+      processTimeDataForChart();
+    } else if (logData.length > 0) {
       processDataForChart();
     }
-  }, [logData, calculationType, timeFrame]);
+  }, [logData, timeLogData, calculationType, timeFrame]);
 
   const fetchDays = async () => {
     try {
@@ -284,6 +329,92 @@ export default function GraphsWorkoutDetails() {
       console.error('Error fetching log data:', error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const fetchTimeData = async () => {
+    setIsLoading(true);
+    try {
+      // Calculate date based on timeframe
+      const now = new Date();
+      let startDate = new Date();
+      
+      switch (timeFrame) {
+        case 'week':
+          startDate.setDate(now.getDate() - 7);
+          break;
+        case 'month':
+          startDate.setMonth(now.getMonth() - 1);
+          break;
+        case 'year':
+          startDate.setFullYear(now.getFullYear() - 1);
+          break;
+        case 'all':
+          startDate = new Date(0); // Beginning of time (1970)
+          break;
+      }
+      
+      const startTimestamp = Math.floor(startDate.getTime() / 1000);
+      
+      const result = await db.getAllAsync<TimeLogData>(
+        `SELECT workout_log_id, workout_date, day_name, completion_time
+         FROM Workout_Log
+         WHERE workout_name = ? 
+         AND completion_time IS NOT NULL
+         AND workout_date >= ?
+         ORDER BY workout_date ASC`,
+        [workoutName, startTimestamp]
+      );
+      
+      setTimeLogData(result);
+    } catch (error) {
+      console.error('Error fetching time data:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const processTimeDataForChart = () => {
+    const processedData: ProcessedDataPoint[] = timeLogData.map(log => {
+      const date = new Date(log.workout_date * 1000);
+      
+      // Format the date for display in chart
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const formattedDate = dateFormat === 'mm-dd-yyyy'
+        ? `${month}/${day}`
+        : `${day}/${month}`;
+      
+      return {
+        x: formattedDate,
+        y: log.completion_time, // completion_time is already in seconds
+        timestamp: log.workout_date,
+        originalData: [], // Will be populated when needed for tooltip
+        workoutLogId: log.workout_log_id,
+        dayName: log.day_name
+      };
+    });
+    
+    // Apply smart sampling based on timeframe
+    const optimizedData = getOptimalDataPoints(processedData, timeFrame);
+    setChartData(optimizedData);
+  };
+
+  const fetchWorkoutSessionExercises = async (workoutLogId: number) => {
+    try {
+      const result = await db.getAllAsync<WorkoutSessionExercise>(
+        `SELECT Weight_Log.exercise_name, Weight_Log.weight_logged, 
+                Weight_Log.reps_logged, Weight_Log.set_number, Workout_Log.day_name
+         FROM Weight_Log
+         INNER JOIN Workout_Log ON Weight_Log.workout_log_id = Workout_Log.workout_log_id
+         WHERE Workout_Log.workout_log_id = ?
+         ORDER BY Workout_Log.day_name ASC, Weight_Log.exercise_name ASC, Weight_Log.set_number ASC`,
+        [workoutLogId]
+      );
+      
+      setWorkoutSessionExercises(result);
+    } catch (error) {
+      console.error('Error fetching workout session exercises:', error);
     }
   };
 
@@ -466,8 +597,18 @@ export default function GraphsWorkoutDetails() {
     }
   };
 
-  const handleDataPointClick = (data: any) => {
-    if (calculationType === 'Sets') {
+  const handleDataPointClick = async (data: any) => {
+    if (calculationType === 'Time') {
+      // For time chart, fetch the workout session details
+      if (data.index !== undefined && chartData[data.index]) {
+        const clickedPoint = chartData[data.index];
+        setSelectedPoint(clickedPoint);
+        if (clickedPoint.workoutLogId) {
+          await fetchWorkoutSessionExercises(clickedPoint.workoutLogId);
+        }
+        setTooltipVisible(true);
+      }
+    } else if (calculationType === 'Sets') {
       // For sets chart, we need to find which timestamp was clicked
       if (data.index !== undefined) {
         // Get all unique timestamps sorted
@@ -504,9 +645,10 @@ export default function GraphsWorkoutDetails() {
   const closeTooltip = () => {
     setTooltipVisible(false);
     setSelectedPoint(null);
+    setWorkoutSessionExercises([]);
   };
 
-  // Update calculation type toggle to include Sets
+  // Update calculation type toggle to include Time
   const renderCalculationTypeToggle = () => {
     return (
       <View style={styles.toggleContainer}>
@@ -572,17 +714,122 @@ export default function GraphsWorkoutDetails() {
             {t('1RM')}
           </Text>
         </TouchableOpacity>
+
+        <TouchableOpacity 
+          style={[
+            styles.toggleButton, 
+            calculationType === 'Time' && styles.toggleButtonActive,
+            { backgroundColor: calculationType === 'Time' ? theme.buttonBackground : theme.card }
+          ]}
+          onPress={() => setCalculationType('Time')}
+        >
+          <Ionicons 
+            name="time" 
+            size={20} 
+            color={calculationType === 'Time' ? theme.buttonText : theme.text} 
+          />
+          <Text style={[
+            styles.toggleText, 
+            { color: calculationType === 'Time' ? theme.buttonText : theme.text }
+          ]}>
+            {t('Time')}
+          </Text>
+        </TouchableOpacity>
       </View>
     );
   };
 
   // Update chart rendering to handle different calculation types
   const renderChart = () => {
-    if (calculationType === 'Sets') {
+    if (calculationType === 'Time') {
+      return renderTimeChart();
+    } else if (calculationType === 'Sets') {
       return renderSetsChart();
     } else {
       return renderRegularChart();
     }
+  };
+
+  const renderTimeChart = () => {
+    if (chartData.length === 0) {
+      return (
+        <View style={styles.noDataContainer}>
+          <Ionicons name="time-outline" size={60} color={theme.text} style={{ opacity: 0.5 }} />
+          <Text style={[styles.noDataText, { color: theme.text }]}>
+            {t('No completion time data available')}
+          </Text>
+        </View>
+      );
+    }
+
+    const data = {
+      labels: chartData.map(point => point.x),
+      datasets: [
+        {
+          data: chartData.map(point => point.y),
+          color: (opacity = 1) => `rgba(255, 159, 64, ${opacity})`, // Orange color
+          strokeWidth: 2
+        }
+      ],
+      legend: [t('Completion Time')]
+    };
+
+    const chartConfig = {
+      backgroundColor: theme.card,
+      backgroundGradientFrom: theme.card,
+      backgroundGradientTo: theme.card,
+      decimalPlaces: 0,
+      color: (opacity = 1) => `rgba(255, 159, 64, ${opacity})`, // Orange color
+      labelColor: (opacity = 1) => theme.text,
+      style: {
+        borderRadius: 16
+      },
+      propsForDots: {
+        r: '6',
+        strokeWidth: '2',
+        stroke: '#ff9f40' // Orange outline
+      },
+      fillShadowGradientFrom: `rgba(255, 159, 64, 0.15)`, // Orange gradient
+      fillShadowGradientTo: `rgba(255, 159, 64, 0.02)`,
+      fillShadowGradientFromOpacity: 0.5,
+      fillShadowGradientToOpacity: 0.1,
+      useShadowColorFromDataset: true,
+      withShadow: true,
+      withInnerLines: true,
+      withOuterLines: true,
+      formatYLabel: (yValue: string) => {
+        const seconds = parseInt(yValue);
+        return formatTimeForChart(seconds);
+      }
+    };
+
+    const chartWidth = getChartWidth(chartData.length);
+
+    return (
+      <View style={styles.chartContainer}>
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.chartScrollContainer}
+        >
+          <LineChart
+            data={data}
+            width={chartWidth}
+            height={220}
+            chartConfig={chartConfig}
+            bezier
+            style={styles.chart}
+            verticalLabelRotation={30}
+            onDataPointClick={handleDataPointClick}
+          />
+        </ScrollView>
+        {chartData.length > 5 && (
+          <Text style={[styles.scrollHint, { color: theme.text }]}>
+            ← {t('Scroll horizontally to see more data')} →
+          </Text>
+        )}
+      </View>
+    );
   };
 
   const renderRegularChart = () => {
@@ -796,7 +1043,7 @@ export default function GraphsWorkoutDetails() {
     );
   };
 
-  // Render tooltip
+  // Update tooltip to handle time data
   const renderTooltip = () => {
     if (!selectedPoint) return null;
 
@@ -818,6 +1065,15 @@ export default function GraphsWorkoutDetails() {
       });
     }
 
+    // Group exercises by day for time mode
+    const exercisesByDay = workoutSessionExercises.reduce((acc, exercise) => {
+      if (!acc[exercise.day_name]) {
+        acc[exercise.day_name] = [];
+      }
+      acc[exercise.day_name].push(exercise);
+      return acc;
+    }, {} as Record<string, WorkoutSessionExercise[]>);
+
     return (
       <Modal
         transparent={true}
@@ -833,14 +1089,64 @@ export default function GraphsWorkoutDetails() {
           <View style={[styles.tooltipContainer, { backgroundColor: theme.card, borderColor: theme.border }]}>
             <View style={styles.tooltipHeader}>
               <Text style={[styles.tooltipTitle, { color: theme.text }]}>
-                {selectedExercise} - {formattedDate}
+                {calculationType === 'Time' 
+                  ? `${selectedPoint.dayName} - ${formattedDate}`
+                  : `${selectedExercise} - ${formattedDate}`
+                }
               </Text>
               <TouchableOpacity onPress={closeTooltip}>
                 <Ionicons name="close" size={24} color={theme.text} />
               </TouchableOpacity>
             </View>
             
-            {calculationType === 'Sets' ? (
+            {calculationType === 'Time' ? (
+              <>
+                <Text style={[styles.tooltipSubtitle, { color: theme.text }]}>
+                  {t('Completion Time')}: {formatTimeFromSeconds(selectedPoint.y)}
+                </Text>
+                
+                <ScrollView style={styles.tooltipSetsList} nestedScrollEnabled>
+                  {Object.entries(exercisesByDay).map(([dayName, exercises]) => (
+                    <View key={dayName} style={styles.tooltipDaySection}>
+                      {exercises.reduce((acc, exercise) => {
+                        const existingExercise = acc.find(ex => ex.exercise_name === exercise.exercise_name);
+                        if (existingExercise) {
+                          existingExercise.sets.push({
+                            set_number: exercise.set_number,
+                            weight_logged: exercise.weight_logged,
+                            reps_logged: exercise.reps_logged
+                          });
+                        } else {
+                          acc.push({
+                            exercise_name: exercise.exercise_name,
+                            sets: [{
+                              set_number: exercise.set_number,
+                              weight_logged: exercise.weight_logged,
+                              reps_logged: exercise.reps_logged
+                            }]
+                          });
+                        }
+                        return acc;
+                      }, [] as Array<{exercise_name: string, sets: Array<{set_number: number, weight_logged: number, reps_logged: number}>}>)
+                      .map((exercise) => (
+                        <View key={exercise.exercise_name} style={styles.tooltipExerciseItem}>
+                          <Text style={[styles.tooltipExerciseName, { color: theme.text }]}>
+                            {exercise.exercise_name}
+                          </Text>
+                          {exercise.sets
+                            .sort((a, b) => a.set_number - b.set_number)
+                            .map((set) => (
+                            <Text key={set.set_number} style={[styles.tooltipSetText, { color: theme.text, marginLeft: 10 }]}>
+                              {t('Set')} {set.set_number}: {formatWeight(set.weight_logged)} × {set.reps_logged} {t('reps')}
+                            </Text>
+                          ))}
+                        </View>
+                      ))}
+                    </View>
+                  ))}
+                </ScrollView>
+              </>
+            ) : calculationType === 'Sets' ? (
               <View style={styles.tooltipSetsList}>
                 <FlatList
                   data={dateData}
@@ -932,8 +1238,10 @@ export default function GraphsWorkoutDetails() {
     );
   };
 
-  // Render day dropdown button
+  // Render day dropdown button - hide for Time mode
   const renderDayDropdown = () => {
+    if (calculationType === 'Time') return null;
+    
     const selectedDayObj = days.find(day => day.value === selectedDay);
     
     return (
@@ -1003,8 +1311,10 @@ export default function GraphsWorkoutDetails() {
     );
   };
 
-  // Render exercise dropdown button
+  // Render exercise dropdown button - hide for Time mode
   const renderExerciseDropdown = () => {
+    if (calculationType === 'Time') return null;
+    
     const selectedExerciseObj = exercises.find(exercise => exercise.value === selectedExercise);
     
     return (
@@ -1107,12 +1417,14 @@ export default function GraphsWorkoutDetails() {
       {/* Calculation Type Toggle */}
       {renderCalculationTypeToggle()}
       
-      {/* Day and Exercise Selectors */}
-      <View style={[styles.selectionContainer, (dayDropdownVisible || exerciseDropdownVisible) && styles.expandedSelectionContainer]}>
-        {/* Custom dropdown selectors */}
-        {renderDayDropdown()}
-        {renderExerciseDropdown()}
-      </View>
+      {/* Day and Exercise Selectors - Hidden for Time mode */}
+      {calculationType !== 'Time' && (
+        <View style={[styles.selectionContainer, (dayDropdownVisible || exerciseDropdownVisible) && styles.expandedSelectionContainer]}>
+          {/* Custom dropdown selectors */}
+          {renderDayDropdown()}
+          {renderExerciseDropdown()}
+        </View>
+      )}
       
       {/* Graph Area */}
       <View style={styles.graphSection}>
@@ -1121,6 +1433,8 @@ export default function GraphsWorkoutDetails() {
             ? t('Combined Effort Score') 
             : calculationType === '1RM' 
             ? t('Estimated 1RM')
+            : calculationType === 'Time'
+            ? t('Workout Completion Time')
             : t('Weight Progression by Sets')}
         </Text>
         
@@ -1137,6 +1451,8 @@ export default function GraphsWorkoutDetails() {
               ? t('About CES') 
               : calculationType === '1RM' 
               ? t('About 1RM')
+              : calculationType === 'Time'
+              ? t('About Completion Time')
               : t('About Sets Progression')}
           </Text>
           <Text style={[styles.infoText, { color: theme.text }]}>
@@ -1144,6 +1460,8 @@ export default function GraphsWorkoutDetails() {
               ? t('CESExplanation')
               : calculationType === '1RM'
               ? t('1RMExplanation')
+              : calculationType === 'Time'
+              ? t('This graph shows how long it takes you to complete your workout sessions over time. Click on any point to see the detailed breakdown of exercises and sets for that workout session.')
               : t('This graph shows the weight progression for each set position over time. Each line represents a different set number (Set 1, Set 2, etc.), allowing you to track how your performance changes throughout your workout sessions.')}
           </Text>
         </View>
@@ -1362,6 +1680,7 @@ const styles = StyleSheet.create({
   },
   tooltipContainer: {
     width: '90%',
+    maxHeight: '80%',
     borderRadius: 15,
     padding: 15,
     borderWidth: 1,
@@ -1380,6 +1699,7 @@ const styles = StyleSheet.create({
   tooltipTitle: {
     fontSize: 18,
     fontWeight: 'bold',
+    flex: 1,
   },
   tooltipSubtitle: {
     fontSize: 16,
@@ -1399,6 +1719,24 @@ const styles = StyleSheet.create({
   },
   tooltipSetText: {
     fontSize: 15,
+  },
+  tooltipDaySection: {
+    marginBottom: 15,
+  },
+  tooltipDayHeader: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 8,
+    textDecorationLine: 'underline',
+  },
+  tooltipExerciseItem: {
+    marginBottom: 10,
+    paddingLeft: 5,
+  },
+  tooltipExerciseName: {
+    fontSize: 15,
+    fontWeight: '600',
+    marginBottom: 4,
   },
   // New styles for sets legend
   legendContainer: {
