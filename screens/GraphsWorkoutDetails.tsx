@@ -762,11 +762,26 @@ export default function GraphsWorkoutDetails() {
       );
     }
 
+    const formattedChartData = chartData.map(point => {
+      const date = new Date(point.timestamp * 1000);
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      
+      const formattedDate = dateFormat === 'mm-dd-yyyy'
+        ? `${month}/${day}`
+        : `${day}/${month}`;
+        
+      return {
+        ...point,
+        x: formattedDate
+      };
+    });
+
     const data = {
-      labels: chartData.map(point => point.x),
+      labels: formattedChartData.map(point => point.x),
       datasets: [
         {
-          data: chartData.map(point => point.y),
+          data: formattedChartData.map(point => point.y),
           color: (opacity = 1) => `rgba(255, 159, 64, ${opacity})`, // Orange color
           strokeWidth: 2
         }
