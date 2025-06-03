@@ -530,7 +530,7 @@ export default function GraphsWorkoutDetails() {
   
     // Process data for each set
     const setsProgressData: SetProgressData[] = [];
-
+  
     // Create a map to track points at each timestamp for overlap detection
     const timestampWeightMap: Record<number, number[]> = {};
   
@@ -548,22 +548,22 @@ export default function GraphsWorkoutDetails() {
         const formattedDate = dateFormat === 'mm-dd-yyyy'
           ? `${month}/${day}`
           : `${day}/${month}`;
-
+  
         const setLog = logs[0];
         const weight = setLog.weight_logged;
-
+  
         // Skip if weight is 0 or negative
         if (weight <= 0) return;
-
+  
         // Initialize the weight array for this timestamp if it doesn't exist
         if (!timestampWeightMap[timestamp]) {
           timestampWeightMap[timestamp] = [];
         }
-
+  
         // Count how many times this weight appears at this timestamp
         const weightCount = timestampWeightMap[timestamp].filter(w => Math.abs(w - weight) < 0.1).length;
-        // Add a small offset if there are overlapping points
-        const adjustedWeight = weight + (weightCount * 0.8);
+        // Add a small offset if there are overlapping points (reduced offset)
+        const adjustedWeight = weight + (weightCount * 0.3); // Reduced from 0.8 to 0.3
         
         // Store the original weight for future overlap checks
         timestampWeightMap[timestamp].push(weight);
@@ -979,32 +979,30 @@ export default function GraphsWorkoutDetails() {
       return dateFormat === 'mm-dd-yyyy' ? `${month}/${day}` : `${day}/${month}`;
     });
   
-    // Create datasets for each set - using null for missing data
+    // Create datasets for each set - using 0 instead of null for missing data
     const datasets = setsData.map(setData => {
-      const dataArray: (number | null)[] = sortedTimestamps.map(timestamp => {
+      const dataArray = sortedTimestamps.map(timestamp => {
         const point = setData.data.find(p => p.timestamp === timestamp);
-        // Return actual value or null for missing data
         if (point && point.originalWeight && point.originalWeight > 0) {
           return point.y;
         }
-        return null; // Use null for missing data points
+        return 0; // Use 0 instead of null - this will show as gaps in the line
       });
   
       return {
         data: dataArray,
         color: (opacity = 1) => setData.color,
-        strokeWidth: 2
+        strokeWidth: 2,
       };
     });
   
-    // Type assertion to make TypeScript accept our data structure
     const data = {
       labels: sortedDates,
       datasets: datasets,
       legend: setsData.length > 5 
         ? setsData.map(() => '') 
         : setsData.map(setData => `${t('Set')} ${setData.setNumber}`)
-    } as any; // Type assertion here
+    };
   
     const dynamicHeight = Math.max(220, 180 + (setsData.length > 5 ? setsData.length * 5 : setsData.length * 10));
     const chartWidth = getChartWidth(sortedDates.length);
@@ -1031,6 +1029,8 @@ export default function GraphsWorkoutDetails() {
       withShadow: false,
       withInnerLines: true,
       withOuterLines: true,
+      // Remove segments to let the chart auto-scale better
+      fromZero: false, // Don't force the chart to start from 0
     };
   
     return (
