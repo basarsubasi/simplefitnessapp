@@ -93,7 +93,7 @@ export default function GraphsWorkoutDetails() {
   const [exercises, setExercises] = useState<ExerciseOption[]>([]);
   const [selectedExercise, setSelectedExercise] = useState<string>('');
   const [timeFrame, setTimeFrame] = useState<TimeFrame>('month');
-  const [calculationType, setCalculationType] = useState<CalculationType>('CES');
+  const [calculationType, setCalculationType] = useState<CalculationType>('Sets');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [logData, setLogData] = useState<LogData[]>([]);
   const [chartData, setChartData] = useState<ProcessedDataPoint[]>([]);
@@ -433,6 +433,27 @@ export default function GraphsWorkoutDetails() {
         <TouchableOpacity 
           style={[
             styles.toggleButton, 
+            calculationType === 'Sets' && styles.toggleButtonActive,
+            { backgroundColor: calculationType === 'Sets' ? theme.buttonBackground : theme.card }
+          ]}
+          onPress={() => setCalculationType('Sets')}
+        >
+          <Ionicons 
+            name="analytics" 
+            size={20} 
+            color={calculationType === 'Sets' ? theme.buttonText : theme.text} 
+          />
+          <Text style={[
+            styles.toggleText, 
+            { color: calculationType === 'Sets' ? theme.buttonText : theme.text }
+          ]}>
+            {t('Sets')}
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity 
+          style={[
+            styles.toggleButton, 
             calculationType === 'CES' && styles.toggleButtonActive,
             { backgroundColor: calculationType === 'CES' ? theme.buttonBackground : theme.card }
           ]}
@@ -471,27 +492,6 @@ export default function GraphsWorkoutDetails() {
             {t('1RM')}
           </Text>
         </TouchableOpacity>
-
-        <TouchableOpacity 
-          style={[
-            styles.toggleButton, 
-            calculationType === 'Sets' && styles.toggleButtonActive,
-            { backgroundColor: calculationType === 'Sets' ? theme.buttonBackground : theme.card }
-          ]}
-          onPress={() => setCalculationType('Sets')}
-        >
-          <Ionicons 
-            name="analytics" 
-            size={20} 
-            color={calculationType === 'Sets' ? theme.buttonText : theme.text} 
-          />
-          <Text style={[
-            styles.toggleText, 
-            { color: calculationType === 'Sets' ? theme.buttonText : theme.text }
-          ]}>
-            {t('Sets')}
-          </Text>
-        </TouchableOpacity>
       </View>
     );
   };
@@ -517,14 +517,11 @@ export default function GraphsWorkoutDetails() {
       );
     }
 
-    // Ensure dates are formatted according to user's preference
     const formattedChartData = chartData.map(point => {
-      // Parse the date from timestamp
       const date = new Date(point.timestamp * 1000);
       const day = date.getDate().toString().padStart(2, '0');
       const month = (date.getMonth() + 1).toString().padStart(2, '0');
       
-      // Format according to preference (short format for chart labels)
       const formattedDate = dateFormat === 'mm-dd-yyyy'
         ? `${month}/${day}`
         : `${day}/${month}`;
@@ -540,7 +537,9 @@ export default function GraphsWorkoutDetails() {
       datasets: [
         {
           data: formattedChartData.map(point => point.y),
-          color: (opacity = 1) => `rgba(0, 123, 255, ${opacity})`,
+          color: (opacity = 1) => calculationType === '1RM' 
+            ? `rgba(0, 168, 132, ${opacity})` // Jade green for 1RM
+            : `rgba(0, 123, 255, ${opacity})`, // Keep blue for CES
           strokeWidth: 2
         }
       ],
@@ -552,7 +551,9 @@ export default function GraphsWorkoutDetails() {
       backgroundGradientFrom: theme.card,
       backgroundGradientTo: theme.card,
       decimalPlaces: 1,
-      color: (opacity = 1) => `rgba(0, 123, 255, ${opacity})`,
+      color: (opacity = 1) => calculationType === '1RM'
+        ? `rgba(0, 168, 132, ${opacity})` // Jade green for 1RM
+        : `rgba(0, 123, 255, ${opacity})`, // Keep blue for CES
       labelColor: (opacity = 1) => theme.text,
       style: {
         borderRadius: 16
@@ -560,10 +561,14 @@ export default function GraphsWorkoutDetails() {
       propsForDots: {
         r: '6',
         strokeWidth: '2',
-        stroke: '#ffa726'
+        stroke: '#ffa726' // Orange outline for both modes
       },
-      fillShadowGradientFrom: `rgba(0, 123, 255, 0.15)`,
-      fillShadowGradientTo: `rgba(0, 123, 255, 0.02)`,
+      fillShadowGradientFrom: calculationType === '1RM' 
+        ? `rgba(0, 168, 132, 0.15)` // Jade green gradient for 1RM
+        : `rgba(0, 123, 255, 0.15)`,
+      fillShadowGradientTo: calculationType === '1RM'
+        ? `rgba(0, 168, 132, 0.02)` // Jade green gradient for 1RM
+        : `rgba(0, 123, 255, 0.02)`,
       fillShadowGradientFromOpacity: 0.5,
       fillShadowGradientToOpacity: 0.1,
       useShadowColorFromDataset: true,
