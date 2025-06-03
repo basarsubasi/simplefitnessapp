@@ -18,6 +18,7 @@ import { useTheme } from '../context/ThemeContext';
 import { useTranslation } from 'react-i18next';
 import { LineChart } from 'react-native-chart-kit';
 import { useSettings } from '../context/SettingsContext';
+import StickyYAxis from '../components/StickyYAxis';
 
 // Define the type for route params
 type GraphsParamList = {
@@ -458,6 +459,58 @@ export default function GraphsWorkoutDetails() {
     return `${weight.toFixed(1)} ${weightFormat}`;
   };
 
+  const generateYTickLabels = (
+    yValues: number[],
+    segments: number,
+    formatYLabel: (valueStr: string, textStr?: string) => string,
+    fromZero: boolean,
+    decimalPlaces?: number
+  ): string[] => {
+    if (!yValues || yValues.length === 0 || segments === 0) {
+      return [];
+    }
+
+    let yMin = fromZero && yValues.every(v => v >= 0) ? 0 : Math.min(...yValues);
+    let yMax = Math.max(...yValues);
+
+    if (yMin === yMax) {
+      if (yMin === 0 && fromZero) {
+        yMax = 1;
+      } else if (yMin > 0) {
+        yMin = fromZero ? 0 : yMin * 0.8;
+        yMax = yMax * 1.2;
+      } else if (yMin < 0) {
+        yMax = 0;
+        yMin = yMin * 1.2;
+      } else {
+        yMax = 1;
+        yMin = -1;
+      }
+    }
+    
+    if (yMin > yMax) {
+      yMin = yMax -1; 
+      if (fromZero && yMin < 0 && yValues.every(v => v >= 0)) yMin = 0;
+    }
+
+    const yRange = yMax - yMin;
+    const tickLabels: string[] = [];
+
+    const effectiveYMax = yRange === 0 && yMin === 0 ? 1 : yMax;
+    const effectiveYMin = yMin;
+    const effectiveYRange = effectiveYMax - effectiveYMin;
+
+    if (segments > 0) {
+        for (let i = 0; i <= segments; i++) {
+          const value = effectiveYMax - (effectiveYRange * (i / segments));
+          let labelText = decimalPlaces !== undefined ? value.toFixed(decimalPlaces) : String(value);
+          let label = formatYLabel(String(value), labelText);
+          tickLabels.push(label);
+        }
+    }
+    return tickLabels;
+  };
+
   // Update processDataForChart to handle different calculation types
   const processDataForChart = () => {
     if (calculationType === 'Sets') {
@@ -740,15 +793,119 @@ export default function GraphsWorkoutDetails() {
     );
   };
 
-  // Update chart rendering to handle different calculation types
-  const renderChart = () => {
-    if (calculationType === 'Time') {
-      return renderTimeChart();
-    } else if (calculationType === 'Sets') {
-      return renderSetsChart();
-    } else {
-      return renderRegularChart();
+  // Define chart-specific rendering functions BEFORE renderChart
+  const renderRegularChart = () => {
+    if (chartData.length === 0) {
+      return (
+        <View style={styles.noDataContainer}>
+          <Ionicons name="analytics-outline" size={60} color={theme.text} style={{ opacity: 0.5 }} />
+          <Text style={[styles.noDataText, { color: theme.text }]}>
+            {t('No data available for the selected criteria')}
+          </Text>
+        </View>
+      );
     }
+
+    const formattedChartData = chartData.map(point => {
+      const date = new Date(point.timestamp * 1000);
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const formattedDate = dateFormat === 'mm-dd-yyyy' ? `${month}/${day}` : `${day}/${month}`;
+      return { ...point, x: formattedDate };
+    });
+
+    const yValues = formattedChartData.map(point => point.y);
+    const chartHeight = 220;
+    const yAxisWidth = 55; 
+    const lineChartContentWidth = getChartWidth(chartData.length);
+    const lineChartSegments = 4; 
+
+    const lineChartConfig = {
+      backgroundColor: theme.card,
+      backgroundGradientFrom: theme.card,
+      backgroundGradientTo: theme.card,
+      decimalPlaces: 1,
+      color: (opacity = 1) => calculationType === '1RM' 
+        ? `rgba(0, 168, 132, ${opacity})` 
+        : `rgba(0, 123, 255, ${opacity})`,
+      labelColor: (opacity = 1) => theme.text,
+      style: { borderRadius: 16 },
+      propsForDots: {
+        r: '4',
+        strokeWidth: '2',
+        stroke: calculationType === '1RM' ? `rgba(0, 168, 132, 1)` : `rgba(0, 123, 255, 1)`
+      },
+      fillShadowGradientFrom: calculationType === '1RM' ? `rgba(0, 168, 132, 0.15)` : `rgba(0, 123, 255, 0.15)`,
+      fillShadowGradientTo: calculationType === '1RM' ? `rgba(0, 168, 132, 0.02)` : `rgba(0, 123, 255, 0.02)`,
+      fillShadowGradientFromOpacity: 0.5,
+      fillShadowGradientToOpacity: 0.1,
+      useShadowColorFromDataset: true,
+      withShadow: true,
+      withInnerLines: true,
+      withOuterLines: true,
+      fromZero: false,
+    };
+
+    const defaultFormatYLabel = (yLabelValue: string, yLabelText?: string) => {
+        return yLabelText || yLabelValue;
+    };
+
+    const yTickLabels = generateYTickLabels(
+      yValues,
+      lineChartSegments,
+      defaultFormatYLabel,
+      lineChartConfig.fromZero || false,
+      lineChartConfig.decimalPlaces
+    );
+
+    const lineChartProps = {
+      data: {
+        labels: formattedChartData.map(point => point.x),
+        datasets: [{
+          data: yValues,
+          color: lineChartConfig.color,
+          strokeWidth: 2
+        }],
+        legend: [calculationType === 'CES' ? 'Combined Effort Score' : t('Estimated 1RM')]
+      },
+      width: lineChartContentWidth,
+      height: chartHeight,
+      chartConfig: lineChartConfig,
+      bezier: true,
+      style: styles.chart,
+      verticalLabelRotation: 30,
+      onDataPointClick: handleDataPointClick,
+      withHorizontalLabels: false,
+      paddingRight: 0, // This is the prop causing the linter issue
+      segments: lineChartSegments,
+    };
+
+    return (
+      <View style={styles.chartContainer}>
+        <View style={{ flexDirection: 'row' }}>
+          <StickyYAxis
+            chartHeight={chartHeight}
+            yTickLabels={yTickLabels}
+            labelColor={lineChartConfig.labelColor}
+            chartPaddingTop={16}
+            fontSize={10}
+            axisWidth={yAxisWidth}
+          />
+          <ScrollView 
+            horizontal 
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.chartScrollContainer}
+          >
+            <LineChart {...lineChartProps as any} />
+          </ScrollView>
+        </View>
+        {chartData.length > 5 && (
+          <Text style={[styles.scrollHint, { color: theme.text }]}>
+            ← {t('Scroll horizontally to see more data')} →
+          </Text>
+        )}
+      </View>
+    );
   };
 
   const renderTimeChart = () => {
@@ -767,45 +924,34 @@ export default function GraphsWorkoutDetails() {
       const date = new Date(point.timestamp * 1000);
       const day = date.getDate().toString().padStart(2, '0');
       const month = (date.getMonth() + 1).toString().padStart(2, '0');
-      
-      const formattedDate = dateFormat === 'mm-dd-yyyy'
-        ? `${month}/${day}`
-        : `${day}/${month}`;
-        
-      return {
-        ...point,
-        x: formattedDate
-      };
+      const formattedDate = dateFormat === 'mm-dd-yyyy' ? `${month}/${day}` : `${day}/${month}`;
+      return { ...point, x: formattedDate }; // x is for labels, y for values
     });
 
-    const data = {
-      labels: formattedChartData.map(point => point.x),
-      datasets: [
-        {
-          data: formattedChartData.map(point => point.y),
-          color: (opacity = 1) => `rgba(255, 159, 64, ${opacity})`, // Orange color
-          strokeWidth: 2
-        }
-      ],
-      legend: [t('Completion Time')]
+    const yValues = formattedChartData.map(point => point.y); // These are completion times in seconds
+    const chartHeight = 220;
+    const yAxisWidth = 65; // Adjusted for potentially wider time labels
+    const lineChartContentWidth = getChartWidth(chartData.length);
+    const lineChartSegments = 4; // Default segments
+
+    // Specific Y-axis formatter for time values (seconds to H:MMh or MMm)
+    const timeChartFormatYLabel = (yLabelValue: string) => {
+      const seconds = parseInt(yLabelValue, 10);
+      if (isNaN(seconds)) return '0m'; // Should not happen with valid data
+      return formatTimeForChart(seconds);
     };
 
-    const chartConfig = {
+    // Define timeChartConfig before it's used by generateYTickLabels
+    const timeChartConfig = {
       backgroundColor: theme.card,
       backgroundGradientFrom: theme.card,
       backgroundGradientTo: theme.card,
-      decimalPlaces: 0,
+      decimalPlaces: 0, // Time is typically whole numbers when formatted
       color: (opacity = 1) => `rgba(255, 159, 64, ${opacity})`, // Orange color
-      labelColor: (opacity = 1) => theme.text,
-      style: {
-        borderRadius: 16
-      },
-      propsForDots: {
-        r: '4',
-        strokeWidth: '2',
-        stroke: '#ff9f40' // Orange color for dot outline
-      },
-      fillShadowGradientFrom: `rgba(255, 159, 64, 0.15)`, // Orange gradient
+      labelColor: (opacity = 1) => theme.text, // For StickyYAxis
+      style: { borderRadius: 16 },
+      propsForDots: { r: '4', strokeWidth: '2', stroke: '#ff9f40' },
+      fillShadowGradientFrom: `rgba(255, 159, 64, 0.15)`,
       fillShadowGradientTo: `rgba(255, 159, 64, 0.02)`,
       fillShadowGradientFromOpacity: 0.5,
       fillShadowGradientToOpacity: 0.1,
@@ -813,135 +959,59 @@ export default function GraphsWorkoutDetails() {
       withShadow: true,
       withInnerLines: true,
       withOuterLines: true,
-      formatYLabel: (yValue: string) => {
-        const seconds = parseInt(yValue);
-        return formatTimeForChart(seconds);
-      }
+      fromZero: yValues.every(v => v >= 0), // Start from zero if all times are positive
     };
 
-    const chartWidth = getChartWidth(chartData.length);
-
-    return (
-      <View style={styles.chartContainer}>
-        <ScrollView 
-          horizontal 
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.chartScrollContainer}
-        >
-          <LineChart
-            data={data}
-            width={chartWidth}
-            height={220}
-            chartConfig={chartConfig}
-            bezier
-            style={styles.chart}
-            verticalLabelRotation={30}
-            onDataPointClick={handleDataPointClick}
-          />
-        </ScrollView>
-        {chartData.length > 5 && (
-          <Text style={[styles.scrollHint, { color: theme.text }]}>
-            ← {t('Scroll horizontally to see more data')} →
-          </Text>
-        )}
-      </View>
+    const yTickLabels = generateYTickLabels(
+      yValues,
+      lineChartSegments,
+      timeChartFormatYLabel,
+      timeChartConfig.fromZero, // Use fromZero from timeChartConfig
+      timeChartConfig.decimalPlaces // Use decimalPlaces from timeChartConfig
     );
-  };
 
-  const renderRegularChart = () => {
-    if (chartData.length === 0) {
-      return (
-        <View style={styles.noDataContainer}>
-          <Ionicons name="analytics-outline" size={60} color={theme.text} style={{ opacity: 0.5 }} />
-          <Text style={[styles.noDataText, { color: theme.text }]}>
-            {t('No data available for the selected criteria')}
-          </Text>
-        </View>
-      );
-    }
-
-    const formattedChartData = chartData.map(point => {
-      const date = new Date(point.timestamp * 1000);
-      const day = date.getDate().toString().padStart(2, '0');
-      const month = (date.getMonth() + 1).toString().padStart(2, '0');
-      
-      const formattedDate = dateFormat === 'mm-dd-yyyy'
-        ? `${month}/${day}`
-        : `${day}/${month}`;
-        
-      return {
-        ...point,
-        x: formattedDate
-      };
-    });
-
-    const data = {
-      labels: formattedChartData.map(point => point.x),
-      datasets: [
-        {
-          data: formattedChartData.map(point => point.y),
-          color: (opacity = 1) => calculationType === '1RM' 
-            ? `rgba(0, 168, 132, ${opacity})` // Jade green for 1RM
-            : `rgba(0, 123, 255, ${opacity})`, // Keep blue for CES
+    const lineChartProps = {
+      data: {
+        labels: formattedChartData.map(point => point.x),
+        datasets: [{
+          data: yValues,
+          color: timeChartConfig.color,
           strokeWidth: 2
-        }
-      ],
-      legend: [calculationType === 'CES' ? 'Combined Effort Score' : t('Estimated 1RM')]
-    };
-
-    const chartConfig = {
-      backgroundColor: theme.card,
-      backgroundGradientFrom: theme.card,
-      backgroundGradientTo: theme.card,
-      decimalPlaces: 1,
-      color: (opacity = 1) => calculationType === '1RM'
-        ? `rgba(0, 168, 132, ${opacity})` // Jade green for 1RM
-        : `rgba(0, 123, 255, ${opacity})`, // Keep blue for CES
-      labelColor: (opacity = 1) => theme.text,
-      style: {
-        borderRadius: 16
+        }],
+        legend: [t('Completion Time')]
       },
-      propsForDots: {
-        r: '4',
-        strokeWidth: '2',
-        stroke: calculationType === '1RM'
-          ? `rgba(0, 168, 132, 1)` // Same color as the line for 1RM
-          : `rgba(0, 123, 255, 1)` // Same color as the line for CES
-      },
-      fillShadowGradientFrom: calculationType === '1RM' 
-        ? `rgba(0, 168, 132, 0.15)` // Jade green gradient for 1RM
-        : `rgba(0, 123, 255, 0.15)`,
-      fillShadowGradientTo: calculationType === '1RM'
-        ? `rgba(0, 168, 132, 0.02)` // Jade green gradient for 1RM
-        : `rgba(0, 123, 255, 0.02)`,
-      fillShadowGradientFromOpacity: 0.5,
-      fillShadowGradientToOpacity: 0.1,
-      useShadowColorFromDataset: true,
-      withShadow: true,
-      withInnerLines: true,
-      withOuterLines: true
+      width: lineChartContentWidth,
+      height: chartHeight,
+      chartConfig: timeChartConfig, // Pass the specific config
+      bezier: true,
+      style: styles.chart,
+      verticalLabelRotation: 30,
+      onDataPointClick: handleDataPointClick,
+      withHorizontalLabels: false, // Disable internal Y labels
+      paddingRight: 0, // Remove space for internal Y labels
+      segments: lineChartSegments,
+      // formatYLabel is not needed here as withHorizontalLabels is false
     };
-
-    const chartWidth = getChartWidth(chartData.length);
 
     return (
       <View style={styles.chartContainer}>
-        <ScrollView 
-          horizontal 
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.chartScrollContainer}
-        >
-          <LineChart
-            data={data}
-            width={chartWidth}
-            height={220}
-            chartConfig={chartConfig}
-            bezier
-            style={styles.chart}
-            verticalLabelRotation={30}
-            onDataPointClick={handleDataPointClick}
+        <View style={{ flexDirection: 'row' }}>
+          <StickyYAxis
+            chartHeight={chartHeight}
+            yTickLabels={yTickLabels}
+            labelColor={timeChartConfig.labelColor}
+            chartPaddingTop={16}
+            fontSize={10}
+            axisWidth={yAxisWidth}
           />
-        </ScrollView>
+          <ScrollView 
+            horizontal 
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.chartScrollContainer}
+          >
+            <LineChart {...lineChartProps as any} />
+          </ScrollView>
+        </View>
         {chartData.length > 5 && (
           <Text style={[styles.scrollHint, { color: theme.text }]}>
             ← {t('Scroll horizontally to see more data')} →
@@ -963,11 +1033,17 @@ export default function GraphsWorkoutDetails() {
       );
     }
   
-    // Get all unique dates from all sets and sort them
     const allTimestamps = new Set<number>();
-    setsData.forEach(setData => {
-      setData.data.forEach(point => {
+    const allYValuesForAxis: number[] = []; // Collect all Y values for StickyYAxis scaling
+
+    setsData.forEach(set => {
+      set.data.forEach(point => {
         allTimestamps.add(point.timestamp);
+        // Only include points that are actually plotted (weight > 0 lead to y > 0)
+        // The point.y already includes the offset for overlap, use originalWeight for true scale value
+        if (point.originalWeight && point.originalWeight > 0) {
+            allYValuesForAxis.push(point.originalWeight); 
+        }
       });
     });
     
@@ -979,24 +1055,18 @@ export default function GraphsWorkoutDetails() {
       return dateFormat === 'mm-dd-yyyy' ? `${month}/${day}` : `${day}/${month}`;
     });
   
-    // Create datasets for each set - using 0 instead of null for missing data
     const datasets = setsData.map(setData => {
       const dataArray = sortedTimestamps.map(timestamp => {
         const point = setData.data.find(p => p.timestamp === timestamp);
         if (point && point.originalWeight && point.originalWeight > 0) {
-          return point.y;
+          return point.y; // This is the (potentially offset) value for plotting
         }
-        return 0; // Use 0 instead of null - this will show as gaps in the line
+        return 0; 
       });
-  
-      return {
-        data: dataArray,
-        color: (opacity = 1) => setData.color,
-        strokeWidth: 2,
-      };
+      return { data: dataArray, color: (opacity = 1) => setData.color, strokeWidth: 2 };
     });
   
-    const data = {
+    const chartDataForLineChart = {
       labels: sortedDates,
       datasets: datasets,
       legend: setsData.length > 5 
@@ -1004,54 +1074,78 @@ export default function GraphsWorkoutDetails() {
         : setsData.map(setData => `${t('Set')} ${setData.setNumber}`)
     };
   
-    const dynamicHeight = Math.max(220, 180 + (setsData.length > 5 ? setsData.length * 5 : setsData.length * 10));
-    const chartWidth = getChartWidth(sortedDates.length);
-  
-    const chartConfig = {
+    const chartHeight = Math.max(220, 180 + (setsData.length > 5 ? setsData.length * 5 : setsData.length * 10));
+    const yAxisWidth = 55;
+    const lineChartContentWidth = getChartWidth(sortedDates.length);
+    const lineChartSegments = 4;
+
+    // Define setsChartConfig and defaultFormatYLabel before they are used by generateYTickLabels
+    const setsChartConfig = {
       backgroundColor: theme.card,
       backgroundGradientFrom: theme.card,
       backgroundGradientTo: theme.card,
-      decimalPlaces: 1,
-      color: (opacity = 1) => `rgba(0, 123, 255, ${opacity})`,
-      labelColor: (opacity = 1) => theme.text,
-      style: {
-        borderRadius: 16
-      },
-      propsForDots: {
-        r: '4',
-        strokeWidth: '2'
-      },
-      fillShadowGradientFrom: 'rgba(0, 0, 0, 0)',
+      decimalPlaces: 1, // For Y-axis labels displayed by StickyYAxis
+      color: (opacity = 1) => `rgba(0, 123, 255, ${opacity})`, // Default line color, overridden by dataset
+      labelColor: (opacity = 1) => theme.text, // For StickyYAxis
+      style: { borderRadius: 16 },
+      propsForDots: { r: '4', strokeWidth: '2' }, // Dots color will use dataset color
+      fillShadowGradientFrom: 'rgba(0, 0, 0, 0)', // No fill shadow for sets chart lines
       fillShadowGradientTo: 'rgba(0, 0, 0, 0)',
       fillShadowGradientFromOpacity: 0,
       fillShadowGradientToOpacity: 0,
       useShadowColorFromDataset: false,
-      withShadow: false,
+      withShadow: false, // No line shadow for sets chart lines
       withInnerLines: true,
       withOuterLines: true,
-      // Remove segments to let the chart auto-scale better
-      fromZero: false, // Don't force the chart to start from 0
+      fromZero: false, 
+    };
+
+    const defaultFormatYLabel = (yLabelValue: string, yLabelText?: string) => {
+        return yLabelText || yLabelValue; 
+    };
+
+    const yTickValuesForSets = allYValuesForAxis.length > 0 ? allYValuesForAxis : [0,1];
+    const yTickLabels = generateYTickLabels(
+      yTickValuesForSets,
+      lineChartSegments,
+      defaultFormatYLabel,
+      setsChartConfig.fromZero, // Use fromZero from setsChartConfig
+      setsChartConfig.decimalPlaces // Use decimalPlaces from setsChartConfig
+    );
+
+    const lineChartProps = {
+      data: chartDataForLineChart,
+      width: lineChartContentWidth,
+      height: chartHeight,
+      chartConfig: setsChartConfig,
+      style: styles.chart,
+      verticalLabelRotation: 30,
+      onDataPointClick: handleDataPointClick,
+      withHorizontalLabels: false,
+      paddingRight: 0,
+      segments: lineChartSegments,
+      withShadow: false, // Explicitly set here for the LineChart component itself
     };
   
     return (
       <View style={styles.chartContainer}>
-        <ScrollView 
-          horizontal 
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.chartScrollContainer}
-        >
-          <LineChart
-            data={data}
-            width={chartWidth}
-            height={dynamicHeight}
-            chartConfig={chartConfig}
-            style={styles.chart}
-            verticalLabelRotation={30}
-            onDataPointClick={handleDataPointClick}
-            withShadow={false}
-            segments={4}
+        <View style={{ flexDirection: 'row' }}>
+          <StickyYAxis
+            chartHeight={chartHeight}
+            yTickLabels={yTickLabels}
+            labelColor={setsChartConfig.labelColor}
+            chartPaddingTop={16}
+            fontSize={10}
+            axisWidth={yAxisWidth}
           />
-        </ScrollView>
+          <ScrollView 
+            horizontal 
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.chartScrollContainer}
+          >
+            <LineChart {...lineChartProps as any} />
+          </ScrollView>
+        </View>
         {sortedDates.length > 5 && (
           <Text style={[styles.scrollHint, { color: theme.text }]}>
             ← {t('Scroll horizontally to see more data')} →
@@ -1059,6 +1153,17 @@ export default function GraphsWorkoutDetails() {
         )}
       </View>
     );
+  };
+
+  // Define renderChart AFTER the individual chart rendering functions
+  const renderChart = () => {
+    if (calculationType === 'Time') {
+      return renderTimeChart();
+    } else if (calculationType === 'Sets') {
+      return renderSetsChart();
+    } else {
+      return renderRegularChart(); // This should now be correctly defined and in scope
+    }
   };
 
   // Update tooltip to handle time data
