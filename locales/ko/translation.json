@@ -275,5 +275,32 @@
   "importFailedTitle": "가져오기 실패",
   "importErrorMessage": "데이터베이스 가져오기에 실패했습니다",
   "remindScheduledWorkouts": "예정된 운동 알림",
-  "dayInterval": "일 간격:"
+  "dayInterval": "일 간격:",
+
+  "_comment_Graphs": "그래프 관련 문자열입니다.",
+  "Graphs": "그래프",
+  "SelectWorkoutforGraph": "그래프를 위한 운동 선택",
+  "No data available for the selected criteria": "선택한 기준에 대한 데이터가 없습니다.",
+  "Combined Effort Score": "종합 운동 점수",
+  "About CES": "CES 정보",
+  "About 1RM": "1RM 정보",
+  "CESExplanation": "CES (종합 운동 점수)는 무게, 반복 횟수, 강도를 고려하여 총 운동량을 측정합니다.",
+  "1RMExplanation": "1RM (One Rep Max)은 사용자의 수행 능력을 기반으로 단일 반복으로 들어 올릴 수 있는 최대 무게를 추정합니다.\n(이는 실제 1RM이 아니며, 이 추정치를 1RM으로 사용하여 발생하는 부상에 대해 앱 개발자는 책임지지 않습니다.)",
+  "Time Frame": "기간",
+  "Estimated 1RM": "추정 1RM",
+  "Select Exercise": "운동 선택",
+  "Week": "주",
+  "Month": "월",
+  "Year": "년",
+  "All Time": "전체 기간",
+  "Select an exercise": "운동을 선택하세요.",
+  "No exercises available": "사용 가능한 운동이 없습니다.",
+  "Track a workout first to see your progress": "진행 상황을 보려면 먼저 운동을 기록하세요.",
+  "No workout data available for graphs": "그래프에 사용할 운동 데이터가 없습니다.",
+  "workoutReminderTitle": "운동 알림: {{workoutName}}",
+  "workoutReminderBody": "{{dayName}} 운동 시간입니다!",
+  "Workout in Progress": "운동 진행 중",
+  "Workout in Progress Message": "운동을 완료하는 것을 잊지 마세요!"
+
+
 }

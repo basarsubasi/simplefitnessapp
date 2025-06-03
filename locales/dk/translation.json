@@ -275,6 +275,32 @@
     "importFailedTitle": "Import mislykket",
     "importErrorMessage": "Kunne ikke importere database",
     "remindScheduledWorkouts": "Mind mig om planlagte træninger",
-    "dayInterval": "Dagle interval:"
+    "dayInterval": "Dagle interval:",
+    
+    "_comment_Graphs": "Disse er Grafer-relaterede strenge.",
+    "Graphs": "Grafer",
+    "SelectWorkoutforGraph": "Vælg en træning til grafer",
+    "No data available for the selected criteria": "Ingen data tilgængelig for de valgte kriterier",
+    "Combined Effort Score": "Kombineret Anstrengelsesscore",
+    "About CES": "Om CES",
+    "About 1RM": "Om 1RM",
+    "CESExplanation": "CES (Kombineret Anstrengelsesscore) måler din samlede træningsvolumen under hensyntagen til vægt, gentagelser og intensitet.",
+    "1RMExplanation": "1RM (One Rep Max) estimerer den maksimale vægt, du kunne løfte for en enkelt gentagelse baseret på din præstation.\n(Dette er ikke den faktiske 1RM, udvikleren af appen er ikke ansvarlig for eventuelle skader, hvis du bruger dette estimat som din 1RM)",
+    "Time Frame": "Tidsramme",
+    "Estimated 1RM": "Estimeret 1RM",
+    "Select Exercise": "Vælg øvelse",
+    "Week": "Uge",
+    "Month": "Måned",
+    "Year": "År",
+    "All Time": "Altid",
+    "Select an exercise": "Vælg en øvelse",
+    "No exercises available": "Ingen øvelser tilgængelige",
+    "Track a workout first to see your progress": "Registrer en træning først for at se din fremgang",
+    "No workout data available for graphs": "Ingen træningsdata tilgængelig for grafer",
+    "workoutReminderTitle": "Træningspåmindelse: {{workoutName}}",
+    "workoutReminderBody": "Tid til din {{dayName}} træning!",
+    "Workout in Progress": "Træning i gang",
+    "Workout in Progress Message": "Glem ikke at fuldføre din træning!"
+    
   }
   
