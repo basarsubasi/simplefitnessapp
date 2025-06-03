@@ -604,7 +604,7 @@ export default function GraphsWorkoutDetails() {
         </View>
       );
     }
-
+  
     // Get all unique dates from all sets and sort them
     const allTimestamps = new Set<number>();
     setsData.forEach(setData => {
@@ -620,31 +620,36 @@ export default function GraphsWorkoutDetails() {
       const month = (date.getMonth() + 1).toString().padStart(2, '0');
       return dateFormat === 'mm-dd-yyyy' ? `${month}/${day}` : `${day}/${month}`;
     });
-
-    // Create datasets for each set
+  
+    // Create datasets for each set - using null for missing data
     const datasets = setsData.map(setData => {
-      const dataArray = sortedTimestamps.map(timestamp => {
+      const dataArray: (number | null)[] = sortedTimestamps.map(timestamp => {
         const point = setData.data.find(p => p.timestamp === timestamp);
-        return point ? point.y : undefined;
-      }).filter(value => value !== undefined) as number[];
-
+        // Return actual value or null for missing data
+        if (point && point.originalWeight && point.originalWeight > 0) {
+          return point.y;
+        }
+        return null; // Use null for missing data points
+      });
+  
       return {
         data: dataArray,
         color: (opacity = 1) => setData.color,
         strokeWidth: 2
       };
     });
-
+  
+    // Type assertion to make TypeScript accept our data structure
     const data = {
       labels: sortedDates,
       datasets: datasets,
       legend: setsData.length > 5 
-        ? setsData.map(() => '') // Empty legend labels when more than 5 sets
+        ? setsData.map(() => '') 
         : setsData.map(setData => `${t('Set')} ${setData.setNumber}`)
-    };
-
+    } as any; // Type assertion here
+  
     const dynamicHeight = Math.max(220, 180 + (setsData.length > 5 ? setsData.length * 5 : setsData.length * 10));
-
+  
     const chartConfig = {
       backgroundColor: theme.card,
       backgroundGradientFrom: theme.card,
@@ -668,7 +673,7 @@ export default function GraphsWorkoutDetails() {
       withInnerLines: true,
       withOuterLines: true,
     };
-
+  
     return (
       <View style={styles.chartContainer}>
         <LineChart
