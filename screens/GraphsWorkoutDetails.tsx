@@ -1191,7 +1191,7 @@ export default function GraphsWorkoutDetails() {
               <Text style={[styles.tooltipTitle, { color: theme.text }]}>
                 {calculationType === 'Time' 
                   ? `${selectedPoint.dayName} - ${formattedDate}`
-                  : `${selectedExercise} - ${formattedDate}`
+                  : `${selectedDay} - ${formattedDate}`
                 }
               </Text>
               <TouchableOpacity onPress={closeTooltip}>
@@ -1206,6 +1206,7 @@ export default function GraphsWorkoutDetails() {
                 </Text>
                 
                 <ScrollView style={styles.tooltipSetsList} nestedScrollEnabled>
+
                   {Object.entries(exercisesByDay).map(([dayName, exercises]) => (
                     <View key={dayName} style={styles.tooltipDaySection}>
                       {exercises.reduce((acc, exercise) => {
@@ -1248,11 +1249,15 @@ export default function GraphsWorkoutDetails() {
               </>
             ) : calculationType === 'Sets' ? (
               <View style={styles.tooltipSetsList}>
+                <Text style={[styles.tooltipSetsHeader, { color: theme.text }]}>
+                      {selectedExercise}:
+                 </Text>
                 <FlatList
                   data={dateData}
                   keyExtractor={(item) => `set_${item.setNumber}`}
                   renderItem={({ item }) => (
                     <View style={[styles.tooltipSetItem, { flexDirection: 'row', alignItems: 'center', marginVertical: 4 }]}>
+                      
                       <View style={{ width: 12, height: 12, borderRadius: 6, backgroundColor: item.color, marginRight: 8 }} />
                       <Text style={[styles.tooltipSetText, { color: theme.text }]}>
                         {t('Set')} {item.setNumber}: {formatWeight(item.weight)} × {item.reps} {t('reps')}
@@ -1272,7 +1277,7 @@ export default function GraphsWorkoutDetails() {
                 
                 <View style={styles.tooltipSetsList}>
                   <Text style={[styles.tooltipSetsHeader, { color: theme.text }]}>
-                    {t('Sets')}:
+                    {selectedExercise}:
                   </Text>
                   <FlatList
                     data={selectedPoint.originalData}
