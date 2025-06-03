@@ -53,6 +53,14 @@ type SetProgressData = {
   color: string;
 };
 
+// Add this type definition near the top with other type definitions
+type SetDataPoint = {
+  setNumber: number;
+  weight: number;
+  color: string;
+  reps: number;
+};
+
 export default function GraphsWorkoutDetails() {
   const navigation = useNavigation();
   const route = useRoute<GraphsWorkoutDetailsRouteProp>();
@@ -315,28 +323,32 @@ export default function GraphsWorkoutDetails() {
   };
 
   const processDataForSetsChart = () => {
-    // Group logs by date first
-    const logsByDate = logData.reduce((acc, log) => {
-      const date = log.date;
-      if (!acc[date]) {
-        acc[date] = [];
+    // Group logs by set number first, then by date
+    const logsBySet = logData.reduce((acc, log) => {
+      const setNum = log.set_number;
+      if (!acc[setNum]) {
+        acc[setNum] = {};
       }
-      acc[date].push(log);
+      const date = log.date;
+      if (!acc[setNum][date]) {
+        acc[setNum][date] = [];
+      }
+      acc[setNum][date].push(log);
       return acc;
-    }, {} as Record<number, LogData[]>);
-
-    // Get all unique set numbers across all dates
-    const allSetNumbers = new Set<number>();
-    logData.forEach(log => allSetNumbers.add(log.set_number));
-    const maxSetNumber = Math.max(...Array.from(allSetNumbers));
-
+    }, {} as Record<number, Record<number, LogData[]>>);
+  
+    // Get all unique set numbers
+    const allSetNumbers = Object.keys(logsBySet).map(Number).sort((a, b) => a - b);
+  
     // Process data for each set
     const setsProgressData: SetProgressData[] = [];
-
-    for (let setNum = 1; setNum <= maxSetNumber; setNum++) {
+  
+    allSetNumbers.forEach(setNum => {
+      const setLogs = logsBySet[setNum];
       const setData: ProcessedDataPoint[] = [];
-
-      Object.entries(logsByDate).forEach(([dateStr, logs]) => {
+  
+      // Only process dates where this specific set was logged
+      Object.entries(setLogs).forEach(([dateStr, logs]) => {
         const date = new Date(parseInt(dateStr) * 1000);
         
         const day = date.getDate().toString().padStart(2, '0');
@@ -344,26 +356,24 @@ export default function GraphsWorkoutDetails() {
         const formattedDate = dateFormat === 'mm-dd-yyyy'
           ? `${month}/${day}`
           : `${day}/${month}`;
-
-        // Find the log for this specific set number
-        const setLog = logs.find(log => log.set_number === setNum);
+  
+        // Since we're only iterating through dates where this set exists,
+        // we know there's always a log for this set
+        const setLog = logs[0]; // Take the first (should be only) log for this set on this date
         
-        if (setLog) {
-          setData.push({
-            x: formattedDate,
-            y: setLog.weight_logged,
-            timestamp: parseInt(dateStr),
-            originalData: [setLog]
-          });
-        }
+        setData.push({
+          x: formattedDate,
+          y: setLog.weight_logged,
+          timestamp: parseInt(dateStr),
+          originalData: [setLog]
+        });
       });
-
+  
       // Sort by timestamp and filter out empty data points
       const sortedSetData = setData
         .sort((a, b) => a.timestamp - b.timestamp)
-        .filter(point => point.originalData.length > 0)
-        .slice(-10);
-
+        .slice(-10); // Keep only last 10 data points
+  
       if (sortedSetData.length > 0) {
         setsProgressData.push({
           setNumber: setNum,
@@ -371,8 +381,8 @@ export default function GraphsWorkoutDetails() {
           color: setColors[(setNum - 1) % setColors.length]
         });
       }
-    }
-
+    });
+  
     setSetsData(setsProgressData);
     
     // Also set chart data to the first set for compatibility with existing tooltip logic
@@ -380,7 +390,6 @@ export default function GraphsWorkoutDetails() {
       setChartData(setsProgressData[0].data);
     }
   };
-
   const handleDataPointClick = (data: any) => {
     // Find the data point that was clicked
     if (data.index !== undefined && chartData[data.index]) {
@@ -556,6 +565,7 @@ export default function GraphsWorkoutDetails() {
     );
   };
 
+
   const renderSetsChart = () => {
     if (setsData.length === 0) {
       return (
@@ -567,56 +577,93 @@ export default function GraphsWorkoutDetails() {
         </View>
       );
     }
-
-    // Get all unique dates from all sets
-    const allDates = new Set<string>();
+  
+    // Get all unique dates from all sets and sort them
+    const allTimestamps = new Set<number>();
     setsData.forEach(setData => {
-      setData.data.forEach(point => allDates.add(point.x));
+      setData.data.forEach(point => {
+        allTimestamps.add(point.timestamp);
+      });
     });
-    const sortedDates = Array.from(allDates).sort();
-
-    // Create datasets for each set with offset for overlapping dots
+    
+    const sortedTimestamps = Array.from(allTimestamps).sort((a, b) => a - b);
+    const sortedDates = sortedTimestamps.map(timestamp => {
+      const date = new Date(timestamp * 1000);
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      return dateFormat === 'mm-dd-yyyy' ? `${month}/${day}` : `${day}/${month}`;
+    });
+  
+    // Create datasets for each set
     const datasets = setsData.map((setData, setIndex) => {
-      // Create data array that matches all dates, filling with null for missing dates
-      const dataArray = sortedDates.map(date => {
-        const point = setData.data.find(p => p.x === date);
-        if (point) {
-          // Check for overlapping values on the same date
-          let offsetValue = point.y;
-          const overlappingCount = setsData.filter((otherSetData, otherIndex) => {
-            if (otherIndex >= setIndex) return false; // Only check previous sets
-            const otherPoint = otherSetData.data.find(p => p.x === date);
-            return otherPoint && Math.abs(otherPoint.y - point.y) < 0.1; // Same weight (within 0.1kg)
-          }).length;
-          
-          // Apply small offset if there are overlapping dots (0.05kg per overlap)
-          if (overlappingCount > 0) {
-            offsetValue = point.y + (overlappingCount * 0.8);
-          }
-          
-          return offsetValue;
+      // Find when this set first appears
+      const setTimestamps = setData.data.map(point => point.timestamp).sort((a, b) => a - b);
+      const firstSetTimestamp = setTimestamps[0];
+      
+      // Create data array - only include values from when this set first appears
+      const dataArray = sortedTimestamps.map(timestamp => {
+        if (timestamp < firstSetTimestamp) {
+          // This set hasn't started yet - return minimum value to hide the line
+          return 0;
         }
-        return null;
-      }).filter(val => val !== null) as number[];
-
+        
+        const point = setData.data.find(p => p.timestamp === timestamp);
+        return point ? point.y : 0;
+      });
+  
       return {
         data: dataArray,
-        color: (opacity = 1) => setData.color,
+        color: (opacity = 1) => {
+          // Make early points transparent
+          return setData.color;
+        },
         strokeWidth: 2,
-        withDots: true,
-        withFill: false
+        withDots: (index: number) => {
+          // Only show dots for points where this set actually has data
+          const timestamp = sortedTimestamps[index];
+          return timestamp >= firstSetTimestamp && setData.data.some(p => p.timestamp === timestamp);
+        },
       };
     });
-
+  
+    // Filter the data to make lines start only from their first date
+    const filteredDatasets = setsData.map((setData, setIndex) => {
+      const setTimestamps = setData.data.map(point => point.timestamp).sort((a, b) => a - b);
+      const firstSetTimestamp = setTimestamps[0];
+      const firstIndex = sortedTimestamps.indexOf(firstSetTimestamp);
+      
+      // Create array with actual values only from first appearance
+      const dataArray = sortedTimestamps.map((timestamp, index) => {
+        if (index < firstIndex) {
+          return undefined; // Will be filtered out
+        }
+        const point = setData.data.find(p => p.timestamp === timestamp);
+        return point ? point.y : undefined;
+      });
+  
+      // Get indices where we have actual data
+      const validIndices: number[] = [];
+      dataArray.forEach((value, index) => {
+        if (value !== undefined) {
+          validIndices.push(index);
+        }
+      });
+  
+      return {
+        data: validIndices.map(i => dataArray[i]!),
+        color: (opacity = 1) => setData.color,
+        strokeWidth: 2,
+      };
+    });
+  
     const data = {
       labels: sortedDates,
-      datasets: datasets,
+      datasets: filteredDatasets,
       legend: setsData.map(setData => `${t('Set')} ${setData.setNumber}`)
     };
-
-    // Calculate dynamic height based on number of sets
+  
     const dynamicHeight = Math.max(220, 180 + (setsData.length * 10));
-
+  
     const chartConfig = {
       backgroundColor: theme.card,
       backgroundGradientFrom: theme.card,
@@ -637,23 +684,26 @@ export default function GraphsWorkoutDetails() {
       fillShadowGradientToOpacity: 0,
       useShadowColorFromDataset: false,
       withShadow: false,
-      withInnerLines: false,
-      withOuterLines: false
+      withInnerLines: true,
+      withOuterLines: true,
     };
+  
     return (
       <View style={styles.chartContainer}>
-<LineChart
-  data={data}
-  width={screenWidth}
-  height={dynamicHeight}
-  chartConfig={chartConfig}
-  style={styles.chart}
-  verticalLabelRotation={30}
-  onDataPointClick={handleDataPointClick}
-/>
-</View>
-);
-};
+        <LineChart
+          data={data}
+          width={screenWidth}
+          height={dynamicHeight}
+          chartConfig={chartConfig}
+          style={styles.chart}
+          verticalLabelRotation={30}
+          onDataPointClick={handleDataPointClick}
+          withShadow={false}
+          segments={4}
+        />
+      </View>
+    );
+  };
 
   // Render tooltip
   const renderTooltip = () => {
@@ -661,6 +711,22 @@ export default function GraphsWorkoutDetails() {
 
     const formattedDate = formatDate(selectedPoint.timestamp);
     
+    // Find all sets data for the selected date when in Sets mode
+    let dateData: SetDataPoint[] = [];
+    if (calculationType === 'Sets') {
+      setsData.forEach(setData => {
+        const dataPoint = setData.data.find(point => point.timestamp === selectedPoint.timestamp);
+        if (dataPoint) {
+          dateData.push({
+            setNumber: setData.setNumber,
+            weight: dataPoint.y,
+            color: setData.color,
+            reps: dataPoint.originalData[0].reps_logged
+          });
+        }
+      });
+    }
+
     return (
       <Modal
         transparent={true}
@@ -683,31 +749,48 @@ export default function GraphsWorkoutDetails() {
               </TouchableOpacity>
             </View>
             
-            <Text style={[styles.tooltipSubtitle, { color: theme.text }]}>
-              {calculationType === 'CES' 
-                ? `${t('CES')}: ${selectedPoint.y.toFixed(1)}`
-                : calculationType === '1RM'
-                ? `${t('1RM')}: ${formatWeight(selectedPoint.y)}`
-                : `${t('Weight')}: ${formatWeight(selectedPoint.y)}`
-              }
-            </Text>
-            
-            <View style={styles.tooltipSetsList}>
-              <Text style={[styles.tooltipSetsHeader, { color: theme.text }]}>
-                {t('Sets')}:
-              </Text>
-              <FlatList
-                data={selectedPoint.originalData}
-                keyExtractor={(item, index) => `${item.logged_exercise_id}_${index}`}
-                renderItem={({ item }) => (
-                  <View style={styles.tooltipSetItem}>
-                    <Text style={[styles.tooltipSetText, { color: theme.text }]}>
-                      {t('Set')} {item.set_number}: {formatWeight(item.weight_logged)} × {item.reps_logged} {t('Reps')}
-                    </Text>
-                  </View>
-                )}
-              />
-            </View>
+            {calculationType === 'Sets' ? (
+              <View style={styles.tooltipSetsList}>
+                <FlatList
+                  data={dateData}
+                  keyExtractor={(item) => `set_${item.setNumber}`}
+                  renderItem={({ item }) => (
+                    <View style={[styles.tooltipSetItem, { flexDirection: 'row', alignItems: 'center', marginVertical: 4 }]}>
+                      <View style={{ width: 12, height: 12, borderRadius: 6, backgroundColor: item.color, marginRight: 8 }} />
+                      <Text style={[styles.tooltipSetText, { color: theme.text }]}>
+                        {t('Set')} {item.setNumber}: {formatWeight(item.weight)} × {item.reps} {t('reps')}
+                      </Text>
+                    </View>
+                  )}
+                />
+              </View>
+            ) : (
+              <>
+                <Text style={[styles.tooltipSubtitle, { color: theme.text }]}>
+                  {calculationType === 'CES' 
+                    ? `${t('CES')}: ${selectedPoint.y.toFixed(1)}`
+                    : `${t('1RM')}: ${formatWeight(selectedPoint.y)}`
+                  }
+                </Text>
+                
+                <View style={styles.tooltipSetsList}>
+                  <Text style={[styles.tooltipSetsHeader, { color: theme.text }]}>
+                    {t('Sets')}:
+                  </Text>
+                  <FlatList
+                    data={selectedPoint.originalData}
+                    keyExtractor={(item, index) => `${item.logged_exercise_id}_${index}`}
+                    renderItem={({ item }) => (
+                      <View style={styles.tooltipSetItem}>
+                        <Text style={[styles.tooltipSetText, { color: theme.text }]}>
+                          {t('Set')} {item.set_number}: {formatWeight(item.weight_logged)} × {item.reps_logged} {t('reps')}
+                        </Text>
+                      </View>
+                    )}
+                  />
+                </View>
+              </>
+            )}
           </View>
         </TouchableOpacity>
       </Modal>
@@ -1248,5 +1331,11 @@ const styles = StyleSheet.create({
   },
   legendText: {
     fontSize: 14,
+  },
+  setColorIndicator: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    marginRight: 8,
   },
 });
