@@ -774,7 +774,7 @@ export default function GraphsWorkoutDetails() {
 
         <TouchableOpacity 
           style={[
-            styles.toggleButton, 
+            styles.timeToggleButton, 
             calculationType === 'Time' && styles.toggleButtonActive,
             { backgroundColor: calculationType === 'Time' ? theme.buttonBackground : theme.card }
           ]}
@@ -1616,6 +1616,17 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     marginVertical: 2,
   },
+  timeToggleButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 15,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+    marginHorizontal: 5,
+    marginVertical: 2,
+  },
+
   toggleButtonActive: {
     elevation: 2,
   },
