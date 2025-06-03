@@ -185,12 +185,15 @@ export default function GraphsWorkoutDetails() {
   };
 
   // Add time formatting functions
-  const formatTimeFromSeconds = (seconds: number): string => {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const remainingSeconds = seconds % 60;
+  const formatTimeFromSeconds = (totalSecondsInput: number): string => {
+    const roundedTotalSeconds = Math.round(totalSecondsInput);
+
+    const hours = Math.floor(roundedTotalSeconds / 3600);
+    const minutes = Math.floor((roundedTotalSeconds % 3600) / 60);
+    const seconds = roundedTotalSeconds % 60;
     
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+    const formattedString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    return formattedString;
   };
 
   const formatTimeForChart = (seconds: number): string => {
@@ -935,21 +938,13 @@ export default function GraphsWorkoutDetails() {
     const lineChartContentWidth = getChartWidth(chartData.length);
     const lineChartSegments = 4; // Default segments for the LineChart
 
-    // Specific Y-axis formatter for time values (seconds to H:MMh or MMm)
-    // User has reverted this to a single argument, which is fine for built-in chart formatYLabel
-    const timeChartFormatYLabel = (yLabelValue: string) => {
-      const seconds = parseInt(yLabelValue, 10);
-      if (isNaN(seconds)) return '0m'; 
-      return formatTimeForChart(seconds);
-    };
-
     const timeChartConfig = {
       backgroundColor: theme.card,
       backgroundGradientFrom: theme.card,
       backgroundGradientTo: theme.card,
-      decimalPlaces: 0, // Affects the value before it's passed to formatYLabel
-      color: (opacity = 1) => `rgba(255, 159, 64, ${opacity})`, // Orange color
-      labelColor: (opacity = 1) => theme.text, // For the built-in Y-axis labels
+      decimalPlaces: 1, 
+      color: (opacity = 1) => `rgba(255, 159, 64, ${opacity})`, 
+      labelColor: (opacity = 1) => theme.text, 
       style: { borderRadius: 16 },
       propsForDots: { r: '4', strokeWidth: '2', stroke: '#ff9f40' },
       fillShadowGradientFrom: `rgba(255, 159, 64, 0.15)`,
@@ -961,36 +956,32 @@ export default function GraphsWorkoutDetails() {
       withInnerLines: true,
       withOuterLines: true,
       fromZero: yValues.every(v => v >= 0),
-      formatYLabel: timeChartFormatYLabel, // Added for built-in Y-axis formatting
     };
-
-    // yTickLabels and generateYTickLabels call removed as we are using built-in Y-axis
 
     const lineChartProps = {
       data: {
         labels: formattedChartData.map(point => point.x),
         datasets: [{
-          data: yValues,
-          color: timeChartConfig.color,
+          data: yValues.map(seconds => seconds / 3600), // Convert yValues to hours
+          color: timeChartConfig.color, 
           strokeWidth: 2
         }],
         legend: [t('Completion Time')]
       },
-      width: lineChartContentWidth, // May need adjustment if yAxisWidth was part of available space
+      width: lineChartContentWidth, 
       height: chartHeight,
-      chartConfig: timeChartConfig,
+      chartConfig: timeChartConfig, // Pass the modified timeChartConfig (no formatYLabel)
       bezier: true,
       style: styles.chart,
       verticalLabelRotation: 30,
       onDataPointClick: handleDataPointClick,
-      withHorizontalLabels: true, // Enabled for built-in Y-axis
-      paddingRight: 50,         // Added padding for built-in Y-axis labels
+      withHorizontalLabels: true, 
+      paddingRight: 50,         
       segments: lineChartSegments,
     };
 
     return (
       <View style={styles.chartContainer}>
-        {/* Removed View with flexDirection:row and StickyYAxis */}
         <ScrollView 
           horizontal 
           showsHorizontalScrollIndicator={false}
@@ -1000,7 +991,7 @@ export default function GraphsWorkoutDetails() {
         </ScrollView>
         {chartData.length > 5 && (
           <Text style={[styles.scrollHint, { color: theme.text }]}>
-            ← {t('Scroll horizontally to see more data')} →
+            {t('Scroll horizontally to see more data')} →
           </Text>
         )}
       </View>
