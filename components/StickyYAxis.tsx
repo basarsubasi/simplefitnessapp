@@ -17,8 +17,7 @@ const StickyYAxis: React.FC<StickyYAxisProps> = ({
   labelColor,
   chartPaddingTop = 16,
   fontSize = 10,
-  yAxisLabel = '',
-  axisWidth = 50,
+  axisWidth = 0,
 }) => {
   if (!yTickLabels || yTickLabels.length === 0) {
     return <View style={[styles.yAxisContainer, { height: chartHeight, width: axisWidth }]} />;
@@ -30,7 +29,7 @@ const StickyYAxis: React.FC<StickyYAxisProps> = ({
   const baseHeightForLinesAndLabels = chartHeight - xLabelsHeightApproximation - chartPaddingTop;
 
   return (
-    <View style={[styles.yAxisContainer, { height: chartHeight, width: axisWidth }]}>
+    <View style={[styles.yAxisContainer, { height: chartHeight, width: axisWidth, position: 'absolute', left: 0, top: 0}]}>
       {yTickLabels.map((label, index) => {
         const yPosition = chartPaddingTop + (index * (baseHeightForLinesAndLabels / numberOfSegments));
         
@@ -44,8 +43,9 @@ const StickyYAxis: React.FC<StickyYAxisProps> = ({
                 fontSize: fontSize,
                 position: 'absolute',
                 top: yPosition + (fontSize) + 22, // Adjusted to shift labels down
+                left: 0,
                 right: 5,
-                left: 0, // Ensure it takes up space for textAlign
+                zIndex: 1000,
               },
             ]}
             numberOfLines={1}
@@ -61,7 +61,6 @@ const StickyYAxis: React.FC<StickyYAxisProps> = ({
 const styles = StyleSheet.create({
   yAxisContainer: {
     justifyContent: 'flex-start', // Align items to the top for absolute positioning context
-    paddingRight: 5, // Padding for the text inside
     position: 'relative',
   },
   yLabel: {
