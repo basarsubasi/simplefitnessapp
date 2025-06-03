@@ -454,7 +454,7 @@ const AppContent = () => {
     React.useEffect(() => {
       (async () => {
         try {
-          //await resetDatabase();
+          // await resetDatabase();
           await loadDatabase();
           setDbLoaded(true);
         } catch (e) {
