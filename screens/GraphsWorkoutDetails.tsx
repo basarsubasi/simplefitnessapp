@@ -929,26 +929,27 @@ export default function GraphsWorkoutDetails() {
     });
 
     const yValues = formattedChartData.map(point => point.y); // These are completion times in seconds
+    
     const chartHeight = 220;
-    const yAxisWidth = 65; // Adjusted for potentially wider time labels
+    const yAxisWidth = 65; // This might not be directly used anymore, but good for reference if padding is needed
     const lineChartContentWidth = getChartWidth(chartData.length);
-    const lineChartSegments = 4; // Default segments
+    const lineChartSegments = 4; // Default segments for the LineChart
 
     // Specific Y-axis formatter for time values (seconds to H:MMh or MMm)
+    // User has reverted this to a single argument, which is fine for built-in chart formatYLabel
     const timeChartFormatYLabel = (yLabelValue: string) => {
       const seconds = parseInt(yLabelValue, 10);
-      if (isNaN(seconds)) return '0m'; // Should not happen with valid data
+      if (isNaN(seconds)) return '0m'; 
       return formatTimeForChart(seconds);
     };
 
-    // Define timeChartConfig before it's used by generateYTickLabels
     const timeChartConfig = {
       backgroundColor: theme.card,
       backgroundGradientFrom: theme.card,
       backgroundGradientTo: theme.card,
-      decimalPlaces: 0, // Time is typically whole numbers when formatted
+      decimalPlaces: 0, // Affects the value before it's passed to formatYLabel
       color: (opacity = 1) => `rgba(255, 159, 64, ${opacity})`, // Orange color
-      labelColor: (opacity = 1) => theme.text, // For StickyYAxis
+      labelColor: (opacity = 1) => theme.text, // For the built-in Y-axis labels
       style: { borderRadius: 16 },
       propsForDots: { r: '4', strokeWidth: '2', stroke: '#ff9f40' },
       fillShadowGradientFrom: `rgba(255, 159, 64, 0.15)`,
@@ -959,16 +960,11 @@ export default function GraphsWorkoutDetails() {
       withShadow: true,
       withInnerLines: true,
       withOuterLines: true,
-      fromZero: yValues.every(v => v >= 0), // Start from zero if all times are positive
+      fromZero: yValues.every(v => v >= 0),
+      formatYLabel: timeChartFormatYLabel, // Added for built-in Y-axis formatting
     };
 
-    const yTickLabels = generateYTickLabels(
-      yValues,
-      lineChartSegments,
-      timeChartFormatYLabel,
-      timeChartConfig.fromZero, // Use fromZero from timeChartConfig
-      timeChartConfig.decimalPlaces // Use decimalPlaces from timeChartConfig
-    );
+    // yTickLabels and generateYTickLabels call removed as we are using built-in Y-axis
 
     const lineChartProps = {
       data: {
@@ -980,38 +976,28 @@ export default function GraphsWorkoutDetails() {
         }],
         legend: [t('Completion Time')]
       },
-      width: lineChartContentWidth,
+      width: lineChartContentWidth, // May need adjustment if yAxisWidth was part of available space
       height: chartHeight,
-      chartConfig: timeChartConfig, // Pass the specific config
+      chartConfig: timeChartConfig,
       bezier: true,
       style: styles.chart,
       verticalLabelRotation: 30,
       onDataPointClick: handleDataPointClick,
-      withHorizontalLabels: false, // Disable internal Y labels
-      paddingRight: 0, // Remove space for internal Y labels
+      withHorizontalLabels: true, // Enabled for built-in Y-axis
+      paddingRight: 50,         // Added padding for built-in Y-axis labels
       segments: lineChartSegments,
-      // formatYLabel is not needed here as withHorizontalLabels is false
     };
 
     return (
       <View style={styles.chartContainer}>
-        <View style={{ flexDirection: 'row' }}>
-          <StickyYAxis
-            chartHeight={chartHeight}
-            yTickLabels={yTickLabels}
-            labelColor={timeChartConfig.labelColor}
-            chartPaddingTop={16}
-            fontSize={10}
-            axisWidth={yAxisWidth}
-          />
-          <ScrollView 
-            horizontal 
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.chartScrollContainer}
-          >
-            <LineChart {...lineChartProps as any} />
-          </ScrollView>
-        </View>
+        {/* Removed View with flexDirection:row and StickyYAxis */}
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.chartScrollContainer}
+        >
+          <LineChart {...lineChartProps as any} />
+        </ScrollView>
         {chartData.length > 5 && (
           <Text style={[styles.scrollHint, { color: theme.text }]}>
             ← {t('Scroll horizontally to see more data')} →
