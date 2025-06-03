@@ -107,6 +107,60 @@ export default function GraphsWorkoutDetails() {
   const [tooltipVisible, setTooltipVisible] = useState<boolean>(false);
   const [selectedPoint, setSelectedPoint] = useState<ProcessedDataPoint | null>(null);
 
+  // Smart data sampling functions
+  const getOptimalDataPoints = (data: ProcessedDataPoint[], timeFrame: TimeFrame): ProcessedDataPoint[] => {
+    if (data.length === 0) return data;
+
+    const sortedData = data.sort((a, b) => a.timestamp - b.timestamp);
+    
+    switch (timeFrame) {
+      case 'week':
+        // Show all data for week (max 7 points)
+        return sortedData;
+        
+      case 'month':
+        // Show ~12-15 data points for month
+        return sampleEvenly(sortedData, 15);
+        
+      case 'year':
+        // Show ~20 data points for year (roughly weekly)
+        return sampleEvenly(sortedData, 20);
+        
+      case 'all':
+        // Show ~25 data points for all time
+        return sampleEvenly(sortedData, 25);
+        
+      default:
+        return sortedData.slice(-10);
+    }
+  };
+
+  const sampleEvenly = (data: ProcessedDataPoint[], maxPoints: number): ProcessedDataPoint[] => {
+    if (data.length <= maxPoints) {
+      return data;
+    }
+
+    const sampled: ProcessedDataPoint[] = [];
+    const step = (data.length - 1) / (maxPoints - 1);
+    
+    for (let i = 0; i < maxPoints - 1; i++) {
+      const index = Math.round(i * step);
+      sampled.push(data[index]);
+    }
+    
+    // Always include the last data point
+    sampled.push(data[data.length - 1]);
+    
+    return sampled;
+  };
+
+  const getChartWidth = (dataPointsCount: number): number => {
+    const pointWidth = 60; // Width per data point
+    const minWidth = screenWidth;
+    const calculatedWidth = dataPointsCount * pointWidth;
+    return Math.max(minWidth, calculatedWidth);
+  };
+
   // Fetch days for the selected workout
   useEffect(() => {
     fetchDays();
@@ -131,7 +185,7 @@ export default function GraphsWorkoutDetails() {
     if (logData.length > 0) {
       processDataForChart();
     }
-  }, [logData, calculationType]);
+  }, [logData, calculationType, timeFrame]);
 
   const fetchDays = async () => {
     try {
@@ -316,17 +370,17 @@ export default function GraphsWorkoutDetails() {
       };
     });
     
-    // Sort by timestamp and take only the last 10 points if there are more
-    const sortedData = processedData
-      .sort((a, b) => a.timestamp - b.timestamp)
-      .slice(-10);
-    
-    setChartData(sortedData);
+    // Apply smart sampling based on timeframe
+    const optimizedData = getOptimalDataPoints(processedData, timeFrame);
+    setChartData(optimizedData);
   };
 
   const processDataForSetsChart = () => {
+    // Filter out logs with weight <= 0 first
+    const filteredLogData = logData.filter(log => log.weight_logged > 0);
+    
     // Group logs by set number first, then by date
-    const logsBySet = logData.reduce((acc, log) => {
+    const logsBySet = filteredLogData.reduce((acc, log) => {
       const setNum = log.set_number;
       if (!acc[setNum]) {
         acc[setNum] = {};
@@ -352,7 +406,7 @@ export default function GraphsWorkoutDetails() {
       const setLogs = logsBySet[setNum];
       const setData: ProcessedDataPoint[] = [];
   
-      // Only process dates where this specific set was logged
+      // Only process dates where this specific set was logged AND weight > 0
       Object.entries(setLogs).forEach(([dateStr, logs]) => {
         const timestamp = parseInt(dateStr);
         const date = new Date(timestamp * 1000);
@@ -362,11 +416,12 @@ export default function GraphsWorkoutDetails() {
         const formattedDate = dateFormat === 'mm-dd-yyyy'
           ? `${month}/${day}`
           : `${day}/${month}`;
-  
-        // Since we're only iterating through dates where this set exists,
-        // we know there's always a log for this set on this date
+
         const setLog = logs[0];
         const weight = setLog.weight_logged;
+
+        // Skip if weight is 0 or negative
+        if (weight <= 0) return;
 
         // Initialize the weight array for this timestamp if it doesn't exist
         if (!timestampWeightMap[timestamp]) {
@@ -386,21 +441,19 @@ export default function GraphsWorkoutDetails() {
           y: adjustedWeight,
           timestamp: timestamp,
           originalData: [setLog],
-          originalWeight: weight // Store the original weight for tooltip display
+          originalWeight: weight
         });
       });
   
-      // Sort by timestamp and filter out empty data points
-      const sortedSetData = setData
-        .sort((a, b) => a.timestamp - b.timestamp)
-        .slice(-10); // Keep only last 10 data points
+      // Apply smart sampling to each set's data
+      const optimizedSetData = getOptimalDataPoints(setData, timeFrame);
   
-      if (sortedSetData.length > 0) {
+      if (optimizedSetData.length > 0) {
         setsProgressData.push({
           setNumber: setNum,
-          data: sortedSetData,
+          data: optimizedSetData,
           color: setColors[(setNum - 1) % setColors.length],
-          showInLegend: setNum <= 5 // Only show in legend if set number is 5 or less
+          showInLegend: setNum <= 5
         });
       }
     });
@@ -414,10 +467,37 @@ export default function GraphsWorkoutDetails() {
   };
 
   const handleDataPointClick = (data: any) => {
-    // Find the data point that was clicked
-    if (data.index !== undefined && chartData[data.index]) {
-      setSelectedPoint(chartData[data.index]);
-      setTooltipVisible(true);
+    if (calculationType === 'Sets') {
+      // For sets chart, we need to find which timestamp was clicked
+      if (data.index !== undefined) {
+        // Get all unique timestamps sorted
+        const allTimestamps = new Set<number>();
+        setsData.forEach(setData => {
+          setData.data.forEach(point => {
+            allTimestamps.add(point.timestamp);
+          });
+        });
+        const sortedTimestamps = Array.from(allTimestamps).sort((a, b) => a - b);
+        
+        if (sortedTimestamps[data.index]) {
+          const clickedTimestamp = sortedTimestamps[data.index];
+          // Create a dummy data point for the clicked timestamp
+          const clickedPoint: ProcessedDataPoint = {
+            x: formatDate(clickedTimestamp),
+            y: 0, // This won't be used in sets mode
+            timestamp: clickedTimestamp,
+            originalData: [] // This will be populated in the tooltip
+          };
+          setSelectedPoint(clickedPoint);
+          setTooltipVisible(true);
+        }
+      }
+    } else {
+      // Original logic for CES/1RM charts
+      if (data.index !== undefined && chartData[data.index]) {
+        setSelectedPoint(chartData[data.index]);
+        setTooltipVisible(true);
+      }
     }
   };
 
@@ -577,18 +657,31 @@ export default function GraphsWorkoutDetails() {
       withOuterLines: true
     };
 
+    const chartWidth = getChartWidth(chartData.length);
+
     return (
       <View style={styles.chartContainer}>
-        <LineChart
-          data={data}
-          width={screenWidth}
-          height={220}
-          chartConfig={chartConfig}
-          bezier
-          style={styles.chart}
-          verticalLabelRotation={30}
-          onDataPointClick={handleDataPointClick}
-        />
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.chartScrollContainer}
+        >
+          <LineChart
+            data={data}
+            width={chartWidth}
+            height={220}
+            chartConfig={chartConfig}
+            bezier
+            style={styles.chart}
+            verticalLabelRotation={30}
+            onDataPointClick={handleDataPointClick}
+          />
+        </ScrollView>
+        {chartData.length > 5 && (
+          <Text style={[styles.scrollHint, { color: theme.text }]}>
+            ← {t('Scroll horizontally to see more data')} →
+          </Text>
+        )}
       </View>
     );
   };
@@ -649,6 +742,7 @@ export default function GraphsWorkoutDetails() {
     } as any; // Type assertion here
   
     const dynamicHeight = Math.max(220, 180 + (setsData.length > 5 ? setsData.length * 5 : setsData.length * 10));
+    const chartWidth = getChartWidth(sortedDates.length);
   
     const chartConfig = {
       backgroundColor: theme.card,
@@ -676,17 +770,28 @@ export default function GraphsWorkoutDetails() {
   
     return (
       <View style={styles.chartContainer}>
-        <LineChart
-          data={data}
-          width={screenWidth}
-          height={dynamicHeight}
-          chartConfig={chartConfig}
-          style={styles.chart}
-          verticalLabelRotation={30}
-          onDataPointClick={handleDataPointClick}
-          withShadow={false}
-          segments={4}
-        />
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.chartScrollContainer}
+        >
+          <LineChart
+            data={data}
+            width={chartWidth}
+            height={dynamicHeight}
+            chartConfig={chartConfig}
+            style={styles.chart}
+            verticalLabelRotation={30}
+            onDataPointClick={handleDataPointClick}
+            withShadow={false}
+            segments={4}
+          />
+        </ScrollView>
+        {sortedDates.length > 5 && (
+          <Text style={[styles.scrollHint, { color: theme.text }]}>
+            ← {t('Scroll horizontally to see more data')} →
+          </Text>
+        )}
       </View>
     );
   };
@@ -705,7 +810,7 @@ export default function GraphsWorkoutDetails() {
         if (dataPoint) {
           dateData.push({
             setNumber: setData.setNumber,
-            weight: dataPoint.y,
+            weight: dataPoint.originalWeight || dataPoint.y,
             color: setData.color,
             reps: dataPoint.originalData[0].reps_logged
           });
@@ -1173,9 +1278,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 10,
   },
+  chartScrollContainer: {
+    paddingHorizontal: 10,
+  },
   chart: {
     marginVertical: 8,
     borderRadius: 16,
+  },
+  scrollHint: {
+    textAlign: 'center',
+    fontSize: 12,
+    marginTop: 5,
+    opacity: 0.7,
+    fontStyle: 'italic',
   },
   noDataContainer: {
     alignItems: 'center',
