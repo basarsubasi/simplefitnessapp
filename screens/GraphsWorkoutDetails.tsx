@@ -904,7 +904,7 @@ export default function GraphsWorkoutDetails() {
         </View>
         {chartData.length > 5 && (
           <Text style={[styles.scrollHint, { color: theme.text }]}>
-            ← {t('Scroll horizontally to see more data')} →
+            {t('Scroll horizontally to see more data')} →
           </Text>
         )}
       </View>
@@ -1125,7 +1125,7 @@ export default function GraphsWorkoutDetails() {
         </View>
         {sortedDates.length > 5 && (
           <Text style={[styles.scrollHint, { color: theme.text }]}>
-            ← {t('Scroll horizontally to see more data')} →
+            {t('Scroll horizontally to see more data')} →
           </Text>
         )}
       </View>
