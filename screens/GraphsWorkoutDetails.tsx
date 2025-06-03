@@ -44,6 +44,7 @@ type ProcessedDataPoint = {
   y: number; // Value (CES or 1RM)
   timestamp: number; // Raw timestamp for sorting
   originalData: LogData[]; // Store original data for tooltip
+  originalWeight?: number; // Original weight before offset adjustment
 };
 
 // Add new data structure for sets
@@ -51,6 +52,7 @@ type SetProgressData = {
   setNumber: number;
   data: ProcessedDataPoint[];
   color: string;
+  showInLegend?: boolean; // Whether to show this set in the legend
 };
 
 // Add this type definition near the top with other type definitions
@@ -342,6 +344,9 @@ export default function GraphsWorkoutDetails() {
   
     // Process data for each set
     const setsProgressData: SetProgressData[] = [];
+
+    // Create a map to track points at each timestamp for overlap detection
+    const timestampWeightMap: Record<number, number[]> = {};
   
     allSetNumbers.forEach(setNum => {
       const setLogs = logsBySet[setNum];
@@ -349,7 +354,8 @@ export default function GraphsWorkoutDetails() {
   
       // Only process dates where this specific set was logged
       Object.entries(setLogs).forEach(([dateStr, logs]) => {
-        const date = new Date(parseInt(dateStr) * 1000);
+        const timestamp = parseInt(dateStr);
+        const date = new Date(timestamp * 1000);
         
         const day = date.getDate().toString().padStart(2, '0');
         const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -358,14 +364,29 @@ export default function GraphsWorkoutDetails() {
           : `${day}/${month}`;
   
         // Since we're only iterating through dates where this set exists,
-        // we know there's always a log for this set
-        const setLog = logs[0]; // Take the first (should be only) log for this set on this date
+        // we know there's always a log for this set on this date
+        const setLog = logs[0];
+        const weight = setLog.weight_logged;
+
+        // Initialize the weight array for this timestamp if it doesn't exist
+        if (!timestampWeightMap[timestamp]) {
+          timestampWeightMap[timestamp] = [];
+        }
+
+        // Count how many times this weight appears at this timestamp
+        const weightCount = timestampWeightMap[timestamp].filter(w => Math.abs(w - weight) < 0.1).length;
+        // Add a small offset if there are overlapping points
+        const adjustedWeight = weight + (weightCount * 0.8);
+        
+        // Store the original weight for future overlap checks
+        timestampWeightMap[timestamp].push(weight);
         
         setData.push({
           x: formattedDate,
-          y: setLog.weight_logged,
-          timestamp: parseInt(dateStr),
-          originalData: [setLog]
+          y: adjustedWeight,
+          timestamp: timestamp,
+          originalData: [setLog],
+          originalWeight: weight // Store the original weight for tooltip display
         });
       });
   
@@ -378,7 +399,8 @@ export default function GraphsWorkoutDetails() {
         setsProgressData.push({
           setNumber: setNum,
           data: sortedSetData,
-          color: setColors[(setNum - 1) % setColors.length]
+          color: setColors[(setNum - 1) % setColors.length],
+          showInLegend: setNum <= 5 // Only show in legend if set number is 5 or less
         });
       }
     });
@@ -390,6 +412,7 @@ export default function GraphsWorkoutDetails() {
       setChartData(setsProgressData[0].data);
     }
   };
+
   const handleDataPointClick = (data: any) => {
     // Find the data point that was clicked
     if (data.index !== undefined && chartData[data.index]) {
@@ -565,7 +588,6 @@ export default function GraphsWorkoutDetails() {
     );
   };
 
-
   const renderSetsChart = () => {
     if (setsData.length === 0) {
       return (
@@ -577,7 +599,7 @@ export default function GraphsWorkoutDetails() {
         </View>
       );
     }
-  
+
     // Get all unique dates from all sets and sort them
     const allTimestamps = new Set<number>();
     setsData.forEach(setData => {
@@ -593,77 +615,31 @@ export default function GraphsWorkoutDetails() {
       const month = (date.getMonth() + 1).toString().padStart(2, '0');
       return dateFormat === 'mm-dd-yyyy' ? `${month}/${day}` : `${day}/${month}`;
     });
-  
+
     // Create datasets for each set
-    const datasets = setsData.map((setData, setIndex) => {
-      // Find when this set first appears
-      const setTimestamps = setData.data.map(point => point.timestamp).sort((a, b) => a - b);
-      const firstSetTimestamp = setTimestamps[0];
-      
-      // Create data array - only include values from when this set first appears
+    const datasets = setsData.map(setData => {
       const dataArray = sortedTimestamps.map(timestamp => {
-        if (timestamp < firstSetTimestamp) {
-          // This set hasn't started yet - return minimum value to hide the line
-          return 0;
-        }
-        
-        const point = setData.data.find(p => p.timestamp === timestamp);
-        return point ? point.y : 0;
-      });
-  
-      return {
-        data: dataArray,
-        color: (opacity = 1) => {
-          // Make early points transparent
-          return setData.color;
-        },
-        strokeWidth: 2,
-        withDots: (index: number) => {
-          // Only show dots for points where this set actually has data
-          const timestamp = sortedTimestamps[index];
-          return timestamp >= firstSetTimestamp && setData.data.some(p => p.timestamp === timestamp);
-        },
-      };
-    });
-  
-    // Filter the data to make lines start only from their first date
-    const filteredDatasets = setsData.map((setData, setIndex) => {
-      const setTimestamps = setData.data.map(point => point.timestamp).sort((a, b) => a - b);
-      const firstSetTimestamp = setTimestamps[0];
-      const firstIndex = sortedTimestamps.indexOf(firstSetTimestamp);
-      
-      // Create array with actual values only from first appearance
-      const dataArray = sortedTimestamps.map((timestamp, index) => {
-        if (index < firstIndex) {
-          return undefined; // Will be filtered out
-        }
         const point = setData.data.find(p => p.timestamp === timestamp);
         return point ? point.y : undefined;
-      });
-  
-      // Get indices where we have actual data
-      const validIndices: number[] = [];
-      dataArray.forEach((value, index) => {
-        if (value !== undefined) {
-          validIndices.push(index);
-        }
-      });
-  
+      }).filter(value => value !== undefined) as number[];
+
       return {
-        data: validIndices.map(i => dataArray[i]!),
+        data: dataArray,
         color: (opacity = 1) => setData.color,
-        strokeWidth: 2,
+        strokeWidth: 2
       };
     });
-  
+
     const data = {
       labels: sortedDates,
-      datasets: filteredDatasets,
-      legend: setsData.map(setData => `${t('Set')} ${setData.setNumber}`)
+      datasets: datasets,
+      legend: setsData.length > 5 
+        ? setsData.map(() => '') // Empty legend labels when more than 5 sets
+        : setsData.map(setData => `${t('Set')} ${setData.setNumber}`)
     };
-  
-    const dynamicHeight = Math.max(220, 180 + (setsData.length * 10));
-  
+
+    const dynamicHeight = Math.max(220, 180 + (setsData.length > 5 ? setsData.length * 5 : setsData.length * 10));
+
     const chartConfig = {
       backgroundColor: theme.card,
       backgroundGradientFrom: theme.card,
@@ -687,7 +663,7 @@ export default function GraphsWorkoutDetails() {
       withInnerLines: true,
       withOuterLines: true,
     };
-  
+
     return (
       <View style={styles.chartContainer}>
         <LineChart
