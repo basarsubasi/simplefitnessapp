@@ -44,7 +44,7 @@ export default function Difficulty() {
       const fetchData = async () => {
         await addTables(db);
         await insertWorkouts(db);
-        await insertTestData(db);
+        // await insertTestData(db);
         await db.withTransactionAsync(getWorkouts);
       };
         fetchData()
