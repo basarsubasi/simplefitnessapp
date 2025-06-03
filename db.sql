@@ -86,3 +86,6 @@ CREATE TABLE IF NOT EXISTS Logged_Exercises (
 );
 
 ALTER TABLE Workout_Log ADD COLUMN notification_id TEXT;
+
+ALTER TABLE Workout_Log ADD COLUMN completion_time INTEGER;
+ALTER TABLE Weight_Log ADD COLUMN completion_time INTEGER;
