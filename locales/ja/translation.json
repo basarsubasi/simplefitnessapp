@@ -301,5 +301,20 @@
   "workoutReminderTitle": "ワークアウトリマインダー：{{workoutName}}",
   "workoutReminderBody": "「{{dayName}}」のワークアウトの時間です！",
   "Workout in Progress": "ワークアウト進行中",
-  "Workout in Progress Message": "ワークアウトを完了するのを忘れないでください！"
+  "Workout in Progress Message": "ワークアウトを完了するのを忘れないでください！",
+
+
+  "_comment_GraphsWorkoutDetails": "これらはグラフ-ワークアウト詳細関連の文字列です。",
+    "setGraph": "セット",
+    "Time": "時間",
+    "completionTime": "完了時間",
+    "horizontalScrollHint": "水平にスクロールして詳細データを表示",
+    "weightProgressionBySets": "セット別重量推移",
+    "About Sets Progression": "セットグラフについて",
+    "About Completion Time": "時間グラフについて",
+    "SetsGraph": "セットグラフ",
+    "TimeGraph": "時間グラフ",
+    "timeGraphExplanation": "このグラフは、ワークアウトセッションを完了するのにかかる時間の推移を示します。",
+    "setsGraphExplanation": "このグラフは、各セットの重量の推移を時系列で示します。各線と色は異なるセット番号を表し、ワークアウトセッション全体でのパフォーマンスを追跡できます。",
+    "graphTipText": "ヒント：グラフ上の点を押すと、そのワークアウトセッションに関する追加情報を確認できます。"
 }
