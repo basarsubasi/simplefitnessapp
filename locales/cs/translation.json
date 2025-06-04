@@ -302,7 +302,20 @@
     "workoutReminderTitle": "Připomenutí tréninku: {{workoutName}}",
     "workoutReminderBody": "Čas pro vaši {{dayName}} trénink!",
     "Workout in Progress": "Trénink v průběhu",
-    "Workout in Progress Message": "Nezapomeňte dokončit svůj trénink!"
+    "Workout in Progress Message": "Nezapomeňte dokončit svůj trénink!",
+    "_comment_GraphsWorkoutDetails": "Toto jsou řetězce související s detaily grafů tréninku.",
+    "setGraph": "Série",
+    "Time": "Čas",
+    "completionTime": "Čas dokončení",
+    "horizontalScrollHint": "Posouvejte vodorovně pro zobrazení více dat",
+    "weightProgressionBySets": "Progrese váhy podle sérií",
+    "About Sets Progression": "O grafu sérií",
+    "About Completion Time": "O grafu času",
+    "SetsGraph": "Graf sérií",
+    "TimeGraph": "Graf času",
+    "timeGraphExplanation": "Tento graf ukazuje, jak dlouho vám v průběhu času trvá dokončit tréninkové jednotky.",
+    "setsGraphExplanation": "Tento graf ukazuje progresi váhy pro každou sérii v průběhu času. Každá čára a barva představuje jiné číslo série, což vám umožňuje sledovat váš výkon během tréninkových jednotek.",
+    "graphTipText": "Tip: Můžete stisknout tečky na grafu pro zobrazení dalších informací o dané tréninkové jednotce."
     
     
     

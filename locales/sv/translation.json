@@ -306,7 +306,23 @@
       "workoutReminderTitle": "Påminnelse om träning: {{workoutName}}",
       "workoutReminderBody": "Tid för din {{dayName}} träning!",
       "Workout in Progress": "Träning pågår",
-      "Workout in Progress Message": "Glöm inte att slutföra din träning!"
+      "Workout in Progress Message": "Glöm inte att slutföra din träning!",
+
+
+
+      "_comment_GraphsWorkoutDetails": "Dessa är strängar relaterade till Grafer-Träningsdetaljer.",
+    "setGraph": "Set",
+    "Time": "Tid",
+    "completionTime": "Slutförandetid",
+    "horizontalScrollHint": "Skrolla horisontellt för att se mer data",
+    "weightProgressionBySets": "Viktprogression per set",
+    "About Sets Progression": "Om Setgraf",
+    "About Completion Time": "Om Tidsgraf",
+    "SetsGraph": "Setgraf",
+    "TimeGraph": "Tidsgraf",
+    "timeGraphExplanation": "Denna graf visar hur lång tid det tar för dig att slutföra dina träningspass över tid.",
+    "setsGraphExplanation": "Denna graf visar viktprogressionen för varje set över tid. Varje linje och färg representerar ett annat setnummer, vilket gör att du kan följa din prestation under dina träningspass.",
+    "graphTipText": "Tips: Du kan trycka på prickarna i grafen för att se ytterligare information om det träningspasset."
         
 
     
