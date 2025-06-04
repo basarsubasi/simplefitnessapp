@@ -304,7 +304,22 @@
   "workoutReminderTitle": "Harjoitusmuistutus: {{workoutName}}",
   "workoutReminderBody": "Aika harjoituksen {{dayName}}!",
   "Workout in Progress": "Harjoitus menossa",
-  "Workout in Progress Message": "Älä unohda täyttää harjoitusta!"
+  "Workout in Progress Message": "Älä unohda täyttää harjoitusta!",
+
+
+  "_comment_GraphsWorkoutDetails": "Nämä ovat Kaaviot-Harjoitustiedot-liittyviä merkkijonoja.",
+    "setGraph": "Sarjat",
+    "Time": "Aika",
+    "completionTime": "Suoritusaika",
+    "horizontalScrollHint": "Vieritä vaakasuunnassa nähdäksesi lisää tietoja",
+    "weightProgressionBySets": "Painonkehitys sarjoittain",
+    "About Sets Progression": "Tietoja sarjakaaviosta",
+    "About Completion Time": "Tietoja aikakaaviosta",
+    "SetsGraph": "Sarjakaavio",
+    "TimeGraph": "Aikakaavio",
+    "timeGraphExplanation": "Tämä kaavio näyttää, kuinka kauan harjoituskertojen suorittaminen kestää ajan mittaan.",
+    "setsGraphExplanation": "Tämä kaavio näyttää kunkin sarjan painonkehityksen ajan mittaan. Jokainen viiva ja väri edustaa eri sarjanumeroa, minkä avulla voit seurata suorituskykyäsi harjoituskertojen aikana.",
+    "graphTipText": "Vinkki: Voit painaa kaavion pisteitä nähdäksesi lisätietoja kyseisestä harjoituskerrasta."
     
     
 

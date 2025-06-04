@@ -300,7 +300,22 @@
   "workoutReminderTitle": "운동 알림: {{workoutName}}",
   "workoutReminderBody": "{{dayName}} 운동 시간입니다!",
   "Workout in Progress": "운동 진행 중",
-  "Workout in Progress Message": "운동을 완료하는 것을 잊지 마세요!"
+  "Workout in Progress Message": "운동을 완료하는 것을 잊지 마세요!",
+
+
+  "_comment_GraphsWorkoutDetails": "그래프-운동 상세 관련 문자열입니다.",
+    "setGraph": "세트",
+    "Time": "시간",
+    "completionTime": "완료 시간",
+    "horizontalScrollHint": "더 많은 데이터를 보려면 가로로 스크롤하세요",
+    "weightProgressionBySets": "세트별 중량 진행",
+    "About Sets Progression": "세트 그래프 정보",
+    "About Completion Time": "시간 그래프 정보",
+    "SetsGraph": "세트 그래프",
+    "TimeGraph": "시간 그래프",
+    "timeGraphExplanation": "이 그래프는 시간 경과에 따른 운동 세션 완료 시간을 보여줍니다.",
+    "setsGraphExplanation": "이 그래프는 시간 경과에 따른 각 세트의 중량 진행 상황을 보여줍니다. 각 선과 색상은 다른 세트 번호를 나타내므로 운동 세션 전반에 걸친 수행 능력을 추적할 수 있습니다.",
+    "graphTipText": "팁: 그래프의 점을 누르면 해당 운동 세션에 대한 추가 정보를 볼 수 있습니다."
 
 
 }

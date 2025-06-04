@@ -301,7 +301,22 @@
       "workoutReminderTitle": "Recordatorio de entrenamiento: {{workoutName}}",
       "workoutReminderBody": "Hora para tu entrenamiento {{dayName}}!",
       "Workout in Progress": "Entrenamiento en progreso",
-      "Workout in Progress Message": "¡No olvides completar tu entrenamiento!"
+      "Workout in Progress Message": "¡No olvides completar tu entrenamiento!",
+
+
+      "_comment_GraphsWorkoutDetails": "Estas son cadenas relacionadas con los detalles de los gráficos de entrenamiento.",
+    "setGraph": "Series",
+    "Time": "Tiempo",
+    "completionTime": "Tiempo de finalización",
+    "horizontalScrollHint": "Desplácese horizontalmente para ver más datos",
+    "weightProgressionBySets": "Progresión de peso por series",
+    "About Sets Progression": "Acerca del gráfico de series",
+    "About Completion Time": "Acerca del gráfico de tiempo",
+    "SetsGraph": "Gráfico de series",
+    "TimeGraph": "Gráfico de tiempo",
+    "timeGraphExplanation": "Este gráfico muestra cuánto tiempo le toma completar sus sesiones de entrenamiento a lo largo del tiempo.",
+    "setsGraphExplanation": "Este gráfico muestra la progresión del peso para cada serie a lo largo del tiempo. Cada línea y color representa un número de serie diferente, lo que le permite realizar un seguimiento de su rendimiento a lo largo de sus sesiones de entrenamiento.",
+    "graphTipText": "Consejo: Puede presionar los puntos en el gráfico para ver información adicional sobre esa sesión de entrenamiento."
 
 
 

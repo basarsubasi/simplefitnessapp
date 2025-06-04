@@ -302,7 +302,22 @@
       "workoutReminderTitle": "Obvestilo o vadbi: {{workoutName}}",
       "workoutReminderBody": "Čas za vašo {{dayName}} vadbo!",
       "Workout in Progress": "Vadba v teku",
-      "Workout in Progress Message": "Ne pozabite dokončati vaše vadbe!"
+      "Workout in Progress Message": "Ne pozabite dokončati vaše vadbe!",
+
+
+      "_comment_GraphsWorkoutDetails": "To so nizi, povezani s podrobnostmi grafov vadbe.",
+    "setGraph": "Serije",
+    "Time": "Čas",
+    "completionTime": "Čas zaključka",
+    "horizontalScrollHint": "Pomaknite se vodoravno za več podatkov",
+    "weightProgressionBySets": "Napredovanje teže po serijah",
+    "About Sets Progression": "O grafu serij",
+    "About Completion Time": "O grafu časa",
+    "SetsGraph": "Graf serij",
+    "TimeGraph": "Graf časa",
+    "timeGraphExplanation": "Ta graf prikazuje, kako dolgo potrebujete za dokončanje vadbenih sej skozi čas.",
+    "setsGraphExplanation": "Ta graf prikazuje napredovanje teže za vsako serijo skozi čas. Vsaka črta in barva predstavljata drugačno številko serije, kar vam omogoča spremljanje vaše uspešnosti med vadbenimi sejami.",
+    "graphTipText": "Nasvet: Lahko pritisnete na pike na grafu, da si ogledate dodatne informacije o tej vadbeni seji."
         
 
     

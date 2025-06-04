@@ -276,7 +276,7 @@
     "importErrorMessage": "Kunne ikke importere database",
     "remindScheduledWorkouts": "Mind mig om planlagte træninger",
     "dayInterval": "Dagle interval:",
-    
+
     "_comment_Graphs": "Disse er Grafer-relaterede strenge.",
     "Graphs": "Grafer",
     "SelectWorkoutforGraph": "Vælg en træning til grafer",
@@ -300,7 +300,21 @@
     "workoutReminderTitle": "Træningspåmindelse: {{workoutName}}",
     "workoutReminderBody": "Tid til din {{dayName}} træning!",
     "Workout in Progress": "Træning i gang",
-    "Workout in Progress Message": "Glem ikke at fuldføre din træning!"
+    "Workout in Progress Message": "Glem ikke at fuldføre din træning!",
+
+    "_comment_GraphsWorkoutDetails": "Disse er Grafer-Træningsdetaljer-relaterede strenge.",
+    "setGraph": "Sæt",
+    "Time": "Tid",
+    "completionTime": "Gennemførelsestid",
+    "horizontalScrollHint": "Rul vandret for at se flere data",
+    "weightProgressionBySets": "Vægtprogression pr. sæt",
+    "About Sets Progression": "Om Sæt Graf",
+    "About Completion Time": "Om Tidsgraf",
+    "SetsGraph": "Sæt Graf",
+    "TimeGraph": "Tidsgraf",
+    "timeGraphExplanation": "Denne graf viser, hvor lang tid det tager dig at gennemføre dine træningspas over tid.",
+    "setsGraphExplanation": "Denne graf viser vægtprogressionen for hvert sæt over tid. Hver linje og farve repræsenterer et forskelligt sætnummer, hvilket giver dig mulighed for at spore din præstation gennem dine træningspas.",
+    "graphTipText": "Tip: Du kan trykke på prikkerne på grafen for at se yderligere oplysninger om det pågældende træningspas."
     
   }
   

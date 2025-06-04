@@ -310,7 +310,21 @@
       "workoutReminderTitle": "Treningspåminnelse: {{workoutName}}",
       "workoutReminderBody": "Tid for din {{dayName}} treningsøkt!",
       "Workout in Progress": "Treningsøkt i gang",
-      "Workout in Progress Message": "Ikke glem å fullføre din treningsøkt!"
+      "Workout in Progress Message": "Ikke glem å fullføre din treningsøkt!",
+
+      "_comment_GraphsWorkoutDetails": "Dette er Grafer-Treningsdetaljer-relaterte strenger.",
+    "setGraph": "Sett",
+    "Time": "Tid",
+    "completionTime": "Fullføringstid",
+    "horizontalScrollHint": "Rull horisontalt for å se mer data",
+    "weightProgressionBySets": "Vektprogresjon per sett",
+    "About Sets Progression": "Om Settgraf",
+    "About Completion Time": "Om Tidsgraf",
+    "SetsGraph": "Settgraf",
+    "TimeGraph": "Tidsgraf",
+    "timeGraphExplanation": "Denne grafen viser hvor lang tid det tar deg å fullføre treningsøktene dine over tid.",
+    "setsGraphExplanation": "Denne grafen viser vektprogresjonen for hvert sett over tid. Hver linje og farge representerer et annet settnummer, slik at du kan spore ytelsen din gjennom treningsøktene.",
+    "graphTipText": "Tips: Du kan trykke på prikkene i grafen for å se tilleggsinformasjon om den treningsøkten."
         
 
 }

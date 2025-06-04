@@ -337,6 +337,22 @@
     "workoutReminderTitle": "Workout Reminder: {{workoutName}}",
     "workoutReminderBody": "Time for your {{dayName}} workout!",
     "Workout in Progress": "Workout in Progress",
-    "Workout in Progress Message": "Don't forget to complete your workout!"
-  }
+    "Workout in Progress Message": "Don't forget to complete your workout!",
+
+
+    "_comment_GraphsWorkoutDetails": "These are Graphs-Workout-Details-related strings.",
+
+    "setGraph": "Sets",
+    "Time": "Time",
+    "completionTime": "Completion Time",
+    "horizontalScrollHint": "Scroll horizontally to see more data",
+    "weightProgressionBySets": "Weight Progression by Sets",
+    "About Sets Progression": "About Sets Graph",
+    "About Completion Time": "About Time Graph",
+    "SetsGraph": "Sets Graph",
+    "TimeGraph": "Time Graph",
+    "timeGraphExplanation": "This graph shows how long it takes you to complete your workout sessions over time.",
+    "setsGraphExplanation": "This graph shows the weight progression for each set over time. Each line and color represents a different set number , allowing you to track how your performance throughout your workout sessions.",
+    "graphTipText": "Tip: You can press the dots on the graph to get additional information about that workout session."
+    }
   

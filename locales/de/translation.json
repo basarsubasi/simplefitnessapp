@@ -296,7 +296,21 @@
   "workoutReminderTitle": "Workout-Erinnerung: {{workoutName}}",
   "workoutReminderBody": "Zeit für deinen {{dayName}} Workout!",
   "Workout in Progress": "Workout im Gange",
-  "Workout in Progress Message": "Vergiss nicht, dein Workout zu beenden!"
+  "Workout in Progress Message": "Vergiss nicht, dein Workout zu beenden!",
+
+  "_comment_GraphsWorkoutDetails": "Dies sind Zeichenfolgen im Zusammenhang mit den Details von Trainingsdiagrammen.",
+    "setGraph": "Sätze",
+    "Time": "Zeit",
+    "completionTime": "Abschlusszeit",
+    "horizontalScrollHint": "Horizontal scrollen, um mehr Daten anzuzeigen",
+    "weightProgressionBySets": "Gewichtsentwicklung nach Sätzen",
+    "About Sets Progression": "Über das Sätze-Diagramm",
+    "About Completion Time": "Über das Zeit-Diagramm",
+    "SetsGraph": "Sätze-Diagramm",
+    "TimeGraph": "Zeit-Diagramm",
+    "timeGraphExplanation": "Dieses Diagramm zeigt, wie lange Sie im Laufe der Zeit benötigen, um Ihre Trainingseinheiten abzuschließen.",
+    "setsGraphExplanation": "Dieses Diagramm zeigt die Gewichtsentwicklung für jeden Satz im Laufe der Zeit. Jede Linie und Farbe repräsentiert eine andere Satznummer, sodass Sie Ihre Leistung während Ihrer Trainingseinheiten verfolgen können.",
+    "graphTipText": "Tipp: Sie können auf die Punkte im Diagramm klicken, um zusätzliche Informationen zu dieser Trainingseinheit anzuzeigen."
 
 
 

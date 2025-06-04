@@ -335,7 +335,23 @@
         "workoutReminderTitle": "Antrenman Hatırlatma: {{workoutName}}",
         "workoutReminderBody": " Bugün {{dayName}} antrenmaınız var!",
         "Workout in Progress": "Antrenman Devam Ediyor",
-        "Workout in Progress Message": "Antrenmanınızı bitirmeyi unutmayın!"
+        "Workout in Progress Message": "Antrenmanınızı bitirmeyi unutmayın!",
+
+
+
+        "_comment_GraphsWorkoutDetails": "Bunlar Grafikler-Antrenman Detayları ile ilgili dizelerdir.",
+    "setGraph": "Setler",
+    "Time": "Süre",
+    "completionTime": "Tamamlama Süresi",
+    "horizontalScrollHint": "Daha fazla veri görmek için yatay kaydırın",
+    "weightProgressionBySets": "Setlere Göre Ağırlık İlerlemesi",
+    "About Sets Progression": "Set Grafiği Hakkında",
+    "About Completion Time": "Süre Grafiği Hakkında",
+    "SetsGraph": "Set Grafiği",
+    "TimeGraph": "Süre Grafiği",
+    "timeGraphExplanation": "Bu grafik, antrenman seanslarınızı zaman içinde ne kadar sürede tamamladığınızı gösterir.",
+    "setsGraphExplanation": "Bu grafik, setlerinizin zaman içindeki ilerlemesini gösterir. Her çizgi ve renk farklı bir set numarasını temsil eder ve antrenman seanslarınız boyunca performansınızı izlemenizi sağlar.",
+    "graphTipText": "İpucu: Grafikteki noktalara basarak o antrenman seansı hakkında ek bilgi edinebilirsiniz."
             
         
     
