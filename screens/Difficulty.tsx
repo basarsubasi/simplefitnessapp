@@ -16,7 +16,7 @@ import { WorkoutStackParamList } from '../App';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { insertWorkouts } from '../utils/insertWorkouts'
 import { addTables } from '../utils/addTemplateTable';
-import { insertTestData } from '../utils/insertTestData';
+// import { insertTestData } from '../utils/insertTestData';
 
 
 
@@ -44,7 +44,7 @@ export default function Difficulty() {
       const fetchData = async () => {
         await addTables(db);
         await insertWorkouts(db);
-        await insertTestData(db);
+        // await insertTestData(db);
         await db.withTransactionAsync(getWorkouts);
       };
         fetchData()
