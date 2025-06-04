@@ -304,7 +304,22 @@
       "workoutReminderTitle": "Workout-herinnering: {{workoutName}}",
       "workoutReminderBody": "Tijd voor je {{dayName}} workout!",
       "Workout in Progress":"Training in uitvoering",
-      "Workout in Progress Message": "Vergeet niet je workout te voltooien!"
+      "Workout in Progress Message": "Vergeet niet je workout te voltooien!",
+
+
+      "_comment_GraphsWorkoutDetails": "Dit zijn strings gerelateerd aan Grafieken-Workoutdetails.",
+    "setGraph": "Sets",
+    "Time": "Tijd",
+    "completionTime": "Voltooiingstijd",
+    "horizontalScrollHint": "Scroll horizontaal om meer gegevens te zien",
+    "weightProgressionBySets": "Gewichtsprogressie per sets",
+    "About Sets Progression": "Over Sets Grafiek",
+    "About Completion Time": "Over Tijd Grafiek",
+    "SetsGraph": "Sets Grafiek",
+    "TimeGraph": "Tijd Grafiek",
+    "timeGraphExplanation": "Deze grafiek laat zien hoe lang het duurt om uw workoutsessies in de loop van de tijd te voltooien.",
+    "setsGraphExplanation": "Deze grafiek toont de gewichtsprogressie voor elke set in de loop van de tijd. Elke lijn en kleur vertegenwoordigt een ander setnummer, zodat u uw prestaties tijdens uw workoutsessies kunt volgen.",
+    "graphTipText": "Tip: U kunt op de stippen in de grafiek drukken om aanvullende informatie over die workoutsessie te zien."
     
     
     

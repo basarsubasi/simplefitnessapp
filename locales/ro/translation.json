@@ -275,6 +275,48 @@
     "importFailedTitle": "Import Eșuat",
     "importErrorMessage": "Importul bazei de date a eșuat",
     "remindScheduledWorkouts": "Amintește-mi de antrenamentele programate",
-    "dayInterval": "Interval zile:"
+    "dayInterval": "Interval zile:",
+
+
+
+    "_comment_Graphs": "Acestea sunt șiruri legate de Grafice.",
+  "Graphs": "Grafice",
+  "SelectWorkoutforGraph": "Selectați un antrenament pentru grafice",
+  "No data available for the selected criteria": "Nu există date disponibile pentru criteriile selectate",
+  "Combined Effort Score": "Scor Combinat de Efort",
+  "About CES": "Despre CES",
+  "About 1RM": "Despre 1RM",
+  "CESExplanation": "CES (Scor Combinat de Efort) măsoară volumul total al antrenamentului dvs. luând în considerare greutatea, repetările și intensitatea.",
+  "1RMExplanation": "1RM (O Repetare Maximă) estimează greutatea maximă pe care ați putea-o ridica pentru o singură repetare, pe baza performanței dvs.\n(Aceasta nu este valoarea reală 1RM, dezvoltatorul aplicației nu este responsabil pentru nicio accidentare dacă utilizați această estimare ca 1RM)",
+  "Time Frame": "Interval de timp",
+  "Estimated 1RM": "1RM estimat",
+  "Select Exercise": "Selectați exercițiul",
+  "Week": "Săptămână",
+  "Month": "Lună",
+  "Year": "An",
+  "All Time": "Tot timpul",
+  "Select an exercise": "Selectați un exercițiu",
+  "No exercises available": "Niciun exercițiu disponibil",
+  "Track a workout first to see your progress": "Înregistrați mai întâi un antrenament pentru a vedea progresul",
+  "No workout data available for graphs": "Nu există date de antrenament disponibile pentru grafice",
+  "workoutReminderTitle": "Memento antrenament: {{workoutName}}",
+  "workoutReminderBody": "E timpul pentru antrenamentul tău de {{dayName}}!",
+  "Workout in Progress": "Antrenament în desfășurare",
+  "Workout in Progress Message": "Nu uitați să finalizați antrenamentul!",
+
+
+    "_comment_GraphsWorkoutDetails": "Acestea sunt șiruri legate de Detaliile Antrenamentului din Grafice.",
+    "setGraph": "Serii",
+    "Time": "Timp",
+    "completionTime": "Timp de finalizare",
+    "horizontalScrollHint": "Derulați orizontal pentru a vedea mai multe date",
+    "weightProgressionBySets": "Progresia greutății pe serii",
+    "About Sets Progression": "Despre Graficul Seriilor",
+    "About Completion Time": "Despre Graficul Timpului",
+    "SetsGraph": "Graficul Seriilor",
+    "TimeGraph": "Graficul Timpului",
+    "timeGraphExplanation": "Acest grafic arată cât timp vă ia să finalizați sesiunile de antrenament de-a lungul timpului.",
+    "setsGraphExplanation": "Acest grafic arată progresia greutății pentru fiecare serie de-a lungul timpului. Fiecare linie și culoare reprezintă un număr de serie diferit, permițându-vă să urmăriți performanța pe parcursul sesiunilor de antrenament.",
+    "graphTipText": "Sfat: Puteți apăsa pe punctele de pe grafic pentru a vedea informații suplimentare despre acea sesiune de antrenament."
   }
   

@@ -726,7 +726,7 @@ export default function GraphsWorkoutDetails() {
             styles.toggleText, 
             { color: calculationType === 'Sets' ? theme.buttonText : theme.text }
           ]}>
-            {t('Sets')}
+            {t('setGraph')}
           </Text>
         </TouchableOpacity>
 
@@ -904,7 +904,7 @@ export default function GraphsWorkoutDetails() {
         </View>
         {chartData.length > 5 && (
           <Text style={[styles.scrollHint, { color: theme.text }]}>
-            {t('Scroll horizontally to see more data')} →
+            {t('horizontalScrollHint')} →
           </Text>
         )}
       </View>
@@ -917,7 +917,7 @@ export default function GraphsWorkoutDetails() {
         <View style={styles.noDataContainer}>
           <Ionicons name="time-outline" size={60} color={theme.text} style={{ opacity: 0.5 }} />
           <Text style={[styles.noDataText, { color: theme.text }]}>
-            {t('No completion time data available')}
+            {t('No data available for the selected criteria')}
           </Text>
         </View>
       );
@@ -966,7 +966,7 @@ export default function GraphsWorkoutDetails() {
           color: timeChartConfig.color, 
           strokeWidth: 2
         }],
-        legend: [t('Completion Time')]
+        legend: [t('completionTime')]
       },
       width: lineChartContentWidth, 
       height: chartHeight,
@@ -991,7 +991,7 @@ export default function GraphsWorkoutDetails() {
         </ScrollView>
         {chartData.length > 5 && (
           <Text style={[styles.scrollHint, { color: theme.text }]}>
-            {t('Scroll horizontally to see more data')} →
+            {t('horizontalScrollHint')} →
           </Text>
         )}
       </View>
@@ -1125,7 +1125,7 @@ export default function GraphsWorkoutDetails() {
         </View>
         {sortedDates.length > 5 && (
           <Text style={[styles.scrollHint, { color: theme.text }]}>
-            {t('Scroll horizontally to see more data')} →
+            {t('horizontalScrollHint')} →
           </Text>
         )}
       </View>
@@ -1202,7 +1202,7 @@ export default function GraphsWorkoutDetails() {
             {calculationType === 'Time' ? (
               <>
                 <Text style={[styles.tooltipSubtitle, { color: theme.text }]}>
-                  {t('Completion Time')}: {formatTimeFromSeconds(selectedPoint.y)}
+                  {t('completionTime')}: {formatTimeFromSeconds(selectedPoint.y)}
                 </Text>
                 
                 <ScrollView style={styles.tooltipSetsList} nestedScrollEnabled>
@@ -1539,8 +1539,8 @@ export default function GraphsWorkoutDetails() {
             : calculationType === '1RM' 
             ? t('Estimated 1RM')
             : calculationType === 'Time'
-            ? t('Workout Completion Time')
-            : t('Weight Progression by Sets')}
+            ? t('TimeGraph')
+            : t('SetsGraph')}
         </Text>
         
         {isLoading ? (
@@ -1566,8 +1566,8 @@ export default function GraphsWorkoutDetails() {
               : calculationType === '1RM'
               ? t('1RMExplanation')
               : calculationType === 'Time'
-              ? t('This graph shows how long it takes you to complete your workout sessions over time. Click on any point to see the detailed breakdown of exercises and sets for that workout session.')
-              : t('This graph shows the weight progression for each set position over time. Each line represents a different set number (Set 1, Set 2, etc.), allowing you to track how your performance changes throughout your workout sessions.')}
+              ? t('timeGraphExplanation')
+              : t('setsGraphExplanation')}
           </Text>
         </View>
       </View>

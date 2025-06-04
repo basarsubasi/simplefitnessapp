@@ -301,5 +301,19 @@
   "workoutReminderTitle": "锻炼提醒：{{workoutName}}",
   "workoutReminderBody": "是时候进行您的“{{dayName}}”锻炼了！",
   "Workout in Progress": "锻炼进行中",
-  "Workout in Progress Message": "请不要忘记完成您的锻炼！"
+  "Workout in Progress Message": "请不要忘记完成您的锻炼！",
+
+  "_comment_GraphsWorkoutDetails": "这些是图表-锻炼详情相关的字符串。",
+    "setGraph": "组数",
+    "Time": "时间",
+    "completionTime": "完成时间",
+    "horizontalScrollHint": "水平滚动以查看更多数据",
+    "weightProgressionBySets": "按组数划分的重量进展",
+    "About Sets Progression": "关于组数图表",
+    "About Completion Time": "关于时间图表",
+    "SetsGraph": "组数图表",
+    "TimeGraph": "时间图表",
+    "timeGraphExplanation": "此图表显示您完成锻炼课程所需的时间随时间的变化。",
+    "setsGraphExplanation": "此图表显示每个组的重量进展随时间的变化。每条线和颜色代表不同的组号，使您可以跟踪整个锻炼课程中的表现。",
+    "graphTipText": "提示：您可以按图表上的点以查看有关该锻炼课程的更多信息。"
 }
