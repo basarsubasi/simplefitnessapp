@@ -1,0 +1,3 @@
+- Added new graphs
+- Implemented horizontal scrolling on the graphs
+- Improved data sampling on the graphs
