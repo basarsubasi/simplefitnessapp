@@ -11,7 +11,7 @@ export interface TimerState {
   workoutStartTime: number | null;
   workoutDuration: number;
   restStartTime: number | null;
-  restRemaining: number;
+  restRemaining: number | null;
   isResting: boolean;
   isExerciseRest: boolean;
   currentSetIndex: number;
