@@ -159,8 +159,12 @@ export default function StartedWorkoutInterface() {
     const handleAppStateChange = async (nextAppState: string) => {
       // Going to background - schedule notification if workout is active and notifications are enabled
       if (nextAppState === 'background' || nextAppState === 'inactive') {
-        clearRestTimerState(); // Clear timer state when going background
-        
+        // Stop active intervals when going to background
+        // Let useTimerPersistence handle saving the actual current state
+        stopWorkoutTimer();
+        stopRestTimer();
+        // clearRestTimerState(); // Clear timer state when going background // REMOVED
+
         if (timerState.workoutStarted && 
             timerState.workoutStage !== 'completed' && 
             enableNotifications && 
@@ -186,9 +190,6 @@ export default function StartedWorkoutInterface() {
               trigger: null,
             });
             
-
-
-            
           } catch (error) {
             console.error('Error scheduling notifications:', error);
           }
@@ -196,7 +197,7 @@ export default function StartedWorkoutInterface() {
       } 
       // Coming to foreground - clear notifications
       else if (nextAppState === 'active') {
-        clearRestTimerState(); // Clear timer state when coming to foreground
+        // clearRestTimerState(); // Clear timer state when coming to foreground // REMOVED
         if (enableNotifications) {
           console.log('App returning to foreground - clearing notifications');
           try {
@@ -211,18 +212,16 @@ export default function StartedWorkoutInterface() {
     const subscription = AppState.addEventListener('change', handleAppStateChange);
     
     return () => {
-      clearRestTimerState(); // Clear on unmount
+      // clearRestTimerState(); // Clear on unmount // This was already correctly removed/commented
       subscription.remove();
     };
   }, [
     timerState.workoutStarted, 
     timerState.workoutStage, 
-    timerState.restRemaining,
-    timerState.currentSetIndex,
     enableNotifications, 
     notificationPermissionGranted,
-    workout_log_id,
-    t
+    t,
+    timerState.workoutStartTime
   ]);
   
   // Update enableNotifications only if permission is granted
@@ -403,8 +402,9 @@ export default function StartedWorkoutInterface() {
   };
   
   const startRestTimer = (seconds: number) => {
+    // We're explicitly setting a number here, not null
     setTimerState(prev => updateTimerState(prev, {
-      restRemaining: seconds,
+      restRemaining: seconds,  // This is a number
       restStartTime: Date.now(),
       isResting: true
     }));
@@ -421,7 +421,7 @@ export default function StartedWorkoutInterface() {
           stopRestTimer();
           handleRestComplete(prev.isExerciseRest);
           return updateTimerState(prev, {
-            restRemaining: null,
+            restRemaining: null,  // Only set to null when complete
             isResting: false,
             isExerciseRest: false
           });
