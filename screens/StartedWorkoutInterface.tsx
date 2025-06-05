@@ -164,13 +164,22 @@ export default function StartedWorkoutInterface() {
       // Coming to foreground - clear notifications
       else if (nextAppState === 'active') {
         clearRestTimerState(); // Clear timer state when coming to foreground
+        // Stop active intervals when going to background
+        // Let useTimerPersistence handle saving the actual current state
+        stopWorkoutTimer();
+        stopRestTimer();
+        // clearRestTimerState(); // Clear timer state when going background // REMOVED
+      } 
+      // Coming to foreground - clear notifications
+      else if (nextAppState === 'active') {
+        // clearRestTimerState(); // Clear timer state when coming to foreground // REMOVED
       }
     };
     
     const subscription = AppState.addEventListener('change', handleAppStateChange);
     
     return () => {
-      clearRestTimerState(); // Clear on unmount
+      // clearRestTimerState(); // Clear on unmount // This was already correctly removed/commented
       subscription.remove();
     };
   }, [
@@ -179,7 +188,7 @@ export default function StartedWorkoutInterface() {
     timerState.restRemaining,
     timerState.currentSetIndex,
     workout_log_id,
-    t
+    timerState.workoutStartTime
   ]);
   
 
@@ -333,8 +342,9 @@ export default function StartedWorkoutInterface() {
   };
   
   const startRestTimer = (seconds: number) => {
+    // We're explicitly setting a number here, not null
     setTimerState(prev => updateTimerState(prev, {
-      restRemaining: seconds,
+      restRemaining: seconds,  // This is a number
       restStartTime: Date.now(),
       isResting: true
     }));
@@ -351,7 +361,7 @@ export default function StartedWorkoutInterface() {
           stopRestTimer();
           handleRestComplete(prev.isExerciseRest);
           return updateTimerState(prev, {
-            restRemaining: null,
+            restRemaining: null,  // Only set to null when complete
             isResting: false,
             isExerciseRest: false
           });
