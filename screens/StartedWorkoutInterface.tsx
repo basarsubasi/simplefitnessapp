@@ -120,7 +120,7 @@ export default function StartedWorkoutInterface() {
     }
     
     // Restore rest timer if needed
-    if (savedState.isResting && savedState.restRemaining > 0) {
+    if (savedState.isResting && savedState.restRemaining !== null && savedState.restRemaining > 0) {
       const newRestTime = Math.max(0, savedState.restRemaining - elapsedSeconds);
       
       if (newRestTime <= 0) {
@@ -159,6 +159,8 @@ export default function StartedWorkoutInterface() {
     const handleAppStateChange = async (nextAppState: string) => {
       // Going to background - schedule notification if workout is active and notifications are enabled
       if (nextAppState === 'background' || nextAppState === 'inactive') {
+        clearRestTimerState(); // Clear timer state when going background
+        
         if (timerState.workoutStarted && 
             timerState.workoutStage !== 'completed' && 
             enableNotifications && 
@@ -194,6 +196,7 @@ export default function StartedWorkoutInterface() {
       } 
       // Coming to foreground - clear notifications
       else if (nextAppState === 'active') {
+        clearRestTimerState(); // Clear timer state when coming to foreground
         if (enableNotifications) {
           console.log('App returning to foreground - clearing notifications');
           try {
@@ -208,6 +211,7 @@ export default function StartedWorkoutInterface() {
     const subscription = AppState.addEventListener('change', handleAppStateChange);
     
     return () => {
+      clearRestTimerState(); // Clear on unmount
       subscription.remove();
     };
   }, [
@@ -407,13 +411,17 @@ export default function StartedWorkoutInterface() {
     
     restTimerRef.current = setInterval(() => {
       setTimerState(prev => {
+        if (prev.restRemaining === null) {
+          stopRestTimer();
+          return prev;
+        }
         const newRestTime = prev.restRemaining - 1;
         
         if (newRestTime <= 0) {
           stopRestTimer();
           handleRestComplete(prev.isExerciseRest);
           return updateTimerState(prev, {
-            restRemaining: 0,
+            restRemaining: null,
             isResting: false,
             isExerciseRest: false
           });
@@ -432,12 +440,10 @@ export default function StartedWorkoutInterface() {
   };
   
   const handleRestComplete = (wasExerciseRest: boolean) => {
+    clearRestTimerState(); // Clear rest timer state before new set
     setTimerState(prev => updateTimerState(prev, {
       currentSetIndex: prev.currentSetIndex + 1,
-      workoutStage: 'exercise',
-      isResting: false,
-      isExerciseRest: false,
-      restStartTime: null
+      workoutStage: 'exercise'
     }));
     
     if (enableVibration) {
@@ -788,7 +794,9 @@ export default function StartedWorkoutInterface() {
           
           <TouchableOpacity
             style={[styles.addTimeButton, { backgroundColor: theme.type === 'dark' ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.2)' }]}
-            onPress={() => setTimerState(prev => updateTimerState(prev, { restRemaining: prev.restRemaining + 15 }))}
+            onPress={() => setTimerState(prev => updateTimerState(prev, { 
+              restRemaining: (prev.restRemaining ?? 0) + 15 
+            }))}
           >
             <Text style={[styles.addTimeButtonText, { color: theme.text }]}>{t('addTime')}</Text>
           </TouchableOpacity>
@@ -813,12 +821,10 @@ export default function StartedWorkoutInterface() {
         <TouchableOpacity
           style={[styles.skipRestButton, { backgroundColor: theme.buttonBackground }]}
           onPress={() => {
-            stopRestTimer();
+            clearRestTimerState(); // Clear rest timer state when skipping
             setTimerState(prev => updateTimerState(prev, {
               currentSetIndex: prev.currentSetIndex + 1,
-              workoutStage: 'exercise',
-              isResting: false,
-              isExerciseRest: false
+              workoutStage: 'exercise'
             }));
           }}
         >
@@ -994,6 +1000,16 @@ export default function StartedWorkoutInterface() {
         </TouchableOpacity>
       </Modal>
     );
+  };
+  
+  const clearRestTimerState = () => {
+    stopRestTimer(); // Clear the interval
+    setTimerState(prev => updateTimerState(prev, {
+      isResting: false,
+      isExerciseRest: false,
+      restRemaining: null,
+      restStartTime: null
+    }));
   };
   
   if (loading) {
