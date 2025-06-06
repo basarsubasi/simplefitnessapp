@@ -199,13 +199,19 @@ export default function StartedWorkoutInterface() {
         const preferences = await loadRestTimerPreferences();
         setRestTime(preferences.restTimeBetweenSets);
         setExerciseRestTime(preferences.restTimeBetweenExercises);
+        setEnableVibration(preferences.enableVibration);
+        if (notificationPermissionGranted) {
+          setEnableNotifications(preferences.enableNotifications);
+        } else {
+          setEnableNotifications(false);
+        }
       } catch (error) {
         console.error('Error loading rest timer preferences:', error);
       }
     };
     
     loadPreferences();
-  }, []);
+  }, [notificationPermissionGranted]);
 
   useEffect(() => {
     
@@ -409,7 +415,9 @@ export default function StartedWorkoutInterface() {
     try {
       await saveRestTimerPreferences({
         restTimeBetweenSets: restTime,
-        restTimeBetweenExercises: exerciseRestTime
+        restTimeBetweenExercises: exerciseRestTime,
+        enableVibration: enableVibration,
+        enableNotifications: enableNotifications,
       });
     } catch (error) {
       console.error('Error saving rest timer preferences:', error);
