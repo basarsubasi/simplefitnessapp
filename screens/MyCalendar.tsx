@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useEffect } from 'react'; // Import useEffect
 import {
   View,
   Text,
@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   Alert,
   Modal,
-  ViewStyle, // Import ViewStyle
+  ViewStyle,
 } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useSQLiteContext } from 'expo-sqlite';
@@ -58,6 +58,12 @@ export default function MyCalendar() {
   const [exercises, setExercises] = useState<
     { exercise_name: string; sets: number; reps: number }[]
   >([]);
+
+  // Run this check only ONCE when the component mounts
+  useEffect(() => {
+    console.log('MyCalendar: Component mounted, checking recurring workouts.');
+    checkRecurringWorkouts();
+  }, []); // Empty dependency array ensures this runs only once
 
   const fetchWorkoutsForMonth = useCallback(
     async (date: Date) => {
@@ -111,20 +117,12 @@ export default function MyCalendar() {
     [db]
   );
 
+  // Refresh the calendar data every time the screen is focused
   useFocusEffect(
     useCallback(() => {
-      const checkAndFetchWorkouts = async () => {
-        console.log('MyCalendar: Checking recurring workouts');
-        // First check and schedule any recurring workouts
-        await checkRecurringWorkouts();        
-
-        // Then fetch the workouts to display the latest data
-        fetchWorkoutsForMonth(currentDate);
-        await checkRecurringWorkouts();
-        fetchWorkoutsForMonth(currentDate);
-      };
-      checkAndFetchWorkouts();
-    }, [currentDate, checkRecurringWorkouts, fetchWorkoutsForMonth])
+      console.log('MyCalendar: Screen focused, fetching workouts for month.');
+      fetchWorkoutsForMonth(currentDate);
+    }, [currentDate, fetchWorkoutsForMonth])
   );
 
   const fetchWorkoutDetails = async (workout_log_id: number) => {
