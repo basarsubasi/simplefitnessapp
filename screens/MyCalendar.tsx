@@ -46,15 +46,15 @@ export default function MyCalendar() {
 
   // State for the calendar
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [workouts, setWorkouts] = useState<Map<string, WorkoutEntry>>(
+  const [workouts, setWorkouts] = useState<Map<string, WorkoutEntry[]>>(
     new Map()
   );
 
   // State for the modal
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedWorkout, setSelectedWorkout] = useState<WorkoutEntry | null>(
-    null
-  );
+  const [selectedDateWorkouts, setSelectedDateWorkouts] = useState<WorkoutEntry[]>([]);
+  const [detailedWorkout, setDetailedWorkout] = useState<WorkoutEntry | null>(null);
+  
   const [exercises, setExercises] = useState<
     { exercise_name: string; sets: number; reps: number }[]
   >([]);
@@ -99,7 +99,7 @@ export default function MyCalendar() {
           loggedWorkoutIdsResult.map((item) => item.workout_log_id)
         );
 
-        const workoutsMap = new Map<string, WorkoutEntry>();
+        const workoutsMap = new Map<string, WorkoutEntry[]>();
         allWorkoutsInRange.forEach((workout) => {
           const workoutDate = new Date(workout.workout_date * 1000);
           const dateKey = `${workoutDate.getFullYear()}-${String(
@@ -108,10 +108,18 @@ export default function MyCalendar() {
             2,
             '0'
           )}`;
-          workoutsMap.set(dateKey, {
+          
+          const entry: WorkoutEntry = {
             workout,
             isLogged: loggedWorkoutIds.has(workout.workout_log_id),
-          });
+          };
+
+          const existingEntries = workoutsMap.get(dateKey);
+          if (existingEntries) {
+            existingEntries.push(entry);
+          } else {
+            workoutsMap.set(dateKey, [entry]);
+          }
         });
 
         setWorkouts(workoutsMap);
@@ -147,9 +155,10 @@ export default function MyCalendar() {
     }
   };
 
-  const handleWorkoutPress = (workoutEntry: WorkoutEntry) => {
-    setSelectedWorkout(workoutEntry);
-    fetchWorkoutDetails(workoutEntry.workout.workout_log_id);
+  const handleDayPress = (workoutEntries: WorkoutEntry[]) => {
+    setSelectedDateWorkouts(workoutEntries);
+    setDetailedWorkout(null); // Reset detailed view
+    setExercises([]); // Reset exercises
     setModalVisible(true);
   };
 
@@ -250,7 +259,7 @@ export default function MyCalendar() {
         2,
         '0'
       )}-${String(day).padStart(2, '0')}`;
-      const workoutEntry = workouts.get(dateKey);
+      const workoutEntries = workouts.get(dateKey);
 
       const isCurrentMonth = cellMonth === month;
       const isToday =
@@ -260,15 +269,17 @@ export default function MyCalendar() {
       const isPast = cellDate.setHours(0, 0, 0, 0) < today.setHours(0, 0, 0, 0);
 
       const cellStyle: ViewStyle[] = [styles.dayCell];
-      const textStyle = [
+      const textStyle: any[] = [
         styles.dayText,
         isCurrentMonth
           ? { color: theme.text }
-          : [styles.otherMonthDayText, { color: theme.text }],
+          : { color: theme.text, opacity: 0.3 },
       ];
 
-      if (workoutEntry) {
-        if (workoutEntry.isLogged) {
+      let isAnyLogged = false;
+      if (workoutEntries && workoutEntries.length > 0) {
+        isAnyLogged = workoutEntries.some((entry) => entry.isLogged);
+        if (isAnyLogged) {
           cellStyle.push({ backgroundColor: theme.buttonBackground });
           textStyle.push({ color: theme.buttonText });
         } else if (isPast) {
@@ -282,15 +293,20 @@ export default function MyCalendar() {
         <TouchableOpacity
           key={dateKey}
           style={cellStyle}
-          onPress={() => workoutEntry && handleWorkoutPress(workoutEntry)}
-          onLongPress={() => workoutEntry && handleLongPress(workoutEntry)}
-          disabled={!workoutEntry}
+          onPress={() => workoutEntries && handleDayPress(workoutEntries)}
+          disabled={!workoutEntries || workoutEntries.length === 0}
         >
           <Text style={textStyle}>{day}</Text>
           {isToday && (
             <View
               style={[styles.todayIndicator, { backgroundColor: theme.text }]}
             />
+          )}
+          {workoutEntries && workoutEntries.length > 1 && (
+             <View style={[
+                styles.multipleWorkoutIndicator, 
+                { backgroundColor: isAnyLogged ? theme.buttonText : theme.text }
+            ]} />
           )}
         </TouchableOpacity>
       );
@@ -452,7 +468,10 @@ export default function MyCalendar() {
         visible={modalVisible}
         animationType="slide"
         transparent={true}
-        onRequestClose={() => setModalVisible(false)}
+        onRequestClose={() => {
+          setModalVisible(false);
+          setDetailedWorkout(null);
+        }}
       >
         <View
           style={[
@@ -463,21 +482,34 @@ export default function MyCalendar() {
           <View style={[styles.modalContent, { backgroundColor: theme.card }]}>
             <TouchableOpacity
               style={styles.modalCloseButton}
-              onPress={() => setModalVisible(false)}
+              onPress={() => {
+                if (detailedWorkout) {
+                  setDetailedWorkout(null);
+                  setExercises([]);
+                } else {
+                  setModalVisible(false);
+                }
+              }}
             >
-              <Ionicons name="close" size={24} color={theme.text} />
+              <Ionicons
+                name={detailedWorkout ? 'arrow-back' : 'close'}
+                size={24}
+                color={theme.text}
+              />
             </TouchableOpacity>
-            {selectedWorkout && (
+
+            {detailedWorkout ? (
               <>
                 <Text style={[styles.modalTitle, { color: theme.text }]}>
-                  {selectedWorkout.workout.workout_name}
+                  {detailedWorkout.workout.workout_name}
                 </Text>
                 <Text style={[styles.modalSubtitle, { color: theme.text }]}>
-                  {selectedWorkout.workout.day_name} |{' '}
-                  {formatDate(selectedWorkout.workout.workout_date)}
+                  {detailedWorkout.workout.day_name} |{' '}
+                  {formatDate(detailedWorkout.workout.workout_date)}
                 </Text>
                 {exercises.length > 0 ? (
-                  exercises.map((exercise, index) => (
+                  <ScrollView>
+                  {exercises.map((exercise, index) => (
                     <View key={index} style={styles.modalExercise}>
                       <Text
                         style={[
@@ -497,12 +529,58 @@ export default function MyCalendar() {
                         {t('Reps')}
                       </Text>
                     </View>
-                  ))
+                  ))}
+                  </ScrollView>
                 ) : (
                   <Text style={[styles.emptyText, { color: theme.text }]}>
                     {t('noExerciseLogged')}
                   </Text>
                 )}
+              </>
+            ) : (
+               <>
+                <Text style={[styles.modalTitle, { color: theme.text }]}>
+                  {selectedDateWorkouts.length > 0
+                    ? formatDate(selectedDateWorkouts[0].workout.workout_date)
+                    : ''}
+                </Text>
+                <ScrollView style={{width: '100%'}}>
+                  {selectedDateWorkouts.map((entry, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      style={[
+                        styles.modalWorkoutItem,
+                        {
+                          backgroundColor: theme.background,
+                          borderColor: entry.isLogged
+                            ? theme.buttonBackground
+                            : theme.border,
+                        },
+                      ]}
+                      onPress={() => {
+                        setDetailedWorkout(entry);
+                        fetchWorkoutDetails(entry.workout.workout_log_id);
+                      }}
+                      onLongPress={() => handleLongPress(entry)}
+                    >
+                      <View style={{ flex: 1 }}>
+                        <Text style={[styles.modalWorkoutName, { color: theme.text }]}>
+                          {entry.workout.workout_name}
+                        </Text>
+                        <Text style={[styles.modalWorkoutDay, { color: theme.text }]}>
+                          {entry.workout.day_name}
+                        </Text>
+                      </View>
+                      <View>
+                        {entry.isLogged ? (
+                           <Ionicons name="checkmark-circle" size={24} color={theme.buttonBackground} />
+                        ) : (
+                           <Ionicons name="ellipse-outline" size={24} color={theme.text} />
+                        )}
+                      </View>
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
               </>
             )}
           </View>
@@ -691,4 +769,28 @@ const styles = StyleSheet.create({
   modalExercise: { marginBottom: 15, width: '100%' },
   modalExerciseName: { fontSize: 20, fontWeight: '800', textAlign: 'center' },
   modalExerciseDetails: { fontSize: 16, textAlign: 'center', opacity: 0.8 },
+  multipleWorkoutIndicator: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    position: 'absolute',
+    top: 5,
+    right: 5,
+  },
+  modalWorkoutItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 15,
+    borderRadius: 15,
+    marginBottom: 10,
+    borderWidth: 1,
+  },
+  modalWorkoutName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  modalWorkoutDay: {
+    fontSize: 14,
+    opacity: 0.8,
+  },
 });
