@@ -80,7 +80,7 @@ export default function EditRecurringWorkout() {
           workout_name, 
           day_name, 
           recurring_interval, 
-          recurring_days,
+          recurring_days
         FROM Recurring_Workouts 
         WHERE recurring_workout_id = ?`,
         [recurring_workout_id]
