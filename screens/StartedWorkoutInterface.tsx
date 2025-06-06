@@ -311,7 +311,7 @@ export default function StartedWorkoutInterface() {
               set_number: i,
               total_sets: exercise.sets,
               reps_goal: exercise.reps,
-              reps_done: 0,
+              reps_done: exercise.reps,
               weight: '',
               completed: false
             });
