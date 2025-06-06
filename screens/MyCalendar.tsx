@@ -29,17 +29,15 @@ export default function MyCalendar() {
   const db = useSQLiteContext();
   const navigation = useNavigation<MyCalendarNavigationProp>();
 
-  const { theme } = useTheme();
-  const { t } = useTranslation(); // Initialize translations
+    const { theme } = useTheme(); 
+    const { t } = useTranslation(); // Initialize translations
+    
 
+  // State for workouts
   const [todayWorkouts, setTodayWorkouts] = useState<
-    {
-      workout_name: string;
-      workout_date: number;
-      day_name: string;
-      workout_log_id: number;
-    }[]
-  >([]);
+  { workout_name: string; workout_date: number; day_name: string; workout_log_id: number }[]
+>([]);
+
   const [pastWorkouts, setPastWorkouts] = useState<
     {
       workout_name: string;
@@ -116,9 +114,9 @@ export default function MyCalendar() {
         workout_log_id: number;
       }>(
         `SELECT * FROM Workout_Log 
-         WHERE workout_date BETWEEN ? AND ?
-           AND workout_log_id NOT IN (SELECT DISTINCT workout_log_id FROM Weight_Log)
-         ORDER BY workout_date ASC;`,
+        WHERE workout_date BETWEEN ? AND ?
+          AND workout_log_id NOT IN (SELECT DISTINCT workout_log_id FROM Weight_Log)
+        ORDER BY workout_date ASC;`,
         [startOfDayTimestamp, endOfDayTimestamp]
       );
       setTodayWorkouts(todayResult);
@@ -338,75 +336,66 @@ export default function MyCalendar() {
           </Text>
         </TouchableOpacity>
 
-        {/* Recurring Workouts Button */}
-        <TouchableOpacity
-          style={[
-            styles.actionButton,
-            { backgroundColor: theme.buttonBackground },
-          ]}
-          onPress={() => navigation.navigate('RecurringWorkoutOptions')}
-        >
-          <Ionicons
-            name="time"
-            size={22}
-            color={theme.buttonText}
-            style={styles.icon}
-          />
-          <Text
-            style={[styles.actionButtonText, { color: theme.buttonText }]}
-          >
-            {t('recurringWorkouts')}
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Today's Workouts Section */}
-      <View style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: theme.text }]}>
-          {t('todaysWorkout')}
+      {/* Recurring Workouts Button */}
+      <TouchableOpacity
+        style={[styles.actionButton, { backgroundColor: theme.buttonBackground }]}
+        onPress={() => navigation.navigate('RecurringWorkoutOptions')}
+      >
+        <Ionicons
+          name="time"
+          size={22}
+          color={theme.buttonText}
+          style={styles.icon}
+        />
+        <Text style={[styles.actionButtonText, { color: theme.buttonText }]}>
+          {t('recurringWorkouts')}
         </Text>
-        {todayWorkouts.length > 0 ? (
-          todayWorkouts.map((workout) => (
-            <View key={workout.workout_log_id}>
-              {renderWorkoutCard(workout)}
-            </View>
-          ))
-        ) : (
-          <Text style={[styles.emptyText, { color: theme.text }]}>
-            {t('noWorkoutToday')}
-          </Text>
-        )}
-      </View>
-
-      <View style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: theme.text }]}>
-          {t('untrackedWorkouts')}
+      </TouchableOpacity>
+    </View>
+  
+    {/* Today's Workout Section */}
+    <View style={styles.section}>
+      <Text style={[styles.sectionTitle, { color: theme.text }]}>
+      {t('todaysWorkout')}
+      </Text>
+      {todayWorkouts.length > 0 ? (
+     todayWorkouts.map((workout) => renderWorkoutCard(workout))
+      ) : (
+        <Text style={[styles.emptyText, { color: theme.text }]}>
+          {t('noWorkoutToday')}
         </Text>
-        {pastWorkouts.length > 0 ? (
-          pastWorkouts.map((item) => (
-            <View key={item.workout_log_id}>{renderWorkoutCard(item)}</View>
-          ))
-        ) : (
-          <Text style={[styles.emptyText, { color: theme.text }]}>
-            {t('noUntrackedWorkouts')}
-          </Text>
-        )}
-      </View>
-
-      <View style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: theme.text }]}>
-          {t('upcomingWorkouts')}
+      )}
+    </View>
+  
+    <View style={styles.section}>
+      <Text style={[styles.sectionTitle, { color: theme.text }]}>
+      {t('untrackedWorkouts')}
+      </Text>
+      {pastWorkouts.length > 0 ? (
+        pastWorkouts.map((item) => (
+          <View key={item.workout_log_id}>{renderWorkoutCard(item)}</View>
+        ))
+      ) : (
+        <Text style={[styles.emptyText, { color: theme.text }]}>
+          {t('noUntrackedWorkouts')}
         </Text>
-        {futureWorkouts.length > 0 ? (
-          futureWorkouts.map((item) => (
-            <View key={item.workout_log_id}>{renderWorkoutCard(item)}</View>
-          ))
-        ) : (
-          <Text style={[styles.emptyText, { color: theme.text }]}>
-            {t('noUpcomingWorkouts')}
-          </Text>
-        )}
-        <Text style={[styles.tipText, { color: theme.text }]}>
+      )}
+    </View>
+  
+    <View style={styles.section}>
+      <Text style={[styles.sectionTitle, { color: theme.text }]}>
+      {t('upcomingWorkouts')}
+      </Text>
+      {futureWorkouts.length > 0 ? (
+        futureWorkouts.map((item) => (
+          <View key={item.workout_log_id}>{renderWorkoutCard(item)}</View>
+        ))
+      ) : (
+        <Text style={[styles.emptyText, { color: theme.text }]}>
+          {t('noUpcomingWorkouts')}
+        </Text>
+      )}
+          <Text style={[styles.tipText, { color: theme.text }]}>
           {t('scheduleTip')}
         </Text>
       </View>
