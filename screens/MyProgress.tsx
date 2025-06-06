@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 
 type WeightLogNavigationProp = StackNavigationProp<
   WeightLogStackParamList,
-  'LogWeights' | 'WeightLogDetail' | 'AllLogs' | 'GraphsWorkoutSelection'
+  'LogWeights' | 'WeightLogDetail' | 'AllLogs' | 'GraphsWorkoutDetails'
 >;
 
 export default function MyProgress() {
@@ -27,55 +27,8 @@ export default function MyProgress() {
   const [workouts, setWorkouts] = useState<string[]>([]);
 
 
-  const addColumn1 = async () => {
-    try {
-      // Check if column exists first
-      const tableInfo = await db.getAllAsync(
-        "PRAGMA table_info(Workout_Log);"
-      );
-      const columnExists = tableInfo.some(
-        (column: any) => column.name === 'completion_time'
-      );
-      
-      if (!columnExists) {
-        await db.runAsync('ALTER TABLE Workout_Log ADD COLUMN completion_time INTEGER;');
-        console.log('Column added successfully');
-      } else {
-        console.log('Column already exists, skipping');
-      }
-    } catch (error) {
-      console.error('Error managing column:', error);
-    }
-  };
-
-
-  const addColumn0 = async () => {
-    try {
-      // Check if column exists first
-      const tableInfo = await db.getAllAsync(
-        "PRAGMA table_info(Weight_Log);"
-      );
-      const columnExists = tableInfo.some(
-        (column: any) => column.name === 'completion_time'
-      );
-      
-      if (!columnExists) {
-        await db.runAsync('ALTER TABLE Weight_Log ADD COLUMN completion_time INTEGER;');
-        console.log('Column added successfully');
-      } else {
-        console.log('Column already exists, skipping');
-      }
-    } catch (error) {
-      console.error('Error managing column:', error);
-    }
-  };
-
-
-
   useFocusEffect(
     React.useCallback(() => {
-      addColumn0()
-      addColumn1()
       fetchWorkoutsWithLogs();
     }, [db])
   );
@@ -142,38 +95,6 @@ export default function MyProgress() {
 <View style={[styles.container, { backgroundColor: theme.background }]}>
   {/* Title */}
   <Text style={[styles.title, { color: theme.text }]}>{t('myProgress')}</Text>
-
-  {/* Buttons Row */}
-  <View style={styles.buttonRow}>
-  
-
-    {/* Log Weights Button */}
-    <TouchableOpacity
-      style={[styles.actionButton, { backgroundColor: theme.buttonBackground }]}
-      onPress={() => navigation.navigate('LogWeights')}
-    >
-      <Ionicons name="stats-chart" size={24} color={theme.buttonText} />
-      <Text style={[styles.actionButtonText, { color: theme.buttonText }]}>
-        {t('trackAWorkout')}
-      </Text>
-    </TouchableOpacity>
-
-  {/* Graphs Button */}
-  <TouchableOpacity
-      style={[styles.actionButton, { backgroundColor: theme.buttonBackground }]}
-      onPress={() => navigation.navigate('GraphsWorkoutSelection')}
-    >
-      <Ionicons name="trending-up" size={24} color={theme.buttonText} />
-      <Text style={[styles.actionButtonText, { color: theme.buttonText }]}>
-        {t('Graphs')}
-      </Text>
-    </TouchableOpacity>
-
-
-
-
-
-  </View>
 
   <TouchableOpacity
         style={[styles.workoutCard, { backgroundColor: theme.card, borderColor: theme.border }]}
@@ -246,33 +167,6 @@ const styles = StyleSheet.create({
     marginTop: 40,
     textAlign: 'center',
     color: '#000000',
-  },
-  buttonRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 20,
-    marginBottom: 20,
-  },
-  actionButton: {
-    backgroundColor: '#000000',
-    borderRadius: 20,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 0.48, // Take up slightly less than half the available space
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
-    elevation: 5,
-  },
-  actionButtonText: {
-    color: '#FFFFFF',
-    fontWeight: 'bold',
-    fontSize: 16, // Slightly smaller to fit
-    marginLeft: 8,
   },
   tipText: {
     marginTop: 20, // Space above the text

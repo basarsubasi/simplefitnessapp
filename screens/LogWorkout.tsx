@@ -45,7 +45,6 @@ export default function LogWorkout() {
     }, [])
   );
 
-
   // Fetch the list of available workouts
   const fetchWorkouts = async () => {
     try {

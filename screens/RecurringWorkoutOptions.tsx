@@ -22,7 +22,6 @@ export default function RecurringWorkoutOptions() {
   const { theme } = useTheme();
   const { t } = useTranslation();
 
-
   // Initialize database tables and triggers when screen loads
   useEffect(() => {
     const setupDatabase = async () => {

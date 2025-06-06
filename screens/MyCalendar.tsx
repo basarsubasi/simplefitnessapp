@@ -81,8 +81,74 @@ export default function MyCalendar() {
   // Run this check only ONCE when the component mounts
   useEffect(() => {
     console.log('MyCalendar: Component mounted, checking recurring workouts.');
+    addColumn0();
+    addColumn1();
+    addColumn2();
     checkRecurringWorkouts();
   }, []); // Empty dependency array ensures this runs only once
+
+  const addColumn1 = async () => {
+    try {
+      // Check if column exists first
+      const tableInfo = await db.getAllAsync(
+        "PRAGMA table_info(Workout_Log);"
+      );
+      const columnExists = tableInfo.some(
+        (column: any) => column.name === 'completion_time'
+      );
+      
+      if (!columnExists) {
+        await db.runAsync('ALTER TABLE Workout_Log ADD COLUMN completion_time INTEGER;');
+        console.log('Column added successfully');
+      } else {
+        console.log('Column already exists, skipping');
+      }
+    } catch (error) {
+      console.error('Error managing column:', error);
+    }
+  };
+
+  const addColumn0 = async () => {
+    try {
+      // Check if column exists first
+      const tableInfo = await db.getAllAsync(
+        "PRAGMA table_info(Weight_Log);"
+      );
+      const columnExists = tableInfo.some(
+        (column: any) => column.name === 'completion_time'
+      );
+      
+      if (!columnExists) {
+        await db.runAsync('ALTER TABLE Weight_Log ADD COLUMN completion_time INTEGER;');
+        console.log('Column added successfully');
+      } else {
+        console.log('Column already exists, skipping');
+      }
+    } catch (error) {
+      console.error('Error managing column:', error);
+    }
+  };
+
+  const addColumn2 = async () => {
+    try {
+      // Check if column exists first
+      const tableInfo = await db.getAllAsync(
+        "PRAGMA table_info(Workout_Log);"
+      );
+      const columnExists = tableInfo.some(
+        (column: any) => column.name === 'notification_id'
+      );
+      
+      if (!columnExists) {
+        await db.runAsync('ALTER TABLE Workout_Log ADD COLUMN notification_id TEXT;');
+        console.log('Column added successfully');
+      } else {
+        console.log('Column already exists, skipping');
+      }
+    } catch (error) {
+      console.error('Error managing column:', error);
+    }
+  };
 
   const fetchWorkoutsForGrid = useCallback(
     async (date: Date) => {
