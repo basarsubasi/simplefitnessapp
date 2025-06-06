@@ -67,6 +67,16 @@ export default function MyCalendar() {
   const [detailedWorkout, setDetailedWorkout] = useState<WorkoutEntry | null>(null);
   const [exercises, setExercises] = useState<ExerciseDetails[]>([]);
   const [completionTime, setCompletionTime] = useState<number | null>(null);
+  const [untrackedChoiceModalVisible, setUntrackedChoiceModalVisible] =
+    useState(false);
+  const [
+    selectedUntrackedWorkout,
+    setSelectedUntrackedWorkout,
+  ] = useState<WorkoutEntry | null>(null);
+  const [
+    untrackedWorkoutDetails,
+    setUntrackedWorkoutDetails,
+  ] = useState<ExerciseDetails[]>([]);
   
   // Run this check only ONCE when the component mounts
   useEffect(() => {
@@ -238,6 +248,31 @@ export default function MyCalendar() {
     } catch (error) {
       console.error('Error fetching workout details:', error);
     }
+  };
+
+  const fetchUntrackedWorkoutDetails = async (workout_log_id: number) => {
+    try {
+      const planned = await db.getAllAsync<
+        { exercise_name: string; sets: number; reps: number }
+      >(
+        `SELECT exercise_name, sets, reps FROM Logged_Exercises WHERE workout_log_id = ?;`,
+        [workout_log_id]
+      );
+      setUntrackedWorkoutDetails(planned.map((p) => ({ ...p, logs: [] })));
+    } catch (error) {
+      console.error('Error fetching untracked workout details:', error);
+    }
+  };
+
+  const closeUntrackedModal = () => {
+    setUntrackedChoiceModalVisible(false);
+    setUntrackedWorkoutDetails([]);
+  };
+
+  const handleUntrackedWorkoutPress = (entry: WorkoutEntry) => {
+    setSelectedUntrackedWorkout(entry);
+    fetchUntrackedWorkoutDetails(entry.workout.workout_log_id);
+    setUntrackedChoiceModalVisible(true);
   };
 
   const handleDayPress = (workoutEntries: WorkoutEntry[]) => {
@@ -739,14 +774,8 @@ export default function MyCalendar() {
                                   entry.isLogged
                                 );
                               } else {
-                                navigation.navigate(
-                                  'StartedWorkoutInterface',
-                                  {
-                                    workout_log_id:
-                                      entry.workout.workout_log_id,
-                                  }
-                                );
                                 setModalVisible(false);
+                                handleUntrackedWorkoutPress(entry);
                               }
                             }}
                             onLongPress={() => handleLongPress(entry)}
@@ -792,6 +821,115 @@ export default function MyCalendar() {
                 })()}
               </>
             )}
+          </View>
+        </View>
+      </Modal>
+
+      {/* Modal for Untracked Workout Choice */}
+      <Modal
+        visible={untrackedChoiceModalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={closeUntrackedModal}
+      >
+        <View
+          style={[
+            styles.modalContainer,
+            { backgroundColor: 'rgba(0, 0, 0, 0.5)' },
+          ]}
+        >
+          <View style={[styles.modalContent, { backgroundColor: theme.card }]}>
+            <TouchableOpacity
+              style={[styles.modalCloseButton, { right: 10 }]}
+              onPress={closeUntrackedModal}
+            >
+              <Ionicons name="close" size={24} color={theme.text} />
+            </TouchableOpacity>
+            <Text style={[styles.modalTitle, { color: theme.text }]}>
+              {selectedUntrackedWorkout?.workout.workout_name}
+            </Text>
+            {selectedUntrackedWorkout && (
+              <Text style={[styles.modalSubtitle, { color: theme.text }]}>
+                {selectedUntrackedWorkout.workout.day_name} |{' '}
+                {formatDate(selectedUntrackedWorkout.workout.workout_date)}
+              </Text>
+            )}
+            <ScrollView
+              style={{ width: '100%', maxHeight: 200, marginVertical: 20 }}
+            >
+              {untrackedWorkoutDetails.map((exercise, index) => (
+                <View key={index} style={styles.modalExercise}>
+                  <Text
+                    style={[
+                      styles.modalExerciseName,
+                      { color: theme.text, fontSize: 18 },
+                    ]}
+                  >
+                    {exercise.exercise_name}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.modalExerciseDetails,
+                      { color: theme.text, fontSize: 14 },
+                    ]}
+                  >
+                    {exercise.sets} {t('Sets')} x {exercise.reps} {t('Reps')}
+                  </Text>
+                </View>
+              ))}
+            </ScrollView>
+            <TouchableOpacity
+              style={[
+                styles.choiceButton,
+                { backgroundColor: theme.buttonBackground },
+              ]}
+              onPress={() => {
+                if (!selectedUntrackedWorkout) return;
+                navigation.navigate('StartedWorkoutInterface', {
+                  workout_log_id:
+                    selectedUntrackedWorkout.workout.workout_log_id,
+                });
+                closeUntrackedModal();
+              }}
+            >
+              <Ionicons
+                name="stopwatch-outline"
+                size={22}
+                color={theme.buttonText}
+                style={styles.icon}
+              />
+              <Text
+                style={[styles.actionButtonText, { color: theme.buttonText }]}
+              >
+                {t('startWorkout')}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.choiceButton,
+                { backgroundColor: theme.buttonBackground, marginTop: 15 },
+              ]}
+              onPress={() => {
+                if (!selectedUntrackedWorkout) return;
+                navigation.navigate('LogWeights', {
+                  workout_log_id:
+                    selectedUntrackedWorkout.workout.workout_log_id,
+                });
+                closeUntrackedModal();
+              }}
+            >
+              <Ionicons
+                name="stats-chart"
+                size={22}
+                color={theme.buttonText}
+                style={styles.icon}
+              />
+              <Text
+                style={[styles.actionButtonText, { color: theme.buttonText }]}
+              >
+                {t('logWeightsManually')}
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
@@ -1026,5 +1164,14 @@ const styles = StyleSheet.create({
   completionTimeText: {
     fontSize: 16,
     fontWeight: '600',
+  },
+  choiceButton: {
+    borderRadius: 20,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '80%',
   },
 });

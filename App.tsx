@@ -142,11 +142,12 @@
     RecurringWorkoutDetails: { recurring_workout_id: number };
     EditRecurringWorkout: { recurring_workout_id: number };
     StartedWorkoutInterface: { workout_log_id: number };
+    LogWeights: { workout_log_id?: number };
   };
 
   export type WeightLogStackParamList = {
     MyProgress: undefined;
-    LogWeights: undefined;
+    LogWeights: { workout_log_id?: number };
     WeightLogDetail:{ workoutName: string }
     AllLogs: undefined;
     GraphsWorkoutSelection: undefined;
@@ -252,6 +253,11 @@
         <WorkoutLogStackScreen.Screen
           name="StartedWorkoutInterface"
           component={StartedWorkoutInterface}
+          options={{ headerShown: false }}
+        />
+        <WorkoutLogStackScreen.Screen
+          name="LogWeights"
+          component={LogWeights}
           options={{ headerShown: false }}
         />
       </WorkoutLogStackScreen.Navigator>
