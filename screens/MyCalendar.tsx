@@ -604,10 +604,21 @@ export default function MyCalendar() {
                               },
                             ]}
                             onPress={() => {
-                              setDetailedWorkout(entry);
-                              fetchWorkoutDetails(
-                                entry.workout.workout_log_id
-                              );
+                              if (entry.isLogged || isUpcoming) {
+                                setDetailedWorkout(entry);
+                                fetchWorkoutDetails(
+                                  entry.workout.workout_log_id
+                                );
+                              } else {
+                                navigation.navigate(
+                                  'StartedWorkoutInterface',
+                                  {
+                                    workout_log_id:
+                                      entry.workout.workout_log_id,
+                                  }
+                                );
+                                setModalVisible(false);
+                              }
                             }}
                             onLongPress={() => handleLongPress(entry)}
                           >
