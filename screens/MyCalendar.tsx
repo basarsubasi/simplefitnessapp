@@ -37,12 +37,23 @@ interface WorkoutEntry {
   isLogged: boolean;
 }
 
+interface ExerciseDetails {
+  exercise_name: string;
+  sets?: number;
+  reps?: number;
+  logs: {
+    set_number: number;
+    weight_logged: number;
+    reps_logged: number;
+  }[];
+}
+
 export default function MyCalendar() {
   const db = useSQLiteContext();
   const navigation = useNavigation<MyCalendarNavigationProp>();
   const { theme } = useTheme();
   const { t } = useTranslation();
-  const { dateFormat } = useSettings();
+  const { dateFormat, weightFormat } = useSettings();
   const { cancelNotification } = useNotifications();
   const { checkRecurringWorkouts } = useRecurringWorkouts();
 
@@ -56,11 +67,9 @@ export default function MyCalendar() {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedDateWorkouts, setSelectedDateWorkouts] = useState<WorkoutEntry[]>([]);
   const [detailedWorkout, setDetailedWorkout] = useState<WorkoutEntry | null>(null);
+  const [exercises, setExercises] = useState<ExerciseDetails[]>([]);
+  const [completionTime, setCompletionTime] = useState<number | null>(null);
   
-  const [exercises, setExercises] = useState<
-    { exercise_name: string; sets: number; reps: number }[]
-  >([]);
-
   // Run this check only ONCE when the component mounts
   useEffect(() => {
     console.log('MyCalendar: Component mounted, checking recurring workouts.');
@@ -140,18 +149,94 @@ export default function MyCalendar() {
     }, [currentDate, fetchWorkoutsForGrid])
   );
 
-  const fetchWorkoutDetails = async (workout_log_id: number) => {
+  const fetchWorkoutDetails = async (
+    workout_log_id: number,
+    isLogged: boolean
+  ) => {
     try {
-      const result = await db.getAllAsync<{
-        exercise_name: string;
-        sets: number;
-        reps: number;
-      }>(
-        `SELECT exercise_name, sets, reps FROM Logged_Exercises 
-         WHERE workout_log_id = ?;`,
-        [workout_log_id]
-      );
-      setExercises(result);
+      setExercises([]);
+      setCompletionTime(null);
+
+      if (isLogged) {
+        const workoutLogData = await db.getFirstAsync<{
+          completion_time: number | null;
+        }>(`SELECT completion_time FROM Workout_Log WHERE workout_log_id = ?;`, [
+          workout_log_id,
+        ]);
+
+        if (workoutLogData?.completion_time) {
+          setCompletionTime(workoutLogData.completion_time);
+        }
+
+        const loggedData = await db.getAllAsync<{
+          exercise_name: string;
+          set_number: number;
+          weight_logged: number;
+          reps_logged: number;
+        }>(
+          `
+          SELECT le.exercise_name, wl.set_number, wl.weight_logged, wl.reps_logged
+          FROM Weight_Log wl
+          JOIN Logged_Exercises le ON wl.logged_exercise_id = le.logged_exercise_id
+          WHERE wl.workout_log_id = ?
+          ORDER BY le.exercise_name, wl.set_number;
+        `,
+          [workout_log_id]
+        );
+
+        if (loggedData.length > 0) {
+          const grouped = loggedData.reduce(
+            (acc, item) => {
+              if (!acc[item.exercise_name]) {
+                acc[item.exercise_name] = {
+                  exercise_name: item.exercise_name,
+                  logs: [],
+                };
+              }
+
+              const exerciseGroup = acc[item.exercise_name];
+              if (!exerciseGroup || !exerciseGroup.logs) {
+                // This path should be logically impossible.
+                throw new Error(
+                  `Failed to find or create group for exercise: ${item.exercise_name}`
+                );
+              }
+
+              exerciseGroup.logs.push({
+                set_number: item.set_number,
+                weight_logged: item.weight_logged,
+                reps_logged: item.reps_logged,
+              });
+              return acc;
+            },
+            {} as Record<string, ExerciseDetails>
+          );
+
+          setExercises(Object.values(grouped));
+        } else {
+          // Fallback to planned if no logs
+          const planned = await db.getAllAsync<
+            { exercise_name: string; sets: number; reps: number }
+          >(
+            `SELECT exercise_name, sets, reps FROM Logged_Exercises WHERE workout_log_id = ?;`,
+            [workout_log_id]
+          );
+          setExercises(
+            planned.map((p) => ({ ...p, logs: [] }))
+          );
+        }
+      } else {
+        // For upcoming workouts
+        const planned = await db.getAllAsync<
+          { exercise_name: string; sets: number; reps: number }
+        >(
+          `SELECT exercise_name, sets, reps FROM Logged_Exercises WHERE workout_log_id = ?;`,
+          [workout_log_id]
+        );
+        setExercises(
+          planned.map((p) => ({ ...p, logs: [] }))
+        );
+      }
     } catch (error) {
       console.error('Error fetching workout details:', error);
     }
@@ -226,6 +311,26 @@ export default function MyCalendar() {
     return dateFormat === 'mm-dd-yyyy'
       ? `${month}-${day}-${year}`
       : `${day}-${month}-${year}`;
+  };
+
+  const formatCompletionTime = (totalSeconds: number): string => {
+    if (!totalSeconds || totalSeconds < 0) {
+      return '';
+    }
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = Math.floor(totalSeconds % 60);
+
+    const paddedMinutes = String(minutes).padStart(2, '0');
+    const paddedSeconds = String(seconds).padStart(2, '0');
+
+    if (hours > 0) {
+      return `${String(hours).padStart(
+        2,
+        '0'
+      )}:${paddedMinutes}:${paddedSeconds}`;
+    }
+    return `${paddedMinutes}:${paddedSeconds}`;
   };
 
   const handlePrevMonth = () => {
@@ -494,6 +599,7 @@ export default function MyCalendar() {
                 if (detailedWorkout) {
                   setDetailedWorkout(null);
                   setExercises([]);
+                  setCompletionTime(null);
                 } else {
                   setModalVisible(false);
                 }
@@ -515,35 +621,61 @@ export default function MyCalendar() {
                   {detailedWorkout.workout.day_name} |{' '}
                   {formatDate(detailedWorkout.workout.workout_date)}
                 </Text>
-                {exercises.length > 0 ? (
-                  <ScrollView>
-                  {exercises.map((exercise, index) => (
-                    <View key={index} style={styles.modalExercise}>
-                      <Text
-                        style={[
-                          styles.modalExerciseName,
-                          { color: theme.text },
-                        ]}
-                      >
-                        {exercise.exercise_name}
-                      </Text>
-                      <Text
-                        style={[
-                          styles.modalExerciseDetails,
-                          { color: theme.text },
-                        ]}
-                      >
-                        {exercise.sets} {t('Sets')} x {exercise.reps}{' '}
-                        {t('Reps')}
-                      </Text>
-                    </View>
-                  ))}
-                  </ScrollView>
-                ) : (
-                  <Text style={[styles.emptyText, { color: theme.text }]}>
-                    {t('noExerciseLogged')}
-                  </Text>
+                {completionTime && (
+                  <View style={styles.completionTimeContainer}>
+                    <Ionicons name="time-outline" size={16} color={theme.text} />
+                    <Text
+                      style={[styles.completionTimeText, { color: theme.text }]}
+                    >
+                      {' '}
+                      {formatCompletionTime(completionTime)}
+                    </Text>
+                  </View>
                 )}
+                <ScrollView style={{ width: '100%', maxHeight: 400 }}>
+                  {exercises.length > 0 ? (
+                    exercises.map((exercise, index) => (
+                      <View key={index} style={styles.modalExercise}>
+                        <Text
+                          style={[
+                            styles.modalExerciseName,
+                            { color: theme.text },
+                          ]}
+                        >
+                          {exercise.exercise_name}
+                        </Text>
+                        {exercise.logs.length > 0 ? (
+                          exercise.logs.map((log, logIndex) => (
+                            <Text
+                              key={logIndex}
+                              style={[
+                                styles.modalExerciseDetails,
+                                { color: theme.text },
+                              ]}
+                            >
+                              {t('Set')} {log.set_number}: {log.weight_logged}{' '}
+                              {weightFormat} x {log.reps_logged} {t('Reps')}
+                            </Text>
+                          ))
+                        ) : (
+                          <Text
+                            style={[
+                              styles.modalExerciseDetails,
+                              { color: theme.text },
+                            ]}
+                          >
+                            {exercise.sets} {t('Sets')} x {exercise.reps}{' '}
+                            {t('Reps')}
+                          </Text>
+                        )}
+                      </View>
+                    ))
+                  ) : (
+                    <Text style={[styles.emptyText, { color: theme.text }]}>
+                      {t('noExerciseLogged')}
+                    </Text>
+                  )}
+                </ScrollView>
               </>
             ) : (
                <>
@@ -608,7 +740,8 @@ export default function MyCalendar() {
                               if (entry.isLogged || isUpcoming) {
                                 setDetailedWorkout(entry);
                                 fetchWorkoutDetails(
-                                  entry.workout.workout_log_id
+                                  entry.workout.workout_log_id,
+                                  entry.isLogged
                                 );
                               } else {
                                 navigation.navigate(
@@ -889,5 +1022,14 @@ const styles = StyleSheet.create({
   modalLegendText: {
     marginLeft: 5,
     fontSize: 14,
+  },
+  completionTimeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  completionTimeText: {
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
