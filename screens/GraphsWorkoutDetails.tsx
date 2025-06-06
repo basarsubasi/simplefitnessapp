@@ -11,7 +11,7 @@ import {
   Modal,
   
 } from 'react-native';
-import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { useSQLiteContext } from 'expo-sqlite';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '../context/ThemeContext';
@@ -19,13 +19,13 @@ import { useTranslation } from 'react-i18next';
 import { LineChart } from 'react-native-chart-kit';
 import { useSettings } from '../context/SettingsContext';
 import StickyYAxis from '../components/StickyYAxis';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { WeightLogStackParamList } from '../App';
 
-// Define the type for route params
-type GraphsParamList = {
-  GraphsWorkoutDetails: { workoutName: string };
-};
-
-type GraphsWorkoutDetailsRouteProp = RouteProp<GraphsParamList, 'GraphsWorkoutDetails'>;
+type GraphsNavigationProp = StackNavigationProp<
+  WeightLogStackParamList,
+  'GraphsWorkoutDetails'
+>;
 
 // Define data types
 type DayOption = { label: string; value: string };
@@ -38,6 +38,7 @@ type LogData = {
   set_number: number;
   workout_log_id: number;
   logged_exercise_id: number;
+  dayName?: string; // For time data
 };
 type TimeFrame = 'week' | 'month' | 'year' | 'all';
 type CalculationType = 'CES' | '1RM' | 'Sets' | 'Time';
@@ -85,9 +86,7 @@ type WorkoutSessionExercise = {
 };
 
 export default function GraphsWorkoutDetails() {
-  const navigation = useNavigation();
-  const route = useRoute<GraphsWorkoutDetailsRouteProp>();
-  const { workoutName } = route.params;
+  const navigation = useNavigation<GraphsNavigationProp>();
   const db = useSQLiteContext();
   const { theme } = useTheme();
   const { t } = useTranslation();
@@ -109,6 +108,8 @@ export default function GraphsWorkoutDetails() {
   ];
 
   // State variables
+  const [allWorkouts, setAllWorkouts] = useState<DayOption[]>([]);
+  const [selectedWorkout, setSelectedWorkout] = useState<string>('');
   const [days, setDays] = useState<DayOption[]>([]);
   const [selectedDay, setSelectedDay] = useState<string>('');
   const [exercises, setExercises] = useState<ExerciseOption[]>([]);
@@ -122,8 +123,10 @@ export default function GraphsWorkoutDetails() {
   const [setsData, setSetsData] = useState<SetProgressData[]>([]);
 
   // Dropdown visibility state
+  const [workoutDropdownVisible, setWorkoutDropdownVisible] = useState<boolean>(false);
   const [dayDropdownVisible, setDayDropdownVisible] = useState<boolean>(false);
   const [exerciseDropdownVisible, setExerciseDropdownVisible] = useState<boolean>(false);
+  const [isInitialLoading, setIsInitialLoading] = useState<boolean>(true);
   
   // Tooltip state
   const [tooltipVisible, setTooltipVisible] = useState<boolean>(false);
@@ -207,10 +210,20 @@ export default function GraphsWorkoutDetails() {
     }
   };
 
+  // Fetch all workouts that have logged data
+  useEffect(() => {
+    fetchWorkoutsWithLogs();
+  }, []);
+
   // Fetch days for the selected workout
   useEffect(() => {
+    if (!selectedWorkout) {
+      setDays([]);
+      setExercises([]);
+      return;
+    }
     fetchDays();
-  }, [workoutName]);
+  }, [selectedWorkout]);
 
   // Fetch exercises when day changes
   useEffect(() => {
@@ -237,13 +250,37 @@ export default function GraphsWorkoutDetails() {
     }
   }, [logData, timeLogData, calculationType, timeFrame]);
 
+  const fetchWorkoutsWithLogs = async () => {
+    setIsInitialLoading(true);
+    try {
+      const result = await db.getAllAsync<{ workout_name: string }>(
+        `SELECT DISTINCT Workout_Log.workout_name
+         FROM Workout_Log
+         INNER JOIN Weight_Log 
+         ON Weight_Log.workout_log_id = Workout_Log.workout_log_id;`
+      );
+
+      const workoutOptions = result.map((workout) => ({
+        label: workout.workout_name,
+        value: workout.workout_name,
+      }));
+
+      setAllWorkouts(workoutOptions);
+    } catch (error) {
+      console.error('Error fetching workouts with logs:', error);
+    } finally {
+      setIsInitialLoading(false);
+    }
+  };
+
   const fetchDays = async () => {
+    if (!selectedWorkout) return;
     try {
       const result = await db.getAllAsync<{ day_name: string }>(
         `SELECT DISTINCT day_name FROM Workout_Log 
          WHERE workout_name = ? 
          ORDER BY day_name ASC`,
-        [workoutName]
+        [selectedWorkout]
       );
       
       const dayOptions = result.map(day => ({
@@ -270,7 +307,7 @@ export default function GraphsWorkoutDetails() {
          ON Weight_Log.workout_log_id = Workout_Log.workout_log_id
          WHERE Workout_Log.workout_name = ? AND Workout_Log.day_name = ?
          ORDER BY Weight_Log.exercise_name ASC`,
-        [workoutName, selectedDay]
+        [selectedWorkout, selectedDay]
       );
       
       const exerciseOptions = result.map(exercise => ({
@@ -326,7 +363,7 @@ export default function GraphsWorkoutDetails() {
          AND Weight_Log.exercise_name = ?
          AND Workout_Log.workout_date >= ?
          ORDER BY Workout_Log.workout_date ASC`,
-        [workoutName, selectedDay, selectedExercise, startTimestamp]
+        [selectedWorkout, selectedDay, selectedExercise, startTimestamp]
       );
       
       setLogData(result);
@@ -368,7 +405,7 @@ export default function GraphsWorkoutDetails() {
          AND completion_time IS NOT NULL
          AND workout_date >= ?
          ORDER BY workout_date ASC`,
-        [workoutName, startTimestamp]
+        [selectedWorkout, startTimestamp]
       );
       
       setTimeLogData(result);
@@ -629,7 +666,7 @@ export default function GraphsWorkoutDetails() {
           y: adjustedWeight,
           timestamp: timestamp,
           originalData: [setLog],
-          originalWeight: weight
+          originalWeight: weight,
         });
       });
   
@@ -641,7 +678,7 @@ export default function GraphsWorkoutDetails() {
           setNumber: setNum,
           data: optimizedSetData,
           color: setColors[(setNum - 1) % setColors.length],
-          showInLegend: setNum <= 5
+          showInLegend: setNum <= 5,
         });
       }
     });
@@ -703,6 +740,91 @@ export default function GraphsWorkoutDetails() {
     setTooltipVisible(false);
     setSelectedPoint(null);
     setWorkoutSessionExercises([]);
+  };
+
+  // Render workout dropdown
+  const renderWorkoutDropdown = () => {
+    return (
+      <View style={styles.pickerContainer}>
+        <Text style={[styles.pickerLabel, { color: theme.text }]}>
+          {t('Select Workout')}
+        </Text>
+        <TouchableOpacity
+          style={[
+            styles.dropdownButton,
+            { backgroundColor: theme.card, borderColor: theme.border },
+          ]}
+          onPress={() => {
+            setWorkoutDropdownVisible(!workoutDropdownVisible);
+            setDayDropdownVisible(false);
+            setExerciseDropdownVisible(false);
+          }}
+        >
+          <Text style={[styles.dropdownButtonText, { color: theme.text }]}>
+            {selectedWorkout || t('Select a Workout')}
+          </Text>
+          <Ionicons
+            name={workoutDropdownVisible ? 'chevron-up' : 'chevron-down'}
+            size={18}
+            color={theme.text}
+            style={styles.dropdownIcon}
+          />
+        </TouchableOpacity>
+
+        {workoutDropdownVisible && allWorkouts.length > 0 && (
+          <View
+            style={[
+              styles.dropdownListContainer,
+              { backgroundColor: theme.card, borderColor: theme.border },
+            ]}
+          >
+            <FlatList
+              data={allWorkouts}
+              keyExtractor={(item) => item.value}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={[
+                    styles.dropdownItem,
+                    { backgroundColor: theme.card },
+                    selectedWorkout === item.value && {
+                      backgroundColor: theme.buttonBackground,
+                    },
+                  ]}
+                  onPress={() => {
+                    setSelectedWorkout(item.value);
+                    setWorkoutDropdownVisible(false);
+                  }}
+                >
+                  <Text
+                    style={[
+                      styles.dropdownItemText,
+                      {
+                        color:
+                          selectedWorkout === item.value
+                            ? theme.buttonText
+                            : theme.text,
+                      },
+                    ]}
+                  >
+                    {item.label}
+                  </Text>
+                  {selectedWorkout === item.value && (
+                    <Ionicons
+                      name="checkmark"
+                      size={18}
+                      color={theme.buttonText}
+                      style={styles.dropdownItemIcon}
+                    />
+                  )}
+                </TouchableOpacity>
+              )}
+              style={styles.dropdownList}
+              nestedScrollEnabled={true}
+            />
+          </View>
+        )}
+      </View>
+    );
   };
 
   // Update calculation type toggle to include Time
@@ -1507,78 +1629,128 @@ export default function GraphsWorkoutDetails() {
       nestedScrollEnabled={true}
       contentContainerStyle={styles.scrollContent}
     >
-      {/* Back Button */}
-      <TouchableOpacity
-        style={styles.backButton}
-        onPress={() => navigation.goBack()}
-      >
-        <Ionicons name="arrow-back" size={24} color={theme.text} />
-      </TouchableOpacity>
-      
       <Text style={[styles.title, { color: theme.text }]}>
-        {workoutName}
+        {t('myProgress')}
       </Text>
-      
-      {/* Calculation Type Toggle */}
-      {renderCalculationTypeToggle()}
-      
-      {/* Day and Exercise Selectors - Hidden for Time mode */}
-      {calculationType !== 'Time' && (
-        <View style={[styles.selectionContainer, (dayDropdownVisible || exerciseDropdownVisible) && styles.expandedSelectionContainer]}>
-          {/* Custom dropdown selectors */}
-          {renderDayDropdown()}
-          {renderExerciseDropdown()}
+
+      {isInitialLoading ? (
+        <ActivityIndicator size="large" color={theme.buttonBackground} style={{ marginTop: 40 }}/>
+      ) : allWorkouts.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Ionicons name="analytics-outline" size={60} color={theme.text} style={{ opacity: 0.5 }} />
+          <Text style={[styles.emptyText, { color: theme.text }]}>
+            {t('No workout data available for graphs')}
+          </Text>
+          <Text style={[styles.emptySubText, { color: theme.text }]}>
+            {t('Track a workout first to see your progress')}
+          </Text>
         </View>
+      ) : (
+        <>
+          <Text style={[styles.sectionTitle, { color: theme.text, textAlign: 'center' }]}>
+            Graph Type
+          </Text>
+          
+          {/* Calculation Type Toggle */}
+          {renderCalculationTypeToggle()}
+
+          {/* Workout Dropdown */}
+          {renderWorkoutDropdown()}
+          
+          {/* Conditional rendering for the rest of the content */}
+          {selectedWorkout && (
+            <>
+              {/* Day and Exercise Selectors - Hidden for Time mode */}
+              {calculationType !== 'Time' && (
+                <View
+                  style={[
+                    styles.selectionContainer,
+                    (dayDropdownVisible || exerciseDropdownVisible) &&
+                      styles.expandedSelectionContainer,
+                  ]}
+                >
+                  {/* Custom dropdown selectors */}
+                  {renderDayDropdown()}
+                  {renderExerciseDropdown()}
+                </View>
+              )}
+
+              {/* Graph Area */}
+              <View style={styles.graphSection}>
+                <Text style={[styles.sectionTitle, { color: theme.text }]}>
+                  {calculationType === 'CES'
+                    ? t('Combined Effort Score')
+                    : calculationType === '1RM'
+                    ? t('Estimated 1RM')
+                    : calculationType === 'Time'
+                    ? t('TimeGraph')
+                    : t('SetsGraph')}
+                </Text>
+
+                {isLoading ? (
+                  <ActivityIndicator
+                    size="large"
+                    color={theme.buttonBackground}
+                    style={styles.loader}
+                  />
+                ) : (
+                  renderChart()
+                )}
+
+                {/* Info about calculation */}
+                <View
+                  style={[
+                    styles.infoBox,
+                    { backgroundColor: theme.card, borderColor: theme.border },
+                  ]}
+                >
+                  <Text style={[styles.infoTitle, { color: theme.text }]}>
+                    {calculationType === 'CES'
+                      ? t('About CES')
+                      : calculationType === '1RM'
+                      ? t('About 1RM')
+                      : calculationType === 'Time'
+                      ? t('About Completion Time')
+                      : t('About Sets Progression')}
+                  </Text>
+                  <Text style={[styles.infoText, { color: theme.text }]}>
+                    {calculationType === 'CES'
+                      ? t('CESExplanation')
+                      : calculationType === '1RM'
+                      ? t('1RMExplanation')
+                      : calculationType === 'Time'
+                      ? t('timeGraphExplanation')
+                      : t('setsGraphExplanation')}
+                  </Text>
+                </View>
+              </View>
+
+              {/* Timeframe selector */}
+              {renderTimeFrameButtons()}
+
+              {/* Tip Text */}
+              <Text style={[styles.tipText, { color: theme.text }]}>
+                {t('graphTipText')}
+              </Text>
+
+              <TouchableOpacity
+                style={[styles.logsButton, { backgroundColor: theme.text }]}
+                onPress={() => navigation.navigate('MyProgress')}
+              >
+                <Ionicons
+                  name="list-outline"
+                  size={20}
+                  color={theme.background}
+                  style={styles.logsButtonIcon}
+                />
+                <Text style={[styles.logsButtonText, { color: theme.background }]}>
+                  {t('View Logs')}
+                </Text>
+              </TouchableOpacity>
+            </>
+          )}
+        </>
       )}
-      
-      {/* Graph Area */}
-      <View style={styles.graphSection}>
-        <Text style={[styles.sectionTitle, { color: theme.text }]}>
-          {calculationType === 'CES' 
-            ? t('Combined Effort Score') 
-            : calculationType === '1RM' 
-            ? t('Estimated 1RM')
-            : calculationType === 'Time'
-            ? t('TimeGraph')
-            : t('SetsGraph')}
-        </Text>
-        
-        {isLoading ? (
-          <ActivityIndicator size="large" color={theme.buttonBackground} style={styles.loader} />
-        ) : (
-          renderChart()
-        )}
-        
-        {/* Info about calculation */}
-        <View style={[styles.infoBox, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <Text style={[styles.infoTitle, { color: theme.text }]}>
-            {calculationType === 'CES' 
-              ? t('About CES') 
-              : calculationType === '1RM' 
-              ? t('About 1RM')
-              : calculationType === 'Time'
-              ? t('About Completion Time')
-              : t('About Sets Progression')}
-          </Text>
-          <Text style={[styles.infoText, { color: theme.text }]}>
-            {calculationType === 'CES' 
-              ? t('CESExplanation')
-              : calculationType === '1RM'
-              ? t('1RMExplanation')
-              : calculationType === 'Time'
-              ? t('timeGraphExplanation')
-              : t('setsGraphExplanation')}
-          </Text>
-        </View>
-      </View>
-      
-      {/* Timeframe selector */}
-      {renderTimeFrameButtons()}
-      
-      {/* Tip Text */}
-      <Text style={[styles.tipText, { color: theme.text }]}>
-        {t('graphTipText')}
-      </Text>
 
       {/* Tooltip Modal */}
       {renderTooltip()}
@@ -1594,17 +1766,27 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingBottom: 40,
   },
-  backButton: {
-    marginTop: 40,
-    marginBottom: 10,
-    padding: 8,
-    width: 40,
-  },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    fontSize: 32,
+    fontWeight: '900',
     marginBottom: 20,
     textAlign: 'center',
+    marginTop: 40,
+  },
+  logsButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 10,
+    borderRadius: 20,
+    marginTop: 20,
+  },
+  logsButtonIcon: {
+    marginRight: 8,
+  },
+  logsButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   toggleContainer: {
     flexDirection: 'row',
@@ -1902,5 +2084,24 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 14,
     fontStyle: 'italic',
-  }
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 40,
+    marginTop: 40,
+  },
+  emptyText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginTop: 20,
+  },
+  emptySubText: {
+    fontSize: 14,
+    textAlign: 'center',
+    marginTop: 10,
+    opacity: 0.7,
+  },
 });

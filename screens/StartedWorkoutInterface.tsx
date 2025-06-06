@@ -623,7 +623,7 @@ export default function StartedWorkoutInterface() {
             style={[styles.startButton, { backgroundColor: theme.buttonBackground }]}
             onPress={startWorkout}
           >
-            <Ionicons name="play" size={20} color={theme.buttonText} style={styles.buttonIcon} />
+            <Ionicons name="stopwatch-outline" size={20} color={theme.buttonText} style={styles.buttonIcon} />
             <Text style={[styles.buttonText, { color: theme.buttonText }]}>{t('startWorkout')}</Text>
           </TouchableOpacity>
         </View>
