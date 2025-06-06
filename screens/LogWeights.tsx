@@ -7,7 +7,7 @@ import {
   Alert,
   TextInput,
 } from 'react-native';
-import { useNavigation} from '@react-navigation/native';
+import { useNavigation, useRoute, RouteProp} from '@react-navigation/native';
 import { useSQLiteContext } from 'expo-sqlite';
 import { WorkoutLog, LoggedExercise } from '../utils/types';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -16,15 +16,15 @@ import { useSettings } from '../context/SettingsContext';
 import { useTheme } from '../context/ThemeContext';
 import { KeyboardAwareFlatList, KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useTranslation } from 'react-i18next';
+import { WeightLogStackParamList } from '../App';
 
-
-
-
+type LogWeightsRouteProp = RouteProp<WeightLogStackParamList, 'LogWeights'>;
 
 export default function LogWeights() {
   const db = useSQLiteContext();
   
   const navigation = useNavigation();
+  const route = useRoute<LogWeightsRouteProp>();
 
   const { theme } = useTheme(); // Add the theme hook here
   const { t } = useTranslation(); // Initialize translations
@@ -36,8 +36,32 @@ export default function LogWeights() {
   const [exerciseSets, setExerciseSets] = useState<{ [key: string]: number[] }>({});
   const { weightFormat, dateFormat } = useSettings();
   useEffect(() => {
-    fetchWorkouts();
-  }, []);
+    const passedWorkoutLogId = route.params?.workout_log_id;
+    if (passedWorkoutLogId) {
+      fetchAndSetWorkout(passedWorkoutLogId);
+    } else {
+      fetchWorkouts();
+    }
+  }, [route.params?.workout_log_id]);
+
+  const fetchAndSetWorkout = async (workout_log_id: number) => {
+    try {
+      const workout = await db.getFirstAsync<WorkoutLog>(
+        'SELECT * FROM Workout_Log WHERE workout_log_id = ?',
+        [workout_log_id]
+      );
+      if (workout) {
+        setSelectedWorkout(workout);
+        fetchExercises(workout.workout_log_id);
+      } else {
+        Alert.alert(t('errorTitle'), t('workoutNotFound'));
+        fetchWorkouts(); // Fallback to list
+      }
+    } catch (error) {
+      console.error('Error fetching specific workout:', error);
+      fetchWorkouts(); // Fallback to list
+    }
+  };
 
   const fetchWorkouts = async () => {
     try {
