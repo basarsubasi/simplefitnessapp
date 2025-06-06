@@ -37,6 +37,7 @@ const [todayWorkouts, setTodayWorkouts] = useState<
   useFocusEffect(
     React.useCallback(() => {
       async function initializeData() {
+        setSelectedWorkout(null);
         await addColumn0 ()
         await addColumn1()
         await fetchWorkouts()
