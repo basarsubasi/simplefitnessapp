@@ -544,43 +544,107 @@ export default function MyCalendar() {
                     ? formatDate(selectedDateWorkouts[0].workout.workout_date)
                     : ''}
                 </Text>
-                <ScrollView style={{width: '100%'}}>
-                  {selectedDateWorkouts.map((entry, index) => (
-                    <TouchableOpacity
-                      key={index}
-                      style={[
-                        styles.modalWorkoutItem,
-                        {
-                          backgroundColor: theme.background,
-                          borderColor: entry.isLogged
-                            ? theme.buttonBackground
-                            : theme.border,
-                        },
-                      ]}
-                      onPress={() => {
-                        setDetailedWorkout(entry);
-                        fetchWorkoutDetails(entry.workout.workout_log_id);
-                      }}
-                      onLongPress={() => handleLongPress(entry)}
-                    >
-                      <View style={{ flex: 1 }}>
-                        <Text style={[styles.modalWorkoutName, { color: theme.text }]}>
-                          {entry.workout.workout_name}
-                        </Text>
-                        <Text style={[styles.modalWorkoutDay, { color: theme.text }]}>
-                          {entry.workout.day_name}
-                        </Text>
+                {(() => {
+                  const isUpcoming =
+                    selectedDateWorkouts.length > 0 &&
+                    new Date(
+                      selectedDateWorkouts[0].workout.workout_date * 1000
+                    ).setHours(0, 0, 0, 0) >= new Date().setHours(0, 0, 0, 0);
+
+                  return (
+                    <>
+                      <View style={styles.modalLegendContainer}>
+                        <View style={styles.modalLegendItem}>
+                          <Ionicons
+                            name="checkmark-circle"
+                            size={20}
+                            color={theme.buttonBackground}
+                          />
+                          <Text
+                            style={[
+                              styles.modalLegendText,
+                              { color: theme.text },
+                            ]}
+                          >
+                            {t('Logged')}
+                          </Text>
+                        </View>
+                        <View style={styles.modalLegendItem}>
+                          <Ionicons
+                            name="ellipse-outline"
+                            size={20}
+                            color={isUpcoming ? 'grey' : theme.text}
+                          />
+                          <Text
+                            style={[
+                              styles.modalLegendText,
+                              { color: theme.text },
+                            ]}
+                          >
+                            {isUpcoming ? t('Upcoming') : t('Untracked')}
+                          </Text>
+                        </View>
                       </View>
-                      <View>
-                        {entry.isLogged ? (
-                           <Ionicons name="checkmark-circle" size={24} color={theme.buttonBackground} />
-                        ) : (
-                           <Ionicons name="ellipse-outline" size={24} color={theme.text} />
-                        )}
-                      </View>
-                    </TouchableOpacity>
-                  ))}
-                </ScrollView>
+                      <ScrollView style={{ width: '100%' }}>
+                        {selectedDateWorkouts.map((entry, index) => (
+                          <TouchableOpacity
+                            key={index}
+                            style={[
+                              styles.modalWorkoutItem,
+                              {
+                                backgroundColor: theme.background,
+                                borderColor: entry.isLogged
+                                  ? theme.buttonBackground
+                                  : theme.border,
+                              },
+                            ]}
+                            onPress={() => {
+                              setDetailedWorkout(entry);
+                              fetchWorkoutDetails(
+                                entry.workout.workout_log_id
+                              );
+                            }}
+                            onLongPress={() => handleLongPress(entry)}
+                          >
+                            <View style={{ flex: 1 }}>
+                              <Text
+                                style={[
+                                  styles.modalWorkoutName,
+                                  { color: theme.text },
+                                ]}
+                              >
+                                {entry.workout.workout_name}
+                              </Text>
+                              <Text
+                                style={[
+                                  styles.modalWorkoutDay,
+                                  { color: theme.text },
+                                ]}
+                              >
+                                {entry.workout.day_name}
+                              </Text>
+                            </View>
+                            <View>
+                              {entry.isLogged ? (
+                                <Ionicons
+                                  name="checkmark-circle"
+                                  size={24}
+                                  color={theme.buttonBackground}
+                                />
+                              ) : (
+                                <Ionicons
+                                  name="ellipse-outline"
+                                  size={24}
+                                  color={isUpcoming ? 'grey' : theme.text}
+                                />
+                              )}
+                            </View>
+                          </TouchableOpacity>
+                        ))}
+                      </ScrollView>
+                    </>
+                  );
+                })()}
               </>
             )}
           </View>
@@ -792,5 +856,21 @@ const styles = StyleSheet.create({
   modalWorkoutDay: {
     fontSize: 14,
     opacity: 0.8,
+  },
+  modalLegendContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 15,
+    marginTop: 5,
+  },
+  modalLegendItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 15,
+  },
+  modalLegendText: {
+    marginLeft: 5,
+    fontSize: 14,
   },
 });
