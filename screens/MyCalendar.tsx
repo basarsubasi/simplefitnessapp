@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import {
   View,
   Text,
@@ -226,17 +226,33 @@ export default function MyCalendar() {
   const renderCalendarDays = () => {
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
-    const firstDayOfMonth = new Date(year, month, 1).getDay();
+    const firstDayOfMonth = new Date(year, month, 1).getDay(); // 0=Sun, 1=Mon, ...
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const today = new Date();
 
+    const daysInPrevMonth = new Date(year, month, 0).getDate();
+
     const days = [];
-    // Add blank spaces for days before the first day of the month
+
+    // 1. Add days from the previous month
     for (let i = 0; i < firstDayOfMonth; i++) {
-      days.push(<View key={`blank-${i}`} style={styles.dayCell} />);
+      const day = daysInPrevMonth - firstDayOfMonth + 1 + i;
+      days.push(
+        <View key={`prev-${i}`} style={styles.dayCell}>
+          <Text
+            style={[
+              styles.dayText,
+              styles.otherMonthDayText,
+              { color: theme.text },
+            ]}
+          >
+            {day}
+          </Text>
+        </View>
+      );
     }
 
-    // Add day cells for the month
+    // 2. Add days for the current month
     for (let day = 1; day <= daysInMonth; day++) {
       const dayDate = new Date(year, month, day);
       const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(
@@ -250,7 +266,6 @@ export default function MyCalendar() {
         today.getDate() === day;
       const isPast = dayDate.setHours(0, 0, 0, 0) < today.setHours(0, 0, 0, 0);
 
-      // FIX 1: Explicitly type cellStyle as ViewStyle[]
       const cellStyle: ViewStyle[] = [styles.dayCell];
       const textStyle = [styles.dayText, { color: theme.text }];
 
@@ -274,7 +289,6 @@ export default function MyCalendar() {
           disabled={!workoutEntry}
         >
           <Text style={textStyle}>{day}</Text>
-          {/* FIX 2: Use theme.text instead of theme.primary */}
           {isToday && (
             <View
               style={[styles.todayIndicator, { backgroundColor: theme.text }]}
@@ -283,6 +297,28 @@ export default function MyCalendar() {
         </TouchableOpacity>
       );
     }
+
+    // 3. Add days from the next month
+    const totalGridCells =
+      Math.ceil((firstDayOfMonth + daysInMonth) / 7) * 7;
+    const remainingCells = totalGridCells - (firstDayOfMonth + daysInMonth);
+
+    for (let i = 1; i <= remainingCells; i++) {
+      days.push(
+        <View key={`next-${i}`} style={styles.dayCell}>
+          <Text
+            style={[
+              styles.dayText,
+              styles.otherMonthDayText,
+              { color: theme.text },
+            ]}
+          >
+            {i}
+          </Text>
+        </View>
+      );
+    }
+
     return days;
   };
 
@@ -530,6 +566,9 @@ const styles = StyleSheet.create({
   dayText: {
     fontSize: 16,
     fontWeight: '500',
+  },
+  otherMonthDayText: {
+    opacity: 0.3,
   },
   todayIndicator: {
     width: 16,
