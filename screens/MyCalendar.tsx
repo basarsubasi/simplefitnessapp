@@ -267,7 +267,9 @@ export default function MyCalendar() {
       const cellStyle: ViewStyle[] = [styles.dayCell];
       const textStyle = [
         styles.dayText,
-        isCurrentMonth ? { color: theme.text } : styles.otherMonthDayText,
+        isCurrentMonth
+          ? { color: theme.text }
+          : [styles.otherMonthDayText, { color: theme.text }],
       ];
 
       if (workoutEntry) {
@@ -381,6 +383,52 @@ export default function MyCalendar() {
         <View style={styles.daysGrid}>{renderCalendarDays()}</View>
       </View>
 
+      {/* Legend Section */}
+      <View style={styles.legendContainer}>
+        <View style={styles.legendItem}>
+          <View
+            style={[
+              styles.legendIcon,
+              { backgroundColor: theme.buttonBackground },
+            ]}
+          />
+          <Text style={[styles.legendText, { color: theme.text }]}>
+            {t('Logged')}
+          </Text>
+        </View>
+        <View style={styles.legendItem}>
+          <View
+            style={[
+              styles.legendIcon,
+              styles.untrackedDay,
+              { borderColor: theme.text },
+            ]}
+          />
+          <Text style={[styles.legendText, { color: theme.text }]}>
+            {t('Untracked')}
+          </Text>
+        </View>
+        <View style={styles.legendItem}>
+          <View style={[styles.legendIcon, styles.upcomingDay]} />
+          <Text style={[styles.legendText, { color: theme.text }]}>
+            {t('Upcoming')}
+          </Text>
+        </View>
+        <View style={styles.legendItem}>
+          <View style={styles.legendIcon}>
+            <View
+              style={[
+                styles.todayIndicator,
+                { backgroundColor: theme.text, bottom: -6 },
+              ]}
+            />
+          </View>
+          <Text style={[styles.legendText, { color: theme.text }]}>
+            {t('Today')}
+          </Text>
+        </View>
+      </View>
+
       <Text style={[styles.tipText, { color: theme.text }]}>
         {t('scheduleTip')}
       </Text>
@@ -487,7 +535,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   tipText: {
-    marginTop: 20,
+    marginTop: 10,
     textAlign: 'center',
     fontSize: 14,
     fontStyle: 'italic',
@@ -500,6 +548,7 @@ const styles = StyleSheet.create({
     maxWidth: 400,
     borderRadius: 20,
     padding: 15,
+    marginTop: 30,
     borderWidth: 1,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -548,7 +597,6 @@ const styles = StyleSheet.create({
   },
   otherMonthDayText: {
     opacity: 0.3,
-    color: 'grey'
   },
   todayIndicator: {
     width: 16,
@@ -562,6 +610,34 @@ const styles = StyleSheet.create({
   },
   upcomingDay: {
     backgroundColor: 'rgba(128, 128, 128, 0.2)',
+  },
+  // Legend Styles
+  legendContainer: {
+    width: '100%',
+    maxWidth: 400,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
+    paddingHorizontal: 10,
+  },
+  legendItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 10,
+    marginVertical: 5,
+  },
+  legendIcon: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    marginRight: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  legendText: {
+    fontSize: 14,
   },
   // Modal Styles
   modalContainer: {
