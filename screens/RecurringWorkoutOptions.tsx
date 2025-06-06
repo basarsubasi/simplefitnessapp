@@ -22,35 +22,12 @@ export default function RecurringWorkoutOptions() {
   const { theme } = useTheme();
   const { t } = useTranslation();
 
-
-  const addColumn = async () => {
-    try {
-      // Check if column exists first
-      const tableInfo = await db.getAllAsync(
-        "PRAGMA table_info(Workout_Log);"
-      );
-      const columnExists = tableInfo.some(
-        (column: any) => column.name === 'notification_id'
-      );
-      
-      if (!columnExists) {
-        await db.runAsync('ALTER TABLE Workout_Log ADD COLUMN notification_id TEXT;');
-        console.log('Column added successfully');
-      } else {
-        console.log('Column already exists, skipping');
-      }
-    } catch (error) {
-      console.error('Error managing column:', error);
-    }
-  };
-
   // Initialize database tables and triggers when screen loads
   useEffect(() => {
     const setupDatabase = async () => {
       try {
         await addRecurringTable(db);
         await createUpdateTriggers(db);
-        await addColumn();
         console.log('Recurring workouts database setup complete');
       } catch (error) {
         console.error('Error setting up recurring workouts database:', error);

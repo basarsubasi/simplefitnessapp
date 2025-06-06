@@ -39,7 +39,6 @@
   import * as Notifications from 'expo-notifications';
   import { useRecurringWorkouts } from './utils/recurringWorkoutUtils';
   import { AppState } from 'react-native';
-  import GraphsWorkoutSelection from './screens/GraphsWorkoutSelection';
   import GraphsWorkoutDetails from './screens/GraphsWorkoutDetails';
 
 
@@ -151,8 +150,7 @@
     LogWeights: { workout_log_id?: number };
     WeightLogDetail:{ workoutName: string }
     AllLogs: undefined;
-    GraphsWorkoutSelection: undefined;
-    GraphsWorkoutDetails: { workoutName: string };
+    GraphsWorkoutDetails: undefined;
   }
 
   export type StartWorkoutStackParamList = {
@@ -276,6 +274,11 @@
         }}
       >
         <WeightLogStackScreen.Screen
+          name="GraphsWorkoutDetails"
+          component={GraphsWorkoutDetails}
+          options={{ headerShown: false }}
+        />
+        <WeightLogStackScreen.Screen
           name="MyProgress"
           component={MyProgress}
           options={{ headerShown: false }} // No header for MyCalendar screen
@@ -296,17 +299,6 @@
           component={AllLogs}
           options={{ headerShown: false }} // No header for MyCalendar screen
         />    
-      
-      <WeightLogStackScreen.Screen
-        name="GraphsWorkoutSelection"
-        component={GraphsWorkoutSelection}
-        options={{ headerShown: false }}
-      />
-      <WeightLogStackScreen.Screen
-        name="GraphsWorkoutDetails"
-        component={GraphsWorkoutDetails}
-        options={{ headerShown: false }}
-      />
       
       </WeightLogStackScreen.Navigator>
     );
