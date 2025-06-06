@@ -23,7 +23,7 @@
   import ManageRecurringWorkouts from './screens/ManageRecurringWorkouts';
   import RecurringWorkoutDetails from './screens/RecurringWorkoutDetails';
   import EditRecurringWorkout from './screens/EditRecurringWorkout';
-  import StartWorkout from './screens/StartWorkout';
+  // import StartWorkout from './screens/StartWorkout';
   import StartedWorkoutInterface from './screens/StartedWorkoutInterface';
   import './utils/i18n'; // Ensure this is present to initialize i18n
   import i18n from './utils/i18n'; // Import the i18n instance
@@ -142,6 +142,7 @@
     ManageRecurringWorkouts: undefined;
     RecurringWorkoutDetails: { recurring_workout_id: number };
     EditRecurringWorkout: { recurring_workout_id: number };
+    StartedWorkoutInterface: { workout_log_id: number };
   };
 
   export type WeightLogStackParamList = {
@@ -249,7 +250,11 @@
           component={EditRecurringWorkout}
           options={{ title: 'Edit Recurring Workout' }}
         />
-
+        <WorkoutLogStackScreen.Screen
+          name="StartedWorkoutInterface"
+          component={StartedWorkoutInterface}
+          options={{ headerShown: false }}
+        />
       </WorkoutLogStackScreen.Navigator>
 
       
@@ -301,7 +306,7 @@
     );
   }
 
-  function StartWorkoutStack() {
+  /*function StartWorkoutStack() {
     return (
       <StartWorkoutStackScreen.Navigator
         screenOptions={{
@@ -320,7 +325,7 @@
         />
       </StartWorkoutStackScreen.Navigator>
     );
-  }
+  }*/
 
 // First, create a component that will handle the recurring workout checks
 function RecurringWorkoutManager() {
@@ -406,16 +411,6 @@ const AppContent = () => {
             options={{
               tabBarButton: (props) => (
                 <TabButton {...props} iconName="calendar" />
-              ),
-            }}
-          />
-
-          <Bottom.Screen
-            name="Start Workout"
-            component={StartWorkoutStack}
-            options={{
-              tabBarButton: (props) => (
-                <TabButton {...props} iconName="stopwatch" />
               ),
             }}
           />
