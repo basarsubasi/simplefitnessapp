@@ -486,7 +486,10 @@ export default function MyCalendar() {
         >
           <View style={[styles.modalContent, { backgroundColor: theme.card }]}>
             <TouchableOpacity
-              style={styles.modalCloseButton}
+              style={[
+                styles.modalCloseButton,
+                detailedWorkout ? { left: 10 } : { right: 10 },
+              ]}
               onPress={() => {
                 if (detailedWorkout) {
                   setDetailedWorkout(null);
@@ -598,9 +601,7 @@ export default function MyCalendar() {
                               styles.modalWorkoutItem,
                               {
                                 backgroundColor: theme.background,
-                                borderColor: entry.isLogged
-                                  ? theme.buttonBackground
-                                  : theme.border,
+                                borderColor: theme.border,
                               },
                             ]}
                             onPress={() => {
@@ -833,7 +834,7 @@ const styles = StyleSheet.create({
     maxWidth: 400,
     alignItems: 'center',
   },
-  modalCloseButton: { position: 'absolute', top: 10, right: 10 },
+  modalCloseButton: { position: 'absolute', top: 10 },
   modalTitle: {
     fontSize: 24,
     fontWeight: '900',
