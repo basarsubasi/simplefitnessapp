@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react'; // Import useEffect
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   View,
   Text,
@@ -65,18 +65,23 @@ export default function MyCalendar() {
     checkRecurringWorkouts();
   }, []); // Empty dependency array ensures this runs only once
 
-  const fetchWorkoutsForMonth = useCallback(
+  const fetchWorkoutsForGrid = useCallback(
     async (date: Date) => {
       try {
-        const year = date.getFullYear();
-        const month = date.getMonth();
-        const firstDayOfMonth = new Date(year, month, 1);
-        const lastDayOfMonth = new Date(year, month + 1, 0);
+        // Calculate the start and end of the visible grid
+        const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+        const startDayOfWeek = firstDayOfMonth.getDay(); // 0=Sun, 1=Mon...
 
-        const startTimestamp = Math.floor(firstDayOfMonth.getTime() / 1000);
-        const endTimestamp = Math.floor(lastDayOfMonth.getTime() / 1000) + 86399;
+        const gridStartDate = new Date(firstDayOfMonth);
+        gridStartDate.setDate(gridStartDate.getDate() - startDayOfWeek);
 
-        const allWorkoutsInMonth = await db.getAllAsync<
+        const gridEndDate = new Date(gridStartDate);
+        gridEndDate.setDate(gridEndDate.getDate() + 41); // 6 weeks * 7 days - 1
+
+        const startTimestamp = Math.floor(gridStartDate.getTime() / 1000);
+        const endTimestamp = Math.floor(gridEndDate.getTime() / 1000) + 86399;
+
+        const allWorkoutsInRange = await db.getAllAsync<
           WorkoutEntry['workout']
         >(`SELECT * FROM Workout_Log WHERE workout_date BETWEEN ? AND ?;`, [
           startTimestamp,
@@ -95,7 +100,7 @@ export default function MyCalendar() {
         );
 
         const workoutsMap = new Map<string, WorkoutEntry>();
-        allWorkoutsInMonth.forEach((workout) => {
+        allWorkoutsInRange.forEach((workout) => {
           const workoutDate = new Date(workout.workout_date * 1000);
           const dateKey = `${workoutDate.getFullYear()}-${String(
             workoutDate.getMonth() + 1
@@ -111,7 +116,7 @@ export default function MyCalendar() {
 
         setWorkouts(workoutsMap);
       } catch (error) {
-        console.error('Error fetching workouts for month:', error);
+        console.error('Error fetching workouts for grid:', error);
       }
     },
     [db]
@@ -120,9 +125,9 @@ export default function MyCalendar() {
   // Refresh the calendar data every time the screen is focused
   useFocusEffect(
     useCallback(() => {
-      console.log('MyCalendar: Screen focused, fetching workouts for month.');
-      fetchWorkoutsForMonth(currentDate);
-    }, [currentDate, fetchWorkoutsForMonth])
+      console.log('MyCalendar: Screen focused, fetching workouts for grid.');
+      fetchWorkoutsForGrid(currentDate);
+    }, [currentDate, fetchWorkoutsForGrid])
   );
 
   const fetchWorkoutDetails = async (workout_log_id: number) => {
@@ -172,7 +177,7 @@ export default function MyCalendar() {
                 `DELETE FROM Logged_Exercises WHERE workout_log_id = ?;`,
                 [workout_log_id]
               );
-              fetchWorkoutsForMonth(currentDate); // Refresh the calendar
+              fetchWorkoutsForGrid(currentDate); // Refresh the calendar
             } catch (error) {
               console.error('Error deleting workout log:', error);
               Alert.alert(t('errorTitle'), t('failedToDeleteWorkoutLog'));
@@ -222,50 +227,43 @@ export default function MyCalendar() {
   };
 
   const renderCalendarDays = () => {
-    const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
-    const firstDayOfMonth = new Date(year, month, 1).getDay(); // 0=Sun, 1=Mon, ...
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const year = currentDate.getFullYear();
     const today = new Date();
 
-    const daysInPrevMonth = new Date(year, month, 0).getDate();
+    const firstDayOfMonth = new Date(year, month, 1);
+    const startDayOfWeek = firstDayOfMonth.getDay();
+
+    const gridStartDate = new Date(firstDayOfMonth);
+    gridStartDate.setDate(gridStartDate.getDate() - startDayOfWeek);
 
     const days = [];
+    for (let i = 0; i < 35; i++) {
+      const cellDate = new Date(gridStartDate);
+      cellDate.setDate(gridStartDate.getDate() + i);
 
-    // 1. Add days from the previous month
-    for (let i = 0; i < firstDayOfMonth; i++) {
-      const day = daysInPrevMonth - firstDayOfMonth + 1 + i;
-      days.push(
-        <View key={`prev-${i}`} style={styles.dayCell}>
-          <Text
-            style={[
-              styles.dayText,
-              styles.otherMonthDayText,
-              { color: theme.text },
-            ]}
-          >
-            {day}
-          </Text>
-        </View>
-      );
-    }
+      const day = cellDate.getDate();
+      const cellMonth = cellDate.getMonth();
+      const cellYear = cellDate.getFullYear();
 
-    // 2. Add days for the current month
-    for (let day = 1; day <= daysInMonth; day++) {
-      const dayDate = new Date(year, month, day);
-      const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(
-        day
-      ).padStart(2, '0')}`;
+      const dateKey = `${cellYear}-${String(cellMonth + 1).padStart(
+        2,
+        '0'
+      )}-${String(day).padStart(2, '0')}`;
       const workoutEntry = workouts.get(dateKey);
 
+      const isCurrentMonth = cellMonth === month;
       const isToday =
-        today.getFullYear() === year &&
-        today.getMonth() === month &&
+        today.getFullYear() === cellYear &&
+        today.getMonth() === cellMonth &&
         today.getDate() === day;
-      const isPast = dayDate.setHours(0, 0, 0, 0) < today.setHours(0, 0, 0, 0);
+      const isPast = cellDate.setHours(0, 0, 0, 0) < today.setHours(0, 0, 0, 0);
 
       const cellStyle: ViewStyle[] = [styles.dayCell];
-      const textStyle = [styles.dayText, { color: theme.text }];
+      const textStyle = [
+        styles.dayText,
+        isCurrentMonth ? { color: theme.text } : styles.otherMonthDayText,
+      ];
 
       if (workoutEntry) {
         if (workoutEntry.isLogged) {
@@ -280,7 +278,7 @@ export default function MyCalendar() {
 
       days.push(
         <TouchableOpacity
-          key={day}
+          key={dateKey}
           style={cellStyle}
           onPress={() => workoutEntry && handleWorkoutPress(workoutEntry)}
           onLongPress={() => workoutEntry && handleLongPress(workoutEntry)}
@@ -295,28 +293,6 @@ export default function MyCalendar() {
         </TouchableOpacity>
       );
     }
-
-    // 3. Add days from the next month
-    const totalGridCells =
-      Math.ceil((firstDayOfMonth + daysInMonth) / 7) * 7;
-    const remainingCells = totalGridCells - (firstDayOfMonth + daysInMonth);
-
-    for (let i = 1; i <= remainingCells; i++) {
-      days.push(
-        <View key={`next-${i}`} style={styles.dayCell}>
-          <Text
-            style={[
-              styles.dayText,
-              styles.otherMonthDayText,
-              { color: theme.text },
-            ]}
-          >
-            {i}
-          </Text>
-        </View>
-      );
-    }
-
     return days;
   };
 
@@ -567,6 +543,7 @@ const styles = StyleSheet.create({
   },
   otherMonthDayText: {
     opacity: 0.3,
+    color: 'grey'
   },
   todayIndicator: {
     width: 16,
