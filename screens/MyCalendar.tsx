@@ -381,36 +381,10 @@ export default function MyCalendar() {
       {/* Legend Section */}
       <View style={styles.legendContainer}>
         <View style={styles.legendItem}>
-          <View
-            style={[
-              styles.legendIcon,
-              { backgroundColor: theme.buttonBackground },
-            ]}
-          />
-          <Text style={[styles.legendText, { color: theme.text }]}>
-            {t('Logged')}
-          </Text>
-        </View>
-        <View style={styles.legendItem}>
-          <View
-            style={[
-              styles.legendIcon,
-              styles.untrackedDay,
-              { borderColor: theme.text },
-            ]}
-          />
-          <Text style={[styles.legendText, { color: theme.text }]}>
-            {t('Untracked')}
-          </Text>
-        </View>
-        <View style={styles.legendItem}>
-          <View style={[styles.legendIcon, styles.upcomingDay]} />
-          <Text style={[styles.legendText, { color: theme.text }]}>
-            {t('Upcoming')}
-          </Text>
-        </View>
-        <View style={styles.legendItem}>
           <View style={styles.legendIcon}>
+            <Text style={[styles.legendIconText, { color: theme.text }]}>
+              1
+            </Text>
             <View
               style={[
                 styles.todayIndicator,
@@ -421,6 +395,51 @@ export default function MyCalendar() {
           <Text style={[styles.legendText, { color: theme.text }]}>
             {t('Today')}
           </Text>
+        </View>
+        <View style={styles.legendRow}>
+          <View style={styles.legendItem}>
+            <View
+              style={[
+                styles.legendIcon,
+                { backgroundColor: theme.buttonBackground },
+              ]}
+            >
+              <Text
+                style={[styles.legendIconText, { color: theme.buttonText }]}
+              >
+                2
+              </Text>
+            </View>
+            <Text style={[styles.legendText, { color: theme.text }]}>
+              {t('Logged')}
+            </Text>
+          </View>
+          <View style={styles.legendItem}>
+            <View
+              style={[
+                styles.legendIcon,
+                styles.untrackedDay,
+                { borderColor: theme.text },
+              ]}
+            >
+              <Text style={[styles.legendIconText, { color: theme.text }]}>
+                3
+              </Text>
+            </View>
+            <Text style={[styles.legendText, { color: theme.text }]}>
+              {t('Untracked')}
+            </Text>
+          </View>
+          <View style={styles.legendItem}>
+            <View style={[styles.legendIcon, styles.upcomingDay]}>
+              <Text style={[styles.legendIconText, { color: theme.text }]}>
+                4
+              </Text>
+            </View>
+            <Text style={[styles.legendText, { color: theme.text }]}>
+              {t('Upcoming')}
+            </Text>
+          </View>
         </View>
       </View>
 
@@ -610,12 +629,16 @@ const styles = StyleSheet.create({
   legendContainer: {
     width: '100%',
     maxWidth: 400,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 20,
     paddingHorizontal: 10,
+  },
+  legendRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 5,
   },
   legendItem: {
     flexDirection: 'row',
@@ -624,12 +647,17 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
   legendIcon: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
     marginRight: 8,
     justifyContent: 'center',
     alignItems: 'center',
+    marginVertical: 10, 
+  },
+  legendIconText: {
+    fontSize: 12,
+    fontWeight: 'bold',
   },
   legendText: {
     fontSize: 14,
