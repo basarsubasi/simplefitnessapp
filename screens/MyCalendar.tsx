@@ -1,4 +1,4 @@
-import React, {useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Alert,
   Modal,
+  ViewStyle, // Import ViewStyle
 } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useSQLiteContext } from 'expo-sqlite';
@@ -14,133 +15,117 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { WorkoutLogStackParamList } from '../App';
 import { useSettings } from '../context/SettingsContext';
-
 import { useTheme } from '../context/ThemeContext';
 import { useTranslation } from 'react-i18next';
 import { checkAndScheduleRecurringWorkouts, useRecurringWorkouts } from '../utils/recurringWorkoutUtils';
-
-
-
 
 type MyCalendarNavigationProp = StackNavigationProp<
   WorkoutLogStackParamList,
   'MyCalendar'
 >;
 
+// Define the structure for a workout entry in our map
+interface WorkoutEntry {
+  workout: {
+    workout_name: string;
+    workout_date: number;
+    day_name: string;
+    workout_log_id: number;
+    notification_id?: string | null;
+  };
+  isLogged: boolean;
+}
+
 export default function MyCalendar() {
   const db = useSQLiteContext();
   const navigation = useNavigation<MyCalendarNavigationProp>();
+  const { theme } = useTheme();
+  const { t } = useTranslation();
+  const { dateFormat } = useSettings();
+  const { checkRecurringWorkouts } = useRecurringWorkouts();
 
-    const { theme } = useTheme(); 
-    const { t } = useTranslation(); // Initialize translations
-    
+  // State for the calendar
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [workouts, setWorkouts] = useState<Map<string, WorkoutEntry>>(
+    new Map()
+  );
 
-  // State for workouts
-  const [todayWorkouts, setTodayWorkouts] = useState<
-  { workout_name: string; workout_date: number; day_name: string; workout_log_id: number }[]
->([]);
-
-  const [pastWorkouts, setPastWorkouts] = useState<
-    { workout_name: string; workout_date: number; day_name: string; workout_log_id: number }[]
-  >([]);
-  const [futureWorkouts, setFutureWorkouts] = useState<
-    { workout_name: string; workout_date: number; day_name: string; workout_log_id: number }[]
-  >([]);
+  // State for the modal
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedWorkout, setSelectedWorkout] = useState<
-    { workout_name: string; workout_date: number; day_name: string; workout_log_id: number } | null
-  >(null);
+  const [selectedWorkout, setSelectedWorkout] = useState<WorkoutEntry | null>(
+    null
+  );
   const [exercises, setExercises] = useState<
     { exercise_name: string; sets: number; reps: number }[]
   >([]);
 
-  const today = new Date();
-  const todayTimestamp = new Date(
-    today.getFullYear(),
-    today.getMonth(),
-    today.getDate()
-  ).getTime() / 1000; // Start of today in seconds
+  const fetchWorkoutsForMonth = useCallback(
+    async (date: Date) => {
+      try {
+        const year = date.getFullYear();
+        const month = date.getMonth();
+        const firstDayOfMonth = new Date(year, month, 1);
+        const lastDayOfMonth = new Date(year, month + 1, 0);
 
+        const startTimestamp = Math.floor(firstDayOfMonth.getTime() / 1000);
+        const endTimestamp = Math.floor(lastDayOfMonth.getTime() / 1000) + 86399;
 
-  const { checkRecurringWorkouts } = useRecurringWorkouts();
+        const allWorkoutsInMonth = await db.getAllAsync<
+          WorkoutEntry['workout']
+        >(`SELECT * FROM Workout_Log WHERE workout_date BETWEEN ? AND ?;`, [
+          startTimestamp,
+          endTimestamp,
+        ]);
+
+        const loggedWorkoutIdsResult = await db.getAllAsync<{
+          workout_log_id: number;
+        }>(
+          `SELECT DISTINCT workout_log_id FROM Weight_Log 
+           WHERE workout_log_id IN (SELECT workout_log_id FROM Workout_Log WHERE workout_date BETWEEN ? AND ?);`,
+          [startTimestamp, endTimestamp]
+        );
+        const loggedWorkoutIds = new Set(
+          loggedWorkoutIdsResult.map((item) => item.workout_log_id)
+        );
+
+        const workoutsMap = new Map<string, WorkoutEntry>();
+        allWorkoutsInMonth.forEach((workout) => {
+          const workoutDate = new Date(workout.workout_date * 1000);
+          const dateKey = `${workoutDate.getFullYear()}-${String(
+            workoutDate.getMonth() + 1
+          ).padStart(2, '0')}-${String(workoutDate.getDate()).padStart(
+            2,
+            '0'
+          )}`;
+          workoutsMap.set(dateKey, {
+            workout,
+            isLogged: loggedWorkoutIds.has(workout.workout_log_id),
+          });
+        });
+
+        setWorkouts(workoutsMap);
+      } catch (error) {
+        console.error('Error fetching workouts for month:', error);
+      }
+    },
+    [db]
+  );
 
   useFocusEffect(
-    React.useCallback(() => {
-      // Check for recurring workouts when screen is focused
+    useCallback(() => {
       const checkAndFetchWorkouts = async () => {
         console.log('MyCalendar: Checking recurring workouts');
         // First check and schedule any recurring workouts
         await checkRecurringWorkouts();        
 
         // Then fetch the workouts to display the latest data
-        fetchWorkouts();
+        fetchWorkoutsForMonth(currentDate);
+        await checkRecurringWorkouts();
+        fetchWorkoutsForMonth(currentDate);
       };
-      
       checkAndFetchWorkouts();
-      
-     
-      
-      return () => {
-      };
-    }, [])
+    }, [currentDate, checkRecurringWorkouts, fetchWorkoutsForMonth])
   );
-
-  const fetchWorkouts = async () => {
-    try {
-      const startOfDayTimestamp = new Date(
-        today.getFullYear(),
-        today.getMonth(),
-        today.getDate()
-      ).getTime() / 1000;
-
-      const endOfDayTimestamp = startOfDayTimestamp + 86400 - 1;
-
-      // Fetch today's workout - modified to exclude logged workouts
-      const todayResult = await db.getAllAsync<{
-        workout_name: string;
-        workout_date: number;
-        day_name: string;
-        workout_log_id: number;
-      }>(
-        `SELECT * FROM Workout_Log 
-        WHERE workout_date BETWEEN ? AND ?
-          AND workout_log_id NOT IN (SELECT DISTINCT workout_log_id FROM Weight_Log)
-        ORDER BY workout_date ASC;`,
-        [startOfDayTimestamp, endOfDayTimestamp]
-      );
-      setTodayWorkouts(todayResult);
-
-      // Fetch past workouts not logged in Weight_Log
-      const pastResult = await db.getAllAsync<{
-        workout_name: string;
-        workout_date: number;
-        day_name: string;
-        workout_log_id: number }>(
-        `SELECT * FROM Workout_Log 
-         WHERE workout_date < ? 
-           AND workout_log_id NOT IN (SELECT DISTINCT workout_log_id FROM Weight_Log)
-         ORDER BY workout_date DESC;`,
-        [startOfDayTimestamp]
-      );
-      setPastWorkouts(pastResult);
-
-      // Fetch future workouts
-      const futureResult = await db.getAllAsync<{
-        workout_name: string;
-        workout_date: number;
-        day_name: string;
-        workout_log_id: number }>(
-        `SELECT * FROM Workout_Log 
-         WHERE workout_date > ? 
-         ORDER BY workout_date ASC;`,
-        [endOfDayTimestamp]
-      );
-      setFutureWorkouts(futureResult);
-    } catch (error) {
-      console.error('Error fetching workouts:', error);
-    }
-  };
-  const { dateFormat } = useSettings();
 
   const fetchWorkoutDetails = async (workout_log_id: number) => {
     try {
@@ -159,74 +144,13 @@ export default function MyCalendar() {
     }
   };
 
-  const handleWorkoutPress = (workout: {
-    workout_name: string;
-    workout_date: number;
-    day_name: string;
-    workout_log_id: number;
-  }) => {
-    setSelectedWorkout(workout);
-    fetchWorkoutDetails(workout.workout_log_id);
+  const handleWorkoutPress = (workoutEntry: WorkoutEntry) => {
+    setSelectedWorkout(workoutEntry);
+    fetchWorkoutDetails(workoutEntry.workout.workout_log_id);
     setModalVisible(true);
   };
 
-  const formatDate = (timestamp: number): string => {
-    const date = new Date(timestamp * 1000); // Convert timestamp to Date object
-    const today = new Date();
-    const yesterday = new Date();
-    const tomorrow = new Date();
-  
-    yesterday.setDate(today.getDate() - 1); // Yesterday's date
-    tomorrow.setDate(today.getDate() + 1); // Tomorrow's date
-  
-    // Helper to compare dates without time
-    const isSameDay = (d1: Date, d2: Date) =>
-      d1.getDate() === d2.getDate() &&
-      d1.getMonth() === d2.getMonth() &&
-      d1.getFullYear() === d2.getFullYear();
-  
-    // Check if the date matches today, yesterday, or tomorrow
-    if (isSameDay(date, today)) {
-      return t('Today');
-    } else if (isSameDay(date, yesterday)) {
-      return t('Yesterday');
-    } else if (isSameDay(date, tomorrow)) {
-      return t('Tomorrow');
-    }
-  
-    // Default date formatting based on user-selected format
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
-  
-    return dateFormat === 'mm-dd-yyyy'
-      ? `${month}-${day}-${year}`
-      : `${day}-${month}-${year}`;
-  };
-
-  const renderWorkoutCard = ({
-    workout_name,
-    workout_date,
-    day_name,
-    workout_log_id,
-  }: {
-    workout_name: string;
-    workout_date: number;
-    day_name: string;
-    workout_log_id: number;
-  }) => {
-    return (
-<TouchableOpacity
-  style={[styles.logContainer, { backgroundColor: theme.card, borderColor: theme.border }]}
-  onPress={() =>
-    handleWorkoutPress({
-      workout_name,
-      workout_date,
-      day_name,
-      workout_log_id,
-    })
-  }
-  onLongPress={() =>
+  const handleLongPress = (workoutEntry: WorkoutEntry) => {
     Alert.alert(
       t('deleteDayTitle'),
       t('deleteDayMessage'),
@@ -237,8 +161,7 @@ export default function MyCalendar() {
           style: 'destructive',
           onPress: async () => {
             try {
-
-              // Then proceed with database deletions as before
+              const { workout_log_id, notification_id } = workoutEntry.workout;
               await db.runAsync(
                 `DELETE FROM Workout_Log WHERE workout_log_id = ?;`,
                 [workout_log_id]
@@ -251,7 +174,7 @@ export default function MyCalendar() {
                 `DELETE FROM Logged_Exercises WHERE workout_log_id = ?;`,
                 [workout_log_id]
               );
-              fetchWorkouts(); // Refresh the list
+              fetchWorkoutsForMonth(currentDate); // Refresh the calendar
             } catch (error) {
               console.error('Error deleting workout log:', error);
               Alert.alert(t('errorTitle'), t('failedToDeleteWorkoutLog'));
@@ -259,240 +182,375 @@ export default function MyCalendar() {
           },
         },
       ]
-    )
-  }
->
-  <Text style={[styles.logDate, { color: theme.text }]}>{formatDate(workout_date)}</Text>
-  <Text style={[styles.logWorkoutName, { color: theme.text }]}>{workout_name}</Text>
-  <Text style={[styles.logDayName, { color: theme.text }]}>{day_name}</Text>
-</TouchableOpacity>
-
     );
   };
-  
+
+  const formatDate = (timestamp: number): string => {
+    const date = new Date(timestamp * 1000);
+    const today = new Date();
+    const yesterday = new Date();
+    yesterday.setDate(today.getDate() - 1);
+    const tomorrow = new Date();
+    tomorrow.setDate(today.getDate() + 1);
+
+    const isSameDay = (d1: Date, d2: Date) =>
+      d1.getFullYear() === d2.getFullYear() &&
+      d1.getMonth() === d2.getMonth() &&
+      d1.getDate() === d2.getDate();
+
+    if (isSameDay(date, today)) return t('Today');
+    if (isSameDay(date, yesterday)) return t('Yesterday');
+    if (isSameDay(date, tomorrow)) return t('Tomorrow');
+
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+
+    return dateFormat === 'mm-dd-yyyy'
+      ? `${month}-${day}-${year}`
+      : `${day}-${month}-${year}`;
+  };
+
+  const handlePrevMonth = () => {
+    setCurrentDate(
+      (prevDate) => new Date(prevDate.getFullYear(), prevDate.getMonth() - 1, 1)
+    );
+  };
+
+  const handleNextMonth = () => {
+    setCurrentDate(
+      (prevDate) => new Date(prevDate.getFullYear(), prevDate.getMonth() + 1, 1)
+    );
+  };
+
+  const renderCalendarDays = () => {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    const firstDayOfMonth = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const today = new Date();
+
+    const days = [];
+    // Add blank spaces for days before the first day of the month
+    for (let i = 0; i < firstDayOfMonth; i++) {
+      days.push(<View key={`blank-${i}`} style={styles.dayCell} />);
+    }
+
+    // Add day cells for the month
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dayDate = new Date(year, month, day);
+      const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(
+        day
+      ).padStart(2, '0')}`;
+      const workoutEntry = workouts.get(dateKey);
+
+      const isToday =
+        today.getFullYear() === year &&
+        today.getMonth() === month &&
+        today.getDate() === day;
+      const isPast = dayDate.setHours(0, 0, 0, 0) < today.setHours(0, 0, 0, 0);
+
+      // FIX 1: Explicitly type cellStyle as ViewStyle[]
+      const cellStyle: ViewStyle[] = [styles.dayCell];
+      const textStyle = [styles.dayText, { color: theme.text }];
+
+      if (workoutEntry) {
+        if (workoutEntry.isLogged) {
+          cellStyle.push({ backgroundColor: theme.buttonBackground });
+          textStyle.push({ color: theme.buttonText });
+        } else if (isPast) {
+          cellStyle.push(styles.untrackedDay, { borderColor: theme.text });
+        } else {
+          cellStyle.push(styles.upcomingDay);
+        }
+      }
+
+      days.push(
+        <TouchableOpacity
+          key={day}
+          style={cellStyle}
+          onPress={() => workoutEntry && handleWorkoutPress(workoutEntry)}
+          onLongPress={() => workoutEntry && handleLongPress(workoutEntry)}
+          disabled={!workoutEntry}
+        >
+          <Text style={textStyle}>{day}</Text>
+          {/* FIX 2: Use theme.text instead of theme.primary */}
+          {isToday && (
+            <View
+              style={[styles.todayIndicator, { backgroundColor: theme.text }]}
+            />
+          )}
+        </TouchableOpacity>
+      );
+    }
+    return days;
+  };
 
   return (
     <ScrollView
-    style={{ flex: 1, backgroundColor: theme.background }}
-    contentContainerStyle={[styles.contentContainer, { paddingTop: 70 }]}
-  >
-    <Text style={[styles.title, { color: theme.text }]}>{t('myCalendar')}</Text>
-  
-    {/* Schedule Buttons Row */}
-    <View style={styles.buttonRow}>
-      {/* Schedule a Workout Button */}
-      <TouchableOpacity
-        style={[styles.actionButton, { backgroundColor: theme.buttonBackground }]}
-        onPress={() => navigation.navigate('LogWorkout')}
-      >
-        <Ionicons
-          name="calendar"
-          size={22}
-          color={theme.buttonText}
-          style={styles.icon}
-        />
-        <Text style={[styles.actionButtonText, { color: theme.buttonText }]}>
-          {t('scheduleWorkout')}
-        </Text>
-      </TouchableOpacity>
-
-      {/* Recurring Workouts Button */}
-      <TouchableOpacity
-        style={[styles.actionButton, { backgroundColor: theme.buttonBackground }]}
-        onPress={() => navigation.navigate('RecurringWorkoutOptions')}
-      >
-        <Ionicons
-          name="time"
-          size={22}
-          color={theme.buttonText}
-          style={styles.icon}
-        />
-        <Text style={[styles.actionButtonText, { color: theme.buttonText }]}>
-          {t('recurringWorkouts')}
-        </Text>
-      </TouchableOpacity>
-    </View>
-  
-    {/* Today's Workout Section */}
-    <View style={styles.section}>
-      <Text style={[styles.sectionTitle, { color: theme.text }]}>
-      {t('todaysWorkout')}
-      </Text>
-      {todayWorkouts.length > 0 ? (
-     todayWorkouts.map((workout) => renderWorkoutCard(workout))
-      ) : (
-        <Text style={[styles.emptyText, { color: theme.text }]}>
-          {t('noWorkoutToday')}
-        </Text>
-      )}
-    </View>
-  
-    <View style={styles.section}>
-      <Text style={[styles.sectionTitle, { color: theme.text }]}>
-      {t('untrackedWorkouts')}
-      </Text>
-      {pastWorkouts.length > 0 ? (
-        pastWorkouts.map((item) => (
-          <View key={item.workout_log_id}>{renderWorkoutCard(item)}</View>
-        ))
-      ) : (
-        <Text style={[styles.emptyText, { color: theme.text }]}>
-          {t('noUntrackedWorkouts')}
-        </Text>
-      )}
-    </View>
-  
-    <View style={styles.section}>
-      <Text style={[styles.sectionTitle, { color: theme.text }]}>
-      {t('upcomingWorkouts')}
-      </Text>
-      {futureWorkouts.length > 0 ? (
-        futureWorkouts.map((item) => (
-          <View key={item.workout_log_id}>{renderWorkoutCard(item)}</View>
-        ))
-      ) : (
-        <Text style={[styles.emptyText, { color: theme.text }]}>
-          {t('noUpcomingWorkouts')}
-        </Text>
-      )}
-          <Text style={[styles.tipText, { color: theme.text }]}>
-          {t('scheduleTip')}
-          </Text>
-    </View>
-  
-    {/* Modal for Workout Details */}
-    <Modal
-      visible={modalVisible}
-      animationType="slide"
-      transparent={true}
-      onRequestClose={() => setModalVisible(false)}
+      style={{ flex: 1, backgroundColor: theme.background }}
+      contentContainerStyle={[styles.contentContainer, { paddingTop: 70 }]}
     >
-      <View style={[styles.modalContainer, { backgroundColor: 'rgba(0, 0, 0, 0.5)' }]}>
-        <View style={[styles.modalContent, { backgroundColor: theme.card }]}>
-          <TouchableOpacity
-            style={styles.modalCloseButton}
-            onPress={() => setModalVisible(false)}
-          >
-            <Ionicons name="close" size={24} color={theme.text} />
-          </TouchableOpacity>
-          {selectedWorkout && (
-            <>
-              <Text style={[styles.modalTitle, { color: theme.text }]}>
-                {selectedWorkout.workout_name}
-              </Text>
-              <Text style={[styles.modalSubtitle, { color: theme.text }]}>
-                {selectedWorkout.day_name} | {formatDate(selectedWorkout.workout_date)}
-              </Text>
-              {exercises.length > 0 ? (
-                exercises.map((exercise, index) => (
-                  <View key={index} style={styles.modalExercise}>
-                    <Text style={[styles.modalExerciseName, { color: theme.text }]}>
-                      {exercise.exercise_name}
-                    </Text>
-                    <Text style={[styles.modalExerciseDetails, { color: theme.text }]}>
-                      {exercise.sets} {t('Sets')} x {exercise.reps} {t('Reps')}
-                    </Text>
-                  </View>
-                ))
-              ) : (
-                <Text style={[styles.emptyText, { color: theme.text }]}>
-                  {t('noExerciseLogged')}
-                </Text>
-              )}
-            </>
-          )}
-        </View>
-      </View>
-    </Modal>
+      <Text style={[styles.title, { color: theme.text }]}>
+        {t('myCalendar')}
+      </Text>
 
-  </ScrollView>
-  
+      <View style={styles.buttonRow}>
+        <TouchableOpacity
+          style={[
+            styles.actionButton,
+            { backgroundColor: theme.buttonBackground },
+          ]}
+          onPress={() => navigation.navigate('LogWorkout')}
+        >
+          <Ionicons
+            name="calendar"
+            size={22}
+            color={theme.buttonText}
+            style={styles.icon}
+          />
+          <Text style={[styles.actionButtonText, { color: theme.buttonText }]}>
+            {t('scheduleWorkout')}
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.actionButton,
+            { backgroundColor: theme.buttonBackground },
+          ]}
+          onPress={() => navigation.navigate('RecurringWorkoutOptions')}
+        >
+          <Ionicons
+            name="time"
+            size={22}
+            color={theme.buttonText}
+            style={styles.icon}
+          />
+          <Text style={[styles.actionButtonText, { color: theme.buttonText }]}>
+            {t('recurringWorkouts')}
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Calendar */}
+      <View
+        style={[
+          styles.calendarContainer,
+          { backgroundColor: theme.card, borderColor: theme.border },
+        ]}
+      >
+        <View style={styles.calendarHeader}>
+          <TouchableOpacity onPress={handlePrevMonth}>
+            <Ionicons name="chevron-back" size={24} color={theme.text} />
+          </TouchableOpacity>
+          <Text style={[styles.calendarMonthText, { color: theme.text }]}>
+            {currentDate.toLocaleString('default', {
+              month: 'long',
+              year: 'numeric',
+            })}
+          </Text>
+          <TouchableOpacity onPress={handleNextMonth}>
+            <Ionicons name="chevron-forward" size={24} color={theme.text} />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.weekDaysContainer}>
+          {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, index) => (
+            <Text
+              key={index}
+              style={[styles.weekDayText, { color: theme.text }]}
+            >
+              {day}
+            </Text>
+          ))}
+        </View>
+        <View style={styles.daysGrid}>{renderCalendarDays()}</View>
+      </View>
+
+      <Text style={[styles.tipText, { color: theme.text }]}>
+        {t('scheduleTip')}
+      </Text>
+
+      {/* Modal for Workout Details */}
+      <Modal
+        visible={modalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View
+          style={[
+            styles.modalContainer,
+            { backgroundColor: 'rgba(0, 0, 0, 0.5)' },
+          ]}
+        >
+          <View style={[styles.modalContent, { backgroundColor: theme.card }]}>
+            <TouchableOpacity
+              style={styles.modalCloseButton}
+              onPress={() => setModalVisible(false)}
+            >
+              <Ionicons name="close" size={24} color={theme.text} />
+            </TouchableOpacity>
+            {selectedWorkout && (
+              <>
+                <Text style={[styles.modalTitle, { color: theme.text }]}>
+                  {selectedWorkout.workout.workout_name}
+                </Text>
+                <Text style={[styles.modalSubtitle, { color: theme.text }]}>
+                  {selectedWorkout.workout.day_name} |{' '}
+                  {formatDate(selectedWorkout.workout.workout_date)}
+                </Text>
+                {exercises.length > 0 ? (
+                  exercises.map((exercise, index) => (
+                    <View key={index} style={styles.modalExercise}>
+                      <Text
+                        style={[
+                          styles.modalExerciseName,
+                          { color: theme.text },
+                        ]}
+                      >
+                        {exercise.exercise_name}
+                      </Text>
+                      <Text
+                        style={[
+                          styles.modalExerciseDetails,
+                          { color: theme.text },
+                        ]}
+                      >
+                        {exercise.sets} {t('Sets')} x {exercise.reps}{' '}
+                        {t('Reps')}
+                      </Text>
+                    </View>
+                  ))
+                ) : (
+                  <Text style={[styles.emptyText, { color: theme.text }]}>
+                    {t('noExerciseLogged')}
+                  </Text>
+                )}
+              </>
+            )}
+          </View>
+        </View>
+      </Modal>
+    </ScrollView>
   );
 }
 
-
-// MyCalendar.tsx
-
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FFFFFF' },
-  contentContainer: { alignItems: 'center', paddingHorizontal: 20 },
+  contentContainer: {
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingBottom: 40,
+  },
   title: {
     fontSize: 32,
     fontWeight: '900',
     marginBottom: 20,
-    textAlign: 'center',
-    color: '#000000',
-  },
-  section: { width: '100%', maxWidth: 400, marginBottom: 20 },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '800',
-    marginBottom: 10,
-    color: '#000000',
     textAlign: 'center',
   },
   buttonRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
+    maxWidth: 400,
     marginBottom: 30,
   },
   actionButton: {
-    backgroundColor: '#000000',
     borderRadius: 20,
     paddingVertical: 12,
     paddingHorizontal: 16,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    width: '48%', // Slightly less than 50% to leave some space between
+    width: '48%',
   },
   actionButtonText: {
-    color: '#FFFFFF',
     fontWeight: 'bold',
-    fontSize: 14, // Smaller font to fit on button
+    fontSize: 14,
     textAlign: 'center',
   },
-  adContainer: {
-    alignItems: 'center',
-    position: 'absolute',
-    marginBottom:10,
+  icon: {
+    marginRight: 8,
   },
   tipText: {
-    marginTop: 20, // Space above the text
-    textAlign: 'center', // Center align
-    fontSize: 14, // Smaller font size
-    fontStyle: 'italic', // Italic for emphasis
+    marginTop: 20,
+    textAlign: 'center',
+    fontSize: 14,
+    fontStyle: 'italic',
+    opacity: 0.8,
   },
-  icon: {
-    marginRight: 10,
-  },
-  logContainer: {
-    backgroundColor: '#FFFFFF',
+  emptyText: { fontSize: 16, textAlign: 'center', opacity: 0.7 },
+  // Calendar Styles
+  calendarContainer: {
+    width: '100%',
+    maxWidth: 400,
     borderRadius: 20,
-    padding: 20,
-    marginBottom: 20,
+    padding: 15,
     borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.2)',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 2,
+    elevation: 3,
   },
-  logDate: {
-    fontSize: 18,
+  calendarHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  calendarMonthText: {
+    fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 5,
-    color: '#000000',
-    textAlign: 'center',
   },
-  logWorkoutName: { fontSize: 20, fontWeight: '900', marginBottom: 8, textAlign: 'center' },
-  logDayName: { fontSize: 18, fontWeight: '700', textAlign: 'center' },
-  emptyText: { fontSize: 16, textAlign: 'center', color: 'rgba(0, 0, 0, 0.5)' },
-  modalContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' },
+  weekDaysContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginBottom: 10,
+  },
+  weekDayText: {
+    fontSize: 14,
+    fontWeight: '600',
+    width: 32,
+    textAlign: 'center',
+    opacity: 0.6,
+  },
+  daysGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-around',
+  },
+  dayCell: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 2,
+    borderRadius: 20,
+  },
+  dayText: {
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  todayIndicator: {
+    width: 16,
+    height: 3,
+    borderRadius: 2,
+    position: 'absolute',
+    bottom: 4,
+  },
+  untrackedDay: {
+    borderWidth: 2,
+  },
+  upcomingDay: {
+    backgroundColor: 'rgba(128, 128, 128, 0.2)',
+  },
+  // Modal Styles
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   modalContent: {
-    backgroundColor: '#FFFFFF',
     borderRadius: 20,
     padding: 20,
     width: '90%',
@@ -500,9 +558,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalCloseButton: { position: 'absolute', top: 10, right: 10 },
-  modalTitle: { fontSize: 24, fontWeight: '900', marginBottom: 10, textAlign: 'center' },
-  modalSubtitle: { fontSize: 18, fontWeight: '700', marginBottom: 20, textAlign: 'center' },
-  modalExercise: { marginBottom: 15 },
+  modalTitle: {
+    fontSize: 24,
+    fontWeight: '900',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  modalSubtitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  modalExercise: { marginBottom: 15, width: '100%' },
   modalExerciseName: { fontSize: 20, fontWeight: '800', textAlign: 'center' },
-  modalExerciseDetails: { fontSize: 16, textAlign: 'center', color: '#666' },
+  modalExerciseDetails: { fontSize: 16, textAlign: 'center', opacity: 0.8 },
 });
