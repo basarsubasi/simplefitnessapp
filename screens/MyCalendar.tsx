@@ -35,30 +35,11 @@ export default function MyCalendar() {
     const { t } = useTranslation(); // Initialize translations
     
 
-  
+  // State for workouts
   const [todayWorkouts, setTodayWorkouts] = useState<
+  { workout_name: string; workout_date: number; day_name: string; workout_log_id: number }[]
+>([]);
 
-
-    {
-
-
-      workout_name: string;
-
-
-      workout_date: number;
-
-
-      day_name: string;
-
-
-      workout_log_id: number;
-
-
-    }[]
-
-
-  >([]);
-  
   const [pastWorkouts, setPastWorkouts] = useState<
     { workout_name: string; workout_date: number; day_name: string; workout_log_id: number }[]
   >([]);
@@ -122,10 +103,9 @@ export default function MyCalendar() {
         workout_log_id: number;
       }>(
         `SELECT * FROM Workout_Log 
-         WHERE workout_date BETWEEN ? AND ?
+        WHERE workout_date BETWEEN ? AND ?
           AND workout_log_id NOT IN (SELECT DISTINCT workout_log_id FROM Weight_Log)
-          ORDER BY workout_date ASC;`,
-
+        ORDER BY workout_date ASC;`,
         [startOfDayTimestamp, endOfDayTimestamp]
       );
       setTodayWorkouts(todayResult);
@@ -338,54 +318,28 @@ export default function MyCalendar() {
       <Text style={[styles.sectionTitle, { color: theme.text }]}>
       {t('todaysWorkout')}
       </Text>
- {todayWorkouts.length > 0 ? (
-
-
-
-          todayWorkouts.map((workout) => (
-
-
-            <View key={workout.workout_log_id}>
-
-
-              {renderWorkoutCard(workout)}
-
-
-            </View>
-
-
-          ))
-
-
-        ) : (
-
-
-          <Text style={[styles.emptyText, { color: theme.text }]}>
-
-
-            {t('noWorkoutToday')}
-
-
-          </Text>
-
-
-        )}
-
-
-      </View>
-
-
-
-
-
-      <View style={styles.section}>
-
-
-        <Text style={[styles.sectionTitle, { color: theme.text }]}>
-
-
-          {t('untrackedWorkouts')}
+      {todayWorkouts.length > 0 ? (
+     todayWorkouts.map((workout) => renderWorkoutCard(workout))
+      ) : (
+        <Text style={[styles.emptyText, { color: theme.text }]}>
+          {t('noWorkoutToday')}
         </Text>
+      )}
+    </View>
+  
+    <View style={styles.section}>
+      <Text style={[styles.sectionTitle, { color: theme.text }]}>
+      {t('untrackedWorkouts')}
+      </Text>
+      {pastWorkouts.length > 0 ? (
+        pastWorkouts.map((item) => (
+          <View key={item.workout_log_id}>{renderWorkoutCard(item)}</View>
+        ))
+      ) : (
+        <Text style={[styles.emptyText, { color: theme.text }]}>
+          {t('noUntrackedWorkouts')}
+        </Text>
+      )}
     </View>
   
     <View style={styles.section}>
