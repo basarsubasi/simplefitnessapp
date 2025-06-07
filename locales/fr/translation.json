@@ -104,7 +104,7 @@
   "scheduleWorkout": "Planifier un entraînement",
   "myCalendar": "Mon calendrier",
   "noExerciseLogged": " Aucun exercice enregistré.",
-
+  "noWorkoutsScheduledForDate": "Aucun entraînement programmé pour cette date.",
   "_comment_LogWorkouts": "Voici des chaînes liées à l'enregistrement des entraînements.",
 
   "noDatePicked": "Veuillez sélectionner une date.",

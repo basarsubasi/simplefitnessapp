@@ -94,8 +94,8 @@
   "editWorkout": "编辑锻炼",
 
   "_comment_myCalendar": "These are my-calendar-related strings.",
-  
-"scheduleTip": "提示：您可以在日历中监控、安排、跟踪和取消您的锻炼。整洁有序，尽在一处！",
+
+  "scheduleTip": "提示：您可以在日历中监控、安排、跟踪和取消您的锻炼。整洁有序，尽在一处！",
 
   "noUpcomingWorkouts": "没有即将安排的锻炼。",
   "upcomingWorkouts": "即将到来的锻炼",
@@ -103,6 +103,7 @@
   "untrackedWorkouts": "未跟踪的锻炼",
   "noWorkoutToday": "今天没有安排锻炼。",
   "todaysWorkout": "今天的锻炼",
+  "noWorkoutsScheduledForDate": "今天没有安排锻炼。",
   "scheduleWorkout": "安排锻炼",
   "myCalendar": "我的日历",
   "noExerciseLogged": "未记录任何练习。",

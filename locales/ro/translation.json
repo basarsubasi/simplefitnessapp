@@ -106,7 +106,7 @@
     "myCalendar": "Calendarul Meu",
     "noExerciseLogged": "Nicio activitate înregistrată.",
     "failedToDeleteWorkoutLog": "Ștergerea jurnalului de antrenament a eșuat.",
-  
+    "noWorkoutsScheduledForDate": "Nu există antrenamente programate pentru această dată.",
     "_comment_LogWorkouts": "These are Log-Workouts-related strings.",
   
     "noDatePicked": "Vă rugăm să selectați o dată.",
