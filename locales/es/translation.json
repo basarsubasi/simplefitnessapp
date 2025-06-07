@@ -94,8 +94,7 @@
 
   "_comment_myCalendar": "Estas son cadenas relacionadas con Mi Calendario.",
 
-  "scheduleTip": "Consejo: ¡Necesitas programar tus entrenamientos aquí para poder hacerles seguimiento en la pantalla Mi Progreso!",
-  "noUpcomingWorkouts": "No hay entrenamientos programados próximamente.",
+  "scheduleTip": "Consejo: Puedes supervisar, programar, seguir y cancelar tus entrenamientos en el calendario. ¡Todo ordenado en un solo lugar!",  "noUpcomingWorkouts": "No hay entrenamientos programados próximamente.",
   "upcomingWorkouts": "Próximos Entrenamientos",
   "noUntrackedWorkouts": "No se encontraron entrenamientos sin seguimiento.",
   "untrackedWorkouts": "Entrenamientos sin seguimiento",
@@ -347,7 +346,8 @@
       "View Logs": "Ver registros",
       "Logs": "Registros",
       "Graph Type": "Tipo de gráfico",
-      "Metric": "Métrica"
+      "Metric": "Métrica",
+      "Exercise Stats": "Estadísticas de ejercicios"
 
 
 

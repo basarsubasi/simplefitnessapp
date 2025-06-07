@@ -39,7 +39,7 @@
     "October": "Ekim",
     "November": "Kasım",
     "December": "Aralık",
-
+    "Exercise Stats": "Egzersiz İstatistikleri",
     "Untracked": "Takip Edilmemiş",
     "Upcoming": "Yaklaşan",
     "Logged": "Kaydedilmiş",
@@ -148,8 +148,8 @@
 
     "_comment_myCalendar": "Bunlar takvimle ilgili metinlerdir.",
 
-    "scheduleTip": "İpucu: Burada planladığınız antrenmanları zamanı gelince İlerlemem'den takip edebilirsiniz.",
-    "noUpcomingWorkouts": "Yaklaşan bir antrenman planlanmadı.",
+"scheduleTip": "İpucu: Antrenmanlarınızı takvimde izleyebilir, planlayabilir, takip edebilir ve iptal edebilirsiniz. Artık hepsi tek bir yerde!",
+   "noUpcomingWorkouts": "Yaklaşan bir antrenman planlanmadı.",
     "upcomingWorkouts": "Yaklaşan Antrenmanlar",
     "noUntrackedWorkouts": "Takip edilmeyen bir antrenman bulunamadı.",
     "untrackedWorkouts": "Takip Edilmeyen Antrenmanlar",

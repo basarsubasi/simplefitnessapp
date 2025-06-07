@@ -94,8 +94,8 @@
 
   "_comment_myCalendar": "Dette er tekststrenger for Min kalender-visningen.",
 
-  "scheduleTip": "Tips: Du må planlegge treningsøktene dine her for å kunne spore dem på Min fremgang-siden!",
-  "noUpcomingWorkouts": "Ingen kommende treningsøkter er planlagt.",
+"scheduleTip": "Tips: Du kan overvåke, planlegge, spore og avbryte treningsøktene dine i kalenderen. Ryddig, alt på ett sted!", 
+ "noUpcomingWorkouts": "Ingen kommende treningsøkter er planlagt.",
   "upcomingWorkouts": "Kommende treningsøkter",
   "noUntrackedWorkouts": "Ingen uloggede treningsøkter funnet.",
   "untrackedWorkouts": "Uloggede treningsøkter",
@@ -357,8 +357,8 @@
       "View Logs": "Vis logger",
       "Logs": "Logger",
       "Graph Type": "Graftype",
-      "Metric": "Måling"
-      
+      "Metric": "Måling",
+      "Exercise Stats": "Øvelsesstatistikk"
 
         
 
