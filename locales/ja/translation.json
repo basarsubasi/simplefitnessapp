@@ -316,5 +316,41 @@
     "TimeGraph": "時間グラフ",
     "timeGraphExplanation": "このグラフは、ワークアウトセッションを完了するのにかかる時間の推移を示します。",
     "setsGraphExplanation": "このグラフは、各セットの重量の推移を時系列で示します。各線と色は異なるセット番号を表し、ワークアウトセッション全体でのパフォーマンスを追跡できます。",
-    "graphTipText": "ヒント：グラフ上の点を押すと、そのワークアウトセッションに関する追加情報を確認できます。"
+    "graphTipText": "ヒント：グラフ上の点を押すと、そのワークアウトセッションに関する追加情報を確認できます。",
+
+
+
+
+
+    
+      "_comment_calendar": "These are calendar-related strings.",
+      "locale": "ja",
+      "Mon": "月",
+      "Tue": "火",
+      "Wed": "水",
+      "Thu": "木",
+      "Fri": "金",
+      "Sat": "土",
+      "Sun": "日",
+      "January": "1月",
+      "February": "2月",
+      "March": "3月",
+      "April": "4月",
+      "May": "5月",
+      "June": "6月",
+      "July": "7月",
+      "August": "8月",
+      "September": "9月",
+      "October": "10月",
+      "November": "11月",
+      "December": "12月",
+      "Untracked": "未記録",
+      "Upcoming": "今後",
+      "Logged": "記録済み",
+      "logWeightsManually": "手動で重量を記録",
+      "View Logs": "ログを表示",
+      "Logs": "ログ",
+      "Graph Type": "グラフの種類",
+      "Metric": "メトリック"
+    
 }

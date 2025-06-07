@@ -315,5 +315,37 @@
     "TimeGraph": "时间图表",
     "timeGraphExplanation": "此图表显示您完成锻炼课程所需的时间随时间的变化。",
     "setsGraphExplanation": "此图表显示每个组的重量进展随时间的变化。每条线和颜色代表不同的组号，使您可以跟踪整个锻炼课程中的表现。",
-    "graphTipText": "提示：您可以按图表上的点以查看有关该锻炼课程的更多信息。"
+    "graphTipText": "提示：您可以按图表上的点以查看有关该锻炼课程的更多信息。",
+
+
+    
+      "_comment_calendar": "These are calendar-related strings.",
+      "locale": "zh",
+      "Mon": "周一",
+      "Tue": "周二",
+      "Wed": "周三",
+      "Thu": "周四",
+      "Fri": "周五",
+      "Sat": "周六",
+      "Sun": "周日",
+      "January": "一月",
+      "February": "二月",
+      "March": "三月",
+      "April": "四月",
+      "May": "五月",
+      "June": "六月",
+      "July": "七月",
+      "August": "八月",
+      "September": "九月",
+      "October": "十月",
+      "November": "十一月",
+      "December": "十二月",
+      "Untracked": "未追踪",
+      "Upcoming": "即将到来",
+      "Logged": "已记录",
+      "logWeightsManually": "手动记录重量",
+      "View Logs": "查看日志",
+      "Logs": "日志",
+      "Graph Type": "图表类型",
+      "Metric": "指标"
 }

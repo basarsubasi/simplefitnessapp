@@ -319,7 +319,40 @@
     "TimeGraph": "Tijd Grafiek",
     "timeGraphExplanation": "Deze grafiek laat zien hoe lang het duurt om uw workoutsessies in de loop van de tijd te voltooien.",
     "setsGraphExplanation": "Deze grafiek toont de gewichtsprogressie voor elke set in de loop van de tijd. Elke lijn en kleur vertegenwoordigt een ander setnummer, zodat u uw prestaties tijdens uw workoutsessies kunt volgen.",
-    "graphTipText": "Tip: U kunt op de stippen in de grafiek drukken om aanvullende informatie over die workoutsessie te zien."
+    "graphTipText": "Tip: U kunt op de stippen in de grafiek drukken om aanvullende informatie over die workoutsessie te zien.",
+
+
+
+    
+      "_comment_calendar": "These are calendar-related strings.",
+      "locale": "nl",
+      "Mon": "Ma",
+      "Tue": "Di",
+      "Wed": "Wo",
+      "Thu": "Do",
+      "Fri": "Vr",
+      "Sat": "Za",
+      "Sun": "Zo",
+      "January": "Januari",
+      "February": "Februari",
+      "March": "Maart",
+      "April": "April",
+      "May": "Mei",
+      "June": "Juni",
+      "July": "Juli",
+      "August": "Augustus",
+      "September": "September",
+      "October": "Oktober",
+      "November": "November",
+      "December": "December",
+      "Untracked": "Niet bijgehouden",
+      "Upcoming": "Aankomend",
+      "Logged": "Geregistreerd",
+      "logWeightsManually": "Gewichten handmatig registreren",
+      "View Logs": "Logboeken bekijken",
+      "Logs": "Logboeken",
+      "Graph Type": "Grafiektype",
+      "Metric": "Metriek"
     
     
     
