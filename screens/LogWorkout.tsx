@@ -17,6 +17,9 @@ import { useTheme } from '../context/ThemeContext';
 import { useTranslation } from 'react-i18next';
 import { useNotifications } from '../utils/useNotifications';
 import { WorkoutLogStackParamList } from '../App';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const NOTIFICATION_TIME_KEY = '@last_notification_time';
 
 export default function LogWorkout() {
   const route = useRoute<RouteProp<WorkoutLogStackParamList, 'LogWorkout'>>();
@@ -92,6 +95,15 @@ export default function LogWorkout() {
   useFocusEffect(
     useCallback(() => {
       const setup = async () => {
+        // Load saved notification time
+        try {
+          const savedTime = await AsyncStorage.getItem(NOTIFICATION_TIME_KEY);
+          if (savedTime) {
+            setNotificationTime(new Date(JSON.parse(savedTime)));
+          }
+        } catch (error) {
+          console.error('Failed to load notification time', error);
+        }
         await fetchWorkouts();
       };
       
@@ -416,6 +428,8 @@ export default function LogWorkout() {
             setShowTimePicker(false);
             if (date) {
               setNotificationTime(date);
+              AsyncStorage.setItem(NOTIFICATION_TIME_KEY, JSON.stringify(date))
+                .catch(error => console.error('Failed to save notification time:', error));
             }
           }}
         />
