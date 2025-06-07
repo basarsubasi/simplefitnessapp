@@ -307,11 +307,11 @@ export default function Settings() {
 
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-        {/* Title */}
+    
         <Text style={[styles.title, { color: theme.text }]}>{t('settingsTitle')}</Text>
 
 
-        {/* Language Selection */}
+    
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: theme.text }]}>{t('settingsLanguage')}</Text>
           {renderLanguageButton()}
@@ -350,11 +350,11 @@ export default function Settings() {
           )}
         </View>
 
-{/* Notification Settings Section / Translate this to the other languages */}
+
 <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: theme.text }]}>{t('notifications')}</Text>
           
-          {/* Main Notification Toggle */}
+
           <View style={styles.toggleRow}>
             <Text style={[styles.toggleText, { color: '#FFFFFF' }]}>{t('remindScheduledWorkouts')}</Text>
             <Switch
@@ -377,7 +377,7 @@ export default function Settings() {
 
 
 
-        {/* Date Format Section */}
+
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: theme.text }]}>{t('settingsDateFormat')}</Text>
           <View style={styles.buttonGroup}>
@@ -386,7 +386,7 @@ export default function Settings() {
           </View>
         </View>
 
-        {/* Weight Format Section */}
+
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: theme.text }]}>{t('settingsWeightFormat')}</Text>
           <View style={styles.buttonGroup}>
@@ -397,7 +397,7 @@ export default function Settings() {
 
         
 
-        {/* Theme Section */}
+
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: theme.text }]}>{t('settingsTheme')}</Text>
           <View style={styles.buttonGroup}>
@@ -421,12 +421,12 @@ export default function Settings() {
           </View>
         </View>
 
-        {/* Data Management Section */}
+
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: theme.text }]}>{t('dataManagement') || 'Data Management'}</Text>
           
           <View style={styles.dataManagementButtonGroup}>
-            {/* Export Database Button */}
+
             <TouchableOpacity 
               style={[
                 styles.dataManagementButton,
@@ -453,7 +453,7 @@ export default function Settings() {
               </View>
             </TouchableOpacity>
             
-            {/* Import Database Button */}
+                    
             <TouchableOpacity 
               style={[
                 styles.dataManagementButton,

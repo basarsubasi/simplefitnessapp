@@ -315,7 +315,39 @@
     "TimeGraph": "시간 그래프",
     "timeGraphExplanation": "이 그래프는 시간 경과에 따른 운동 세션 완료 시간을 보여줍니다.",
     "setsGraphExplanation": "이 그래프는 시간 경과에 따른 각 세트의 중량 진행 상황을 보여줍니다. 각 선과 색상은 다른 세트 번호를 나타내므로 운동 세션 전반에 걸친 수행 능력을 추적할 수 있습니다.",
-    "graphTipText": "팁: 그래프의 점을 누르면 해당 운동 세션에 대한 추가 정보를 볼 수 있습니다."
+    "graphTipText": "팁: 그래프의 점을 누르면 해당 운동 세션에 대한 추가 정보를 볼 수 있습니다.",
+    
+    
+      "_comment_calendar": "These are calendar-related strings.",
+      "locale": "ko",
+      "Mon": "월",
+      "Tue": "화",
+      "Wed": "수",
+      "Thu": "목",
+      "Fri": "금",
+      "Sat": "토",
+      "Sun": "일",
+      "January": "1월",
+      "February": "2월",
+      "March": "3월",
+      "April": "4월",
+      "May": "5월",
+      "June": "6월",
+      "July": "7월",
+      "August": "8월",
+      "September": "9월",
+      "October": "10월",
+      "November": "11월",
+      "December": "12월",
+      "Untracked": "추적 안 됨",
+      "Upcoming": "예정",
+      "Logged": "기록됨",
+      "logWeightsManually": "수동으로 무게 기록",
+      "View Logs": "로그 보기",
+      "Logs": "로그",
+      "Graph Type": "그래프 유형",
+      "Metric": "측정 항목"
+    
 
 
 }

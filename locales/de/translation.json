@@ -310,9 +310,38 @@
     "TimeGraph": "Zeit-Diagramm",
     "timeGraphExplanation": "Dieses Diagramm zeigt, wie lange Sie im Laufe der Zeit benötigen, um Ihre Trainingseinheiten abzuschließen.",
     "setsGraphExplanation": "Dieses Diagramm zeigt die Gewichtsentwicklung für jeden Satz im Laufe der Zeit. Jede Linie und Farbe repräsentiert eine andere Satznummer, sodass Sie Ihre Leistung während Ihrer Trainingseinheiten verfolgen können.",
-    "graphTipText": "Tipp: Sie können auf die Punkte im Diagramm klicken, um zusätzliche Informationen zu dieser Trainingseinheit anzuzeigen."
+    "graphTipText": "Tipp: Sie können auf die Punkte im Diagramm klicken, um zusätzliche Informationen zu dieser Trainingseinheit anzuzeigen.",
 
 
+    "_comment_calendar": "These are calendar-related strings.",
+  "locale": "de",
+  "Mon": "Mo",
+  "Tue": "Di",
+  "Wed": "Mi",
+  "Thu": "Do",
+  "Fri": "Fr",
+  "Sat": "Sa",
+  "Sun": "So",
+  "January": "Januar",
+  "February": "Februar",
+  "March": "März",
+  "April": "April",
+  "May": "Mai",
+  "June": "Juni",
+  "July": "Juli",
+  "August": "August",
+  "September": "September",
+  "October": "Oktober",
+  "November": "November",
+  "December": "Dezember",
+  "Untracked": "Nicht verfolgt",
+  "Upcoming": "Anstehend",
+  "Logged": "Protokolliert",
+  "logWeightsManually": "Gewichte manuell eintragen",
+  "View Logs": "Protokolle anzeigen",
+  "Logs": "Protokolle",
+  "Graph Type": "Diagrammtyp",
+  "Metric": "Metrik"
 
 
 }

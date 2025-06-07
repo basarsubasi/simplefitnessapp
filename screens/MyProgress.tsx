@@ -92,62 +92,53 @@ export default function MyProgress() {
   };
 
   return (
-<View style={[styles.container, { backgroundColor: theme.background }]}>
-  {/* Title */}
-  <Text style={[styles.title, { color: theme.text }]}>{t('Logs')}</Text>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <View style={styles.header}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}
+        >
+          <Ionicons name="arrow-back" size={24} color={theme.text} />
+        </TouchableOpacity>
+        <Text style={[styles.title, { color: theme.text }]}>{t('Logs')}</Text>
+        <View style={styles.backButton} />
+      </View>
 
-  <TouchableOpacity
+      <TouchableOpacity
         style={[styles.workoutCard, { backgroundColor: theme.card, borderColor: theme.border }]}
         onPress={() => navigation.navigate('AllLogs')}
-        >
-        {/* Container to align the icon and text */}
+      >
         <View style={styles.workoutCardContent}>
           <Text style={[styles.workoutText, { color: theme.text }]}>{t('allTracks')}</Text>
           <Ionicons name="chevron-forward" size={20} color={theme.text} />
         </View>
-        
       </TouchableOpacity>
 
-
-  {/* List of Workouts with Logs */}
-  <FlatList
-    data={workouts}
-    keyExtractor={(item) => item}
-    renderItem={({ item }) => (
-      <TouchableOpacity
-        style={[styles.workoutCard, { backgroundColor: theme.card, borderColor: theme.border }]}
-        onPress={() => handleWorkoutPress(item)}
-        onLongPress={() => handleWorkoutLongPress(item)}
-      >
-        {/* Container to align the icon and text */}
-        <View style={styles.workoutCardContent}>
-          <Text style={[styles.workoutText, { color: theme.text }]}>{item}</Text>
-          <Ionicons name="chevron-forward" size={20} color={theme.text} />
-        </View>
-        
-      </TouchableOpacity>
-      
-    )}
-
-    
-
-    ListEmptyComponent={
-      <Text style={[styles.emptyText, { color: theme.text }]}>
-        {t('notTracking')}
+      <FlatList
+        data={workouts}
+        keyExtractor={(item) => item}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={[styles.workoutCard, { backgroundColor: theme.card, borderColor: theme.border }]}
+            onPress={() => handleWorkoutPress(item)}
+            onLongPress={() => handleWorkoutLongPress(item)}
+          >
+            <View style={styles.workoutCardContent}>
+              <Text style={[styles.workoutText, { color: theme.text }]}>{item}</Text>
+              <Ionicons name="chevron-forward" size={20} color={theme.text} />
+            </View>
+          </TouchableOpacity>
+        )}
+        ListEmptyComponent={
+          <Text style={[styles.emptyText, { color: theme.text }]}>
+            {t('notTracking')}
+          </Text>
+        }
+      />
+      <Text style={[styles.tipText, { color: theme.text }]}>
+        {t('myProgressTip')}
       </Text>
-    }
-  />
-<Text style={[styles.tipText, { color: theme.text }]}>
-  {t('myProgressTip')}  
-  </Text>
-
-  
-
-
-
-
-</View>
-
+    </View>
   );
 }
 
@@ -160,13 +151,24 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#FFFFFF',
   },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 40,
+    marginBottom: 20,
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   title: {
     fontSize: 32,
     fontWeight: '900',
-    marginBottom: 20,
-    marginTop: 40,
     textAlign: 'center',
-    color: '#000000',
+    flex: 1,
   },
   tipText: {
     marginTop: 20, // Space above the text
