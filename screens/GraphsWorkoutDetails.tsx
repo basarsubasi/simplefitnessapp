@@ -778,51 +778,46 @@ export default function GraphsWorkoutDetails() {
               { backgroundColor: theme.card, borderColor: theme.border },
             ]}
           >
-            <FlatList
-              data={allWorkouts}
-              keyExtractor={(item) => item.value}
-              renderItem={({ item }) => (
-                <TouchableOpacity
+            {allWorkouts.map((item) => (
+              <TouchableOpacity
+                key={item.value}
+                style={[
+                  styles.dropdownItem,
+                  { backgroundColor: theme.card },
+                  selectedWorkout === item.value && {
+                    backgroundColor: theme.buttonBackground,
+                  },
+                ]}
+                onPress={() => {
+                  setSelectedWorkout(item.value);
+                  setSelectedDay('');
+                  setExercises([]);
+                  setWorkoutDropdownVisible(false);
+                }}
+              >
+                <Text
                   style={[
-                    styles.dropdownItem,
-                    { backgroundColor: theme.card },
-                    selectedWorkout === item.value && {
-                      backgroundColor: theme.buttonBackground,
+                    styles.dropdownItemText,
+                    {
+                      color:
+                        selectedWorkout === item.value
+                          ? theme.buttonText
+                          : theme.text,
                     },
                   ]}
-                  onPress={() => {
-                    setSelectedWorkout(item.value);
-                    setSelectedDay('');
-                    setExercises([]);
-                    setWorkoutDropdownVisible(false);
-                  }}
                 >
-                  <Text
-                    style={[
-                      styles.dropdownItemText,
-                      {
-                        color:
-                          selectedWorkout === item.value
-                            ? theme.buttonText
-                            : theme.text,
-                      },
-                    ]}
-                  >
-                    {item.label}
-                  </Text>
-                  {selectedWorkout === item.value && (
-                    <Ionicons
-                      name="checkmark"
-                      size={18}
-                      color={theme.buttonText}
-                      style={styles.dropdownItemIcon}
-                    />
-                  )}
-                </TouchableOpacity>
-              )}
-              style={styles.dropdownList}
-              nestedScrollEnabled={true}
-            />
+                  {item.label}
+                </Text>
+                {selectedWorkout === item.value && (
+                  <Ionicons
+                    name="checkmark"
+                    size={18}
+                    color={theme.buttonText}
+                    style={styles.dropdownItemIcon}
+                  />
+                )}
+              </TouchableOpacity>
+            ))}
           </View>
         )}
       </View>
@@ -1480,42 +1475,37 @@ export default function GraphsWorkoutDetails() {
         
         {dayDropdownVisible && days.length > 0 && (
           <View style={[styles.dropdownListContainer, { backgroundColor: theme.card, borderColor: theme.border }]}>
-            <FlatList
-              data={days}
-              keyExtractor={(item) => item.value}
-              renderItem={({ item }) => (
-                <TouchableOpacity
+            {days.map((item) => (
+              <TouchableOpacity
+                key={item.value}
+                style={[
+                  styles.dropdownItem,
+                  { backgroundColor: theme.card },
+                  selectedDay === item.value && { backgroundColor: theme.buttonBackground }
+                ]}
+                onPress={() => {
+                  setSelectedDay(item.value);
+                  setDayDropdownVisible(false);
+                }}
+              >
+                <Text
                   style={[
-                    styles.dropdownItem,
-                    { backgroundColor: theme.card },
-                    selectedDay === item.value && { backgroundColor: theme.buttonBackground }
+                    styles.dropdownItemText,
+                    { color: selectedDay === item.value ? theme.buttonText : theme.text }
                   ]}
-                  onPress={() => {
-                    setSelectedDay(item.value);
-                    setDayDropdownVisible(false);
-                  }}
                 >
-                  <Text
-                    style={[
-                      styles.dropdownItemText,
-                      { color: selectedDay === item.value ? theme.buttonText : theme.text }
-                    ]}
-                  >
-                    {item.label}
-                  </Text>
-                  {selectedDay === item.value && (
-                    <Ionicons
-                      name="checkmark"
-                      size={18}
-                      color={theme.buttonText}
-                      style={styles.dropdownItemIcon}
-                    />
-                  )}
-                </TouchableOpacity>
-              )}
-              style={styles.dropdownList}
-              nestedScrollEnabled={true}
-            />
+                  {item.label}
+                </Text>
+                {selectedDay === item.value && (
+                  <Ionicons
+                    name="checkmark"
+                    size={18}
+                    color={theme.buttonText}
+                    style={styles.dropdownItemIcon}
+                  />
+                )}
+              </TouchableOpacity>
+            ))}
           </View>
         )}
       </View>
@@ -1564,42 +1554,37 @@ export default function GraphsWorkoutDetails() {
         
         {exerciseDropdownVisible && exercises.length > 0 && (
           <View style={[styles.dropdownListContainer, { backgroundColor: theme.card, borderColor: theme.border }]}>
-            <FlatList
-              data={exercises}
-              keyExtractor={(item) => item.value}
-              renderItem={({ item }) => (
-                <TouchableOpacity
+            {exercises.map((item) => (
+              <TouchableOpacity
+                key={item.value}
+                style={[
+                  styles.dropdownItem,
+                  { backgroundColor: theme.card },
+                  selectedExercise === item.value && { backgroundColor: theme.buttonBackground }
+                ]}
+                onPress={() => {
+                  setSelectedExercise(item.value);
+                  setExerciseDropdownVisible(false);
+                }}
+              >
+                <Text
                   style={[
-                    styles.dropdownItem,
-                    { backgroundColor: theme.card },
-                    selectedExercise === item.value && { backgroundColor: theme.buttonBackground }
+                    styles.dropdownItemText,
+                    { color: selectedExercise === item.value ? theme.buttonText : theme.text }
                   ]}
-                  onPress={() => {
-                    setSelectedExercise(item.value);
-                    setExerciseDropdownVisible(false);
-                  }}
                 >
-                  <Text
-                    style={[
-                      styles.dropdownItemText,
-                      { color: selectedExercise === item.value ? theme.buttonText : theme.text }
-                    ]}
-                  >
-                    {item.label}
-                  </Text>
-                  {selectedExercise === item.value && (
-                    <Ionicons
-                      name="checkmark"
-                      size={18}
-                      color={theme.buttonText}
-                      style={styles.dropdownItemIcon}
-                    />
-                  )}
-                </TouchableOpacity>
-              )}
-              style={styles.dropdownList}
-              nestedScrollEnabled={true}
-            />
+                  {item.label}
+                </Text>
+                {selectedExercise === item.value && (
+                  <Ionicons
+                    name="checkmark"
+                    size={18}
+                    color={theme.buttonText}
+                    style={styles.dropdownItemIcon}
+                  />
+                )}
+              </TouchableOpacity>
+            ))}
           </View>
         )}
       </View>
