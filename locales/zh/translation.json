@@ -94,8 +94,9 @@
   "editWorkout": "编辑锻炼",
 
   "_comment_myCalendar": "These are my-calendar-related strings.",
+  
+"scheduleTip": "提示：您可以在日历中监控、安排、跟踪和取消您的锻炼。整洁有序，尽在一处！",
 
-  "scheduleTip": "提示：您需要在此安排锻炼，才能在“我的进度”屏幕上跟踪！",
   "noUpcomingWorkouts": "没有即将安排的锻炼。",
   "upcomingWorkouts": "即将到来的锻炼",
   "noUntrackedWorkouts": "未找到未跟踪的锻炼。",
@@ -347,5 +348,6 @@
       "View Logs": "查看日志",
       "Logs": "日志",
       "Graph Type": "图表类型",
-      "Metric": "指标"
+      "Metric": "指标",
+      "Exercise Stats": "练习统计"
 }

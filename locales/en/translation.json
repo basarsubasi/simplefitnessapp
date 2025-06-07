@@ -49,6 +49,7 @@
     "Graph Type": "Graph Type",
     "Metric": "Metric",
     "Select Exercise": "Select Exercise",
+    "Exercise Stats": "Exercise Stats",
     
 
     "workoutNameErrorMessage": "Please enter a workout name.",
@@ -151,8 +152,8 @@
     "_comment_myCalendar": "These are my-calendar-related strings.",
 
   
-    "scheduleTip": "Tip: You need to schedule your workouts here to track them on the My Progress screen!",
-    "noUpcomingWorkouts": "No upcoming workouts scheduled.",
+"scheduleTip": "Consejo: Puedes supervisar, programar, seguir y cancelar tus entrenamientos en el calendario. ¡Todo ordenado en un solo lugar!", 
+   "noUpcomingWorkouts": "No upcoming workouts scheduled.",
     "upcomingWorkouts": "Upcoming Workouts",
     "noUntrackedWorkouts": "No untracked workouts found.",
     "untrackedWorkouts": "Untracked Workouts",

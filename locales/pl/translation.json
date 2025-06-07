@@ -94,8 +94,8 @@
 
   "_comment_myCalendar": "Są to ciągi znaków związane z Moim kalendarzem.",
 
-  "scheduleTip": "Porada: Musisz zaplanować swoje treningi tutaj, aby śledzić je na ekranie Mój postęp!",
-  "noUpcomingWorkouts": "Brak nadchodzących treningów.",
+"scheduleTip": "Wskazówka: W kalendarzu możesz monitorować, planować, śledzić i anulować swoje treningi. Schludnie, wszystko w jednym miejscu!", 
+ "noUpcomingWorkouts": "Brak nadchodzących treningów.",
   "upcomingWorkouts": "Nadchodzące treningi",
   "noUntrackedWorkouts": "Nie znaleziono treningów bez rejestracji.",
   "untrackedWorkouts": "Treningi bez rejestracji",
@@ -348,7 +348,8 @@
       "View Logs": "Zobacz logi",
       "Logs": "Logi",
       "Graph Type": "Typ wykresu",
-      "Metric": "Metryka"
+      "Metric": "Metryka",
+      "Exercise Stats": "Statystyki ćwiczeń"
 
         
 

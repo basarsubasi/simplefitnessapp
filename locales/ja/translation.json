@@ -95,8 +95,8 @@
 
   "_comment_myCalendar": "These are my-calendar-related strings.",
 
-  "scheduleTip": "ヒント: ここでワークアウトをスケジュールすると「マイ進捗」で追跡できます！",
-  "noUpcomingWorkouts": "予定されたワークアウトはありません。",
+"scheduleTip": "ヒント：カレンダーでワークアウトの監視、スケジュール設定、追跡、キャンセルができます。すべて一か所でスッキリ管理！", 
+ "noUpcomingWorkouts": "予定されたワークアウトはありません。",
   "upcomingWorkouts": "今後のワークアウト",
   "noUntrackedWorkouts": "未追跡のワークアウトはありません。",
   "untrackedWorkouts": "未追跡ワークアウト",
@@ -351,6 +351,7 @@
       "View Logs": "ログを表示",
       "Logs": "ログ",
       "Graph Type": "グラフの種類",
-      "Metric": "メトリック"
+      "Metric": "メトリック",
+      "Exercise Stats": "エクササイズの統計"
     
 }

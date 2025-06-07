@@ -94,7 +94,7 @@
 
   "_comment_myCalendar": "Voici des chaînes liées à Mon calendrier.",
 
-  "scheduleTip": "Conseil : Vous devez planifier vos entraînements ici pour les suivre dans l'onglet Ma progression !",
+"scheduleTip": "Astuce : Vous pouvez surveiller, planifier, suivre et annuler vos entraînements dans le calendrier. Le tout, bien organisé, au même endroit !",
   "noUpcomingWorkouts": "Aucun entraînement à venir de prévu.",
   "upcomingWorkouts": "Entraînements à venir",
   "noUntrackedWorkouts": "Aucun entraînement non suivi trouvé.",
@@ -349,7 +349,8 @@
       "View Logs": "Voir les journaux",
       "Logs": "Journaux",
       "Graph Type": "Type de graphique",
-      "Metric": "Métrique"
+      "Metric": "Métrique",
+      "Exercise Stats": "Statistiques des exercices"
 
 
 
