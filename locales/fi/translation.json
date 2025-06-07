@@ -94,8 +94,8 @@
 
   "_comment_myCalendar": "Nämä ovat 'Minun kalenterini' -sivuun liittyvät merkkijonot.",
 
-  "scheduleTip": "Vinkki: Sinun täytyy aikatauluttaa treenisi täällä, jotta voit seurata niitä Edistymiseni-näkymässä!",
-  "noUpcomingWorkouts": "Ei tulevia treenejä aikataulutettuna.",
+"scheduleTip": "Vinkki: Voit seurata, aikatauluttaa, kirjata ja peruuttaa treenejäsi kalenterissa. Siististi, kaikki yhdessä paikassa!", 
+ "noUpcomingWorkouts": "Ei tulevia treenejä aikataulutettuna.",
   "upcomingWorkouts": "Tulevat treenit",
   "noUntrackedWorkouts": "Ei löytämättömiä/ei seurattuja treenejä.",
   "untrackedWorkouts": "Seuraamattomat treenit",
@@ -352,7 +352,8 @@
       "View Logs": "Näytä lokit",
       "Logs": "Lokit",
       "Graph Type": "Kaavion tyyppi",
-      "Metric": "Mittari"
+      "Metric": "Mittari",
+      "Exercise Stats": "Harjoitustilastot"
     
     
 

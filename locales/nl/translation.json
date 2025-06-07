@@ -94,7 +94,7 @@
 
   "_comment_myCalendar": "Dit zijn strings voor Mijn Kalender.",
 
-  "scheduleTip": "Tip: U moet uw trainingen hier plannen om ze te volgen in het scherm Mijn Voortgang!",
+"scheduleTip": "Tip: U kunt uw trainingen in de kalender controleren, plannen, volgen en annuleren. Netjes, alles op één plek!",
   "noUpcomingWorkouts": "Geen aankomende trainingen gepland.",
   "upcomingWorkouts": "Aankomende Trainingen",
   "noUntrackedWorkouts": "Geen niet-gelogde trainingen gevonden.",
@@ -352,7 +352,8 @@
       "View Logs": "Logboeken bekijken",
       "Logs": "Logboeken",
       "Graph Type": "Grafiektype",
-      "Metric": "Metriek"
+      "Metric": "Metriek",
+      "Exercise Stats": "Oefeningstatistieken"
     
     
     

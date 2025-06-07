@@ -94,8 +94,8 @@
 
   "_comment_myCalendar": "Estes são strings relacionados ao Meu Calendário.",
 
-  "scheduleTip": "Dica: Você precisa agendar seus treinos aqui para acompanhá-los na tela Meu Progresso!",
-  "noUpcomingWorkouts": "Nenhum treino futuro agendado.",
+"scheduleTip": "Dica: Você pode monitorar, agendar, acompanhar e cancelar seus treinos no calendário. Tudo organizado em um só lugar!",
+ "noUpcomingWorkouts": "Nenhum treino futuro agendado.",
   "upcomingWorkouts": "Próximos Treinos",
   "noUntrackedWorkouts": "Nenhum treino não registrado encontrado.",
   "untrackedWorkouts": "Treinos não registrados",
@@ -351,7 +351,8 @@
       "View Logs": "Ver registros",
       "Logs": "Registros",
       "Graph Type": "Tipo de gráfico",
-      "Metric": "Métrica"
+      "Metric": "Métrica",
+      "Exercise Stats": "Estatísticas de exercícios"
     
 
         

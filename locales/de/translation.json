@@ -94,7 +94,7 @@
 
   "_comment_myCalendar": "Dies sind Texte für Meinen Kalender.",
 
-  "scheduleTip": "Tipp: Sie müssen Ihre Trainings hier planen, um sie auf der \"Mein Fortschritt\"-Seite zu verfolgen!",
+"scheduleTip": "Tipp: Sie können Ihre Trainingseinheiten im Kalender überwachen, planen, verfolgen und stornieren. Alles ordentlich an einem Ort!",
   "noUpcomingWorkouts": "Keine bevorstehenden Trainings geplant.",
   "upcomingWorkouts": "Bevorstehende Trainings",
   "noUntrackedWorkouts": "Keine nicht protokollierten Trainings gefunden.",
@@ -341,7 +341,8 @@
   "View Logs": "Protokolle anzeigen",
   "Logs": "Protokolle",
   "Graph Type": "Diagrammtyp",
-  "Metric": "Metrik"
+  "Metric": "Metrik",
+  "Exercise Stats": "Übungsstatistiken"
 
 
 }

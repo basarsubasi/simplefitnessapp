@@ -95,8 +95,8 @@
 
   "_comment_myCalendar": "These are my-calendar-related strings.",
 
-  "scheduleTip": "팁: 여기에서 운동을 스케줄해야 '내 진행'에서 추적할 수 있습니다!",
-  "noUpcomingWorkouts": "예정된 운동이 없습니다.",
+"scheduleTip": "팁: 캘린더에서 운동을 모니터링, 예약, 추적 및 취소할 수 있습니다. 깔끔하게 한 곳에서 모두 관리하세요!",
+ "noUpcomingWorkouts": "예정된 운동이 없습니다.",
   "upcomingWorkouts": "예정된 운동",
   "noUntrackedWorkouts": "추적되지 않은 운동이 없습니다.",
   "untrackedWorkouts": "추적되지 않은 운동",
@@ -346,7 +346,8 @@
       "View Logs": "로그 보기",
       "Logs": "로그",
       "Graph Type": "그래프 유형",
-      "Metric": "측정 항목"
+      "Metric": "측정 항목",
+      "Exercise Stats": "운동 통계"
     
 
 

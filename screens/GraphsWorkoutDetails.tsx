@@ -21,6 +21,7 @@ import { useSettings } from '../context/SettingsContext';
 import StickyYAxis from '../components/StickyYAxis';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { WeightLogStackParamList } from '../App';
+import { AutoSizeText, ResizeTextMode } from 'react-native-auto-size-text';
 
 type GraphsNavigationProp = StackNavigationProp<
   WeightLogStackParamList,
@@ -320,15 +321,7 @@ export default function GraphsWorkoutDetails() {
       }));
       
       setExercises(exerciseOptions);
-      
-      if (exerciseOptions.length > 0) {
-        setSelectedExercise(exerciseOptions[0].value);
-      } else {
-        setSelectedExercise('');
-        // Reset things that depend on an exercise
-        setChartData([]);
-        setSetsData([]);
-      }
+      setSelectedExercise(''); // Reset exercise selection when day changes
     } catch (error) {
       console.error('Error fetching exercises:', error);
     }
@@ -852,7 +845,7 @@ export default function GraphsWorkoutDetails() {
             color={calculationType === 'Sets' ? theme.buttonText : theme.text} 
           />
           <Text style={[
-            styles.toggleText, 
+            styles.toggleTexticon, 
             { color: calculationType === 'Sets' ? theme.buttonText : theme.text }
           ]}>
             {t('setGraph')}
@@ -1626,20 +1619,18 @@ export default function GraphsWorkoutDetails() {
         >
           <Ionicons
             name="barbell-outline"
-            size={20}
+            size={18}
+            style={{ marginRight: 6, marginTop: 1 }}
             color={graphMode === 'Exercise' ? theme.buttonText : theme.text}
           />
-          <Text
-            style={[
-              styles.toggleText,
-              {
-                color:
-                  graphMode === 'Exercise' ? theme.buttonText : theme.text,
-              },
-            ]}
+          <AutoSizeText
+            fontSize={16}
+            numberOfLines={2}
+            mode={ResizeTextMode.max_lines}
+            style={[styles.toggleText, { color: graphMode === 'Exercise' ? theme.buttonText : theme.text }]}
           >
             {t('Exercise Stats')}
-          </Text>
+          </AutoSizeText>
         </TouchableOpacity>
         <TouchableOpacity
           style={[
@@ -1653,17 +1644,18 @@ export default function GraphsWorkoutDetails() {
         >
           <Ionicons
             name="time-outline"
-            size={20}
+            size={18}
+            style={{ marginRight: 6, marginTop: 1 }}
             color={graphMode === 'Time' ? theme.buttonText : theme.text}
           />
-          <Text
-            style={[
-              styles.toggleText,
-              { color: graphMode === 'Time' ? theme.buttonText : theme.text },
-            ]}
+          <AutoSizeText
+            fontSize={16}
+            numberOfLines={2}
+            mode={ResizeTextMode.max_lines}
+            style={[styles.toggleTexticon, { color: graphMode === 'Time' ? theme.buttonText : theme.text }]}
           >
             {t('Time')}
-          </Text>
+          </AutoSizeText>
         </TouchableOpacity>
       </View>
     );
@@ -1696,11 +1688,8 @@ export default function GraphsWorkoutDetails() {
         </View>
       ) : (
         <>
-          {/* 1. Workout Dropdown is always visible */}
-          {renderWorkoutDropdown()}
-
-          {/* Render the rest only if a workout is selected */}
-          {selectedWorkout && (
+          {/* Graph Area - Shown first when available */}
+          {selectedExercise && graphMode === 'Exercise' && (
             <>
               <Text
                 style={[
@@ -1708,122 +1697,161 @@ export default function GraphsWorkoutDetails() {
                   { color: theme.text, textAlign: 'center' },
                 ]}
               >
-                {t('Graph Type')}
+                {t('Metric')}
               </Text>
-              {renderGraphModeToggle()}
+              {renderCalculationTypeToggle()}
 
-              {graphMode === 'Exercise' ? (
-                <>
-                  {renderDayDropdown()}
-                  {selectedDay && renderExerciseDropdown()}
-                  {selectedExercise && (
-                    <>
-                      <Text
-                        style={[
-                          styles.sectionTitle,
-                          { color: theme.text, textAlign: 'center' },
-                        ]}
-                      >
-                        {t('Metric')}
-                      </Text>
-                      {renderCalculationTypeToggle()}
-                    </>
-                  )}
-                </>
-              ) : null}
+              {/* Graph Section */}
+              <View style={styles.graphSection}>
+                <Text style={[styles.sectionTitle, { color: theme.text }]}>
+                  {calculationType === 'CES'
+                    ? t('Combined Effort Score')
+                    : calculationType === '1RM'
+                    ? t('Estimated 1RM')
+                    : t('SetsGraph')}
+                </Text>
 
-              {/* Render graph section if we have an exercise OR if in Time mode */}
-              {(selectedExercise || graphMode === 'Time') && (
-                <>
-                  {/* Graph Area */}
-                  <View style={styles.graphSection}>
-                    <Text style={[styles.sectionTitle, { color: theme.text }]}>
-                      {graphMode === 'Time'
-                        ? t('TimeGraph')
-                        : calculationType === 'CES'
-                        ? t('Combined Effort Score')
-                        : calculationType === '1RM'
-                        ? t('Estimated 1RM')
-                        : t('SetsGraph')}
-                    </Text>
+                {isLoading ? (
+                  <ActivityIndicator
+                    size="large"
+                    color={theme.buttonBackground}
+                    style={styles.loader}
+                  />
+                ) : (
+                  renderChart()
+                )}
 
-                    {isLoading ? (
-                      <ActivityIndicator
-                        size="large"
-                        color={theme.buttonBackground}
-                        style={styles.loader}
-                      />
-                    ) : (
-                      renderChart()
-                    )}
-
-                    {/* Info about calculation */}
-                    <View
-                      style={[
-                        styles.infoBox,
-                        {
-                          backgroundColor: theme.card,
-                          borderColor: theme.border,
-                        },
-                      ]}
-                    >
-                      <Text style={[styles.infoTitle, { color: theme.text }]}>
-                        {graphMode === 'Time'
-                          ? t('About Completion Time')
-                          : calculationType === 'CES'
-                          ? t('About CES')
-                          : calculationType === '1RM'
-                          ? t('About 1RM')
-                          : t('About Sets Progression')}
-                      </Text>
-                      <Text style={[styles.infoText, { color: theme.text }]}>
-                        {graphMode === 'Time'
-                          ? t('timeGraphExplanation')
-                          : calculationType === 'CES'
-                          ? t('CESExplanation')
-                          : calculationType === '1RM'
-                          ? t('1RMExplanation')
-                          : t('setsGraphExplanation')}
-                      </Text>
-                    </View>
-                  </View>
-
-                  {/* Timeframe selector */}
-                  {renderTimeFrameButtons()}
-
-                  {/* Tip Text */}
-                  <Text style={[styles.tipText, { color: theme.text }]}>
-                    {t('graphTipText')}
+                {/* Info about calculation */}
+                <View
+                  style={[
+                    styles.infoBox,
+                    {
+                      backgroundColor: theme.card,
+                      borderColor: theme.border,
+                    },
+                  ]}
+                >
+                  <Text style={[styles.infoTitle, { color: theme.text }]}>
+                    {calculationType === 'CES'
+                      ? t('About CES')
+                      : calculationType === '1RM'
+                      ? t('About 1RM')
+                      : t('About Sets Progression')}
                   </Text>
+                  <Text style={[styles.infoText, { color: theme.text }]}>
+                    {calculationType === 'CES'
+                      ? t('CESExplanation')
+                      : calculationType === '1RM'
+                      ? t('1RMExplanation')
+                      : t('setsGraphExplanation')}
+                  </Text>
+                </View>
+              </View>
 
-                  <TouchableOpacity
-                    style={[styles.logsButton, { backgroundColor: theme.text }]}
-                    onPress={() => navigation.navigate('MyProgress')}
-                  >
-                    <Ionicons
-                      name="list-outline"
-                      size={20}
-                      color={theme.background}
-                      style={styles.logsButtonIcon}
-                    />
-                    <Text
-                      style={[
-                        styles.logsButtonText,
-                        { color: theme.background },
-                      ]}
-                    >
-                      {t('View Logs')}
-                    </Text>
-                  </TouchableOpacity>
-                </>
-              )}
+              {/* Timeframe selector */}
+              {renderTimeFrameButtons()}
+
+
             </>
           )}
+
+          {/* Time mode graph section - Shown first when in time mode */}
+          {graphMode === 'Time' && selectedWorkout && (
+            <>
+              {/* Graph Section */}
+              <View style={styles.graphSection}>
+                <Text style={[styles.sectionTitle, { color: theme.text }]}>
+                  {t('TimeGraph')}
+                </Text>
+
+                {isLoading ? (
+                  <ActivityIndicator
+                    size="large"
+                    color={theme.buttonBackground}
+                    style={styles.loader}
+                  />
+                ) : (
+                  renderChart()
+                )}
+
+                {/* Info about calculation */}
+                <View
+                  style={[
+                    styles.infoBox,
+                    {
+                      backgroundColor: theme.card,
+                      borderColor: theme.border,
+                    },
+                  ]}
+                >
+                  <Text style={[styles.infoTitle, { color: theme.text }]}>
+                    {t('About Completion Time')}
+                  </Text>
+                  <Text style={[styles.infoText, { color: theme.text }]}>
+                    {t('timeGraphExplanation')}
+                  </Text>
+                </View>
+              </View>
+
+              {/* Timeframe selector */}
+              {renderTimeFrameButtons()}
+
+
+            </>
+          )}
+
+          {/* Selection Controls */}
+          <Text
+            style={[
+              styles.sectionTitle,
+              { color: theme.text, textAlign: 'center' },
+            ]}
+          >
+            {t('Graph Type')}
+          </Text>
+          {renderGraphModeToggle()}
+
+          {/* Workout Dropdown */}
+          {renderWorkoutDropdown()}
+
+          {/* Exercise mode controls */}
+          {selectedWorkout && graphMode === 'Exercise' && (
+            <>
+              {renderDayDropdown()}
+              {selectedDay && renderExerciseDropdown()}
+            </>
+          )}
+
+                        {/* Tip Text */}
+              <Text style={[styles.tipText, { color: theme.text }]}>
+                {t('graphTipText')}
+              </Text>
+
+          {/* View Logs Button */}
+          <TouchableOpacity
+            style={[styles.logsButton, { backgroundColor: theme.text }]}
+            onPress={() => navigation.navigate('MyProgress')}
+          >
+            <Ionicons
+              name="list-outline"
+              size={20}
+              color={theme.background}
+              style={styles.logsButtonIcon}
+            />
+            <Text
+              style={[
+                styles.logsButtonText,
+                { color: theme.background },
+              ]}
+            >
+              {t('View Logs')}
+            </Text>
+          </TouchableOpacity>
+
+          {/* Tooltip Modal */}
+          {renderTooltip()}
         </>
       )}
-
-      {/* Tooltip Modal */}
-      {renderTooltip()}
     </ScrollView>
   );
 }
@@ -1898,7 +1926,8 @@ const styles = StyleSheet.create({
   toggleText: {
     fontSize: 16,
     fontWeight: 'bold',
-    marginLeft: 5,
+    flex: 1,
+    marginLeft: 6,
   },
   selectionContainer: {
     marginBottom: 20,
@@ -2191,11 +2220,21 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
     borderRadius: 10,
     marginHorizontal: 5,
     borderWidth: 1,
     borderColor: 'transparent',
+  },
+  buttonIcon: {
+    marginRight: 6,
+    marginTop: 1,
+  },
+  toggleTexticon: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    flex: 1,
+    marginLeft: 6,
   },
 });
