@@ -56,7 +56,6 @@ export default function LogWorkout() {
       }
     }
 
-
     // Save Button
     data.push({ key: 'save-button', type: 'SAVE_BUTTON' });
 
@@ -242,7 +241,7 @@ export default function LogWorkout() {
   const renderItem = ({ item }: { item: any }) => {
     switch (item.type) {
       case 'TITLE':
-        return <Text style={[styles.Title, { color: theme.text, marginTop: 50 }]}>{item.title}</Text>;
+        return <Text style={[styles.Title, { color: theme.text }]}>{item.title}</Text>;
       case 'DATE_PICKER':
         return (
           <TouchableOpacity style={[styles.input, { backgroundColor: theme.card, borderColor: theme.border }]} onPress={() => setShowDatePicker(true)}>
@@ -293,16 +292,18 @@ export default function LogWorkout() {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.background }}>
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Ionicons name="arrow-back" size={24} color={theme.text} />
-      </TouchableOpacity>
-      
       <FlatList
         data={listData}
         renderItem={renderItem}
         keyExtractor={(item) => item.key}
         contentContainerStyle={styles.container}
         showsVerticalScrollIndicator={false}
+
+          ListHeaderComponent={
+          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+            <Ionicons name="arrow-back" size={24} color={theme.text} />
+          </TouchableOpacity>
+        }
       />
       
     </View>
@@ -315,11 +316,9 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   backButton: {
-    position: 'absolute',
-    top: 50,
-    left: 20,
-    zIndex: 10,
     padding: 8,
+    marginTop: 40,
+    alignSelf: 'flex-start',
     // No background color to make it unobtrusive
   },
   input: {
