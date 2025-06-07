@@ -27,7 +27,10 @@ export default function WorkoutList({
   return (
     <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
       {/* Title */}
-      <Text style={[styles.title, { color: theme.text }]}>{t('MyWorkouts')}</Text>
+      <View style={styles.titleContainer}>
+        <Ionicons name="barbell" size={30} color={theme.text} style={styles.titleIcon} />
+        <Text style={[styles.title, { color: theme.text }]}>{t('MyWorkouts')}</Text>
+      </View>
 
       {/* Create New Workout Button */}
       <TouchableOpacity
@@ -91,10 +94,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     marginTop: 50, // Move everything down
   },
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 24,
+  },
+  titleIcon: {
+    marginRight: 10,
+  },
   title: {
     fontSize: 35, // Larger font size
     fontWeight: '900', // Extra bold
-    marginBottom: 24,
     textAlign: 'center', // Centered text
   },
   tipText: {

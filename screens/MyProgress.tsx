@@ -94,7 +94,7 @@ export default function MyProgress() {
   return (
 <View style={[styles.container, { backgroundColor: theme.background }]}>
   {/* Title */}
-  <Text style={[styles.title, { color: theme.text }]}>{t('myProgress')}</Text>
+  <Text style={[styles.title, { color: theme.text }]}>{t('Logs')}</Text>
 
   <TouchableOpacity
         style={[styles.workoutCard, { backgroundColor: theme.card, borderColor: theme.border }]}

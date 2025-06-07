@@ -424,7 +424,7 @@ const AppContent = () => {
             component={WeightLogStack}
             options={{
               tabBarButton: (props) => (
-                <TabButton {...props} iconName="stats-chart" />
+                <TabButton {...props} iconName="trending-up" />
               ),
             }}
           />

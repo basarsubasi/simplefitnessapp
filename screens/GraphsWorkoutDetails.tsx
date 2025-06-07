@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   View, 
   Text, 
@@ -11,7 +11,7 @@ import {
   Modal,
   
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useSQLiteContext } from 'expo-sqlite';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '../context/ThemeContext';
@@ -211,9 +211,11 @@ export default function GraphsWorkoutDetails() {
   };
 
   // Fetch all workouts that have logged data
-  useEffect(() => {
-    fetchWorkoutsWithLogs();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchWorkoutsWithLogs();
+    }, [])
+  );
 
   // Fetch days for the selected workout
   useEffect(() => {
@@ -1629,9 +1631,12 @@ export default function GraphsWorkoutDetails() {
       nestedScrollEnabled={true}
       contentContainerStyle={styles.scrollContent}
     >
-      <Text style={[styles.title, { color: theme.text }]}>
-        {t('myProgress')}
-      </Text>
+      <View style={styles.titleContainer}>
+        <Ionicons name="trending-up" size={30} color={theme.text} style={styles.titleIcon} />
+        <Text style={[styles.title, { color: theme.text }]}>
+          {t('myProgress')}
+        </Text>
+      </View>
 
       {isInitialLoading ? (
         <ActivityIndicator size="large" color={theme.buttonBackground} style={{ marginTop: 40 }}/>
@@ -1766,12 +1771,20 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingBottom: 40,
   },
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
+    marginTop: 40,
+  },
+  titleIcon: {
+    marginRight: 10,
+  },
   title: {
     fontSize: 32,
     fontWeight: '900',
-    marginBottom: 20,
     textAlign: 'center',
-    marginTop: 40,
   },
   logsButton: {
     flexDirection: 'row',

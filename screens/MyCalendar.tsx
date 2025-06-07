@@ -378,6 +378,18 @@ export default function MyCalendar() {
                 [workout_log_id]
               );
               fetchWorkoutsForGrid(currentDate); // Refresh the calendar
+
+              // Refresh the modal content
+              const updatedWorkouts = selectedDateWorkouts.filter(
+                (w) => w.workout.workout_log_id !== workout_log_id
+              );
+
+              // If no workouts are left for this date, close the modal
+              if (updatedWorkouts.length === 0) {
+                setModalVisible(false);
+              } else {
+                setSelectedDateWorkouts(updatedWorkouts);
+              }
             } catch (error) {
               console.error('Error deleting workout log:', error);
               Alert.alert(t('errorTitle'), t('failedToDeleteWorkoutLog'));
@@ -530,9 +542,12 @@ export default function MyCalendar() {
       style={{ flex: 1, backgroundColor: theme.background }}
       contentContainerStyle={[styles.contentContainer, { paddingTop: 70 }]}
     >
-      <Text style={[styles.title, { color: theme.text }]}>
-        {t('myCalendar')}
-      </Text>
+      <View style={styles.titleContainer}>
+        <Ionicons name="calendar" size={30} color={theme.text} style={styles.titleIcon} />
+        <Text style={[styles.title, { color: theme.text }]}>
+          {t('myCalendar')}
+        </Text>
+      </View>
 
       <View style={styles.buttonRow}>
         <TouchableOpacity
@@ -1014,10 +1029,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 40,
   },
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
+  },
+  titleIcon: {
+    marginRight: 10,
+  },
   title: {
     fontSize: 32,
     fontWeight: '900',
-    marginBottom: 20,
     textAlign: 'center',
   },
   buttonRow: {
