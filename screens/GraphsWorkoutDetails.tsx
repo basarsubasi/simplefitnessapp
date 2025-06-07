@@ -41,7 +41,8 @@ type LogData = {
   dayName?: string; // For time data
 };
 type TimeFrame = 'week' | 'month' | 'year' | 'all';
-type CalculationType = 'CES' | '1RM' | 'Sets' | 'Time';
+type CalculationType = 'CES' | '1RM' | 'Sets';
+type GraphMode = 'Exercise' | 'Time';
 type ProcessedDataPoint = {
   x: string; // Date string for display
   y: number; // Value (CES, 1RM, or time in seconds)
@@ -127,6 +128,7 @@ export default function GraphsWorkoutDetails() {
   const [dayDropdownVisible, setDayDropdownVisible] = useState<boolean>(false);
   const [exerciseDropdownVisible, setExerciseDropdownVisible] = useState<boolean>(false);
   const [isInitialLoading, setIsInitialLoading] = useState<boolean>(true);
+  const [graphMode, setGraphMode] = useState<GraphMode>('Exercise');
   
   // Tooltip state
   const [tooltipVisible, setTooltipVisible] = useState<boolean>(false);
@@ -236,21 +238,21 @@ export default function GraphsWorkoutDetails() {
 
   // Fetch and process data when exercise, timeframe, or calculation type changes
   useEffect(() => {
-    if (calculationType === 'Time') {
+    if (graphMode === 'Time') {
       fetchTimeData();
     } else if (selectedExercise) {
       fetchData();
     }
-  }, [selectedExercise, timeFrame, calculationType]);
+  }, [selectedExercise, timeFrame, calculationType, graphMode]);
 
   // Process log data into chart data
   useEffect(() => {
-    if (calculationType === 'Time' && timeLogData.length > 0) {
+    if (graphMode === 'Time' && timeLogData.length > 0) {
       processTimeDataForChart();
     } else if (logData.length > 0) {
       processDataForChart();
     }
-  }, [logData, timeLogData, calculationType, timeFrame]);
+  }, [logData, timeLogData, calculationType, timeFrame, graphMode]);
 
   const fetchWorkoutsWithLogs = async () => {
     setIsInitialLoading(true);
@@ -323,6 +325,9 @@ export default function GraphsWorkoutDetails() {
         setSelectedExercise(exerciseOptions[0].value);
       } else {
         setSelectedExercise('');
+        // Reset things that depend on an exercise
+        setChartData([]);
+        setSetsData([]);
       }
     } catch (error) {
       console.error('Error fetching exercises:', error);
@@ -694,7 +699,7 @@ export default function GraphsWorkoutDetails() {
   };
 
   const handleDataPointClick = async (data: any) => {
-    if (calculationType === 'Time') {
+    if (graphMode === 'Time') {
       // For time chart, fetch the workout session details
       if (data.index !== undefined && chartData[data.index]) {
         const clickedPoint = chartData[data.index];
@@ -893,27 +898,6 @@ export default function GraphsWorkoutDetails() {
             { color: calculationType === '1RM' ? theme.buttonText : theme.text }
           ]}>
             {t('1RM')}
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity 
-          style={[
-            styles.timeToggleButton, 
-            calculationType === 'Time' && styles.toggleButtonActive,
-            { backgroundColor: calculationType === 'Time' ? theme.buttonBackground : theme.card }
-          ]}
-          onPress={() => setCalculationType('Time')}
-        >
-          <Ionicons 
-            name="time" 
-            size={20} 
-            color={calculationType === 'Time' ? theme.buttonText : theme.text} 
-          />
-          <Text style={[
-            styles.toggleText, 
-            { color: calculationType === 'Time' ? theme.buttonText : theme.text }
-          ]}>
-            {t('Time')}
           </Text>
         </TouchableOpacity>
       </View>
@@ -1258,7 +1242,7 @@ export default function GraphsWorkoutDetails() {
 
   // Define renderChart AFTER the individual chart rendering functions
   const renderChart = () => {
-    if (calculationType === 'Time') {
+    if (graphMode === 'Time') {
       return renderTimeChart();
     } else if (calculationType === 'Sets') {
       return renderSetsChart();
@@ -1313,7 +1297,7 @@ export default function GraphsWorkoutDetails() {
           <View style={[styles.tooltipContainer, { backgroundColor: theme.card, borderColor: theme.border }]}>
             <View style={styles.tooltipHeader}>
               <Text style={[styles.tooltipTitle, { color: theme.text }]}>
-                {calculationType === 'Time' 
+                {graphMode === 'Time' 
                   ? `${selectedPoint.dayName} - ${formattedDate}`
                   : `${selectedDay} - ${formattedDate}`
                 }
@@ -1323,7 +1307,7 @@ export default function GraphsWorkoutDetails() {
               </TouchableOpacity>
             </View>
             
-            {calculationType === 'Time' ? (
+            {graphMode === 'Time' ? (
               <>
                 <Text style={[styles.tooltipSubtitle, { color: theme.text }]}>
                   {t('completionTime')}: {formatTimeFromSeconds(selectedPoint.y)}
@@ -1469,7 +1453,7 @@ export default function GraphsWorkoutDetails() {
 
   // Render day dropdown button - hide for Time mode
   const renderDayDropdown = () => {
-    if (calculationType === 'Time') return null;
+    if (graphMode === 'Time') return null;
     
     const selectedDayObj = days.find(day => day.value === selectedDay);
     
@@ -1542,7 +1526,7 @@ export default function GraphsWorkoutDetails() {
 
   // Render exercise dropdown button - hide for Time mode
   const renderExerciseDropdown = () => {
-    if (calculationType === 'Time') return null;
+    if (graphMode === 'Time') return null;
     
     const selectedExerciseObj = exercises.find(exercise => exercise.value === selectedExercise);
     
@@ -1625,6 +1609,66 @@ export default function GraphsWorkoutDetails() {
     );
   };
 
+  const renderGraphModeToggle = () => {
+    return (
+      <View style={styles.graphModeToggleContainer}>
+        <TouchableOpacity
+          style={[
+            styles.graphModeButton,
+            {
+              backgroundColor:
+                graphMode === 'Exercise'
+                  ? theme.buttonBackground
+                  : theme.card,
+            },
+          ]}
+          onPress={() => setGraphMode('Exercise')}
+        >
+          <Ionicons
+            name="barbell-outline"
+            size={20}
+            color={graphMode === 'Exercise' ? theme.buttonText : theme.text}
+          />
+          <Text
+            style={[
+              styles.toggleText,
+              {
+                color:
+                  graphMode === 'Exercise' ? theme.buttonText : theme.text,
+              },
+            ]}
+          >
+            {t('Exercise Stats')}
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.graphModeButton,
+            {
+              backgroundColor:
+                graphMode === 'Time' ? theme.buttonBackground : theme.card,
+            },
+          ]}
+          onPress={() => setGraphMode('Time')}
+        >
+          <Ionicons
+            name="time-outline"
+            size={20}
+            color={graphMode === 'Time' ? theme.buttonText : theme.text}
+          />
+          <Text
+            style={[
+              styles.toggleText,
+              { color: graphMode === 'Time' ? theme.buttonText : theme.text },
+            ]}
+          >
+            {t('Time')}
+          </Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
   return (
     <ScrollView 
       style={[styles.container, { backgroundColor: theme.background }]}
@@ -1652,106 +1696,127 @@ export default function GraphsWorkoutDetails() {
         </View>
       ) : (
         <>
-          <Text style={[styles.sectionTitle, { color: theme.text, textAlign: 'center' }]}>
-            Graph Type
-          </Text>
-          
-          {/* Calculation Type Toggle */}
-          {renderCalculationTypeToggle()}
-
-          {/* Workout Dropdown */}
+          {/* 1. Workout Dropdown is always visible */}
           {renderWorkoutDropdown()}
-          
-          {/* Conditional rendering for the rest of the content */}
+
+          {/* Render the rest only if a workout is selected */}
           {selectedWorkout && (
             <>
-              {/* Day and Exercise Selectors - Hidden for Time mode */}
-              {calculationType !== 'Time' && (
-                <View
-                  style={[
-                    styles.selectionContainer,
-                    (dayDropdownVisible || exerciseDropdownVisible) &&
-                      styles.expandedSelectionContainer,
-                  ]}
-                >
-                  {/* Custom dropdown selectors */}
-                  {renderDayDropdown()}
-                  {renderExerciseDropdown()}
-                </View>
-              )}
-
-              {/* Graph Area */}
-              <View style={styles.graphSection}>
-                <Text style={[styles.sectionTitle, { color: theme.text }]}>
-                  {calculationType === 'CES'
-                    ? t('Combined Effort Score')
-                    : calculationType === '1RM'
-                    ? t('Estimated 1RM')
-                    : calculationType === 'Time'
-                    ? t('TimeGraph')
-                    : t('SetsGraph')}
-                </Text>
-
-                {isLoading ? (
-                  <ActivityIndicator
-                    size="large"
-                    color={theme.buttonBackground}
-                    style={styles.loader}
-                  />
-                ) : (
-                  renderChart()
-                )}
-
-                {/* Info about calculation */}
-                <View
-                  style={[
-                    styles.infoBox,
-                    { backgroundColor: theme.card, borderColor: theme.border },
-                  ]}
-                >
-                  <Text style={[styles.infoTitle, { color: theme.text }]}>
-                    {calculationType === 'CES'
-                      ? t('About CES')
-                      : calculationType === '1RM'
-                      ? t('About 1RM')
-                      : calculationType === 'Time'
-                      ? t('About Completion Time')
-                      : t('About Sets Progression')}
-                  </Text>
-                  <Text style={[styles.infoText, { color: theme.text }]}>
-                    {calculationType === 'CES'
-                      ? t('CESExplanation')
-                      : calculationType === '1RM'
-                      ? t('1RMExplanation')
-                      : calculationType === 'Time'
-                      ? t('timeGraphExplanation')
-                      : t('setsGraphExplanation')}
-                  </Text>
-                </View>
-              </View>
-
-              {/* Timeframe selector */}
-              {renderTimeFrameButtons()}
-
-              {/* Tip Text */}
-              <Text style={[styles.tipText, { color: theme.text }]}>
-                {t('graphTipText')}
-              </Text>
-
-              <TouchableOpacity
-                style={[styles.logsButton, { backgroundColor: theme.text }]}
-                onPress={() => navigation.navigate('MyProgress')}
+              <Text
+                style={[
+                  styles.sectionTitle,
+                  { color: theme.text, textAlign: 'center' },
+                ]}
               >
-                <Ionicons
-                  name="list-outline"
-                  size={20}
-                  color={theme.background}
-                  style={styles.logsButtonIcon}
-                />
-                <Text style={[styles.logsButtonText, { color: theme.background }]}>
-                  {t('View Logs')}
-                </Text>
-              </TouchableOpacity>
+                Graph Type
+              </Text>
+              {renderGraphModeToggle()}
+
+              {graphMode === 'Exercise' ? (
+                <>
+                  {renderDayDropdown()}
+                  {selectedDay && renderExerciseDropdown()}
+                  {selectedExercise && (
+                    <>
+                      <Text
+                        style={[
+                          styles.sectionTitle,
+                          { color: theme.text, textAlign: 'center' },
+                        ]}
+                      >
+                        Metric
+                      </Text>
+                      {renderCalculationTypeToggle()}
+                    </>
+                  )}
+                </>
+              ) : null}
+
+              {/* Render graph section if we have an exercise OR if in Time mode */}
+              {(selectedExercise || graphMode === 'Time') && (
+                <>
+                  {/* Graph Area */}
+                  <View style={styles.graphSection}>
+                    <Text style={[styles.sectionTitle, { color: theme.text }]}>
+                      {graphMode === 'Time'
+                        ? t('TimeGraph')
+                        : calculationType === 'CES'
+                        ? t('Combined Effort Score')
+                        : calculationType === '1RM'
+                        ? t('Estimated 1RM')
+                        : t('SetsGraph')}
+                    </Text>
+
+                    {isLoading ? (
+                      <ActivityIndicator
+                        size="large"
+                        color={theme.buttonBackground}
+                        style={styles.loader}
+                      />
+                    ) : (
+                      renderChart()
+                    )}
+
+                    {/* Info about calculation */}
+                    <View
+                      style={[
+                        styles.infoBox,
+                        {
+                          backgroundColor: theme.card,
+                          borderColor: theme.border,
+                        },
+                      ]}
+                    >
+                      <Text style={[styles.infoTitle, { color: theme.text }]}>
+                        {graphMode === 'Time'
+                          ? t('About Completion Time')
+                          : calculationType === 'CES'
+                          ? t('About CES')
+                          : calculationType === '1RM'
+                          ? t('About 1RM')
+                          : t('About Sets Progression')}
+                      </Text>
+                      <Text style={[styles.infoText, { color: theme.text }]}>
+                        {graphMode === 'Time'
+                          ? t('timeGraphExplanation')
+                          : calculationType === 'CES'
+                          ? t('CESExplanation')
+                          : calculationType === '1RM'
+                          ? t('1RMExplanation')
+                          : t('setsGraphExplanation')}
+                      </Text>
+                    </View>
+                  </View>
+
+                  {/* Timeframe selector */}
+                  {renderTimeFrameButtons()}
+
+                  {/* Tip Text */}
+                  <Text style={[styles.tipText, { color: theme.text }]}>
+                    {t('graphTipText')}
+                  </Text>
+
+                  <TouchableOpacity
+                    style={[styles.logsButton, { backgroundColor: theme.text }]}
+                    onPress={() => navigation.navigate('MyProgress')}
+                  >
+                    <Ionicons
+                      name="list-outline"
+                      size={20}
+                      color={theme.background}
+                      style={styles.logsButtonIcon}
+                    />
+                    <Text
+                      style={[
+                        styles.logsButtonText,
+                        { color: theme.background },
+                      ]}
+                    >
+                      {t('View Logs')}
+                    </Text>
+                  </TouchableOpacity>
+                </>
+              )}
             </>
           )}
         </>
@@ -2116,5 +2181,21 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 10,
     opacity: 0.7,
+  },
+  graphModeToggleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginBottom: 20,
+  },
+  graphModeButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 10,
+    borderRadius: 10,
+    marginHorizontal: 5,
+    borderWidth: 1,
+    borderColor: 'transparent',
   },
 });
