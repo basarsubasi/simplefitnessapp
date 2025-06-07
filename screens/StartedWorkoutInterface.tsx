@@ -13,7 +13,8 @@ import {
   Platform,
   Switch,
   Modal,
-  AppState
+  AppState,
+  AppStateStatus
 } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -154,33 +155,19 @@ export default function StartedWorkoutInterface() {
   
   // Handle AppState changes for notifications
   useEffect(() => {
-    const handleAppStateChange = async (nextAppState: string) => {
-      // Going to background - schedule notification if workout is active and notifications are enabled
+    const handleAppStateChange = async (nextAppState: AppStateStatus) => {
       if (nextAppState === 'background' || nextAppState === 'inactive') {
-        clearRestTimerState(); // Clear timer state when going background
-        
-      
-      } 
-      // Coming to foreground - clear notifications
-      else if (nextAppState === 'active') {
-        clearRestTimerState(); // Clear timer state when coming to foreground
-        // Stop active intervals when going to background
-        // Let useTimerPersistence handle saving the actual current state
         stopWorkoutTimer();
         stopRestTimer();
-        // clearRestTimerState(); // Clear timer state when going background // REMOVED
-      } 
-      // Coming to foreground - clear notifications
-      else if (nextAppState === 'active') {
-        // clearRestTimerState(); // Clear timer state when coming to foreground // REMOVED
+      } else if (nextAppState === 'active') {
+        // App is in the foreground, timers will be managed by user interaction
       }
     };
     
-    const subscription = AppState.addEventListener('change', handleAppStateChange);
+    const appStateSubscription = AppState.addEventListener('change', handleAppStateChange);
     
     return () => {
-      // clearRestTimerState(); // Clear on unmount // This was already correctly removed/commented
-      subscription.remove();
+      appStateSubscription.remove();
     };
   }, [
     timerState.workoutStarted, 
