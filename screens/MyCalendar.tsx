@@ -1269,7 +1269,8 @@ const styles = StyleSheet.create({
     width: '100%',
     position: 'absolute',
     top: 15,
-    paddingHorizontal: 15,
+    paddingLeft: 0,
+    paddingRight: 0,
     zIndex: 1,
   },
   modalLeftButton: {
@@ -1283,7 +1284,7 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     marginBottom: 10,
     textAlign: 'center',
-    marginTop: 30,
+    marginTop: 20,
   },
   modalSubtitle: {
     fontSize: 18,
@@ -1352,5 +1353,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: '80%',
   },
-  modalCloseButton: { position: 'absolute', top: 10 },
+  modalCloseButton: { position: 'absolute', top: 10, marginRight: 10 },
 });
