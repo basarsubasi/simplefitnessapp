@@ -317,7 +317,38 @@
     "TimeGraph": "Graf časa",
     "timeGraphExplanation": "Ta graf prikazuje, kako dolgo potrebujete za dokončanje vadbenih sej skozi čas.",
     "setsGraphExplanation": "Ta graf prikazuje napredovanje teže za vsako serijo skozi čas. Vsaka črta in barva predstavljata drugačno številko serije, kar vam omogoča spremljanje vaše uspešnosti med vadbenimi sejami.",
-    "graphTipText": "Nasvet: Lahko pritisnete na pike na grafu, da si ogledate dodatne informacije o tej vadbeni seji."
+    "graphTipText": "Nasvet: Lahko pritisnete na pike na grafu, da si ogledate dodatne informacije o tej vadbeni seji.",
+
+
+      "_comment_calendar": "These are calendar-related strings.",
+      "locale": "sl",
+      "Mon": "Pon",
+      "Tue": "Tor",
+      "Wed": "Sre",
+      "Thu": "Čet",
+      "Fri": "Pet",
+      "Sat": "Sob",
+      "Sun": "Ned",
+      "January": "Januar",
+      "February": "Februar",
+      "March": "Marec",
+      "April": "April",
+      "May": "Maj",
+      "June": "Junij",
+      "July": "Julij",
+      "August": "Avgust",
+      "September": "September",
+      "October": "Oktober",
+      "November": "November",
+      "December": "December",
+      "Untracked": "Nesledeno",
+      "Upcoming": "Prihajajoče",
+      "Logged": "Zabeleženo",
+      "logWeightsManually": "Ročno zabeleži težo",
+      "View Logs": "Ogled dnevnikov",
+      "Logs": "Dnevniki",
+      "Graph Type": "Vrsta grafa",
+      "Metric": "Metrika"
         
 
     

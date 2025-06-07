@@ -322,7 +322,41 @@
     "TimeGraph": "Tidsgraf",
     "timeGraphExplanation": "Denna graf visar hur lång tid det tar för dig att slutföra dina träningspass över tid.",
     "setsGraphExplanation": "Denna graf visar viktprogressionen för varje set över tid. Varje linje och färg representerar ett annat setnummer, vilket gör att du kan följa din prestation under dina träningspass.",
-    "graphTipText": "Tips: Du kan trycka på prickarna i grafen för att se ytterligare information om det träningspasset."
+    "graphTipText": "Tips: Du kan trycka på prickarna i grafen för att se ytterligare information om det träningspasset.",
+
+
+
+    
+      "_comment_calendar": "These are calendar-related strings.",
+      "locale": "sv",
+      "Mon": "Mån",
+      "Tue": "Tis",
+      "Wed": "Ons",
+      "Thu": "Tor",
+      "Fri": "Fre",
+      "Sat": "Lör",
+      "Sun": "Sön",
+      "January": "Januari",
+      "February": "Februari",
+      "March": "Mars",
+      "April": "April",
+      "May": "Maj",
+      "June": "Juni",
+      "July": "Juli",
+      "August": "Augusti",
+      "September": "September",
+      "October": "Oktober",
+      "November": "November",
+      "December": "December",
+      "Untracked": "Ospårad",
+      "Upcoming": "Kommande",
+      "Logged": "Loggad",
+      "logWeightsManually": "Logga vikter manuellt",
+      "View Logs": "Visa loggar",
+      "Logs": "Loggar",
+      "Graph Type": "Graftyp",
+      "Metric": "Mått"
+    
         
 
     

@@ -317,6 +317,39 @@
     "TimeGraph": "Graficul Timpului",
     "timeGraphExplanation": "Acest grafic arată cât timp vă ia să finalizați sesiunile de antrenament de-a lungul timpului.",
     "setsGraphExplanation": "Acest grafic arată progresia greutății pentru fiecare serie de-a lungul timpului. Fiecare linie și culoare reprezintă un număr de serie diferit, permițându-vă să urmăriți performanța pe parcursul sesiunilor de antrenament.",
-    "graphTipText": "Sfat: Puteți apăsa pe punctele de pe grafic pentru a vedea informații suplimentare despre acea sesiune de antrenament."
+    "graphTipText": "Sfat: Puteți apăsa pe punctele de pe grafic pentru a vedea informații suplimentare despre acea sesiune de antrenament.",
+
+
+
+
+      "_comment_calendar": "These are calendar-related strings.",
+      "locale": "ro",
+      "Mon": "Lun",
+      "Tue": "Mar",
+      "Wed": "Mie",
+      "Thu": "Joi",
+      "Fri": "Vin",
+      "Sat": "Sâm",
+      "Sun": "Dum",
+      "January": "Ianuarie",
+      "February": "Februarie",
+      "March": "Martie",
+      "April": "Aprilie",
+      "May": "Mai",
+      "June": "Iunie",
+      "July": "Iulie",
+      "August": "August",
+      "September": "Septembrie",
+      "October": "Octombrie",
+      "November": "Noiembrie",
+      "December": "Decembrie",
+      "Untracked": "Neurmărit",
+      "Upcoming": "Următor",
+      "Logged": "Înregistrat",
+      "logWeightsManually": "Înregistrează greutățile manual",
+      "View Logs": "Vezi jurnalele",
+      "Logs": "Jurnale",
+      "Graph Type": "Tip grafic",
+      "Metric": "Metrică"
   }
   

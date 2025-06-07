@@ -754,7 +754,7 @@ export default function GraphsWorkoutDetails() {
     return (
       <View style={styles.pickerContainer}>
         <Text style={[styles.pickerLabel, { color: theme.text }]}>
-          {t('Select Workout')}
+          {t('selectWorkout')}
         </Text>
         <TouchableOpacity
           style={[
@@ -768,7 +768,7 @@ export default function GraphsWorkoutDetails() {
           }}
         >
           <Text style={[styles.dropdownButtonText, { color: theme.text }]}>
-            {selectedWorkout || t('Select a Workout')}
+            {selectedWorkout || t('selectWorkout')}
           </Text>
           <Ionicons
             name={workoutDropdownVisible ? 'chevron-up' : 'chevron-down'}
@@ -1708,7 +1708,7 @@ export default function GraphsWorkoutDetails() {
                   { color: theme.text, textAlign: 'center' },
                 ]}
               >
-                Graph Type
+                {t('Graph Type')}
               </Text>
               {renderGraphModeToggle()}
 
@@ -1724,7 +1724,7 @@ export default function GraphsWorkoutDetails() {
                           { color: theme.text, textAlign: 'center' },
                         ]}
                       >
-                        Metric
+                        {t('Metric')}
                       </Text>
                       {renderCalculationTypeToggle()}
                     </>
