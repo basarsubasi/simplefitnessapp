@@ -589,23 +589,6 @@ export default function MyCalendar() {
             styles.actionButton,
             { backgroundColor: theme.buttonBackground },
           ]}
-          onPress={() => navigation.navigate('LogWorkout', { selectedDate: undefined })}
-        >
-          <Ionicons
-            name="calendar"
-            size={22}
-            color={theme.buttonText}
-            style={styles.icon}
-          />
-          <Text style={[styles.actionButtonText, { color: theme.buttonText }]}>
-            {t('scheduleWorkout')}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.actionButton,
-            { backgroundColor: theme.buttonBackground },
-          ]}
           onPress={() => navigation.navigate('RecurringWorkoutOptions')}
         >
           <Ionicons
@@ -1130,7 +1113,7 @@ const styles = StyleSheet.create({
   },
   buttonRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     width: '100%',
     maxWidth: 400,
     marginBottom: 30,
