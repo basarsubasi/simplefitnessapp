@@ -155,10 +155,12 @@ export default function MyCalendar() {
       try {
         // Calculate the start and end of the visible grid
         const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
-        const startDayOfWeek = firstDayOfMonth.getDay(); // 0=Sun, 1=Mon...
+        const dayOfWeek = firstDayOfMonth.getDay(); // 0=Sun, 1=Mon...
+        // To make Monday the first day of the week
+        const daysToSubtract = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
 
         const gridStartDate = new Date(firstDayOfMonth);
-        gridStartDate.setDate(gridStartDate.getDate() - startDayOfWeek);
+        gridStartDate.setDate(gridStartDate.getDate() - daysToSubtract);
 
         const gridEndDate = new Date(gridStartDate);
         gridEndDate.setDate(gridEndDate.getDate() + 41); // 6 weeks * 7 days - 1
@@ -459,13 +461,15 @@ export default function MyCalendar() {
     const today = new Date();
 
     const firstDayOfMonth = new Date(year, month, 1);
-    const startDayOfWeek = firstDayOfMonth.getDay();
+    const dayOfWeek = firstDayOfMonth.getDay(); // 0=Sun, 1=Mon...
+    // To make Monday the first day of the week
+    const daysToSubtract = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
 
     const gridStartDate = new Date(firstDayOfMonth);
-    gridStartDate.setDate(gridStartDate.getDate() - startDayOfWeek);
+    gridStartDate.setDate(gridStartDate.getDate() - daysToSubtract);
 
     const days = [];
-    for (let i = 0; i < 35; i++) {
+    for (let i = 0; i < 42; i++) {
       const cellDate = new Date(gridStartDate);
       cellDate.setDate(gridStartDate.getDate() + i);
 
@@ -603,7 +607,7 @@ export default function MyCalendar() {
           </TouchableOpacity>
         </View>
         <View style={styles.weekDaysContainer}>
-          {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, index) => (
+          {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day, index) => (
             <Text
               key={index}
               style={[styles.weekDayText, { color: theme.text }]}
