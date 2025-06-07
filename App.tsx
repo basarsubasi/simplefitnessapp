@@ -23,7 +23,6 @@
   import ManageRecurringWorkouts from './screens/ManageRecurringWorkouts';
   import RecurringWorkoutDetails from './screens/RecurringWorkoutDetails';
   import EditRecurringWorkout from './screens/EditRecurringWorkout';
-  // import StartWorkout from './screens/StartWorkout';
   import StartedWorkoutInterface from './screens/StartedWorkoutInterface';
   import './utils/i18n'; // Ensure this is present to initialize i18n
   import i18n from './utils/i18n'; // Import the i18n instance
