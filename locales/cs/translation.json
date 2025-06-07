@@ -315,7 +315,37 @@
     "TimeGraph": "Graf času",
     "timeGraphExplanation": "Tento graf ukazuje, jak dlouho vám v průběhu času trvá dokončit tréninkové jednotky.",
     "setsGraphExplanation": "Tento graf ukazuje progresi váhy pro každou sérii v průběhu času. Každá čára a barva představuje jiné číslo série, což vám umožňuje sledovat váš výkon během tréninkových jednotek.",
-    "graphTipText": "Tip: Můžete stisknout tečky na grafu pro zobrazení dalších informací o dané tréninkové jednotce."
+    "graphTipText": "Tip: Můžete stisknout tečky na grafu pro zobrazení dalších informací o dané tréninkové jednotce.",
+
+    "_comment_calendar": "These are calendar-related strings.",
+  "locale": "cs",
+  "Mon": "Po",
+  "Tue": "Út",
+  "Wed": "St",
+  "Thu": "Čt",
+  "Fri": "Pá",
+  "Sat": "So",
+  "Sun": "Ne",
+  "January": "Leden",
+  "February": "Únor",
+  "March": "Březen",
+  "April": "Duben",
+  "May": "Květen",
+  "June": "Červen",
+  "July": "Červenec",
+  "August": "Srpen",
+  "September": "Září",
+  "October": "Říjen",
+  "November": "Listopad",
+  "December": "Prosinec",
+  "Untracked": "Nesledováno",
+  "Upcoming": "Nadcházející",
+  "Logged": "Zaznamenáno",
+  "logWeightsManually": "Zaznamenat váhy ručně",
+  "View Logs": "Zobrazit záznamy",
+  "Logs": "Záznamy",
+  "Graph Type": "Typ grafu",
+  "Metric": "Metrika"
     
     
     

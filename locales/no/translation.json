@@ -324,7 +324,42 @@
     "TimeGraph": "Tidsgraf",
     "timeGraphExplanation": "Denne grafen viser hvor lang tid det tar deg å fullføre treningsøktene dine over tid.",
     "setsGraphExplanation": "Denne grafen viser vektprogresjonen for hvert sett over tid. Hver linje og farge representerer et annet settnummer, slik at du kan spore ytelsen din gjennom treningsøktene.",
-    "graphTipText": "Tips: Du kan trykke på prikkene i grafen for å se tilleggsinformasjon om den treningsøkten."
+    "graphTipText": "Tips: Du kan trykke på prikkene i grafen for å se tilleggsinformasjon om den treningsøkten.",
+
+
+
+    
+      "_comment_calendar": "These are calendar-related strings.",
+      "locale": "no",
+      "Mon": "Man",
+      "Tue": "Tir",
+      "Wed": "Ons",
+      "Thu": "Tor",
+      "Fri": "Fre",
+      "Sat": "Lør",
+      "Sun": "Søn",
+      "January": "Januar",
+      "February": "Februar",
+      "March": "Mars",
+      "April": "April",
+      "May": "Mai",
+      "June": "Juni",
+      "July": "Juli",
+      "August": "August",
+      "September": "September",
+      "October": "Oktober",
+      "November": "November",
+      "December": "Desember",
+      "Untracked": "Ikke sporet",
+      "Upcoming": "Kommende",
+      "Logged": "Loggført",
+      "logWeightsManually": "Loggfør vekter manuelt",
+      "View Logs": "Vis logger",
+      "Logs": "Logger",
+      "Graph Type": "Graftype",
+      "Metric": "Måling"
+      
+
         
 
 }

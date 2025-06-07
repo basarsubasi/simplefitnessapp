@@ -316,7 +316,40 @@
     "TimeGraph": "Wykres czasu",
     "timeGraphExplanation": "Ten wykres pokazuje, ile czasu zajmuje Ci ukończenie sesji treningowych na przestrzeni czasu.",
     "setsGraphExplanation": "Ten wykres pokazuje progresję ciężaru dla każdej serii na przestrzeni czasu. Każda linia i kolor reprezentuje inny numer serii, co pozwala śledzić Twoje wyniki podczas sesji treningowych.",
-    "graphTipText": "Wskazówka: Możesz nacisnąć kropki na wykresie, aby zobaczyć dodatkowe informacje o tej sesji treningowej."
+    "graphTipText": "Wskazówka: Możesz nacisnąć kropki na wykresie, aby zobaczyć dodatkowe informacje o tej sesji treningowej.",
+
+
+    
+      "_comment_calendar": "These are calendar-related strings.",
+      "locale": "pl",
+      "Mon": "Pon",
+      "Tue": "Wt",
+      "Wed": "Śr",
+      "Thu": "Czw",
+      "Fri": "Pt",
+      "Sat": "Sob",
+      "Sun": "Ndz",
+      "January": "Styczeń",
+      "February": "Luty",
+      "March": "Marzec",
+      "April": "Kwiecień",
+      "May": "Maj",
+      "June": "Czerwiec",
+      "July": "Lipiec",
+      "August": "Sierpień",
+      "September": "Wrzesień",
+      "October": "Październik",
+      "November": "Listopad",
+      "December": "Grudzień",
+      "Untracked": "Nieśledzone",
+      "Upcoming": "Nadchodzące",
+      "Logged": "Zarejestrowano",
+      "logWeightsManually": "Rejestruj wagi ręcznie",
+      "View Logs": "Zobacz logi",
+      "Logs": "Logi",
+      "Graph Type": "Typ wykresu",
+      "Metric": "Metryka"
+
         
 
     

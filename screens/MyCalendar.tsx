@@ -461,6 +461,24 @@ export default function MyCalendar() {
     );
   };
 
+  const getMonthName = (date: Date) => {
+    const months = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December'
+    ];
+    return t(months[date.getMonth()]);
+  };
+
   const renderCalendarDays = () => {
     const month = currentDate.getMonth();
     const year = currentDate.getFullYear();
@@ -609,17 +627,22 @@ export default function MyCalendar() {
             <Ionicons name="chevron-back" size={24} color={theme.text} />
           </TouchableOpacity>
           <Text style={[styles.calendarMonthText, { color: theme.text }]}>
-            {currentDate.toLocaleString('default', {
-              month: 'long',
-              year: 'numeric',
-            })}
+            {`${getMonthName(currentDate)} ${currentDate.getFullYear()}`}
           </Text>
           <TouchableOpacity onPress={handleNextMonth}>
             <Ionicons name="chevron-forward" size={24} color={theme.text} />
           </TouchableOpacity>
         </View>
         <View style={styles.weekDaysContainer}>
-          {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day, index) => (
+          {[
+            t('Mon'),
+            t('Tue'),
+            t('Wed'),
+            t('Thu'),
+            t('Fri'),
+            t('Sat'),
+            t('Sun')
+          ].map((day, index) => (
             <Text
               key={index}
               style={[styles.weekDayText, { color: theme.text }]}

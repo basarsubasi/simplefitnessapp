@@ -316,7 +316,38 @@
     "TimeGraph": "Gráfico de tiempo",
     "timeGraphExplanation": "Este gráfico muestra cuánto tiempo le toma completar sus sesiones de entrenamiento a lo largo del tiempo.",
     "setsGraphExplanation": "Este gráfico muestra la progresión del peso para cada serie a lo largo del tiempo. Cada línea y color representa un número de serie diferente, lo que le permite realizar un seguimiento de su rendimiento a lo largo de sus sesiones de entrenamiento.",
-    "graphTipText": "Consejo: Puede presionar los puntos en el gráfico para ver información adicional sobre esa sesión de entrenamiento."
+    "graphTipText": "Consejo: Puede presionar los puntos en el gráfico para ver información adicional sobre esa sesión de entrenamiento.",
+
+
+      "_comment_calendar": "These are calendar-related strings.",
+      "locale": "es",
+      "Mon": "Lun",
+      "Tue": "Mar",
+      "Wed": "Mié",
+      "Thu": "Jue",
+      "Fri": "Vie",
+      "Sat": "Sáb",
+      "Sun": "Dom",
+      "January": "Enero",
+      "February": "Febrero",
+      "March": "Marzo",
+      "April": "Abril",
+      "May": "Mayo",
+      "June": "Junio",
+      "July": "Julio",
+      "August": "Agosto",
+      "September": "Septiembre",
+      "October": "Octubre",
+      "November": "Noviembre",
+      "December": "Diciembre",
+      "Untracked": "Sin seguimiento",
+      "Upcoming": "Próximo",
+      "Logged": "Registrado",
+      "logWeightsManually": "Registrar pesos manualmente",
+      "View Logs": "Ver registros",
+      "Logs": "Registros",
+      "Graph Type": "Tipo de gráfico",
+      "Metric": "Métrica"
 
 
 

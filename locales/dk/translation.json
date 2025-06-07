@@ -314,7 +314,39 @@
     "TimeGraph": "Tidsgraf",
     "timeGraphExplanation": "Denne graf viser, hvor lang tid det tager dig at gennemføre dine træningspas over tid.",
     "setsGraphExplanation": "Denne graf viser vægtprogressionen for hvert sæt over tid. Hver linje og farve repræsenterer et forskelligt sætnummer, hvilket giver dig mulighed for at spore din præstation gennem dine træningspas.",
-    "graphTipText": "Tip: Du kan trykke på prikkerne på grafen for at se yderligere oplysninger om det pågældende træningspas."
+    "graphTipText": "Tip: Du kan trykke på prikkerne på grafen for at se yderligere oplysninger om det pågældende træningspas.",
+
+
+
+      "_comment_calendar": "These are calendar-related strings.",
+      "locale": "da",
+      "Mon": "Man",
+      "Tue": "Tir",
+      "Wed": "Ons",
+      "Thu": "Tor",
+      "Fri": "Fre",
+      "Sat": "Lør",
+      "Sun": "Søn",
+      "January": "Januar",
+      "February": "Februar",
+      "March": "Marts",
+      "April": "April",
+      "May": "Maj",
+      "June": "Juni",
+      "July": "Juli",
+      "August": "August",
+      "September": "September",
+      "October": "Oktober",
+      "November": "November",
+      "December": "December",
+      "Untracked": "Ikke sporet",
+      "Upcoming": "Kommende",
+      "Logged": "Logget",
+      "logWeightsManually": "Log vægte manuelt",
+      "View Logs": "Se logs",
+      "Logs": "Logs",
+      "Graph Type": "Graftype",
+      "Metric": "Måling"
     
   }
   
