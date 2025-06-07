@@ -1,4 +1,4 @@
-import React, {useCallback, useState } from 'react';
+import React, {useCallback, useState, useMemo } from 'react';
 
 import {
   View,
@@ -7,9 +7,7 @@ import {
   TouchableOpacity,
   FlatList,
   Alert,
-  ScrollView,
 } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { useSQLiteContext } from 'expo-sqlite';
 import { useFocusEffect, useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -34,6 +32,39 @@ export default function LogWorkout() {
   const [selectedWorkout, setSelectedWorkout] = useState<number | null>(null);
   const [days, setDays] = useState<{ day_id: number; day_name: string }[]>([]);
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
+  
+
+  const listData = useMemo(() => {
+    const data: any[] = [];
+
+    // Title and Date Picker
+    data.push({ key: 'title', type: 'TITLE', title: t('selectDate') });
+    data.push({ key: 'date-picker', type: 'DATE_PICKER' });
+
+    // Workouts Section
+    data.push({ key: 'workout-title', type: 'SECTION_TITLE', title: t('selectWorkout') });
+    if (workouts.length > 0) {
+      workouts.forEach((item) => data.push({ type: 'WORKOUT_ITEM', item, key: `workout-${item.workout_id}` }));
+    } else {
+      data.push({ key: 'empty-workouts', type: 'EMPTY', text: t('emptyWorkoutLog') });
+    }
+
+    // Days Section
+    if (selectedWorkout) {
+      data.push({ key: 'day-title', type: 'SECTION_TITLE', title: t('selectDay') });
+      if (days.length > 0) {
+        days.forEach((item) => data.push({ type: 'DAY_ITEM', item, key: `day-${item.day_id}` }));
+      } else {
+        data.push({ key: 'empty-days', type: 'EMPTY', text: t('noDaysAvailable') });
+      }
+    }
+
+
+    // Save Button
+    data.push({ key: 'save-button', type: 'SAVE_BUTTON' });
+
+    return data;
+  }, [workouts, selectedWorkout, days, selectedDay,selectedDate, theme.text, t]);
 
   useFocusEffect(
     useCallback(() => {
@@ -204,135 +235,114 @@ export default function LogWorkout() {
       : `${day}-${month}-${year}`;
   };
   
-  return (
-    <ScrollView 
-      style={[styles.container, { backgroundColor: theme.background }]}
-      contentContainerStyle={{ paddingBottom: 60 }}
-    >
-
-            {/* Back Button */}
-            <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Ionicons name="arrow-back" size={24} color={theme.text} />
-      </TouchableOpacity>
-
-
-      {/* Date Picker */}
-      <Text style={[styles.Title, { color: theme.text }]}>{t('selectDate')}</Text>
-      <TouchableOpacity style={[styles.input, { backgroundColor: theme.card, borderColor: theme.border }]} onPress={() => setShowDatePicker(true)}>
-        <Text style={[styles.inputText, { color: theme.text }]}>
-          {selectedDate ? formatDate(normalizeDate(selectedDate)) : t('selectADate')}
-        </Text>
-      </TouchableOpacity>
-      {showDatePicker && (
-        <DateTimePicker
-          value={selectedDate || new Date()}
-          mode="date"
-          display="default"
-          onChange={(event, date) => {
-            setShowDatePicker(false);
-            if (date) {
-              setSelectedDate(date);
-            }
-          }}
-        />
-      )}
-
-      {/* Workouts List */}
-      <Text style={[styles.sectionTitle, { color: theme.text }]}>{t('selectWorkout')}</Text>
-      <FlatList
-        data={workouts}
-        keyExtractor={(item) => item.workout_id.toString()}
-        renderItem={({ item }) => (
+  const renderItem = ({ item }: { item: any }) => {
+    switch (item.type) {
+      case 'TITLE':
+        return <Text style={[styles.Title, { color: theme.text, marginTop: 50 }]}>{item.title}</Text>;
+      case 'DATE_PICKER':
+        return (
+          <TouchableOpacity style={[styles.input, { backgroundColor: theme.card, borderColor: theme.border }]} onPress={() => setShowDatePicker(true)}>
+            <Text style={[styles.inputText, { color: theme.text }]}>
+              {selectedDate ? formatDate(normalizeDate(selectedDate)) : t('selectADate')}
+            </Text>
+          </TouchableOpacity>
+        );
+      case 'SECTION_TITLE':
+        return <Text style={[styles.sectionTitle, { color: theme.text }]}>{item.title}</Text>;
+      case 'WORKOUT_ITEM':
+        return (
           <TouchableOpacity
             style={[
               styles.listItem,
               { backgroundColor: theme.card, borderColor: theme.border },
-              selectedWorkout === item.workout_id && { backgroundColor: theme.buttonBackground },
+              selectedWorkout === item.item.workout_id && { backgroundColor: theme.buttonBackground },
             ]}
             onPress={() => {
-              setSelectedWorkout(item.workout_id);
+              setSelectedWorkout(item.item.workout_id);
               setDays([]);
               setSelectedDay(null);
-              fetchDays(item.workout_id);
+              fetchDays(item.item.workout_id);
             }}
           >
             <Text
               style={[
                 styles.listItemText,
                 { color: theme.text },
-                selectedWorkout === item.workout_id && { color: theme.buttonText },
+                selectedWorkout === item.item.workout_id && { color: theme.buttonText },
               ]}
             >
-              {item.workout_name}
+              {item.item.workout_name}
             </Text>
           </TouchableOpacity>
-        )}
-        ListEmptyComponent={<Text style={[styles.emptyText, { color: theme.text }]}>{t('emptyWorkoutLog')}</Text>}
-        nestedScrollEnabled={true}
-        style={{ maxHeight: 200 }}
-      />
+        );
+      case 'DAY_ITEM':
+        return (
+          <TouchableOpacity
+            style={[
+              styles.listItem,
+              { backgroundColor: theme.card, borderColor: theme.border },
+              selectedDay === item.item.day_id && { backgroundColor: theme.buttonBackground },
+            ]}
+            onPress={() => setSelectedDay(item.item.day_id)}
+          >
+            <Text
+              style={[
+                styles.listItemText,
+                { color: theme.text },
+                selectedDay === item.item.day_id && { color: theme.buttonText },
+              ]}
+            >
+              {item.item.day_name}
+            </Text>
+          </TouchableOpacity>
+        );
 
-      {/* Days List */}
-      {selectedWorkout && (
-        <>
-          <Text style={[styles.sectionTitle, { color: theme.text }]}>{t('selectDay')}</Text>
-          <FlatList
-            data={days}
-            keyExtractor={(item) => item.day_id.toString()}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                style={[
-                  styles.listItem,
-                  { backgroundColor: theme.card, borderColor: theme.border },
-                  selectedDay === item.day_id && { backgroundColor: theme.buttonBackground },
-                ]}
-                onPress={() => setSelectedDay(item.day_id)}
-              >
-                <Text
-                  style={[
-                    styles.listItemText,
-                    { color: theme.text },
-                    selectedDay === item.day_id && { color: theme.buttonText },
-                  ]}
-                >
-                  {item.day_name}
-                </Text>
-              </TouchableOpacity>
-            )}
-            ListEmptyComponent={<Text style={[styles.emptyText, { color: theme.text }]}>{t('noDaysAvailable')}</Text>}
-            nestedScrollEnabled={true}
-            style={{ maxHeight: 200 }}
-          />
-        </>
-      )}
+      case 'EMPTY':
+        return <Text style={[styles.emptyText, { color: theme.text }]}>{item.text}</Text>;
+      case 'SAVE_BUTTON':
+        return (
+          <TouchableOpacity
+            style={[styles.saveButton, { backgroundColor: theme.buttonBackground }]}
+            onPress={logWorkout}
+          >
+            <Text style={[styles.saveButtonText, { color: theme.buttonText }]}>{t('scheduleWorkoutLog')}</Text>
+          </TouchableOpacity>
+        );
+      default:
+        return null;
+    }
+  };
 
-      {/* Save Button */}
-      <TouchableOpacity
-        style={[styles.saveButton, { backgroundColor: theme.buttonBackground }]}
-        onPress={logWorkout}
-      >
-        <Text style={[styles.saveButtonText, { color: theme.buttonText }]}>{t('scheduleWorkoutLog')}</Text>
+  return (
+    <View style={{ flex: 1, backgroundColor: theme.background }}>
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+        <Ionicons name="arrow-back" size={24} color={theme.text} />
       </TouchableOpacity>
-
-
-    </ScrollView>
-
-    
+      
+      <FlatList
+        data={listData}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.key}
+        contentContainerStyle={styles.container}
+        showsVerticalScrollIndicator={false}
+      />
+      
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 20,
+    paddingBottom: 40,
   },
   backButton: {
     position: 'absolute',
-    top:10,
-    left: 10,
+    top: 50,
+    left: 20,
     zIndex: 10,
     padding: 8,
+    // No background color to make it unobtrusive
   },
   input: {
     borderWidth: 1,
