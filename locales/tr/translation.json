@@ -159,7 +159,7 @@
     "scheduleWorkout": "Bir Antrenman Planla",
     "myCalendar": "Takvimim",
     "noExerciseLogged": " Bu gün için egzersiz bulunamadı.",
-
+    "noWorkoutsScheduledForDate": "Bu tarihte planlanmış bir antrenman bulunamadı.",
 
     "_comment_LogWorkouts": "These are Log-Workouts-related strings.",
   

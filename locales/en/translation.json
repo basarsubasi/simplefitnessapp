@@ -163,6 +163,7 @@
     "myCalendar": "My Calendar",
     "noExerciseLogged":" No exercises logged.",
     "failedToDeleteWorkoutLog": "Failed to delete workout log.",
+    "noWorkoutsScheduledForDate": "No workouts scheduled for this date.",
 
 
     "_comment_LogWorkouts": "These are Log-Workouts-related strings.",

@@ -104,7 +104,7 @@
   "scheduleWorkout": "Planlegg en treningsøkt",
   "myCalendar": "Min kalender",
   "noExerciseLogged": " Ingen øvelser er logget.",
-
+  "noWorkoutsScheduledForDate": "Ingen treningsøkter planlagt for denne datoen.",
   "_comment_LogWorkouts": "Dette er tekststrenger for å loggføre treningsøkter.",
 
   "noDatePicked": "Vennligst velg en dato.",

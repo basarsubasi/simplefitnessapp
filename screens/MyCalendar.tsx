@@ -79,6 +79,7 @@ export default function MyCalendar() {
     untrackedWorkoutDetails,
     setUntrackedWorkoutDetails,
   ] = useState<ExerciseDetails[]>([]);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   
   // Run this check only ONCE when the component mounts
   useEffect(() => {
@@ -87,6 +88,7 @@ export default function MyCalendar() {
     addColumn1();
     addColumn2();
     checkRecurringWorkouts();
+    setUntrackedWorkoutDetails([]);
   }, []); // Empty dependency array ensures this runs only once
 
   const addColumn1 = async () => {
@@ -345,17 +347,12 @@ export default function MyCalendar() {
     setUntrackedChoiceModalVisible(true);
   };
 
-  const handleDayPress = (workoutEntries: WorkoutEntry[]) => {
-    setSelectedDateWorkouts(workoutEntries);
+  const handleDatePress = (date: Date, workoutEntries?: WorkoutEntry[]) => {
+    setSelectedDate(date);
+    setSelectedDateWorkouts(workoutEntries || []);
     setDetailedWorkout(null); // Reset detailed view
     setExercises([]); // Reset exercises
     setModalVisible(true);
-  };
-
-  const handleEmptyDayPress = (date: Date) => {
-    navigation.navigate('LogWorkout', {
-      selectedDate: date.toISOString(),
-    });
   };
 
   const handleLongPress = (workoutEntry: WorkoutEntry) => {
@@ -546,11 +543,7 @@ export default function MyCalendar() {
           key={dateKey}
           style={cellStyle}
           onPress={() => {
-            if (workoutEntries && workoutEntries.length > 0) {
-              handleDayPress(workoutEntries);
-            } else {
-              handleEmptyDayPress(cellDate);
-            }
+            handleDatePress(cellDate, workoutEntries);
           }}
         >
           <Text style={textStyle}>{day}</Text>
@@ -840,15 +833,27 @@ export default function MyCalendar() {
                 </ScrollView>
               </>
             ) : (
-               <>
+              <>
                 <Text style={[styles.modalTitle, { color: theme.text }]}>
-                  {selectedDateWorkouts.length > 0
-                    ? formatDate(selectedDateWorkouts[0].workout.workout_date)
+                  {selectedDate
+                    ? formatDate(selectedDate.getTime() / 1000)
                     : ''}
                 </Text>
                 {(() => {
+                  if (selectedDateWorkouts.length === 0) {
+                    return (
+                      <Text
+                        style={[
+                          styles.emptyText,
+                          { color: theme.text, padding: 20 },
+                        ]}
+                      >
+                        {t('noWorkoutsScheduledForDate')}
+                      </Text>
+                    );
+                  }
+
                   const isUpcoming =
-                    selectedDateWorkouts.length > 0 &&
                     new Date(
                       selectedDateWorkouts[0].workout.workout_date * 1000
                     ).setHours(0, 0, 0, 0) > new Date().setHours(0, 0, 0, 0);
@@ -953,6 +958,38 @@ export default function MyCalendar() {
                     </>
                   );
                 })()}
+                <TouchableOpacity
+                  style={[
+                    styles.actionButton,
+                    {
+                      backgroundColor: theme.buttonBackground,
+                      marginTop: 20,
+                      width: '100%',
+                    },
+                  ]}
+                  onPress={() => {
+                    if (!selectedDate) return;
+                    navigation.navigate('LogWorkout', {
+                      selectedDate: selectedDate.toISOString(),
+                    });
+                    setModalVisible(false);
+                  }}
+                >
+                  <Ionicons
+                    name="add"
+                    size={22}
+                    color={theme.buttonText}
+                    style={styles.icon}
+                  />
+                  <Text
+                    style={[
+                      styles.actionButtonText,
+                      { color: theme.buttonText },
+                    ]}
+                  >
+                    {t('scheduleWorkout')}
+                  </Text>
+                </TouchableOpacity>
               </>
             )}
           </View>

@@ -104,7 +104,7 @@
   "scheduleWorkout": "Načrtuj vadbo",
   "myCalendar": "Moj koledar",
   "noExerciseLogged": " Ni zabeleženih vaj.",
-
+  "noWorkoutsScheduledForDate": "Za to datum ni načrtovanih vadb.",
   "_comment_LogWorkouts": "To so nizi, povezani z beleženjem vadb.",
 
   "noDatePicked": "Prosimo, izberite datum.",

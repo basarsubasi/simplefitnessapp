@@ -104,7 +104,7 @@
   "scheduleWorkout": "Plan een Training",
   "myCalendar": "Mijn Kalender",
   "noExerciseLogged": " Geen oefeningen gelogd.",
-
+  "noWorkoutsScheduledForDate": "Geen trainingen gepland voor deze datum.",
   "_comment_LogWorkouts": "Dit zijn strings voor het loggen van trainingen.",
 
   "noDatePicked": "Selecteer alstublieft een datum.",
