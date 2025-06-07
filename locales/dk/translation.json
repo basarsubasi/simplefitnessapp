@@ -106,7 +106,7 @@
     "myCalendar": "Min kalender",
     "noExerciseLogged": "Ingen øvelser logget.",
     "failedToDeleteWorkoutLog": "Kunne ikke slette træningslog.",
-  
+    "noWorkoutsScheduledForDate": "Ingen træninger planlagt for denne dato.",
     "_comment_LogWorkouts": "These are Log-Workouts-related strings.",
   
     "noDatePicked": "Vælg en dato.",

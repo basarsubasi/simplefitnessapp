@@ -104,7 +104,7 @@
   "scheduleWorkout": "Naplánovat trénink",
   "myCalendar": "Můj kalendář",
   "noExerciseLogged": " Nebyly zaznamenány žádné cviky.",
-
+  "noWorkoutsScheduledForDate": "Pro tento den nejsou naplánovány žádné tréninky.",
   "_comment_LogWorkouts": "Toto jsou texty pro záznam tréninků.",
 
   "noDatePicked": "Vyberte prosím datum.",

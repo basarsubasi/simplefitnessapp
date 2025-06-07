@@ -104,7 +104,7 @@
   "scheduleWorkout": "Aikatauluta treeni",
   "myCalendar": "Kalenterini",
   "noExerciseLogged": " Ei kirjattuja harjoituksia.",
-
+  "noWorkoutsScheduledForDate": "Tälle päivälle ei ole aikataulutettuja treenejä.",
   "_comment_LogWorkouts": "Nämä ovat treenilokin merkkijonot.",
 
   "noDatePicked": "Valitse päivämäärä.",

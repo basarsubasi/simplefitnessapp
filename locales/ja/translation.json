@@ -106,7 +106,7 @@
   "myCalendar": "マイカレンダー",
   "noExerciseLogged": "エクササイズが記録されていません。",
   "failedToDeleteWorkoutLog": "ワークアウトログの削除に失敗しました。",
-
+  "noWorkoutsScheduledForDate": "この日にはワークアウトがスケジュールされていません。",
   "_comment_LogWorkouts": "These are Log-Workouts-related strings.",
 
   "noDatePicked": "日付を選択してください。",
