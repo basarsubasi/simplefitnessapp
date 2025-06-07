@@ -760,9 +760,12 @@ export default function GraphsWorkoutDetails() {
             setExerciseDropdownVisible(false);
           }}
         >
-          <Text style={[styles.dropdownButtonText, { color: theme.text }]}>
-            {selectedWorkout || t('selectWorkout')}
-          </Text>
+          <View style={styles.dropdownHeaderTextContainer}>
+            <Ionicons name="barbell-outline" size={24} color={theme.text} style={{ marginRight: 10, }}/>
+            <Text style={[styles.dropdownHeaderText, { color: theme.text }]}>
+              {allWorkouts.find(w => w.value === selectedWorkout)?.label || t('selectWorkout')}
+            </Text>
+          </View>
           <Ionicons
             name={workoutDropdownVisible ? 'chevron-up' : 'chevron-down'}
             size={18}
@@ -1462,9 +1465,12 @@ export default function GraphsWorkoutDetails() {
             setExerciseDropdownVisible(false); // Close other dropdown
           }}
         >
-          <Text style={[styles.dropdownButtonText, { color: theme.text }]}>
-            {selectedDayObj ? selectedDayObj.label : t('selectDay')}
-          </Text>
+          <View style={styles.dropdownHeaderTextContainer}>
+            <Ionicons name="calendar-outline" size={24} color={theme.text} style={{ marginRight: 10, }}/>
+            <Text style={[styles.dropdownHeaderText, { color: theme.text }]}>
+              {days.find(d => d.value === selectedDay)?.label || t('selectDay')}
+            </Text>
+          </View>
           <Ionicons
             name={dayDropdownVisible ? 'chevron-up' : 'chevron-down'}
             size={18}
@@ -1538,16 +1544,15 @@ export default function GraphsWorkoutDetails() {
           }}
           disabled={exercises.length === 0}
         >
-          <Text style={[
-            styles.dropdownButtonText, 
-            { color: exercises.length > 0 ? theme.text : theme.inactivetint }
-          ]}>
-            {selectedExerciseObj 
-              ? selectedExerciseObj.label 
-              : exercises.length > 0 
-                ? t('Select an exercise') 
-                : t('No exercises available')}
-          </Text>
+          <View style={styles.dropdownHeaderTextContainer}>
+            <Ionicons name="bicycle-outline" size={24} color={theme.text} style={{ marginRight: 10, }}/>
+            <Text style={[
+              styles.dropdownHeaderText,
+              { color: exercises.length > 0 ? theme.text : theme.inactivetint }
+            ]}>
+              {exercises.find(e => e.value === selectedExercise)?.label || (exercises.length > 0 ? t('Select an exercise') : t('No exercises available'))}
+            </Text>
+          </View>
           {exercises.length > 0 && (
             <Ionicons
               name={exerciseDropdownVisible ? 'chevron-up' : 'chevron-down'}
@@ -2245,5 +2250,26 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     flex: 1,
     marginLeft: 6,
+  },
+  dropdownContainer: {
+    marginBottom: 15,
+    zIndex: 1,
+  },
+  dropdownHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 15,
+  },
+  dropdownHeaderTextContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  dropdownHeaderText: {
+    fontSize: 16,
+    fontWeight: '500',
   },
 });
