@@ -533,7 +533,7 @@ export default function MyCalendar() {
         isAnyLogged = workoutEntries.some((entry) => entry.isLogged);
         if (isAnyLogged) {
           cellStyle.push({ backgroundColor: theme.buttonBackground });
-          textStyle.push({ color: theme.buttonText });
+          textStyle.splice(1, 1, { color: theme.buttonText });
         } else if (isPast || isToday) {
           cellStyle.push(styles.untrackedDay, { borderColor: theme.text });
         } else if (isFuture) {
