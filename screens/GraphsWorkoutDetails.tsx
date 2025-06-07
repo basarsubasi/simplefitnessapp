@@ -845,7 +845,7 @@ export default function GraphsWorkoutDetails() {
             color={calculationType === 'Sets' ? theme.buttonText : theme.text} 
           />
           <Text style={[
-            styles.toggleTexticon, 
+            styles.toggleText, 
             { color: calculationType === 'Sets' ? theme.buttonText : theme.text }
           ]}>
             {t('setGraph')}
@@ -1627,7 +1627,7 @@ export default function GraphsWorkoutDetails() {
             fontSize={16}
             numberOfLines={2}
             mode={ResizeTextMode.max_lines}
-            style={[styles.toggleText, { color: graphMode === 'Exercise' ? theme.buttonText : theme.text }]}
+            style={[styles.toggleTexticon, { color: graphMode === 'Exercise' ? theme.buttonText : theme.text }]}
           >
             {t('Exercise Stats')}
           </AutoSizeText>
@@ -1909,6 +1909,14 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     marginVertical: 2,
   },
+  toggleButtonActive: {
+    elevation: 2,
+  },
+  toggleText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginLeft: 8,
+  },
   timeToggleButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1920,10 +1928,11 @@ const styles = StyleSheet.create({
     marginVertical: 2,
   },
 
-  toggleButtonActive: {
+  
+  toggleButtonActiveFix: {
     elevation: 2,
   },
-  toggleText: {
+  toggleTextFix: {
     fontSize: 16,
     fontWeight: 'bold',
     flex: 1,
