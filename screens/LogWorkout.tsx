@@ -11,13 +11,15 @@ import {
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useSQLiteContext } from 'expo-sqlite';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useSettings } from '../context/SettingsContext';
 import { useTheme } from '../context/ThemeContext';
 import { useTranslation } from 'react-i18next';
+import { WorkoutLogStackParamList } from '../App';
 
 export default function LogWorkout() {
+  const route = useRoute<RouteProp<WorkoutLogStackParamList, 'LogWorkout'>>();
   const db = useSQLiteContext();
   const navigation = useNavigation();
   const { theme } = useTheme(); 
@@ -25,7 +27,9 @@ export default function LogWorkout() {
   const { dateFormat } = useSettings();
   
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(() => {
+    return route.params?.selectedDate ? new Date(route.params.selectedDate) : null;
+  });
   const [workouts, setWorkouts] = useState<{ workout_id: number; workout_name: string }[]>([]);
   const [selectedWorkout, setSelectedWorkout] = useState<number | null>(null);
   const [days, setDays] = useState<{ day_id: number; day_name: string }[]>([]);

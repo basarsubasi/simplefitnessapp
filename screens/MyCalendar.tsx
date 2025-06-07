@@ -350,6 +350,12 @@ export default function MyCalendar() {
     setModalVisible(true);
   };
 
+  const handleEmptyDayPress = (date: Date) => {
+    navigation.navigate('LogWorkout', {
+      selectedDate: date.toISOString(),
+    });
+  };
+
   const handleLongPress = (workoutEntry: WorkoutEntry) => {
     Alert.alert(
       t('deleteDayTitle'),
@@ -515,8 +521,13 @@ export default function MyCalendar() {
         <TouchableOpacity
           key={dateKey}
           style={cellStyle}
-          onPress={() => workoutEntries && handleDayPress(workoutEntries)}
-          disabled={!workoutEntries || workoutEntries.length === 0}
+          onPress={() => {
+            if (workoutEntries && workoutEntries.length > 0) {
+              handleDayPress(workoutEntries);
+            } else {
+              handleEmptyDayPress(cellDate);
+            }
+          }}
         >
           <Text style={textStyle}>{day}</Text>
           {isToday && (
@@ -554,7 +565,7 @@ export default function MyCalendar() {
             styles.actionButton,
             { backgroundColor: theme.buttonBackground },
           ]}
-          onPress={() => navigation.navigate('LogWorkout')}
+          onPress={() => navigation.navigate('LogWorkout', { selectedDate: undefined })}
         >
           <Ionicons
             name="calendar"
