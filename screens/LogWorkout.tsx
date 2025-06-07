@@ -28,7 +28,7 @@ export default function LogWorkout() {
   const { theme } = useTheme(); 
   const { t } = useTranslation(); // Initialize translations
   const { notificationPermissionGranted, scheduleNotification } = useNotifications();
-  const { dateFormat } = useSettings();
+  const { dateFormat, timeFormat } = useSettings();
   
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(() => {
@@ -156,8 +156,15 @@ export default function LogWorkout() {
     return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime() / 1000; // Midnight timestamp
   };
 
-  // Format time for display (24h format)
+  // Format time for display based on user settings
   const formatTime = (date: Date): string => {
+    if (timeFormat === 'AM/PM') {
+      return date.toLocaleString('en-US', {
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: true,
+      });
+    }
     return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
   };
 
@@ -422,7 +429,7 @@ export default function LogWorkout() {
         <DateTimePicker
           value={notificationTime}
           mode="time"
-          is24Hour={true}
+          is24Hour={timeFormat === '24h'}
           display="default"
           onChange={(event, date) => {
             setShowTimePicker(false);

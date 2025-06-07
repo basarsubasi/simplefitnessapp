@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { WorkoutLogStackParamList } from '../App';
 import { useSQLiteContext } from 'expo-sqlite';
 import { useRecurringWorkouts } from '../utils/recurringWorkoutUtils';
+import { useSettings } from '../context/SettingsContext';
 
 type NavigationProp = StackNavigationProp<
   WorkoutLogStackParamList,
@@ -48,6 +49,7 @@ export default function RecurringWorkoutDetails() {
   const { t } = useTranslation();
   const db = useSQLiteContext();
   const { deleteRecurringWorkout } = useRecurringWorkouts();
+  const { timeFormat } = useSettings();
 
   const [workout, setWorkout] = useState<RecurringWorkout | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -112,6 +114,21 @@ export default function RecurringWorkoutDetails() {
       return t('weekly');
     }
     return '';
+  };
+
+  // Format notification time from "HH:mm" string based on user setting
+  const formatNotificationTime = (timeString: string | null): string => {
+    if (!timeString) return '';
+    
+    const [hours, minutes] = timeString.split(':');
+    const date = new Date();
+    date.setHours(parseInt(hours, 10), parseInt(minutes, 10));
+    
+    if (timeFormat === 'AM/PM') {
+      return date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+    }
+    
+    return timeString;
   };
 
   // Format weekdays for display
@@ -216,7 +233,7 @@ export default function RecurringWorkoutDetails() {
         <Text style={[styles.infoLabel, { color: theme.text }]}>{t('notifications')}:</Text>
         <Text style={[styles.infoValue, { color: theme.text }]}>
           {workout.notification_enabled === 1 
-            ? `${t('Notifications enabled')} (${workout.notification_time})` 
+            ? `${t('Notifications enabled')} (${formatNotificationTime(workout.notification_time)})` 
             : t('Notificationsdisabled')}
         </Text>
       </View>
