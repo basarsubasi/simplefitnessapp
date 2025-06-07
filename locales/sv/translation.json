@@ -94,8 +94,8 @@
 
   "_comment_myCalendar": "Dessa är strängar relaterade till Min Kalender.",
 
-  "scheduleTip": "Tips: Du måste schemalägga dina träningspass här för att kunna följa dem i vyn Min Utveckling!",
-  "noUpcomingWorkouts": "Inga kommande träningspass schemalagda.",
+"scheduleTip": "Tips: Du kan övervaka, schemalägga, spåra och avboka dina träningspass i kalendern. Snyggt och prydligt, allt på ett ställe!", 
+ "noUpcomingWorkouts": "Inga kommande träningspass schemalagda.",
   "upcomingWorkouts": "Kommande Träningspass",
   "noUntrackedWorkouts": "Inga ospårade träningspass hittades.",
   "untrackedWorkouts": "Ospårade Träningspass",
@@ -355,7 +355,8 @@
       "View Logs": "Visa loggar",
       "Logs": "Loggar",
       "Graph Type": "Graftyp",
-      "Metric": "Mått"
+      "Metric": "Mått",
+      "Exercise Stats": "Övningstatistik"
     
         
 

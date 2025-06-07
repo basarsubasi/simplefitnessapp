@@ -94,7 +94,7 @@
 
   "_comment_myCalendar": "Toto jsou texty pro Můj kalendář.",
 
-  "scheduleTip": "Tip: Musíte si zde naplánovat tréninky, abyste je mohli sledovat na obrazovce Můj pokrok!",
+"scheduleTip": "Tip: V kalendáři můžete sledovat, plánovat, zaznamenávat a rušit své tréninky. Přehledně, vše na jednom místě!",
   "noUpcomingWorkouts": "Žádné nadcházející tréninky nejsou naplánovány.",
   "upcomingWorkouts": "Nadcházející tréninky",
   "noUntrackedWorkouts": "Nebyly nalezeny žádné nenalogované tréninky.",
@@ -345,7 +345,8 @@
   "View Logs": "Zobrazit záznamy",
   "Logs": "Záznamy",
   "Graph Type": "Typ grafu",
-  "Metric": "Metrika"
+  "Metric": "Metrika",
+  "Exercise Stats": "Statistiky cviků"
     
     
     

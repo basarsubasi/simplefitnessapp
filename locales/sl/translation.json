@@ -94,7 +94,7 @@
 
   "_comment_myCalendar": "To so nizi, povezani z Mojim koledarjem.",
 
-  "scheduleTip": "Namig: Vadbe morate načrtovati tukaj, da jih boste lahko spremljali na zaslonu Moj napredek!",
+"scheduleTip": "Nasvet: V koledarju lahko spremljate, načrtujete, sledite in prekličete svoje vadbe. Urejeno, vse na enem mestu!",
   "noUpcomingWorkouts": "Ni načrtovanih prihajajočih vadb.",
   "upcomingWorkouts": "Prihajajoče vadbe",
   "noUntrackedWorkouts": "Ni najdenih nesledenih vadb.",
@@ -348,7 +348,8 @@
       "View Logs": "Ogled dnevnikov",
       "Logs": "Dnevniki",
       "Graph Type": "Vrsta grafa",
-      "Metric": "Metrika"
+      "Metric": "Metrika",
+      "Exercise Stats": "Statistike vaj"
         
 
     

@@ -95,7 +95,7 @@
   
     "_comment_myCalendar": "These are my-calendar-related strings.",
   
-    "scheduleTip": "Sfat: Trebuie să programezi antrenamentele aici ca să le urmărești în Progresul Meu!",
+"scheduleTip": "Sfat: Puteți monitoriza, programa, urmări și anula antrenamentele în calendar. Ordonat, totul într-un singur loc!",
     "noUpcomingWorkouts": "Nu sunt antrenamente viitoare programate.",
     "upcomingWorkouts": "Antrenamente Viitoare",
     "noUntrackedWorkouts": "Nu au fost găsite antrenamente neînregistrate.",
@@ -350,6 +350,7 @@
       "View Logs": "Vezi jurnalele",
       "Logs": "Jurnale",
       "Graph Type": "Tip grafic",
-      "Metric": "Metrică"
+      "Metric": "Metrică",
+      "Exercise Stats": "Statistici exerciții"
   }
   
