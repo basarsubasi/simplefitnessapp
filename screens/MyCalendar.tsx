@@ -851,21 +851,23 @@ export default function MyCalendar() {
                   return (
                     <>
                       <View style={styles.modalLegendContainer}>
-                        <View style={styles.modalLegendItem}>
-                          <Ionicons
-                            name="checkmark-circle"
-                            size={20}
-                            color={theme.buttonBackground}
-                          />
-                          <Text
-                            style={[
-                              styles.modalLegendText,
-                              { color: theme.text },
-                            ]}
-                          >
-                            {t('Logged')}
-                          </Text>
-                        </View>
+                        {!isUpcoming && (
+                          <View style={styles.modalLegendItem}>
+                            <Ionicons
+                              name="checkmark-circle"
+                              size={20}
+                              color={theme.buttonBackground}
+                            />
+                            <Text
+                              style={[
+                                styles.modalLegendText,
+                                { color: theme.text },
+                              ]}
+                            >
+                              {t('Logged')}
+                            </Text>
+                          </View>
+                        )}
                         <View style={styles.modalLegendItem}>
                           <Ionicons
                             name="ellipse-outline"
