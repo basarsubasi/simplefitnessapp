@@ -938,7 +938,7 @@ export default function GraphsWorkoutDetails() {
       style: { borderRadius: 16 },
       propsForDots: {
         r: '4',
-        strokeWidth: '2',
+        strokeWidth: '4',
         stroke: calculationType === '1RM' ? `rgba(0, 168, 132, 1)` : `rgba(0, 123, 255, 1)`
       },
       fillShadowGradientFrom: calculationType === '1RM' ? `rgba(0, 168, 132, 0.15)` : `rgba(0, 123, 255, 0.15)`,
@@ -1049,7 +1049,7 @@ export default function GraphsWorkoutDetails() {
       color: (opacity = 1) => `rgba(255, 159, 64, ${opacity})`, 
       labelColor: (opacity = 1) => theme.text, 
       style: { borderRadius: 16 },
-      propsForDots: { r: '4', strokeWidth: '2', stroke: '#ff9f40' },
+      propsForDots: { r: '4', strokeWidth: '4', stroke: '#ff9f40' },
       fillShadowGradientFrom: `rgba(255, 159, 64, 0.15)`,
       fillShadowGradientTo: `rgba(255, 159, 64, 0.02)`,
       fillShadowGradientFromOpacity: 0.5,
