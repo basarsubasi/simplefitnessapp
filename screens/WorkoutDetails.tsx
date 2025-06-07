@@ -652,7 +652,7 @@ export default function WorkoutDetails() {
     }
   />
 
-  <Modal visible={showDayModal} animationType="slide" transparent>
+  <Modal visible={showDayModal} animationType="fade" transparent>
     <View style={[styles.modalContainer, { backgroundColor: 'rgba(0, 0, 0, 0.5)' }]}>
       <View style={[styles.modalContent, { backgroundColor: theme.card }]}>
         <Text style={[styles.modalTitle, { color: theme.text }]}>{t('addDayFromDetails')}</Text>
@@ -673,7 +673,7 @@ export default function WorkoutDetails() {
     </View>
   </Modal>
 
-  <Modal visible={showExerciseModal} animationType="slide" transparent>
+  <Modal visible={showExerciseModal} animationType="fade" transparent>
     <View style={[styles.modalContainer, { backgroundColor: 'rgba(0, 0, 0, 0.5)' }]}>
       <View style={[styles.modalContent, { backgroundColor: theme.card }]}>
         <Text style={[styles.modalTitle, { color: theme.text }]}>{t('addExerciseFromDetails')}</Text>
@@ -724,7 +724,7 @@ export default function WorkoutDetails() {
         </TouchableOpacity>
       </View>
     </View>
-      </Modal>
+  </Modal>
     </View>
   );
 }
@@ -850,7 +850,6 @@ const styles = StyleSheet.create({
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
     modalContent: {
       backgroundColor: '#FFFFFF',

@@ -731,8 +731,8 @@ export default function MyCalendar() {
       {/* Modal for Workout Details */}
       <Modal
         visible={modalVisible}
-        animationType="slide"
         transparent={true}
+        animationType="fade"
         onRequestClose={() => {
           setModalVisible(false);
           setDetailedWorkout(null);
@@ -953,8 +953,8 @@ export default function MyCalendar() {
       {/* Modal for Untracked Workout Choice */}
       <Modal
         visible={untrackedChoiceModalVisible}
-        animationType="slide"
         transparent={true}
+        animationType="fade"
         onRequestClose={closeUntrackedModal}
       >
         <View
