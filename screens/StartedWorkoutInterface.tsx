@@ -945,9 +945,9 @@ export default function StartedWorkoutInterface() {
 
     return (
       <Modal
-        animationType="fade"
-        transparent={true}
         visible={isExerciseListModalVisible}
+        transparent={true}
+        animationType="fade"
         onRequestClose={() => {
           setIsExerciseListModalVisible(false);
         }}
