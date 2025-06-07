@@ -104,7 +104,7 @@
   "scheduleWorkout": "Schemalägg ett Träningspass",
   "myCalendar": "Min Kalender",
   "noExerciseLogged": " Inga övningar inloggade.",
-
+  "noWorkoutsScheduledForDate": "Inga träningspass schemalagda för denna dag.",
   "_comment_LogWorkouts": "Dessa är strängar relaterade till att logga träningspass.",
 
   "noDatePicked": "Välj ett datum.",

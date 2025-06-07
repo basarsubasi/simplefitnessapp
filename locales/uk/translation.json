@@ -104,7 +104,7 @@
   "scheduleWorkout": "Запланувати тренування",
   "myCalendar": "Мій календар",
   "noExerciseLogged": " Немає записаних вправ.",
-
+  "noWorkoutsScheduledForDate": "Немає запланованих тренувань для цієї дати.",
   "_comment_LogWorkouts": "Це рядки, пов’язані з журналом тренувань.",
 
   "noDatePicked": "Будь ласка, виберіть дату.",

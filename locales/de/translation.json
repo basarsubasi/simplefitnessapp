@@ -104,6 +104,7 @@
   "scheduleWorkout": "Training planen",
   "myCalendar": "Mein Kalender",
   "noExerciseLogged": " Keine Übungen protokolliert.",
+  "noWorkoutsScheduledForDate": "Für dieses Datum sind keine Trainings geplant.",
 
   "_comment_LogWorkouts": "Dies sind Texte für das Protokollieren von Trainings.",
 
