@@ -309,6 +309,7 @@ export default function LogWeights() {
 
   {!selectedWorkout ? (
     <KeyboardAwareFlatList
+      scrollEnabled={false}
       data={workouts}
       keyExtractor={(item) => item.workout_log_id.toString()}
       renderItem={({ item }) => (
@@ -331,6 +332,7 @@ export default function LogWeights() {
   ) : (
     <>
       <KeyboardAwareFlatList
+        scrollEnabled={false}
         data={exercises}
         keyExtractor={(item) => item.logged_exercise_id.toString()}
         renderItem={({ item }) => renderExercise(item)}
