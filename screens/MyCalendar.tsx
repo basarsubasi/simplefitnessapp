@@ -556,7 +556,14 @@ export default function MyCalendar() {
           <Text style={textStyle}>{day}</Text>
           {isToday && (
             <View
-              style={[styles.todayIndicator, { backgroundColor: theme.text }]}
+              style={[
+                styles.todayIndicator,
+                {
+                  backgroundColor: isAnyLogged
+                    ? theme.buttonText
+                    : theme.text,
+                },
+              ]}
             />
           )}
           {workoutEntries && workoutEntries.length > 1 && (
