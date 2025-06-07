@@ -500,6 +500,7 @@ export default function MyCalendar() {
         today.getMonth() === cellMonth &&
         today.getDate() === day;
       const isPast = cellDate.setHours(0, 0, 0, 0) < today.setHours(0, 0, 0, 0);
+      const isFuture = cellDate.setHours(0, 0, 0, 0) > today.setHours(0, 0, 0, 0);
 
       const cellStyle: ViewStyle[] = [styles.dayCell];
       const textStyle: any[] = [
@@ -515,9 +516,9 @@ export default function MyCalendar() {
         if (isAnyLogged) {
           cellStyle.push({ backgroundColor: theme.buttonBackground });
           textStyle.push({ color: theme.buttonText });
-        } else if (isPast) {
+        } else if (isPast || isToday) {
           cellStyle.push(styles.untrackedDay, { borderColor: theme.text });
-        } else {
+        } else if (isFuture) {
           cellStyle.push(styles.upcomingDay);
         }
       }
@@ -820,7 +821,7 @@ export default function MyCalendar() {
                     selectedDateWorkouts.length > 0 &&
                     new Date(
                       selectedDateWorkouts[0].workout.workout_date * 1000
-                    ).setHours(0, 0, 0, 0) >= new Date().setHours(0, 0, 0, 0);
+                    ).setHours(0, 0, 0, 0) > new Date().setHours(0, 0, 0, 0);
 
                   return (
                     <>
