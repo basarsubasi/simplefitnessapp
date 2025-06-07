@@ -592,7 +592,7 @@ export default function MyCalendar() {
           onPress={() => navigation.navigate('RecurringWorkoutOptions')}
         >
           <Ionicons
-            name="time"
+            name="infinite"
             size={22}
             color={theme.buttonText}
             style={styles.icon}
