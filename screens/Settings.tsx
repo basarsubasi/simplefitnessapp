@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { FlatList } from 'react-native-gesture-handler';
 import { useSettings } from '../context/SettingsContext';
 import { useTheme } from '../context/ThemeContext';
 import { useTranslation } from 'react-i18next'
@@ -277,11 +276,10 @@ export default function Settings() {
           <Text style={[styles.sectionTitle, { color: theme.text }]}>{t('settingsLanguage')}</Text>
           {renderLanguageButton()}
           {languageDropdownVisible && (
-            <FlatList
-              data={languages}
-              keyExtractor={(item) => item.code}
-              renderItem={({ item }) => (
+            <View style={styles.dropdownList}>
+              {languages.map((item) => (
                 <TouchableOpacity
+                  key={item.code}
                   style={[
                     styles.dropdownItem,
                     currentLanguage === item.code && styles.activeDropdownItem,
@@ -305,9 +303,8 @@ export default function Settings() {
                     )}
                   </Text>
                 </TouchableOpacity>
-              )}
-              style={styles.dropdownList}
-            />
+              ))}
+            </View>
           )}
         </View>
 
@@ -504,7 +501,6 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   dropdownList: {
-    maxHeight: 200,
     marginTop: 10,
     borderWidth: 1,
     borderColor: 'black',
