@@ -723,27 +723,32 @@ export default function MyCalendar() {
           ]}
         >
           <View style={[styles.modalContent, { backgroundColor: theme.card }]}>
-            <TouchableOpacity
-              style={[
-                styles.modalCloseButton,
-                detailedWorkout ? { left: 10 } : { right: 10 },
-              ]}
-              onPress={() => {
-                if (detailedWorkout) {
-                  setDetailedWorkout(null);
-                  setExercises([]);
-                  setCompletionTime(null);
-                } else {
+            <View style={styles.modalHeader}>
+              {detailedWorkout ? (
+                <TouchableOpacity
+                  style={styles.modalLeftButton}
+                  onPress={() => {
+                    setDetailedWorkout(null);
+                    setExercises([]);
+                    setCompletionTime(null);
+                  }}
+                >
+                  <Ionicons name="arrow-back" size={24} color={theme.text} />
+                </TouchableOpacity>
+              ) : (
+                <View style={styles.modalLeftButton} />
+              )}
+
+              <TouchableOpacity
+                style={styles.modalRightButton}
+                onPress={() => {
                   setModalVisible(false);
-                }
-              }}
-            >
-              <Ionicons
-                name={detailedWorkout ? 'arrow-back' : 'close'}
-                size={24}
-                color={theme.text}
-              />
-            </TouchableOpacity>
+                  setDetailedWorkout(null);
+                }}
+              >
+                <Ionicons name="close" size={24} color={theme.text} />
+              </TouchableOpacity>
+            </View>
 
             {detailedWorkout ? (
               <>
@@ -1257,12 +1262,28 @@ const styles = StyleSheet.create({
     maxWidth: 400,
     alignItems: 'center',
   },
-  modalCloseButton: { position: 'absolute', top: 10 },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    position: 'absolute',
+    top: 15,
+    paddingHorizontal: 15,
+    zIndex: 1,
+  },
+  modalLeftButton: {
+    padding: 5,
+  },
+  modalRightButton: {
+    padding: 5,
+  },
   modalTitle: {
     fontSize: 24,
     fontWeight: '900',
     marginBottom: 10,
     textAlign: 'center',
+    marginTop: 30,
   },
   modalSubtitle: {
     fontSize: 18,
@@ -1331,4 +1352,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: '80%',
   },
+  modalCloseButton: { position: 'absolute', top: 10 },
 });
