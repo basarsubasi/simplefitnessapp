@@ -394,6 +394,7 @@ export default function EditWorkout() {
               {/* Exercises as DraggableFlatList */}
               <View style={styles.exercisesContainer}>
                 <DraggableFlatList
+                  scrollEnabled={false}
                   data={day.exercises}
                   renderItem={(props) => renderExerciseItem(props, day)}
                   keyExtractor={(item) => item.exercise_id.toString()}
@@ -451,11 +452,13 @@ const styles = StyleSheet.create({
   subtitle: { 
     fontSize: 24, 
     fontWeight: 'bold', 
-    marginBottom: 20 
+    marginBottom: 30,
+    marginTop: 60,
   },
   dayContainer: { 
     padding: 20, 
-    borderRadius: 15, 
+    borderRadius: 15,
+    marginTop: 30,
     marginBottom: 99, 
     borderWidth: 1, 
     backgroundColor: 'transparent',
