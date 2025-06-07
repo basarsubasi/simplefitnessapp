@@ -14,6 +14,8 @@ export default function Settings() {
   const { 
     dateFormat, 
     setDateFormat, 
+    timeFormat,
+    setTimeFormat,
     weightFormat, 
     setWeightFormat, 
     language, 
@@ -74,6 +76,10 @@ export default function Settings() {
 
   const handleDateFormatChange = (format: string) => {
     setDateFormat(format);
+  };
+
+  const handleTimeFormatChange = (format: '24h' | 'AM/PM') => {
+    setTimeFormat(format);
   };
 
   const handleWeightFormatChange = (format: string) => {
@@ -380,6 +386,14 @@ export default function Settings() {
           <View style={styles.buttonGroup}>
             {renderButton('dd-mm-yyyy', dateFormat, () => handleDateFormatChange('dd-mm-yyyy'))}
             {renderButton('mm-dd-yyyy', dateFormat, () => handleDateFormatChange('mm-dd-yyyy'))}
+          </View>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: theme.text }]}>{t('settingsTimeFormat', 'Time Format')}</Text>
+          <View style={styles.buttonGroup}>
+            {renderButton('24h', timeFormat, () => handleTimeFormatChange('24h'))}
+            {renderButton('AM/PM', timeFormat, () => handleTimeFormatChange('AM/PM'))}
           </View>
         </View>
 
