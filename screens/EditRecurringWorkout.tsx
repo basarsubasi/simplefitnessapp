@@ -44,7 +44,7 @@ export default function EditRecurringWorkout() {
   const { t } = useTranslation();
   const db = useSQLiteContext();
   const { updateRecurringWorkout } = useRecurringWorkouts();
-  const { notificationPermissionGranted } = useSettings();
+  const { notificationPermissionGranted, timeFormat } = useSettings();
 
 
     // Using t() for day names inside the component
@@ -168,6 +168,9 @@ export default function EditRecurringWorkout() {
   
   // Format time for display
   const formatTime = (date: Date): string => {
+    if (timeFormat === 'AM/PM') {
+      return date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+    }
     return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
   };
 
@@ -258,7 +261,7 @@ export default function EditRecurringWorkout() {
 
       // Format notification time as string (HH:MM)
       const timeString = notificationsEnabled 
-        ? formatTime(notificationTime) 
+        ? `${String(notificationTime.getHours()).padStart(2, '0')}:${String(notificationTime.getMinutes()).padStart(2, '0')}` 
         : undefined;
       
       console.log(`DEBUG: Notifications Enabled: ${notificationsEnabled}`);
@@ -581,7 +584,7 @@ export default function EditRecurringWorkout() {
             <DateTimePicker
               value={notificationTime}
               mode="time"
-              is24Hour={true}
+              is24Hour={timeFormat === '24h'}
               display="default"
               onChange={handleTimeChange}
             />
