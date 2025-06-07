@@ -1,0 +1,13 @@
+In 1.7.0, there are big design and functionality changes!
+
+Main Changes:
+
+    Overhauled the My Calendar section, now it has a real calendar which you can use to schedule and log workouts!
+
+    While you can still start your workouts through the new calendar, Start Workout section is gone for improved UX
+
+    Graphs section now resides directly at My Progress tab, you can still access your logs from there as well.
+
+    Now it remembers your notification and vibration preferences before you start your workout!
+
+    Last but not least, some usual bugfixes
