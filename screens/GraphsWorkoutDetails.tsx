@@ -295,9 +295,6 @@ export default function GraphsWorkoutDetails() {
       
       setDays(dayOptions);
       
-      if (dayOptions.length > 0) {
-        setSelectedDay(dayOptions[0].value);
-      }
     } catch (error) {
       console.error('Error fetching days:', error);
     }
@@ -795,6 +792,8 @@ export default function GraphsWorkoutDetails() {
                   ]}
                   onPress={() => {
                     setSelectedWorkout(item.value);
+                    setSelectedDay('');
+                    setExercises([]);
                     setWorkoutDropdownVisible(false);
                   }}
                 >
