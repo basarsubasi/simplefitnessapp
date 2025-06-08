@@ -9,7 +9,8 @@ import {
   StyleSheet,
   FlatList,
   Alert,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { WorkoutStackParamList } from '../App'; // Adjust path to where WorkoutStackParamList is defined
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -188,223 +189,273 @@ export default function CreateWorkout() {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
-       <KeyboardAvoidingView
-                style={{ flex: 1 }}
-                behavior="height" // Android-specific behavior
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
+        <FlatList
+          data={days}
+          keyExtractor={(item, index) => index.toString()}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
+          contentContainerStyle={styles.contentContainer}
+          ListHeaderComponent={
+            <>
+        
+              <View style={styles.header}>
+                <TouchableOpacity
+                  style={styles.backButton}
+                  onPress={() => navigation.goBack()}
+                >
+                  <Ionicons name="arrow-back" size={28} color={theme.text} />
+                </TouchableOpacity>
+                <Text style={[styles.title, { color: theme.text }]}>{t('CreateAWorkout')}</Text>
+              </View>
 
-      <FlatList
-        data={days}
-        keyExtractor={(item, index) => index.toString()}
-        keyboardShouldPersistTaps="handled"
-        keyboardDismissMode="on-drag"
-        ListHeaderComponent={
-          <>
-            {/* Back Button */}
-            <TouchableOpacity
-              style={styles.backButton}
-              onPress={() => navigation.goBack()}
-            >
-              <Ionicons name="arrow-back" size={30} color={theme.text} />
-            </TouchableOpacity>
-
-            {/* Title */}
-            <Text style={[styles.title, { color: theme.text }]}>{t('CreateAWorkout')}</Text>
-
-            {/* Workout Name Input */}
-            <TextInput
-              style={[styles.input, { backgroundColor: theme.card, color: theme.text, borderColor: theme.border }]}
-              placeholder={t('workoutNamePlaceholder')}
-              placeholderTextColor={theme.text}
-              value={workoutName}
-              onChangeText={setWorkoutName}
-            />
-          </>
-        }
-        renderItem={({ item, index }) => (
-          <TouchableOpacity
-            onLongPress={() => deleteDay(index)}
-            activeOpacity={0.8}
-            style={[
-              styles.dayContainer,
-              { backgroundColor: theme.card, borderColor: theme.border },
-            ]}
-          >
-            <TextInput
-              style={[styles.input, { backgroundColor: theme.card, color: theme.text, borderColor: theme.border }]}
-              placeholder={t('dayNamePlaceholder')}
-              placeholderTextColor={theme.text}
-              value={item.dayName}
-              onChangeText={(text) => {
-                const updatedDays = [...days];
-                updatedDays[index].dayName = text;
-                setDays(updatedDays);
-              }}
-            />
-
-            {item.exercises.map((exercise, exerciseIndex) => (
-              <TouchableOpacity
-                key={exerciseIndex}
-                onLongPress={() => deleteExercise(index, exerciseIndex)}
-                activeOpacity={0.8}
+        
+              <TextInput
                 style={[
-                  styles.exerciseContainer,
-                  { backgroundColor: theme.card, borderColor: theme.border },
+                  styles.input,
+                  {
+                    backgroundColor: theme.card,
+                    color: theme.text,
+                  },
                 ]}
-              >
-                <TextInput
-                  style={[styles.exerciseInput, { backgroundColor: theme.card, color: theme.text, borderColor: theme.border }]}
-                  placeholder={t('exerciseNamePlaceholder')}
-                  placeholderTextColor={theme.text}
-                  value={exercise.exerciseName}
-                  onChangeText={(text) => {
-                    const updatedDays = [...days];
-                    updatedDays[index].exercises[exerciseIndex].exerciseName = text;
-                    setDays(updatedDays);
-                  }}
-                />
-                <TextInput
-                  style={[styles.smallInput, { backgroundColor: theme.card, color: theme.text, borderColor: theme.border }]}
-                  placeholder={t('setsPlaceholder')}
-                  placeholderTextColor={theme.text}
-                  keyboardType="numeric"
-                  value={exercise.sets}
-                  onChangeText={(text) => {
-                    const sanitizedText = text.replace(/[^0-9]/g, ''); // Remove non-numeric characters
-                    const updatedDays = [...days];
-                    updatedDays[index].exercises[exerciseIndex].sets = sanitizedText; // Allow empty string
-                    setDays(updatedDays);
-                  }}
-                />
-                <TextInput
-                  style={[styles.smallInput, { backgroundColor: theme.card, color: theme.text, borderColor: theme.border }]}
-                  placeholder={t('repsPlaceholder')}
-                  placeholderTextColor={theme.text}
-                  keyboardType="numeric"
-                  value={exercise.reps}
-                  onChangeText={(text) => {
-                    const sanitizedText = text.replace(/[^0-9]/g, ''); // Remove non-numeric characters
-                    const updatedDays = [...days];
-                    updatedDays[index].exercises[exerciseIndex].reps = sanitizedText; // Allow empty string
-                    setDays(updatedDays);
-                  }}
-                />
-              </TouchableOpacity>
-            ))}
+                placeholder={t('workoutNamePlaceholder')}
+                placeholderTextColor={theme.text}
+                value={workoutName}
+                onChangeText={setWorkoutName}
+              />
+            </>
+          }
+          renderItem={({ item, index }) => (
+            <TouchableOpacity
+              onLongPress={() => deleteDay(index)}
+              activeOpacity={0.9}
+              style={[
+                styles.dayContainer,
+                { backgroundColor: theme.card, borderColor: theme.border },
+              ]}
+            >
+              <TextInput
+                style={[
+                  styles.dayInput,
+                  { color: theme.text },
+                ]}
+                placeholder={t('dayNamePlaceholder')}
+                placeholderTextColor={theme.text}
+                value={item.dayName}
+                onChangeText={(text) => {
+                  const updatedDays = [...days];
+                  updatedDays[index].dayName = text;
+                  setDays(updatedDays);
+                }}
+              />
 
-            <TouchableOpacity
-              style={[styles.addButton, { backgroundColor: theme.buttonBackground }]}
-              onPress={() => addExercise(index)}
-            >
-              <Text style={[styles.addButtonText, { color: theme.buttonText }]}>{t('addExercise')}</Text>
+              {item.exercises.map((exercise, exerciseIndex) => (
+                <TouchableOpacity
+                  key={exerciseIndex}
+                  onLongPress={() => deleteExercise(index, exerciseIndex)}
+                  activeOpacity={0.8}
+                  style={styles.exerciseRow}
+                >
+                  <TextInput
+                    style={[
+                      styles.exerciseInput,
+                      {
+                        backgroundColor: theme.card,
+                        color: theme.text,
+                      },
+                    ]}
+                    placeholder={t('exerciseNamePlaceholder')}
+                    placeholderTextColor={theme.text}
+                    value={exercise.exerciseName}
+                    onChangeText={(text) => {
+                      const updatedDays = [...days];
+      updatedDays[index].exercises[exerciseIndex].exerciseName =
+                        text;
+                      setDays(updatedDays);
+                    }}
+                  />
+                  <TextInput
+                    style={[
+                      styles.smallInput,
+                      {
+                        backgroundColor: theme.card,
+                        color: theme.text,
+                      },
+                    ]}
+                    placeholder={t('setsPlaceholder')}
+                    placeholderTextColor={theme.text}
+                    keyboardType="numeric"
+                    value={exercise.sets}
+                    onChangeText={(text) => {
+                      const sanitizedText = text.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+                      const updatedDays = [...days];
+                      updatedDays[index].exercises[
+                        exerciseIndex
+                      ].sets = sanitizedText; // Allow empty string
+                      setDays(updatedDays);
+                    }}
+                  />
+                  <TextInput
+                    style={[
+                      styles.smallInput,
+                      {
+                        backgroundColor: theme.card,
+                        color: theme.text,
+                      },
+                    ]}
+                    placeholder={t('repsPlaceholder')}
+                    placeholderTextColor={theme.text}
+                    keyboardType="numeric"
+                    value={exercise.reps}
+                    onChangeText={(text) => {
+                      const sanitizedText = text.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+                      const updatedDays = [...days];
+                      updatedDays[index].exercises[
+                        exerciseIndex
+                      ].reps = sanitizedText; // Allow empty string
+                      setDays(updatedDays);
+                    }}
+                  />
+                </TouchableOpacity>
+              ))}
+
+              <TouchableOpacity
+                style={[
+                  styles.addExerciseButton,
+                ]}
+                onPress={() => addExercise(index)}
+              >
+                <Text style={[styles.addButtonText, { color: theme.text }]}>
+                  {t('addExercise')}
+                </Text>
+              </TouchableOpacity>
             </TouchableOpacity>
-          </TouchableOpacity>
-        )}
-        ListFooterComponent={
-          <View>
-            <TouchableOpacity
-              style={[styles.addButton, { backgroundColor: theme.buttonBackground }]}
-              onPress={addDay}
-            >
-              <Text style={[styles.addButtonText, { color: theme.buttonText }]}>{t('addDay')}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.saveButton, { backgroundColor: theme.buttonBackground }]}
-              onPress={handleSaveWorkout}
-            >
-              <Text style={[styles.saveButtonText, { color: theme.buttonText }]}>{t('saveWorkout')}</Text>
-            </TouchableOpacity>
-          </View>
-        }
-      />
+          )}
+          ListFooterComponent={
+            <View>
+              <TouchableOpacity
+                style={[styles.addDayButton]}
+                onPress={addDay}
+              >
+                <Text style={[styles.addButtonText, { color: theme.text }]}>{t('addDay')}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.saveButton,
+                  { backgroundColor: theme.buttonBackground },
+                ]}
+                onPress={handleSaveWorkout}
+              >
+                <Text
+                  style={[styles.saveButtonText, { color: theme.buttonText }]}
+                >
+                  {t('saveWorkout')}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          }
+        />
       </KeyboardAvoidingView>
     </View>
   );
 }
 
-// CreateWorkout.tsx
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  contentContainer: {
     paddingHorizontal: 20,
-    paddingTop: 30,
+    paddingBottom: 60, // Ample space at the bottom
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 24,
+    marginTop: 20,
+  },
+  backButton: {
+    padding: 5, // make it easier to press
   },
   title: {
-    fontSize: 44,
-    fontWeight: '900',
-    textAlign: 'center',
-    marginBottom: 30,
+    fontSize: 34,
+    fontWeight: '800', // A bit bolder for a strong title
+    marginLeft: 16,
   },
   input: {
-    borderWidth: 1,
-    borderRadius: 20,
-    padding: 16,
-    marginBottom: 16,
-    fontSize: 16,
+    borderRadius: 12,
+    padding: 18,
+    marginBottom: 24,
+    fontSize: 22,
+    fontWeight: 'bold',
   },
   dayContainer: {
-    borderRadius: 20,
+    borderRadius: 16,
     padding: 20,
-    marginBottom: 20,
+    marginBottom: 24,
     borderWidth: 1,
+    overflow: 'hidden', // Ensures children with border radius look good
   },
-  exerciseContainer: {
+  dayInput: {
+    fontSize: 20,
+    fontWeight: '700',
+    paddingBottom: 12,
+    marginBottom: 16,
+  },
+  // The exercise row itself will be a touchable opacity
+  exerciseRow: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 12,
-    borderRadius: 15,
-    padding: 12,
-    borderWidth: 1,
   },
   exerciseInput: {
     flex: 2,
     marginRight: 10,
-    borderRadius: 15,
-    padding: 12,
-    borderWidth: 1,
-    fontSize: 14,
+    borderRadius: 10,
+    padding: 14,
+    fontSize: 15,
   },
   smallInput: {
     flex: 1,
     textAlign: 'center',
-    borderRadius: 15,
-    marginRight: 10,
-    padding: 12,
-    borderWidth: 1,
-    fontSize: 14,
+    borderRadius: 10,
+    padding: 14,
+    fontSize: 15,
   },
-  addButton: {
+  addExerciseButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 12,
-    borderRadius: 15,
-    marginTop: 10,
+    paddingVertical: 14,
+    borderRadius: 12,
+    marginTop: 12,
   },
   addButtonText: {
-    fontWeight: '800',
+    // For both Add Exercise and Add Day
+    fontWeight: '700',
     fontSize: 16,
-    marginLeft: 8,
+    marginLeft: 10,
   },
-  saveButton: {
+  addDayButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 16,
-    borderRadius: 20,
-    marginTop: 30,
+    borderRadius: 12,
+    marginTop: 8,
+  },
+  saveButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 20,
+    borderRadius: 12,
+    marginTop: 24,
   },
   saveButtonText: {
-    fontWeight: '800',
+    fontWeight: 'bold',
     fontSize: 18,
-    marginLeft: 8,
-  },
-  backButton: {
-    position: 'absolute',
-    top: 1,
-    left: 1,
-    zIndex: 1,
-    padding: 8,
   },
 });
