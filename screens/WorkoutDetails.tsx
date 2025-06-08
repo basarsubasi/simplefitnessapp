@@ -801,10 +801,9 @@ const styles = StyleSheet.create({
       justifyContent: 'space-between',
       alignItems: 'center',
       backgroundColor: '#F7F7F7',
-      borderRadius: 15,
       padding: 12,
       marginBottom: 8,
-      borderWidth: 1,
+      borderWidth: 0,
       borderColor: 'rgba(0, 0, 0, 0.1)',
       maxWidth: '100%',  // Prevent overflow
     },
