@@ -255,7 +255,6 @@ export default function CreateWorkout() {
               {item.exercises.map((exercise, exerciseIndex) => (
                 <TouchableOpacity
                   key={exerciseIndex}
-                  onLongPress={() => deleteExercise(index, exerciseIndex)}
                   activeOpacity={0.8}
                   style={styles.exerciseRow}
                 >
