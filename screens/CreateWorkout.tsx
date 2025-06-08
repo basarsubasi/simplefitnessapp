@@ -219,6 +219,8 @@ export default function CreateWorkout() {
                   {
                     backgroundColor: theme.card,
                     color: theme.text,
+                    borderWidth: 1,
+                    borderColor: theme.border,
                   },
                 ]}
                 placeholder={t('workoutNamePlaceholder')}
@@ -234,7 +236,7 @@ export default function CreateWorkout() {
               activeOpacity={0.9}
               style={[
                 styles.dayContainer,
-                { backgroundColor: theme.card, borderColor: theme.border },
+                { backgroundColor: theme.card, borderWidth: 1, borderColor: theme.border },
               ]}
             >
               <TextInput
@@ -390,13 +392,28 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     fontSize: 22,
     fontWeight: 'bold',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   dayContainer: {
     borderRadius: 16,
     padding: 20,
     marginBottom: 24,
-    borderWidth: 1,
     overflow: 'hidden', // Ensures children with border radius look good
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   dayInput: {
     fontSize: 20,
