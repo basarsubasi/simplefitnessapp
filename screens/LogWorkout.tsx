@@ -74,8 +74,8 @@ export default function LogWorkout() {
     if (selectedDay) {
       data.push({ key: 'notify-title', type: 'SECTION_TITLE', title: t('notifications') });
       const notifyOptions = [
-        { id: 'yes', label: t('Notifications enabled'), value: true },
-        { id: 'no', label: t('Notificationsdisabled'), value: false },
+        { id: 'yes', label: t('enableNotifications'), value: true },
+        { id: 'no', label: t('notificationsDisableTitle'), value: false },
       ];
       notifyOptions.forEach((item) => data.push({ type: 'NOTIFY_ITEM', item, key: `notify-${item.id}` }));
     }

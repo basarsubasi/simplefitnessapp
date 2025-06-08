@@ -276,7 +276,7 @@
   "importErrorMessage": "データベースのインポートに失敗しました",
   "remindScheduledWorkouts": "スケジュールされたワークアウトを通知",
   "dayInterval": "日間隔：",
-
+  "settingsTimeFormat": "時刻形式",
   "_comment_Graphs": "These are Graphs-related strings.",
 
   "Graphs": "グラフ",
