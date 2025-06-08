@@ -34,7 +34,7 @@
   "settingsTheme": "Tema",
   "settingsSwitchDark": "Alternar para o modo escuro",
   "settingsSwitchLight": "Alternar para o modo claro",
-
+  "settingsTimeFormat": "Formato de hora",
   "_comment_homepage": "Estes são strings relacionados à tela inicial.",
 
   "homeCreateWorkout": "Crie um\ntreino.",

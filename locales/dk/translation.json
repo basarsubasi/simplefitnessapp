@@ -276,7 +276,7 @@
     "importErrorMessage": "Kunne ikke importere database",
     "remindScheduledWorkouts": "Mind mig om planlagte træninger",
     "dayInterval": "Dagle interval:",
-
+    "settingsTimeFormat": "Tidsformat",
     "_comment_Graphs": "Disse er Grafer-relaterede strenge.",
     "Graphs": "Grafer",
     "SelectWorkoutforGraph": "Vælg en træning til grafer",

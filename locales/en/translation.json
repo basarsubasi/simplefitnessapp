@@ -343,6 +343,7 @@
     "importErrorMessage": "Failed to import database",
     "remindScheduledWorkouts": "Notify me about scheduled workouts",
     "dayInterval": "Day Interval:",
+    "settingsTimeFormat": "Time Format",
 
 
     "_comment_Graphs": "These are Graphs-related strings.",

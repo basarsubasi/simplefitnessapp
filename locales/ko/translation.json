@@ -276,7 +276,7 @@
   "importErrorMessage": "데이터베이스 가져오기에 실패했습니다",
   "remindScheduledWorkouts": "예정된 운동 알림",
   "dayInterval": "일 간격:",
-
+  "settingsTimeFormat": "시간 형식",
   "_comment_Graphs": "그래프 관련 문자열입니다.",
   "Graphs": "그래프",
   "SelectWorkoutforGraph": "그래프를 위한 운동 선택",

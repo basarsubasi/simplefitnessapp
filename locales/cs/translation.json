@@ -269,7 +269,7 @@
     "importFailedTitle": "Import selhal",
     "importErrorMessage": "Nepodařilo se importovat databázi",
     "remindScheduledWorkouts": "Připomenout naplánované tréninky",
-
+    "settingsTimeFormat": "Formát času",
   "completeSet": "Dokončit sérii",
   "upcomingSet": "Nadcházející série",
   "set": "Série",
