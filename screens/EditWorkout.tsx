@@ -368,7 +368,7 @@ export default function EditWorkout() {
 
           {/* Workout Name */}
           <TextInput
-            style={[styles.inputWorkoutName, { color: theme.text, backgroundColor: theme.card }]}
+            style={[styles.inputWorkoutName, { color: theme.text, backgroundColor: theme.card, borderWidth: 1, borderColor: theme.border }]}
             value={workoutName}
             onChangeText={setWorkoutName}
             placeholder={t('workoutNamePlaceholder')}
@@ -378,7 +378,7 @@ export default function EditWorkout() {
           {/* Days and Exercises */}
           <Text style={[styles.subtitle, { color: theme.text }]}>{t('daysAndExercises')}</Text>
           {days.map((day) => (
-            <View key={day.day_id} style={[styles.dayContainer, { backgroundColor: theme.card }]}>
+            <View key={day.day_id} style={[styles.dayContainer, { backgroundColor: theme.card, borderWidth: 1, borderColor: theme.border }]}>
               {/* Day Name */}
               <TextInput
                 style={[styles.dayInput, { color: theme.text }]}
@@ -446,6 +446,14 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     fontWeight: 'bold',
     textAlign: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   input: { 
     borderRadius: 15, 
@@ -467,6 +475,14 @@ const styles = StyleSheet.create({
     marginTop: 30,
     marginBottom: 99, 
     backgroundColor: 'transparent',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 4,
   },
   dayInput: { 
     fontSize: 24, 
