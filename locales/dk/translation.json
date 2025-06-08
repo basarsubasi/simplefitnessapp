@@ -168,7 +168,7 @@
     "createRecurringWorkout": "Opret gentagen træning",
     "manageRecurringWorkouts": "Administrer gentagne træninger",
     "recurringWorkoutsExplanation": "Opsæt træninger, der automatisk planlægges på dit kalendersystem med jævne mellemrum.",
-    "everyXDays": "Hver {{count}} dag(e)",
+    "everyXDays": "Hver",
     "everyday": "Hver dag",
     "weekly": "Hver uge",
     "every": "Hver",
