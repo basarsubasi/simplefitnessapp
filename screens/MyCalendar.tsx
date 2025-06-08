@@ -1207,7 +1207,7 @@ const styles = StyleSheet.create({
     bottom: 4,
   },
   untrackedDay: {
-    borderWidth: 0,
+    borderWidth: 1,
   },
   upcomingDay: {
     backgroundColor: 'rgba(128, 128, 128, 0.2)',
