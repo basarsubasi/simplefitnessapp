@@ -172,7 +172,7 @@
     "createRecurringWorkout": "Skapa återkommande pass",
     "manageRecurringWorkouts": "Hantera återkommande pass",
     "recurringWorkoutsExplanation": "Ställ in träningspass som automatiskt schemaläggs i din kalender med jämna intervaller.",
-    "everyXDays": "Var {{count}} dag",
+    "everyXDays": "Var",
     "everyday": "Varje dag",
     "weekly": "Veckovis",
     "every": "Varje",
@@ -277,7 +277,7 @@
 
     "completeSet": "Slutför set",
     "upcomingSet": "Kommande set",
-    "set": "Set",
+    "set": "Set", 
     "settingsTimeFormat": "Tidsformat",
 
 

@@ -168,7 +168,7 @@
   "createRecurringWorkout": "정기 운동 생성",
   "manageRecurringWorkouts": "정기 운동 관리",
   "recurringWorkoutsExplanation": "정기적으로 달력에 자동 스케줄되는 운동을 설정합니다.",
-  "everyXDays": "{{count}}일마다",
+  "everyXDays": "매",
   "everyday": "매일",
   "weekly": "매주",
   "every": "매",

@@ -170,7 +170,7 @@
     "dayInterval": "Interwał dni:",
     "manageRecurringWorkouts": "Zarządzaj regularnymi treningami",
     "recurringWorkoutsExplanation": "Ustaw treningi, które automatycznie pojawią się w kalendarzu w regularnych odstępach.",
-    "everyXDays": "Co {{count}} dni",
+    "everyXDays": "Co",
     "everyday": "Codziennie",
     "weekly": "Co tydzień",
     "every": "Co",

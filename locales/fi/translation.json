@@ -169,7 +169,7 @@
     "createRecurringWorkout": "Luo toistuva harjoitus",
     "manageRecurringWorkouts": "Hallinnoi toistuvia harjoituksia",
     "recurringWorkoutsExplanation": "Aseta harjoituksia, jotka ajoittuvat kalenteriisi säännöllisesti automaattisesti.",
-    "everyXDays": "Joka {{count}}. päivä",
+    "everyXDays": "Joka",
     "everyday": "Joka päivä",
     "weekly": "Viikoittain",
     "every": "Joka",

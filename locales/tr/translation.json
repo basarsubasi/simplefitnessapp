@@ -232,7 +232,7 @@
       "createRecurringWorkout": "Tekrarlayan Antrenman Oluştur",
       "manageRecurringWorkouts": "Tekrarlayan Antrenmanları Yönet",
       "recurringWorkoutsExplanation": "Antrenmanlarınızı düzenli aralıklarla takviminize otomatik olarak ekleyin.",
-      "everyXDays": "Her {{count}} günde bir",
+      "everyXDays": "Her",
       "everyday": "Her gün",
       "weekly": "Haftalık",
       "every": "Her",

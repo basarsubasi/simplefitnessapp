@@ -235,7 +235,7 @@
     "createRecurringWorkout": "Create Recurring Workout",
     "manageRecurringWorkouts": "Manage Recurring Workouts",
     "recurringWorkoutsExplanation": "Set up workouts that automatically schedule themselves on your calendar at regular intervals.",
-    "everyXDays": "Every {{count}} days",
+    "everyXDays": "Every",
     "everyday": "Every day",
     "weekly": "Weekly",
     "every": "Every",

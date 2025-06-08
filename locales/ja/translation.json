@@ -168,7 +168,7 @@
   "createRecurringWorkout": "定期ワークアウトを作成",
   "manageRecurringWorkouts": "定期ワークアウトを管理",
   "recurringWorkoutsExplanation": "定期的にカレンダーに自動スケジュールされるワークアウトを設定します。",
-  "everyXDays": "{{count}}日ごと",
+  "everyXDays": "毎",
   "everyday": "毎日",
   "weekly": "毎週",
   "every": "毎",
@@ -277,7 +277,7 @@
   "remindScheduledWorkouts": "スケジュールされたワークアウトを通知",
   "dayInterval": "日間隔：",
   "settingsTimeFormat": "時刻形式",
-  "_comment_Graphs": "These are Graphs-related strings.",
+  "_comment_Graphs": "These are Graphs-related strings.", 
 
   "Graphs": "グラフ",
   "SelectWorkoutforGraph": "グラフ用ワークアウトを選択",
