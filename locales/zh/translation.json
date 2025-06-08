@@ -35,7 +35,7 @@
   "settingsTheme": "主题",
   "settingsSwitchDark": "切换到深色模式",
   "settingsSwitchLight": "切换到浅色模式",
-
+  "settingsTimeFormat": "时间格式",
   "_comment_homepage": "These are homepage-related strings.",
 
   "homeCreateWorkout": "创建\n锻炼。",

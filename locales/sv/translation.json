@@ -108,7 +108,7 @@
   "_comment_LogWorkouts": "Dessa är strängar relaterade till att logga träningspass.",
 
   "noDatePicked": "Välj ett datum.",
-  "selectAWorkout": "Välj ett träningspass.",
+  "selectAWorkout": "Välj ett träningspass.", 
   "selectADay": "Välj en dag.",
   "duplicateLogTitle": "Duplicerad Logg",
   "duplicateLogMessage": "Det finns redan en logg för detta träningspass på det valda datumet.",
@@ -278,7 +278,7 @@
     "completeSet": "Slutför set",
     "upcomingSet": "Kommande set",
     "set": "Set",
-
+    "settingsTimeFormat": "Tidsformat",
 
 
     

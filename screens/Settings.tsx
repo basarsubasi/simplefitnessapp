@@ -390,7 +390,7 @@ export default function Settings() {
         </View>
 
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.text }]}>{t('settingsTimeFormat', 'Time Format')}</Text>
+          <Text style={[styles.sectionTitle, { color: theme.text }]}>{t('settingsTimeFormat')}</Text>
           <View style={styles.buttonGroup}>
             {renderButton('24h', timeFormat, () => handleTimeFormatChange('24h'))}
             {renderButton('AM/PM', timeFormat, () => handleTimeFormatChange('AM/PM'))}
