@@ -308,10 +308,7 @@ export default function EditWorkout() {
         onLongPress={drag}
         disabled={isActive}
         style={[
-          styles.exerciseContainer,
-          { 
-            borderBottomColor: theme.border,
-          }
+          styles.exerciseContainer
         ]}
       >
         {/* Drag handle */}
@@ -321,7 +318,7 @@ export default function EditWorkout() {
         
         {/* Exercise Name */}
         <TextInput
-          style={[styles.exerciseInput, { color: theme.text, borderBottomColor: theme.border }]}
+          style={[styles.exerciseInput, { color: theme.text }]}
           value={item.exercise_name}
           onChangeText={(text) =>
             handleExerciseChange(day.day_id, index, 'exercise_name', text)
@@ -332,7 +329,7 @@ export default function EditWorkout() {
         
         {/* Sets */}
         <TextInput
-          style={[styles.numberInput, { color: theme.text, borderBottomColor: theme.border }]}
+          style={[styles.numberInput, { color: theme.text }]}
           value={item.sets.toString()}
           onChangeText={(text) =>
             handleExerciseChange(day.day_id, index, 'sets', text)
@@ -344,7 +341,7 @@ export default function EditWorkout() {
         
         {/* Reps */}
         <TextInput
-          style={[styles.numberInput, { color: theme.text, borderBottomColor: theme.border }]}
+          style={[styles.numberInput, { color: theme.text }]}
           value={item.reps.toString()}
           onChangeText={(text) =>
             handleExerciseChange(day.day_id, index, 'reps', text)
@@ -371,7 +368,7 @@ export default function EditWorkout() {
 
           {/* Workout Name */}
           <TextInput
-            style={[styles.input, { color: theme.text, backgroundColor: theme.card }]}
+            style={[styles.inputWorkoutName, { color: theme.text, backgroundColor: theme.card }]}
             value={workoutName}
             onChangeText={setWorkoutName}
             placeholder={t('workoutNamePlaceholder')}
@@ -384,7 +381,7 @@ export default function EditWorkout() {
             <View key={day.day_id} style={[styles.dayContainer, { backgroundColor: theme.card }]}>
               {/* Day Name */}
               <TextInput
-                style={[styles.dayInput, { color: theme.text, borderBottomColor: theme.border }]}
+                style={[styles.dayInput, { color: theme.text }]}
                 value={day.day_name}
                 onChangeText={(text) => handleDayNameChange(day.day_id, text)}
                 placeholder={t('dayNamePlaceholder')}
@@ -440,14 +437,23 @@ const styles = StyleSheet.create({
     textAlign: 'center', 
     marginBottom: 40 
   },
+
+  inputWorkoutName: { 
+    borderRadius: 15, 
+    padding: 14, 
+    fontSize: 30, 
+    marginBottom: 30, 
+    backgroundColor: 'transparent',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
   input: { 
-    borderWidth: 1, 
     borderRadius: 15, 
     padding: 14, 
     fontSize: 18, 
     marginBottom: 30, 
-    borderColor: 'transparent',
     backgroundColor: 'transparent',
+    fontWeight: 'bold',
   },
   subtitle: { 
     fontSize: 24, 
@@ -460,16 +466,13 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     marginTop: 30,
     marginBottom: 99, 
-    borderWidth: 1, 
     backgroundColor: 'transparent',
-    borderColor: 'transparent',
   },
   dayInput: { 
-    fontSize: 20, 
-    borderBottomWidth: 1, 
+    fontSize: 24, 
     marginBottom: 20, 
-    paddingBottom: 8, 
-    borderBottomColor: 'transparent'
+    paddingBottom: 8,
+    fontWeight: 'bold',
   },
   exercisesContainer: {
     flex: 1,
@@ -481,12 +484,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row', 
     alignItems: 'center', 
     marginBottom: 15, 
-    borderBottomWidth: 1,
     padding: 10, 
     borderRadius: 10, 
-    borderWidth: 1, 
     backgroundColor: 'transparent',
-    borderColor: 'transparent'
   },
   dragHandle: {
     marginRight: 30,
@@ -495,20 +495,16 @@ const styles = StyleSheet.create({
   },
   exerciseInput: { 
     flex: 3, 
-    borderBottomWidth: 1, 
     marginHorizontal: 5, 
     paddingVertical: 6, 
     fontSize: 16, 
-    borderBottomColor: 'transparent'
   },
   numberInput: {
     flex: 1,
-    borderBottomWidth: 1,
     marginHorizontal: 5,
     paddingVertical: 6,
     fontSize: 16,
     textAlign: 'center',
-    borderBottomColor: 'transparent'
   },
   saveButton: { 
     paddingVertical: 18, 
