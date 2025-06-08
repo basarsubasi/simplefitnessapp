@@ -170,7 +170,7 @@
     "createRecurringWorkout": "Створити повторюване тренування",
     "manageRecurringWorkouts": "Керувати повторюваними тренуваннями",
     "recurringWorkoutsExplanation": "Налаштуйте тренування, які автоматично додаються у ваш календар через регулярні проміжки часу.",
-    "everyXDays": "Кожні {{count}} днів",
+    "everyXDays": "Кожні",
     "everyday": "Щодня",
     "weekly": "Щотижня",
     "every": "Кожен",

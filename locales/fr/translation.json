@@ -172,7 +172,7 @@
     "createRecurringWorkout": "Créer un entraînement récurrent",
     "manageRecurringWorkouts": "Gérer les entraînements récurrents",
     "recurringWorkoutsExplanation": "Programmez des entraînements qui s’ajoutent automatiquement à votre calendrier à intervalles réguliers.",
-    "everyXDays": "Tous les {{count}} jours",
+    "everyXDays": "Tous les",
     "everyday": "Chaque jour",
     "weekly": "Hebdomadaire",
     "every": "Chaque",
