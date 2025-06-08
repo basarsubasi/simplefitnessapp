@@ -1212,7 +1212,7 @@ const styles = StyleSheet.create({
     bottom: 4,
   },
   untrackedDay: {
-    borderWidth: 2,
+    borderWidth: 0,
   },
   upcomingDay: {
     backgroundColor: 'rgba(128, 128, 128, 0.2)',
@@ -1314,7 +1314,7 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 15,
     marginBottom: 10,
-    borderWidth: 1,
+    borderWidth: 0,
   },
   modalWorkoutName: {
     fontSize: 18,
