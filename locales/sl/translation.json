@@ -168,7 +168,7 @@
     "createRecurringWorkout": "Ustvari ponavljajoči se trening",
     "manageRecurringWorkouts": "Upravljaj ponavljajoče se treninge",
     "recurringWorkoutsExplanation": "Nastavite treninge, ki se samodejno vnesejo v koledar v rednih intervalih.",
-    "everyXDays": "Vsakih {{count}} dni",
+    "everyXDays": "Vsakih",
     "everyday": "Vsak dan",
     "weekly": "Tedensko",
     "every": "Vsak",

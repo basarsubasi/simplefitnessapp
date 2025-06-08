@@ -170,7 +170,7 @@
   "createRecurringWorkout": "创建定期锻炼",
   "manageRecurringWorkouts": "管理定期锻炼",
   "recurringWorkoutsExplanation": "设置定期在日历上自动安排的锻炼。",
-  "everyXDays": "每{{count}}天",
+  "everyXDays": "每",
   "everyday": "每天",
   "weekly": "每周",
   "every": "每",

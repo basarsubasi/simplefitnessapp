@@ -356,9 +356,9 @@ export default function EditRecurringWorkout() {
                   styles.dayInput,
                   { 
                     color: intervalType === 'custom' ? theme.buttonText : theme.text,
-                    borderColor: intervalType === 'custom' ? theme.buttonText : 'rgba(0, 0, 0, 0.1)',
+                    borderColor: intervalType === 'custom' ? theme.buttonText : 'transparent',
                   }
-                ]}
+                ]}  
                 value={customDaysInterval}
                 onChangeText={setCustomDaysInterval}
                 keyboardType="numeric"
@@ -580,10 +580,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 12,
     paddingHorizontal: 16,
-    borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.1)',
-    borderRadius: 8,
+    borderWidth: 0,
     marginBottom: 8,
+    borderRadius: 10,
+
   },
   intervalOptionWithInput: {
     flexDirection: 'row',
@@ -591,9 +591,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 12,
     paddingHorizontal: 16,
-    borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.1)',
-    borderRadius: 8,
+    borderWidth: 0, 
+    borderRadius: 10,
     marginBottom: 8,
   },
   customIntervalRow: {
@@ -606,8 +605,8 @@ const styles = StyleSheet.create({
   dayInput: {
     width: 40,
     height: 30,
-    borderWidth: 1,
-    borderRadius: 4,
+    borderWidth: 0,
+    borderRadius: 10,
     marginHorizontal: 8,
     textAlign: 'center',
     fontSize: 16,
@@ -627,9 +626,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 12,
     paddingHorizontal: 16,
-    borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.1)',
-    borderRadius: 8,
+    borderWidth: 0,
+    borderRadius: 10,
   },
   timeSelectorText: {
     fontSize: 16,
@@ -667,9 +665,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 12,
     paddingHorizontal: 16,
-    borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.1)',
-    borderRadius: 8,
+    borderWidth: 0,
+    borderRadius: 10,
     marginBottom: 8,
   },
   weekdayText: {

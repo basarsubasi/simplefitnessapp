@@ -167,7 +167,7 @@
   "createRecurringWorkout": "Wiederkehrendes Workout erstellen",
   "manageRecurringWorkouts": "Wiederkehrende Workouts verwalten",
   "recurringWorkoutsExplanation": "Lege Workouts fest, die sich in regelmäßigen Abständen automatisch in deinem Kalender eintragen.",
-  "everyXDays": "Alle {{count}} Tage",
+  "everyXDays": "Alle",  
   "everyday": "Jeden Tag",
   "weekly": "Wöchentlich",
   "every": "Jeden",

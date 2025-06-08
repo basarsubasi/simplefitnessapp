@@ -168,7 +168,7 @@
     "createRecurringWorkout": "Creează Antrenament Recurent",
     "manageRecurringWorkouts": "Gestionează Antrenamente Recurente",
     "recurringWorkoutsExplanation": "Configurează antrenamente care se programează automat la intervale regulate.",
-    "everyXDays": "La fiecare {{count}} zile",
+    "everyXDays": "La fiecare",
     "everyday": "În fiecare zi",
     "weekly": "Săptămânal",
     "every": "La fiecare",

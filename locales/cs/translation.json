@@ -169,7 +169,7 @@
     "createRecurringWorkout": "Vytvořit opakovaný trénink",
     "manageRecurringWorkouts": "Spravovat opakované tréninky",
     "recurringWorkoutsExplanation": "Nastavte tréninky, které se automaticky naplánují do vašeho kalendáře v pravidelných intervalech.",
-    "everyXDays": "Každých {{count}} dní",
+    "everyXDays": "Každých",
     "everyday": "Každý den",
     "weekly": "Týdně",
     "every": "Každý",
