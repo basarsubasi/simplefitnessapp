@@ -749,7 +749,7 @@ export default function GraphsWorkoutDetails() {
         <TouchableOpacity
           style={[
             styles.dropdownButton,
-            { backgroundColor: theme.card, borderColor: theme.border },
+            { backgroundColor: theme.card },
           ]}
           onPress={() => {
             setWorkoutDropdownVisible(!workoutDropdownVisible);
@@ -1420,7 +1420,6 @@ export default function GraphsWorkoutDetails() {
                 timeFrame === frame.value && styles.timeFrameButtonActive,
                 { 
                   backgroundColor: timeFrame === frame.value ? theme.buttonBackground : theme.card,
-                  borderColor: theme.border
                 }
               ]}
               onPress={() => setTimeFrame(frame.value)}
@@ -1453,7 +1452,7 @@ export default function GraphsWorkoutDetails() {
           {t('selectDay')}
         </Text>
         <TouchableOpacity
-          style={[styles.dropdownButton, { backgroundColor: theme.card, borderColor: theme.border }]}
+          style={[styles.dropdownButton, { backgroundColor: theme.card }]}
           onPress={() => {
             setDayDropdownVisible(!dayDropdownVisible);
             setExerciseDropdownVisible(false); // Close other dropdown
@@ -1524,7 +1523,7 @@ export default function GraphsWorkoutDetails() {
           {t('Select Exercise')}
         </Text>
         <TouchableOpacity
-          style={[styles.dropdownButton, { backgroundColor: theme.card, borderColor: theme.border }]}
+          style={[styles.dropdownButton, { backgroundColor: theme.card }]}
           onPress={() => {
             if (exercises.length > 0) {
               setExerciseDropdownVisible(!exerciseDropdownVisible);
@@ -1946,10 +1945,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    borderWidth: 1,
     borderRadius: 10,
     paddingVertical: 12,
     paddingHorizontal: 15,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   dropdownButtonText: {
     fontSize: 16,
@@ -2053,13 +2059,20 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   timeFrameButton: {
-    borderWidth: 1,
     borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 15,
     marginVertical: 5,
     minWidth: '22%',
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   timeFrameButtonActive: {
     elevation: 2,

@@ -228,65 +228,59 @@ export default function LogWeights() {
 
   const renderExercise = (exercise: LoggedExercise) => {
     return (
-
-      
-      <View style={[styles.exerciseContainer, { backgroundColor: theme.background, borderColor: theme.border }]}>
-      <Text style={[styles.exerciseTitle, { color: theme.text }]}>{exercise.exercise_name}</Text>
-      <View style={styles.labelsRow}>
-        <Text style={[styles.label, { color: theme.text }]}>{t('repsPlaceholder')}</Text>
-        <Text style={[styles.label, { color: theme.text }]}>{t('Weight')} ({weightFormat})</Text>
-      </View>
-      {exerciseSets[exercise.logged_exercise_id]?.map((setNumber) => {
-        const weightKey = `${exercise.logged_exercise_id}_${setNumber}`;
-        const repsKey = `${exercise.logged_exercise_id}_${setNumber}`;
+      <View style={[styles.exerciseContainer, { backgroundColor: theme.card, borderWidth: 1, borderColor: theme.border }]}>
+        <Text style={[styles.exerciseTitle, { color: theme.text }]}>{exercise.exercise_name}</Text>
+        <View style={styles.labelsRow}>
+          <Text style={[styles.label, { color: theme.text }]}>{t('repsPlaceholder')}</Text>
+          <Text style={[styles.label, { color: theme.text }]}>{t('Weight')} ({weightFormat})</Text>
+        </View>
+        {exerciseSets[exercise.logged_exercise_id]?.map((setNumber) => {
+          const weightKey = `${exercise.logged_exercise_id}_${setNumber}`;
+          const repsKey = `${exercise.logged_exercise_id}_${setNumber}`;
     
-        return (
-
-          
-
-          <TouchableOpacity
-            key={setNumber.toString()}
-            onLongPress={() => deleteSet(exercise.logged_exercise_id.toString(), setNumber)}
-            style={[styles.setContainer, { backgroundColor: theme.background, borderColor: theme.logborder }]}
-          >
-            <Text style={[styles.setText, { color: theme.text }]}>{t('Set')} {setNumber}:</Text>
-            <TextInput
-              style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.logborder }]}
-              placeholder={t('repsPlaceholder')}
-              placeholderTextColor={theme.logborder}
-              keyboardType="numeric"
-              value={reps[repsKey]}
-              onChangeText={(text) => {
-                setReps((prev) => ({
-                  ...prev,
-                  [repsKey]: text,
-                }));
-              }}
-            />
+          return (
+            <TouchableOpacity
+              key={setNumber.toString()}
+              onLongPress={() => deleteSet(exercise.logged_exercise_id.toString(), setNumber)}
+              style={[styles.setContainer, { backgroundColor: 'transparent' }]}
+            >
+              <Text style={[styles.setText, { color: theme.text }]}>{t('Set')} {setNumber}:</Text>
+              <TextInput
+                style={[styles.input, { color: theme.text, backgroundColor: 'transparent' }]}
+                placeholder={t('repsPlaceholder')}
+                placeholderTextColor={theme.logborder}
+                keyboardType="numeric"
+                value={reps[repsKey]}
+                onChangeText={(text) => {
+                  setReps((prev) => ({
+                    ...prev,
+                    [repsKey]: text,
+                  }));
+                }}
+              />
     
-            <TextInput
-              style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.logborder }]}
-              placeholder={weightFormat}
-              placeholderTextColor={theme.logborder}
-              keyboardType="decimal-pad"
-              value={weights[weightKey]}
-              onChangeText={(text) => {
-                setWeights((prev) => ({
-                  ...prev,
-                  [weightKey]: text,
-                }));
-              }}
-            />
+              <TextInput
+                style={[styles.input, { color: theme.text, backgroundColor: 'transparent' }]}
+                placeholder={weightFormat}
+                placeholderTextColor={theme.logborder}
+                keyboardType="decimal-pad"
+                value={weights[weightKey]}
+                onChangeText={(text) => {
+                  setWeights((prev) => ({
+                    ...prev,
+                    [weightKey]: text,
+                  }));
+                }}
+              />
+            </TouchableOpacity>
+          );
+        })}
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <TouchableOpacity onPress={() => addSet(exercise.logged_exercise_id.toString())}>
+            <Ionicons name="add-circle" size={28} color={theme.text} />
           </TouchableOpacity>
-        );
-      })}
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <TouchableOpacity onPress={() => addSet(exercise.logged_exercise_id.toString())}>
-          <Ionicons name="add-circle" size={28} color={theme.text} />
-        </TouchableOpacity>
+        </View>
       </View>
-    </View>
-    
     );
   };
   
@@ -408,6 +402,17 @@ const styles = StyleSheet.create({
   },
   exerciseContainer: {
     marginBottom: 20,
+    borderRadius: 20,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    marginVertical: 50,
   },
   addSetButtonText: {
     color: '#fff',
@@ -417,7 +422,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 20,
-    marginTop: 40,
+    marginTop: 0,
     textAlign: 'center',
   },
   labelsRow: {
@@ -448,8 +453,6 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    borderWidth: 1,
-    borderColor: '#CCCCCC',
     borderRadius: 5,
     padding: 8,
     marginHorizontal: 25,
