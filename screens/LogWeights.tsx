@@ -277,7 +277,7 @@ export default function LogWeights() {
         })}
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <TouchableOpacity onPress={() => addSet(exercise.logged_exercise_id.toString())}>
-            <Ionicons name="add-circle" size={28} color={theme.text} />
+            <Ionicons name="add" size={28} color={theme.text} />
           </TouchableOpacity>
         </View>
       </View>

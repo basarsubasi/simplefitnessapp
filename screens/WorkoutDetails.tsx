@@ -569,7 +569,7 @@ export default function WorkoutDetails() {
                     disabled={isReordering}
                     style={styles.reorderButton}
                   >
-                    <Ionicons name="arrow-up-circle" size={28} color={isReordering ? theme.border : theme.text} />
+                    <Ionicons name="arrow-up" size={24} color={isReordering ? theme.border : theme.text} />
                   </TouchableOpacity>
                 )}
                 {index < days.length - 1 && (
@@ -578,7 +578,7 @@ export default function WorkoutDetails() {
                     disabled={isReordering}
                     style={styles.reorderButton}
                   >
-                    <Ionicons name="arrow-down-circle" size={28} color={isReordering ? theme.border : theme.text} />
+                    <Ionicons name="arrow-down" size={24} color={isReordering ? theme.border : theme.text} />
                   </TouchableOpacity>
                 )}
               </View>
@@ -589,7 +589,7 @@ export default function WorkoutDetails() {
               disabled={isReordering}
             >
               <Ionicons 
-                name="add-circle" 
+                name="add" 
                 size={28} 
                 color={isReordering ? theme.border : theme.text} 
               />
@@ -641,7 +641,7 @@ export default function WorkoutDetails() {
         style={[styles.addDayButton, { backgroundColor: theme.buttonBackground }]}
         onPress={openAddDayModal}
       >
-        <Ionicons name="add-circle" size={28} color={theme.buttonText} />
+        <Ionicons name="add" size={28} color={theme.buttonText} />
         <Text style={[styles.addDayButtonText, { color: theme.buttonText }]}>{t('addDayFromDetails')}</Text>
       </TouchableOpacity>
     }
