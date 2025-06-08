@@ -41,8 +41,12 @@ export default function LogWorkout() {
     data.push({ key: 'title', type: 'TITLE', title: t('selectDate') });
     data.push({ key: 'date-picker', type: 'DATE_PICKER' });
 
-    // If no workouts, display a message.
-    if (workouts.length === 0) {
+    // Workout Selection Section
+    if (workouts.length > 0) {
+      data.push({ key: 'workout-title', type: 'SECTION_TITLE', title: t('selectWorkout') });
+      workouts.forEach((item) => data.push({ type: 'WORKOUT_ITEM', item, key: `workout-${item.workout_id}` }));
+    } else {
+      // If no workouts, display a message.
       data.push({ key: 'empty-workouts', type: 'EMPTY', text: t('emptyWorkoutLog') });
     }
 
@@ -76,7 +80,7 @@ export default function LogWorkout() {
     }, [])
   );
 
-  // Fetch the list of available workouts and auto-select the first one
+  // Fetch the list of available workouts
   const fetchWorkouts = async () => {
     try {
       const result = await db.getAllAsync<{ workout_id: number; workout_name: string }>(
@@ -84,12 +88,7 @@ export default function LogWorkout() {
       );
       setWorkouts(result);
 
-      if (result.length > 0) {
-        const firstWorkoutId = result[0].workout_id;
-        setSelectedWorkout(firstWorkoutId);
-        setSelectedDay(null); // Reset day selection when workout changes.
-        fetchDays(firstWorkoutId);
-      } else {
+      if (result.length === 0) {
         setSelectedWorkout(null);
         setSelectedDay(null);
         setDays([]);
@@ -116,6 +115,13 @@ export default function LogWorkout() {
   const normalizeDate = (date: Date): number => {
     return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime() / 1000; // Midnight timestamp
   };
+
+  const handleWorkoutSelection = (workoutId: number) => {
+    setSelectedWorkout(workoutId);
+    setSelectedDay(null); // Reset day selection when workout changes.
+    fetchDays(workoutId);
+  };
+
 
   // Log the workout and prevent duplication
   const logWorkout = async () => {
@@ -252,6 +258,27 @@ export default function LogWorkout() {
         );
       case 'SECTION_TITLE':
         return <Text style={[styles.sectionTitle, { color: theme.text }]}>{item.title}</Text>;
+      case 'WORKOUT_ITEM':
+        return (
+          <TouchableOpacity
+            style={[
+              styles.listItem,
+              { backgroundColor: theme.card, borderColor: theme.border },
+              selectedWorkout === item.item.workout_id && { backgroundColor: theme.buttonBackground },
+            ]}
+            onPress={() => handleWorkoutSelection(item.item.workout_id)}
+          >
+            <Text
+              style={[
+                styles.listItemText,
+                { color: theme.text },
+                selectedWorkout === item.item.workout_id && { color: theme.buttonText },
+              ]}
+            >
+              {item.item.workout_name}
+            </Text>
+          </TouchableOpacity>
+        );
       case 'DAY_ITEM':
         return (
           <TouchableOpacity
