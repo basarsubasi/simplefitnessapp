@@ -1277,7 +1277,7 @@ export default function GraphsWorkoutDetails() {
         if (point) {
           return point.y; // This is the (potentially offset) value for plotting
         }
-        return null; 
+        return 0; 
       });
       return { data: dataArray, color: (opacity = 1) => setData.color, strokeWidth: 2 };
     });
