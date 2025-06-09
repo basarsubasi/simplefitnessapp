@@ -150,15 +150,15 @@ export default function GraphsWorkoutDetails() {
         
       case 'month':
         // Show ~12-15 data points for month
-        return sampleEvenly(sortedData, 15);
+        return sampleEvenly(sortedData, 30);
         
       case 'year':
-        // Show ~20 data points for year (roughly weekly)
-        return sampleEvenly(sortedData, 20);
+        // Show ~100 data points for year 
+        return sampleEvenly(sortedData, 100);
         
       case 'all':
-        // Show ~25 data points for all time
-        return sampleEvenly(sortedData, 25);
+        // Show ~200 data points for all time
+        return sampleEvenly(sortedData, 150);
         
       default:
         return sortedData.slice(-10);
