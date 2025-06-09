@@ -1062,7 +1062,7 @@ export default function GraphsWorkoutDetails() {
       backgroundColor: theme.card,
       backgroundGradientFrom: theme.card,
       backgroundGradientTo: theme.card,
-      decimalPlaces: 1,
+      decimalPlaces: 0,
       color: (opacity = 1) => calculationType === '1RM' 
         ? `rgba(0, 168, 132, ${opacity})` 
         : `rgba(0, 123, 255, ${opacity})`,
@@ -1301,7 +1301,7 @@ export default function GraphsWorkoutDetails() {
       backgroundColor: theme.card,
       backgroundGradientFrom: theme.card,
       backgroundGradientTo: theme.card,
-      decimalPlaces: 1, // For Y-axis labels displayed by StickyYAxis
+      decimalPlaces: 0, // For Y-axis labels displayed by StickyYAxis
       color: (opacity = 1) => `rgba(0, 123, 255, ${opacity})`, // Default line color, overridden by dataset
       labelColor: (opacity = 1) => theme.text, // For StickyYAxis
       style: { borderRadius: 16 },
