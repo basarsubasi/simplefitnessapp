@@ -42,7 +42,7 @@ type LogData = {
   dayName?: string; // For time data
 };
 type TimeFrame = 'week' | 'month' | 'year' | 'all';
-type CalculationType = 'CES' | '1RM' | 'Sets';
+type CalculationType = 'CES' | '1RM' | 'Sets' | 'Reps';
 type GraphMode = 'Exercise' | 'Time';
 type ProcessedDataPoint = {
   x: string; // Date string for display
@@ -50,6 +50,7 @@ type ProcessedDataPoint = {
   timestamp: number; // Raw timestamp for sorting
   originalData: LogData[]; // Store original data for tooltip
   originalWeight?: number; // Original weight before offset adjustment
+  originalReps?: number; // Original reps before offset adjustment
   workoutLogId?: number; // For time data
   dayName?: string; // For time data
 };
@@ -225,15 +226,21 @@ export default function GraphsWorkoutDetails() {
     if (!selectedWorkout) {
       setDays([]);
       setExercises([]);
+      setLogData([]);
       return;
     }
+    setLogData([]);
     fetchDays();
   }, [selectedWorkout]);
 
   // Fetch exercises when day changes
   useEffect(() => {
     if (selectedDay) {
+      setLogData([]);
       fetchExercises();
+    } else {
+      setExercises([]);
+      setSelectedExercise('');
     }
   }, [selectedDay]);
 
@@ -248,10 +255,20 @@ export default function GraphsWorkoutDetails() {
 
   // Process log data into chart data
   useEffect(() => {
-    if (graphMode === 'Time' && timeLogData.length > 0) {
-      processTimeDataForChart();
-    } else if (logData.length > 0) {
-      processDataForChart();
+    if (graphMode === 'Time') {
+      if (timeLogData.length > 0) {
+        processTimeDataForChart();
+      } else {
+        setChartData([]);
+        setSetsData([]);
+      }
+    } else { // Exercise mode
+      if (logData.length > 0) {
+        processDataForChart();
+      } else {
+        setChartData([]);
+        setSetsData([]);
+      }
     }
   }, [logData, timeLogData, calculationType, timeFrame, graphMode]);
 
@@ -552,6 +569,8 @@ export default function GraphsWorkoutDetails() {
   const processDataForChart = () => {
     if (calculationType === 'Sets') {
       processDataForSetsChart();
+    } else if (calculationType === 'Reps') {
+      processDataForRepsChart();
     } else {
       processDataForRegularChart();
     }
@@ -685,6 +704,103 @@ export default function GraphsWorkoutDetails() {
     // Also set chart data to the first set for compatibility with existing tooltip logic
     if (setsProgressData.length > 0) {
       setChartData(setsProgressData[0].data);
+    } else {
+      setChartData([]);
+      setSetsData([]);
+    }
+  };
+
+  const processDataForRepsChart = () => {
+    // Filter out logs with reps <= 0 first
+    const filteredLogData = logData.filter(log => log.reps_logged > 0);
+    
+    // Group logs by set number first, then by date
+    const logsBySet = filteredLogData.reduce((acc, log) => {
+      const setNum = log.set_number;
+      if (!acc[setNum]) {
+        acc[setNum] = {};
+      }
+      const date = log.date;
+      if (!acc[setNum][date]) {
+        acc[setNum][date] = [];
+      }
+      acc[setNum][date].push(log);
+      return acc;
+    }, {} as Record<number, Record<number, LogData[]>>);
+  
+    // Get all unique set numbers
+    const allSetNumbers = Object.keys(logsBySet).map(Number).sort((a, b) => a - b);
+  
+    // Process data for each set
+    const setsProgressData: SetProgressData[] = [];
+  
+    // Create a map to track points at each timestamp for overlap detection
+    const timestampRepsMap: Record<number, number[]> = {};
+  
+    allSetNumbers.forEach(setNum => {
+      const setLogs = logsBySet[setNum];
+      const setData: ProcessedDataPoint[] = [];
+  
+      // Only process dates where this specific set was logged AND reps > 0
+      Object.entries(setLogs).forEach(([dateStr, logs]) => {
+        const timestamp = parseInt(dateStr);
+        const date = new Date(timestamp * 1000);
+        
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const formattedDate = dateFormat === 'mm-dd-yyyy'
+          ? `${month}/${day}`
+          : `${day}/${month}`;
+  
+        const setLog = logs[0];
+        const reps = setLog.reps_logged;
+  
+        // Skip if reps is 0 or negative
+        if (reps <= 0) return;
+  
+        // Initialize the reps array for this timestamp if it doesn't exist
+        if (!timestampRepsMap[timestamp]) {
+          timestampRepsMap[timestamp] = [];
+        }
+  
+        // Count how many times this reps value appears at this timestamp
+        const repsCount = timestampRepsMap[timestamp].filter(r => Math.abs(r - reps) < 0.1).length;
+        // Add a small offset if there are overlapping points
+        const adjustedReps = reps + (repsCount * 0.03);
+        
+        // Store the original reps for future overlap checks
+        timestampRepsMap[timestamp].push(reps);
+        
+        setData.push({
+          x: formattedDate,
+          y: adjustedReps,
+          timestamp: timestamp,
+          originalData: [setLog],
+          originalReps: reps,
+        });
+      });
+  
+      // Apply smart sampling to each set's data
+      const optimizedSetData = getOptimalDataPoints(setData, timeFrame);
+  
+      if (optimizedSetData.length > 0) {
+        setsProgressData.push({
+          setNumber: setNum,
+          data: optimizedSetData,
+          color: setColors[(setNum - 1) % setColors.length],
+          showInLegend: setNum <= 5,
+        });
+      }
+    });
+  
+    setSetsData(setsProgressData);
+    
+    // Also set chart data to the first set for compatibility with existing tooltip logic
+    if (setsProgressData.length > 0) {
+      setChartData(setsProgressData[0].data);
+    } else {
+      setChartData([]);
+      setSetsData([]);
     }
   };
 
@@ -699,7 +815,7 @@ export default function GraphsWorkoutDetails() {
         }
         setTooltipVisible(true);
       }
-    } else if (calculationType === 'Sets') {
+    } else if (calculationType === 'Sets' || calculationType === 'Reps') {
       // For sets chart, we need to find which timestamp was clicked
       if (data.index !== undefined) {
         // Get all unique timestamps sorted
@@ -888,6 +1004,27 @@ export default function GraphsWorkoutDetails() {
             { color: calculationType === '1RM' ? theme.buttonText : theme.text }
           ]}>
             {t('1RM')}
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity 
+          style={[
+            styles.toggleButton, 
+            calculationType === 'Reps' && styles.toggleButtonActive,
+            { backgroundColor: calculationType === 'Reps' ? theme.buttonBackground : theme.card }
+          ]}
+          onPress={() => setCalculationType('Reps')}
+        >
+          <Ionicons 
+            name="repeat" 
+            size={20} 
+            color={calculationType === 'Reps' ? theme.buttonText : theme.text} 
+          />
+          <Text style={[
+            styles.toggleText, 
+            { color: calculationType === 'Reps' ? theme.buttonText : theme.text }
+          ]}>
+            {t('Reps')}
           </Text>
         </TouchableOpacity>
       </View>
@@ -1114,10 +1251,15 @@ export default function GraphsWorkoutDetails() {
     setsData.forEach(set => {
       set.data.forEach(point => {
         allTimestamps.add(point.timestamp);
-        // Only include points that are actually plotted (weight > 0 lead to y > 0)
-        // The point.y already includes the offset for overlap, use originalWeight for true scale value
-        if (point.originalWeight && point.originalWeight > 0) {
-            allYValuesForAxis.push(point.originalWeight); 
+        // The point.y already includes the offset for overlap, use originalWeight/originalReps for true scale value
+        if (calculationType === 'Sets') {
+            if (point.originalWeight && point.originalWeight > 0) {
+                allYValuesForAxis.push(point.originalWeight); 
+            }
+        } else if (calculationType === 'Reps') {
+            if (point.originalReps && point.originalReps > 0) {
+                allYValuesForAxis.push(point.originalReps); 
+            }
         }
       });
     });
@@ -1133,10 +1275,10 @@ export default function GraphsWorkoutDetails() {
     const datasets = setsData.map(setData => {
       const dataArray = sortedTimestamps.map(timestamp => {
         const point = setData.data.find(p => p.timestamp === timestamp);
-        if (point && point.originalWeight && point.originalWeight > 0) {
+        if (point) {
           return point.y; // This is the (potentially offset) value for plotting
         }
-        return 0; 
+        return null; 
       });
       return { data: dataArray, color: (opacity = 1) => setData.color, strokeWidth: 2 };
     });
@@ -1234,7 +1376,7 @@ export default function GraphsWorkoutDetails() {
   const renderChart = () => {
     if (graphMode === 'Time') {
       return renderTimeChart();
-    } else if (calculationType === 'Sets') {
+    } else if (calculationType === 'Sets' || calculationType === 'Reps') {
       return renderSetsChart();
     } else {
       return renderRegularChart(); // This should now be correctly defined and in scope
@@ -1249,15 +1391,15 @@ export default function GraphsWorkoutDetails() {
     
     // Find all sets data for the selected date when in Sets mode
     let dateData: SetDataPoint[] = [];
-    if (calculationType === 'Sets') {
+    if (calculationType === 'Sets' || calculationType === 'Reps') {
       setsData.forEach(setData => {
         const dataPoint = setData.data.find(point => point.timestamp === selectedPoint.timestamp);
         if (dataPoint) {
           dateData.push({
             setNumber: setData.setNumber,
-            weight: dataPoint.originalWeight || dataPoint.y,
+            weight: dataPoint.originalData[0].weight_logged,
             color: setData.color,
-            reps: dataPoint.originalData[0].reps_logged
+            reps: dataPoint.originalData[0].reps_logged,
           });
         }
       });
@@ -1345,7 +1487,7 @@ export default function GraphsWorkoutDetails() {
                   ))}
                 </ScrollView>
               </>
-            ) : calculationType === 'Sets' ? (
+            ) : calculationType === 'Sets' || calculationType === 'Reps' ? (
               <View style={styles.tooltipSetsList}>
                 <Text style={[styles.tooltipSetsHeader, { color: theme.text }]}>
                       {selectedExercise}:
@@ -1696,7 +1838,9 @@ export default function GraphsWorkoutDetails() {
                     ? t('Combined Effort Score')
                     : calculationType === '1RM'
                     ? t('Estimated 1RM')
-                    : t('SetsGraph')}
+                    : calculationType === 'Sets'
+                    ? t('SetsGraph')
+                    : t('RepsGraph')}
                 </Text>
 
                 {isLoading ? (
@@ -1724,14 +1868,18 @@ export default function GraphsWorkoutDetails() {
                       ? t('About CES')
                       : calculationType === '1RM'
                       ? t('About 1RM')
-                      : t('About Sets Progression')}
+                      : calculationType === 'Sets'
+                      ? t('About Sets Progression')
+                      : t('About Reps Progression')}
                   </Text>
                   <Text style={[styles.infoText, { color: theme.text }]}>
                     {calculationType === 'CES'
                       ? t('CESExplanation')
                       : calculationType === '1RM'
                       ? t('1RMExplanation')
-                      : t('setsGraphExplanation')}
+                      : calculationType === 'Sets'
+                      ? t('setsGraphExplanation')
+                      : t('repsGraphExplanation')}
                   </Text>
                 </View>
               </View>
