@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
       borderRadius: 15,
       padding: 12,
       marginBottom: 8,
-      borderWidth: 1,
+      borderWidth: 0,
       borderColor: 'rgba(0, 0, 0, 0.1)',
       maxWidth: '100%',  // Prevent overflow
     },
