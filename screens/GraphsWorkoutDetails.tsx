@@ -1119,7 +1119,7 @@ export default function GraphsWorkoutDetails() {
         legend: [calculationType === 'CES' ? 'Combined Effort Score' : t('Estimated 1RM')]
       },
       width: lineChartContentWidth,
-      height: chartHeight,
+      height: chartHeight + 20,
       chartConfig: lineChartConfig,
       bezier: true,
       style: styles.chart,
@@ -1134,7 +1134,7 @@ export default function GraphsWorkoutDetails() {
       <View style={styles.chartContainer}>
         <View style={{ flexDirection: 'row' }}>
           <StickyYAxis
-            chartHeight={chartHeight}
+            chartHeight={chartHeight + 20}
             yTickLabels={yTickLabels}
             labelColor={lineChartConfig.labelColor}
             chartPaddingTop={16}
@@ -1207,7 +1207,7 @@ export default function GraphsWorkoutDetails() {
       color: (opacity = 1) => `rgba(255, 111, 21, ${opacity})`, // Default line color, overridden by dataset
       labelColor: (opacity = 1) => theme.text, 
       style: { borderRadius: 16 },
-      propsForDots: { r: '5', strokeWidth: '4' },
+      propsForDots: { r: '6', strokeWidth: '4' },
       fillShadowGradientFrom: `rgba(255, 111, 21, 0.15)`,
       fillShadowGradientTo: `rgba(255, 111, 21, 0.02)`,
       fillShadowGradientFromOpacity: 0.5,
@@ -1227,16 +1227,18 @@ export default function GraphsWorkoutDetails() {
           color: timeChartConfig.color, 
           strokeWidth: 2
         }],
+        legend: [t('completionTime')]
+        
       },
       width: lineChartContentWidth, 
-      height: chartHeight,
+      height: chartHeight + 20,
       chartConfig: timeChartConfig, // Pass the modified timeChartConfig (no formatYLabel)
       bezier: true,
       style: styles.chart,
       verticalLabelRotation: 30,
       onDataPointClick: handleDataPointClick,
       withHorizontalLabels: true, 
-      paddingRight: 50,         
+      paddingRight: 50,
       segments: lineChartSegments,
       getDotColor: getDotColor,
     };
@@ -1370,7 +1372,7 @@ export default function GraphsWorkoutDetails() {
     const lineChartProps = {
       data: chartDataForLineChart,
       width: lineChartContentWidth,
-      height: chartHeight,
+      height: chartHeight + 20,
       chartConfig: setsChartConfig,
       style: styles.chart,
       verticalLabelRotation: 30,
@@ -1385,7 +1387,7 @@ export default function GraphsWorkoutDetails() {
       <View style={styles.chartContainer}>
         <View style={{ flexDirection: 'row' }}>
           <StickyYAxis
-            chartHeight={chartHeight}
+            chartHeight={chartHeight + 20}
             yTickLabels={yTickLabels}
             labelColor={setsChartConfig.labelColor}
             chartPaddingTop={16}

@@ -40,7 +40,7 @@
     "November": "Kasım",
     "December": "Aralık",
     "Exercise Stats": "Egzersiz İstatistikleri",
-    "Untracked": "Takip Edilmemiş",
+    "Untracked": "Takip\nEdilmemiş",
     "Upcoming": "Yaklaşan",
     "Logged": "Kaydedilmiş",
     "logWeightsManually": "Ağırlıkları Manuel Gir",
@@ -374,7 +374,7 @@
     "setGraph": "Setler",
     "Time": "Süre",
     "completionTime": "Tamamlama Süresi",
-    "horizontalScrollHint": "Daha fazla veri görmek için yatay kaydırın",
+    "horizontalScrollHint": "Daha fazla veri görmek için sağa kaydırın",
     "weightProgressionBySets": "Setlere Göre Ağırlık İlerlemesi",
     "About Sets Progression": "Set Grafiği Hakkında",
     "About Completion Time": "Süre Grafiği Hakkında",
@@ -387,7 +387,8 @@
     "RepsCapital": "Tekrarlar",
     "RepsGraph": "Tekrar Grafiği",
     "About Reps Progression": "Tekrar Grafiği Hakkında",
-    "repsGraphExplanation": "Bu grafik, bireysel setler içinde yaptığınız tekrarları gösterir. Her çizgi ve renk, Set Grafiği'nde olduğu gibi farklı bir seti temsil eder, ancak Y ekseni ağırlıklar yerine tekrarları gösterir. Vücut ağırlığı egzersizlerini takip etmek için mükkemmel!"
+    "repsGraphExplanation": "Bu grafik, bireysel setler içinde yaptığınız tekrarları gösterir. Her çizgi ve renk, Set Grafiği'nde olduğu gibi farklı bir seti temsil eder, ancak Y ekseni ağırlıklar yerine tekrarları gösterir. Vücut ağırlığı egzersizlerini takip etmek için mükkemmel!",
+    "Workout Days": "Antrenman Günleri"
             
         
     
