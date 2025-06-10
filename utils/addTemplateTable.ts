@@ -1,5 +1,13 @@
 export const addTables = async (db: any) => {
     try {
+
+      await db.runAsync(`DROP TABLE IF EXISTS Template_Exercises;`);
+      await db.runAsync(`DROP TABLE IF EXISTS Template_Days;`);
+      await db.runAsync(`DROP TABLE IF EXISTS Template_Workouts;`);
+      await db.runAsync(`DROP TABLE IF EXISTS Template_Workouts;`);
+
+
+
    await db.runAsync(
         
           `CREATE TABLE IF NOT EXISTS Template_Workouts (

@@ -1,5 +1,6 @@
 export const insertWorkouts = async (db: any) => {
     try {
+
      
         // Insert Workouts into Template_Workouts
        await db.runAsync(
@@ -8,6 +9,7 @@ export const insertWorkouts = async (db: any) => {
           ('Push Pull Legs', 'Intermediate'),
           ('Newbie Gains', 'Beginner'),
           ('Bro Split', 'Advanced');`
+          
         );
   
         // Insert Days into Template_Days
@@ -173,6 +175,66 @@ export const insertWorkouts = async (db: any) => {
       );
   
         console.log('Initial  Template workouts inserted into the database.');
+        
+   // Insert more Workouts into Template_Workouts
+   await db.runAsync(
+    `INSERT OR IGNORE INTO Template_Workouts (workout_name, workout_difficulty)
+    VALUES
+    ('Home Alone', 'Beginner'),
+    ('Calisthenics+', 'Intermediate'),
+    ('Bodyweight Beast', 'Advanced');`
+  );
+
+  // Insert more Days into Template_Days
+
+  await db.runAsync(
+    `INSERT OR IGNORE INTO Template_Days (workout_id, day_name)
+    VALUES
+    (7, 'Home Alone Cycle'),
+    (8, 'Calisthenics+ Cycle'),
+    (9, 'Bodyweight Beast Cycle');`
+  );
+
+  // Insert more Exercises into Template_Exercises
+  
+  await db.runAsync(
+    `INSERT OR IGNORE INTO Template_Exercises (day_id, exercise_name, sets, reps)
+    VALUES
+    -- Home Alone Exercises (day_id: 19)
+    (19, 'Push Ups', 4, 10),
+    (19, 'Lateral Raises', 4, 12),
+    (19, 'Barbell Curl', 4, 12),
+    (19, 'Goblet Squats', 4, 12),
+
+    -- Calisthenics+ Exercises (day_id: 20)
+    (20, 'Diamond Push Ups', 4, 10),
+    (20, 'Pull ups', 4, 10),
+    (20, 'Straight Push Ups', 4, 20),
+    (20, 'Dumbell Shoulder Press', 4, 12),
+    (20, 'Lateral Raises', 4, 20),
+    (20, 'Concentration Curl', 4, 12),
+    (20, 'Lunge', 4, 12),
+    (20, 'Goblet Squats', 4, 12),
+
+    -- Bodyweight Beast Exercises (day_id: 21)
+    (21, 'Devils Press', 4, 12),
+    (21, 'Pull ups', 6, 15),
+    (21, 'Decline Push Ups', 4, 25),
+    (21, 'Incline Push Ups', 4, 25),
+    (21, 'Plyometric Push Ups', 4, 12),
+    (21, 'Arnold Press', 4, 12),
+    (21, 'Lateral Raises', 6, 25),
+    (21, 'Front Raises', 4, 12),
+    (21, 'Hammer Curl', 4, 12),
+    (21, 'Jumping Lunge', 4, 12),
+    (21, 'Bulgarian Split Squats', 4, 12);`
+  );
+
+  console.log(
+    'Home Alone, Calisthenics+, and Bodyweight Beast workouts inserted into the database.'
+  );
+
+
     } catch (error) {
       console.error('Error inserting workouts:', error);
     }
