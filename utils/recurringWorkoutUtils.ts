@@ -60,7 +60,7 @@ export const checkAndScheduleRecurringWorkouts = async (
       console.log(`Next occurrence should be: ${nextDate}`);
       
       // Skip if next occurrence is in the past
-      if (nextOccurrence <= currentTimestamp) {
+      if (nextOccurrence < currentTimestamp) {
         console.log(`Skipping - occurrence date is in the past`);
         continue;
       }
@@ -95,51 +95,50 @@ export const checkAndScheduleRecurringWorkouts = async (
  * Calculate the next occurrence date for a recurring workout
  */
 const calculateNextOccurrence = async (
-  db: any, 
-  workout: RecurringWorkout, 
+  db: any,
+  workout: RecurringWorkout,
   currentTimestamp: number
 ): Promise<number> => {
   try {
-    console.log(`Calculating next occurrence for ${workout.workout_name} from current date (${new Date(currentTimestamp * 1000).toDateString()})`);
-    
+    console.log(
+      `Calculating next occurrence for ${
+        workout.workout_name
+      } from current date (${new Date(
+        currentTimestamp * 1000
+      ).toDateString()})`
+    );
+
     // For interval-based scheduling (daily, every N days)
     if (workout.recurring_interval > 0) {
-      // Get the start reference point - either the recurring start date or current date
-      const referenceDate = Math.max(workout.recurring_start_date, currentTimestamp);
-      
-      // If the recurring pattern started in the past, we need to find the next occurrence after today
-      if (workout.recurring_start_date < currentTimestamp) {
-        // Calculate how many days have passed since the start date
-        const daysSinceStart = Math.floor((currentTimestamp - workout.recurring_start_date) / DAY_IN_SECONDS);
-        
-        // Calculate how many intervals have passed
-        const intervalsElapsed = Math.floor(daysSinceStart / workout.recurring_interval);
-        
-        // Calculate the next interval
-        const nextIntervalDate = workout.recurring_start_date + 
-          ((intervalsElapsed) * workout.recurring_interval * DAY_IN_SECONDS);
-        
-        console.log(`Next interval occurs on: ${new Date(nextIntervalDate * 1000).toDateString()}`);
-        return nextIntervalDate;
-      } 
-      
-      // First occurrence starting today or in the future
-      return referenceDate;
-    } 
+      let nextOccurrence = workout.recurring_start_date;
+      const intervalInSeconds = workout.recurring_interval * DAY_IN_SECONDS;
+
+      // Keep adding the interval until the next occurrence is in the future (or today)
+      while (nextOccurrence < currentTimestamp) {
+        nextOccurrence += intervalInSeconds;
+      }
+
+      console.log(
+        `Next interval occurs on: ${new Date(
+          nextOccurrence * 1000
+        ).toDateString()}`
+      );
+      return nextOccurrence;
+    }
     // For day-of-week based scheduling
     else if (workout.recurring_days) {
-      // Always find the next matching day from the current date
+      // This logic was already correct.
+      // Always find the next matching day from the current date.
       return findNextMatchingDay(
         workout.recurring_days,
-        currentTimestamp,  // Always start from current date
-        currentTimestamp
+        currentTimestamp // Always start from the current date
       );
     }
-    
+
     // Default fallback
     return currentTimestamp;
   } catch (error) {
-    console.error('Error calculating next occurrence:', error);
+    console.error("Error calculating next occurrence:", error);
     return currentTimestamp;
   }
 };
@@ -148,28 +147,26 @@ const calculateNextOccurrence = async (
  * Find the next matching day based on the recurring_days pattern
  */
 const findNextMatchingDay = (
-  recurringDays: string, 
-  lastScheduledDate: number,
+  recurringDays: string,
   currentTimestamp: number
 ): number => {
   // Parse selected days (0-6, where 0 is Sunday)
-  const selectedDays = recurringDays.split(',').map(day => parseInt(day, 10));
-  
+  const selectedDays = recurringDays.split(",").map((day) => parseInt(day, 10));
+
   if (selectedDays.length === 0) {
     return currentTimestamp;
   }
-  
-  // Start checking from the day after last scheduled or current date
-  const startDate = Math.max(lastScheduledDate, currentTimestamp);
-  let checkDate = new Date(startDate * 1000);
+
+  // Start checking from tomorrow
+  let checkDate = new Date(currentTimestamp * 1000);
   checkDate.setDate(checkDate.getDate() + 1);
-  
+
   // Look up to 7 days ahead to find the next matching day
   for (let i = 0; i < 7; i++) {
     const dayOfWeek = checkDate.getDay();
-    
+
     if (selectedDays.includes(dayOfWeek)) {
-      // Found a matching day
+      // Found a matching day, normalize to midnight
       return Math.floor(
         new Date(
           checkDate.getFullYear(),
@@ -178,11 +175,11 @@ const findNextMatchingDay = (
         ).getTime() / 1000
       );
     }
-    
+
     // Check the next day
     checkDate.setDate(checkDate.getDate() + 1);
   }
-  
+
   // Fallback - should not reach here if selectedDays is valid
   return currentTimestamp;
 };
