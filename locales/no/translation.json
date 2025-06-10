@@ -358,7 +358,13 @@
       "Logs": "Logger",
       "Graph Type": "Graftype",
       "Metric": "Måling",
-      "Exercise Stats": "Øvelsesstatistikk"
+      "Exercise Stats": "Øvelsesstatistikk",
+
+
+      "RepsCapital": "Repetisjoner",
+      "RepsGraph": "Repetisjonsgraf",
+      "About Reps Progression": "Om repetisjonsgrafen",
+      "repsGraphExplanation": "Denne grafen viser repetisjonene du har gjort for individuelle sett. Hver linje og farge representerer et annet settnummer, som Settgrafen, men med Y-aksen som repetisjoner i stedet for vekter. Perfekt for å spore kroppsvektøvelser!"
 
         
 

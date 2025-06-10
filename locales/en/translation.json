@@ -385,7 +385,16 @@
     "SetsGraph": "Sets Graph",
     "TimeGraph": "Time Graph",
     "timeGraphExplanation": "This graph shows how long it takes you to complete your workout sessions over time.",
-    "setsGraphExplanation": "This graph shows the weight progression for each set over time. Each line and color represents a different set number , allowing you to track how your performance throughout your workout sessions.",
-    "graphTipText": "Tip: You can press the dots on the graph to get additional information about that workout session."
+    "setsGraphExplanation": "This graph shows the weight progression for each set over time. Each line and color represents a different set, allowing you to track how your performance throughout your workout sessions.",
+    "graphTipText": "Tip: You can press the dots on the graph to get additional information about that workout session.",
+
+
+    "RepsCapital": "Reps",
+    "RepsGraph": "Reps Graph",
+    "About Reps Progression": "About Reps Graph",
+    "repsGraphExplanation": "This graph shows the reps you've done for individual sets. Each line and color represents a different set number like the Sets Graph but with the Y axis being the reps instead of weights. Perfect for tracking bodyweight exercises!"
+
+
+
     }
   

@@ -347,7 +347,13 @@
       "Logs": "Logs",
       "Graph Type": "Graftype",
       "Metric": "Måling",
-      "Exercise Stats": "Øvelsesstatistik"
+      "Exercise Stats": "Øvelsesstatistik",
+
+
+      "RepsCapital": "Gentagelser",
+      "RepsGraph": "Gentagelsesgraf",
+      "About Reps Progression": "Om gentagelsesgrafen",
+      "repsGraphExplanation": "Denne graf viser de gentagelser, du har udført for individuelle sæt. Hver linje og farve repræsenterer et forskelligt sætnummer, ligesom sætgrafen, men med y-aksen som gentagelser i stedet for vægte. Perfekt til at spore kropsvægtsøvelser!"
     
   }
   

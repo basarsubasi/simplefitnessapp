@@ -346,7 +346,13 @@
   "Logs": "Záznamy",
   "Graph Type": "Typ grafu",
   "Metric": "Metrika",
-  "Exercise Stats": "Statistiky cviků"
+  "Exercise Stats": "Statistiky cviků",
+
+
+  "RepsCapital": "Opakování",
+  "RepsGraph": "Graf opakování",
+  "About Reps Progression": "O grafu opakování",
+  "repsGraphExplanation": "Tento graf zobrazuje opakování, která jste provedli pro jednotlivé série. Každá čára a barva představuje jiné číslo série, podobně jako graf sérií, ale s osou y zobrazující opakování namísto vah. Ideální pro sledování cvičení s vlastní vahou!"
     
     
     
