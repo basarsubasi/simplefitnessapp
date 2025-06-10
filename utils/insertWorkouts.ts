@@ -203,7 +203,7 @@ export const insertWorkouts = async (db: any) => {
     -- Home Alone Exercises (day_id: 19)
     (19, 'Push Ups', 4, 10),
     (19, 'Lateral Raises', 4, 12),
-    (19, 'Barbell Curl', 4, 12),
+    (19, 'Dumbell Curl', 4, 12),
     (19, 'Goblet Squats', 4, 12),
 
     -- Calisthenics+ Exercises (day_id: 20)
