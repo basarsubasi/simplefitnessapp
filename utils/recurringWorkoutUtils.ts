@@ -210,9 +210,9 @@ const findNextMatchingDay = (
     return currentTimestamp;
   }
 
-  // Start checking from tomorrow
+  // --- THIS IS THE FIX ---
+  // Start checking from today, not tomorrow.
   let checkDate = new Date(currentTimestamp * 1000);
-  checkDate.setDate(checkDate.getDate() + 1);
 
   // Look up to 7 days ahead to find the next matching day
   for (let i = 0; i < 7; i++) {
