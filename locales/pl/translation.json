@@ -356,9 +356,9 @@
       "RepsCapital": "Powtórzenia",
       "RepsGraph": "Wykres powtórzeń",
       "About Reps Progression": "O wykresie powtórzeń",
-      "repsGraphExplanation": "Ten wykres pokazuje wykonane powtórzenia dla poszczególnych serii. Każda linia i kolor reprezentuje inny numer serii, podobnie jak wykres serii, ale oś Y to powtórzenia zamiast ciężarów. Idealny do śledzenia ćwiczeń z masą ciała!"
+      "repsGraphExplanation": "Ten wykres pokazuje wykonane powtórzenia dla poszczególnych serii. Każda linia i kolor reprezentuje inny numer serii, podobnie jak wykres serii, ale oś Y to powtórzenia zamiast ciężarów. Idealny do śledzenia ćwiczeń z masą ciała!",
 
-        
+      "Workout Days": "Dni treningu"
 
     
 }

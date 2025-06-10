@@ -355,7 +355,8 @@
       "RepsCapital": "Ponavljanja",
       "RepsGraph": "Graf ponovitev",
       "About Reps Progression": "O grafu ponovitev",
-      "repsGraphExplanation": "Ta graf prikazuje ponovitve, ki ste jih opravili za posamezne serije. Vsaka črta in barva predstavljata različno številko serije, podobno kot graf serij, vendar z osjo Y, ki prikazuje ponovitve namesto uteži. Popolno za spremljanje vaj z lastno težo!"
+      "repsGraphExplanation": "Ta graf prikazuje ponovitve, ki ste jih opravili za posamezne serije. Vsaka črta in barva predstavljata različno številko serije, podobno kot graf serij, vendar z osjo Y, ki prikazuje ponovitve namesto uteži. Popolno za spremljanje vaj z lastno težo!",
+      "Workout Days": "Dnevi vadbe"
         
 
     

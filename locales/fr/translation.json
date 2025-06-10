@@ -311,6 +311,7 @@
     "setGraph": "Séries",
     "Time": "Temps",
     "completionTime": "Temps de réalisation",
+    "Workout Days": "Jours d'entraînement",
     "horizontalScrollHint": "Faites défiler horizontalement pour voir plus de données",
     "weightProgressionBySets": "Progression du poids par séries",
     "About Sets Progression": "À propos du graphique des séries",

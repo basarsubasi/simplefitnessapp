@@ -307,6 +307,7 @@
     "setGraph": "세트",
     "Time": "시간",
     "completionTime": "완료 시간",
+    "Workout Days": "운동 일",
     "horizontalScrollHint": "더 많은 데이터를 보려면 가로로 스크롤하세요",
     "weightProgressionBySets": "세트별 중량 진행",
     "About Sets Progression": "세트 그래프 정보",
