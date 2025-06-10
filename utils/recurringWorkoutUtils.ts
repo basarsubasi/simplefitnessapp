@@ -2,6 +2,7 @@
 
 import { useSQLiteContext } from 'expo-sqlite';
 import { useNotifications } from './useNotifications';
+import { useCallback } from 'react';
 
 // Constants
 const DAY_IN_SECONDS = 86400; // 24 hours in seconds
@@ -353,26 +354,25 @@ export const useRecurringWorkouts = () => {
     checkNotificationPermission
   } = useNotifications();
   
-  // Check and schedule recurring workouts
-  const checkRecurringWorkouts = async () => {
-    // Get the latest permission status before checking workouts
-    let currentPermissionStatus = notificationPermissionGranted;
-    
-    try {
-      // Double-check permissions are up-to-date
-      currentPermissionStatus = await checkNotificationPermission();
-      console.log(`Current notification permission status: ${currentPermissionStatus}`);
-    } catch (error) {
-      console.error('Error checking notification permissions:', error);
-    }
-    
-    return await checkAndScheduleRecurringWorkouts(
-      db, 
-      scheduleNotification,
-      currentPermissionStatus,
-      3
+ const checkRecurringWorkouts = useCallback(async () => {
+  let currentPermissionStatus;
+  try {
+    currentPermissionStatus = await checkNotificationPermission();
+    console.log(
+      `Current notification permission status: ${currentPermissionStatus}`
     );
-  };
+  } catch (error) {
+    console.error("Error checking notification permissions:", error);
+    return; // Stop if permissions fail
+  }
+    
+return await checkAndScheduleRecurringWorkouts(
+    db,
+    scheduleNotification,
+    currentPermissionStatus,
+    3
+  );
+}, [db, scheduleNotification, checkNotificationPermission]);
   
   // Create a new recurring workout
   const createRecurringWorkout = async (data: {
