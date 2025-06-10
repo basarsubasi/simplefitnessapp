@@ -350,7 +350,13 @@
       "Logs": "Journaux",
       "Graph Type": "Type de graphique",
       "Metric": "Métrique",
-      "Exercise Stats": "Statistiques des exercices"
+      "Exercise Stats": "Statistiques des exercices",
+
+
+      "RepsCapital": "Reps",
+      "RepsGraph": "Graphique de Reps",
+      "About Reps Progression": "À propos du graphique de Reps",
+      "repsGraphExplanation": "Ce graphique montre les répétitions que vous avez effectuées pour des séries individuelles. Chaque ligne et couleur représente un numéro de série différent, comme le graphique des séries, mais avec l'axe Y indiquant les répétitions au lieu des poids. Parfait pour suivre les exercices au poids du corps !"
 
 
 

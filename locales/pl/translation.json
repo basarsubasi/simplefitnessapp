@@ -349,7 +349,14 @@
       "Logs": "Logi",
       "Graph Type": "Typ wykresu",
       "Metric": "Metryka",
-      "Exercise Stats": "Statystyki ćwiczeń"
+      "Exercise Stats": "Statystyki ćwiczeń",
+
+
+
+      "RepsCapital": "Powtórzenia",
+      "RepsGraph": "Wykres powtórzeń",
+      "About Reps Progression": "O wykresie powtórzeń",
+      "repsGraphExplanation": "Ten wykres pokazuje wykonane powtórzenia dla poszczególnych serii. Każda linia i kolor reprezentuje inny numer serii, podobnie jak wykres serii, ale oś Y to powtórzenia zamiast ciężarów. Idealny do śledzenia ćwiczeń z masą ciała!"
 
         
 

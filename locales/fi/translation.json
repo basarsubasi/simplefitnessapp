@@ -353,7 +353,12 @@
       "Logs": "Lokit",
       "Graph Type": "Kaavion tyyppi",
       "Metric": "Mittari",
-      "Exercise Stats": "Harjoitustilastot"
+      "Exercise Stats": "Harjoitustilastot",
+
+      "RepsCapital": "Toistot",
+      "RepsGraph": "Toistokäyrä",
+      "About Reps Progression": "Tietoa toistokäyrästä",
+      "repsGraphExplanation": "Tämä kaavio näyttää yksittäisille sarjoille tehdyt toistot. Jokainen viiva ja väri edustaa eri sarjanumeroa kuten sarjakaaviossa, mutta y-akselilla on toistot painojen sijaan. Täydellinen kehonpainoharjoitusten seuraamiseen!"
     
     
 

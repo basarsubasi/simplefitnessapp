@@ -349,7 +349,12 @@
       "Logs": "Registri",
       "Graph Type": "Tipo di grafico",
       "Metric": "Metrica",
-      "Exercise Stats": "Statistiche esercizi"
+      "Exercise Stats": "Statistiche esercizi",
+
+      "RepsCapital": "Ripetizioni",
+      "RepsGraph": "Grafico Ripetizioni",
+      "About Reps Progression": "Informazioni sul Grafico Ripetizioni",
+      "repsGraphExplanation": "Questo grafico mostra le ripetizioni che hai fatto per i singoli set. Ogni linea e colore rappresenta un numero di set diverso come il Grafico Set ma con l'asse y che indica le ripetizioni invece dei pesi. Perfetto per monitorare gli esercizi a corpo libero!"
         
 
 

@@ -351,6 +351,14 @@
       "Logs": "Jurnale",
       "Graph Type": "Tip grafic",
       "Metric": "Metrică",
-      "Exercise Stats": "Statistici exerciții"
+      "Exercise Stats": "Statistici exerciții",
+
+
+
+
+      "RepsCapital": "Repetări",
+      "RepsGraph": "Grafic Repetări",
+      "About Reps Progression": "Despre Graficul Repetări",
+      "repsGraphExplanation": "Acest grafic arată repetările pe care le-ați făcut pentru seturi individuale. Fiecare linie și culoare reprezintă un număr diferit de set, la fel ca graficul seturilor, dar cu axa Y fiind repetările în loc de greutăți. Perfect pentru urmărirea exercițiilor cu greutatea corporală!"
   }
   
