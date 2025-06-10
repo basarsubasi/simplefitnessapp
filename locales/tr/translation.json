@@ -382,7 +382,12 @@
     "TimeGraph": "Süre Grafiği",
     "timeGraphExplanation": "Bu grafik, antrenman seanslarınızı zaman içinde ne kadar sürede tamamladığınızı gösterir.",
     "setsGraphExplanation": "Bu grafik, setlerinizin zaman içindeki ilerlemesini gösterir. Her çizgi ve renk farklı bir set numarasını temsil eder ve antrenman seanslarınız boyunca performansınızı izlemenizi sağlar.",
-    "graphTipText": "İpucu: Grafikteki noktalara basarak o antrenman seansı hakkında ek bilgi edinebilirsiniz."
+    "graphTipText": "İpucu: Grafikteki noktalara basarak o antrenman seansı hakkında ek bilgi edinebilirsiniz.",
+
+    "RepsCapital": "Tekrarlar",
+    "RepsGraph": "Tekrar Grafiği",
+    "About Reps Progression": "Tekrar Grafiği Hakkında",
+    "repsGraphExplanation": "Bu grafik, bireysel setler içinde yaptığınız tekrarları gösterir. Her çizgi ve renk, Set Grafiği'nde olduğu gibi farklı bir seti temsil eder, ancak Y ekseni ağırlıklar yerine tekrarları gösterir. Vücut ağırlığı egzersizlerini takip etmek için mükkemmel!"
             
         
     

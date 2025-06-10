@@ -353,7 +353,13 @@
       "Logs": "Logboeken",
       "Graph Type": "Grafiektype",
       "Metric": "Metriek",
-      "Exercise Stats": "Oefeningstatistieken"
+      "Exercise Stats": "Oefeningstatistieken",
+
+
+      "RepsCapital": "Herhalingen",
+      "RepsGraph": "Herhalingen Grafiek",
+      "About Reps Progression": "Over Herhalingen Grafiek",
+      "repsGraphExplanation": "Deze grafiek toont de herhalingen die je per individuele set hebt gedaan. Elke lijn en kleur vertegenwoordigt een ander setnummer, net als de Sets Grafiek, maar met de y-as als herhalingen in plaats van gewichten. Perfect voor het bijhouden van lichaamsgewichtoefeningen!"
     
     
     

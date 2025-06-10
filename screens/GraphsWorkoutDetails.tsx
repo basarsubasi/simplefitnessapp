@@ -1015,7 +1015,7 @@ export default function GraphsWorkoutDetails() {
           onPress={() => setCalculationType('Reps')}
         >
           <Ionicons 
-            name="repeat" 
+            name="man" 
             size={20} 
             color={calculationType === 'Reps' ? theme.buttonText : theme.text} 
           />
@@ -1023,7 +1023,7 @@ export default function GraphsWorkoutDetails() {
             styles.toggleText, 
             { color: calculationType === 'Reps' ? theme.buttonText : theme.text }
           ]}>
-            {t('Reps')}
+            {t('RepsCapital')}
           </Text>
         </TouchableOpacity>
       </View>
