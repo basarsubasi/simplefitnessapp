@@ -26,63 +26,117 @@ interface Exercise {
  * Check and schedule any pending recurring workouts
  * This should be called on app startup or when the user opens relevant screens
  */
-export const checkAndScheduleRecurringWorkouts = async (
-  db: any, 
+// utils/recurringWorkoutUtils.ts
 
+/**
+ * Check and schedule any pending recurring workouts.
+ * This version will schedule a specified number of upcoming occurrences.
+ *
+ * @param db The database connection.
+ * @param scheduleNotification The function to schedule a notification.
+ * @param notificationPermissionGranted Whether notification permission is granted.
+ * @param scheduleAheadCount The number of upcoming occurrences to schedule.
+ */
+export const checkAndScheduleRecurringWorkouts = async (
+  db: any,
+  scheduleNotification: any,
+  notificationPermissionGranted: boolean,
+  scheduleAheadCount: number = 2 // Schedule the next 2 occurrences by default
 ) => {
   try {
     console.log("RECURRING CHECK STARTED");
-    // Get all recurring workouts
-    const recurringWorkouts = await db.getAllAsync(
-      'SELECT * FROM Recurring_Workouts'
-    ) as RecurringWorkout[];
+    const recurringWorkouts = (await db.getAllAsync(
+      "SELECT * FROM Recurring_Workouts"
+    )) as RecurringWorkout[];
 
     // Current date at midnight (normalized)
     const now = new Date();
     const currentTimestamp = Math.floor(
-      new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime() / 1000
+      new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime() /
+        1000
     );
-    
-    console.log(`Current timestamp: ${currentTimestamp} (${new Date(currentTimestamp * 1000).toDateString()})`);
 
-    // Process each recurring workout
+    console.log(
+      `Current timestamp: ${currentTimestamp} (${new Date(
+        currentTimestamp * 1000
+      ).toDateString()})`
+    );
+    console.log(`Will attempt to schedule ${scheduleAheadCount} occurrences.`);
+
+    // Process each recurring workout definition
     for (const workout of recurringWorkouts) {
-      console.log(`Checking workout: ${workout.workout_name}/${workout.day_name}`);
-      
-      // First - figure out when the next occurrence should be based on pattern
-      const nextOccurrence = await calculateNextOccurrence(db, workout, currentTimestamp);
-      const nextDate = new Date(nextOccurrence * 1000).toDateString();
-      
-      console.log(`Next occurrence should be: ${nextDate}`);
-      
-      // Skip if next occurrence is in the past
-      if (nextOccurrence < currentTimestamp) {
-        console.log(`Skipping - occurrence date is in the past`);
-        continue;
-      }
-      
-      // Check if ANY workout with this name/day is scheduled on the calculated next occurrence date
-      const existingLog = await db.getAllAsync(
-        `SELECT workout_log_id FROM Workout_Log 
-         WHERE workout_date = ? AND workout_name = ? AND day_name = ?`,
-        [nextOccurrence, workout.workout_name, workout.day_name]
+      console.log(
+        `--- Checking workout: ${workout.workout_name}/${workout.day_name} ---`
       );
-      
-      // If this specific occurrence is already scheduled, skip it
-      if (existingLog.length > 0) {
-        console.log(`SKIPPING - Workout already scheduled for ${nextDate}`);
-        continue;
+
+      // This variable will track where to start the search for the next occurrence.
+      // It starts with today and gets updated after each occurrence is found.
+      let searchFromTimestamp = currentTimestamp;
+
+      // Loop to find and schedule the desired number of occurrences
+      for (let i = 0; i < scheduleAheadCount; i++) {
+        // Find the next occurrence starting from our search date
+        const nextOccurrence = await calculateNextOccurrence(
+          db,
+          workout,
+          searchFromTimestamp
+        );
+
+        // --- VALIDATION CHECKS ---
+
+        // 1. Skip if the calculated date is in the past.
+        //    We use the original `currentTimestamp` for this check.
+        if (nextOccurrence < currentTimestamp) {
+          console.log(
+            `Occurrence on ${new Date(
+              nextOccurrence * 1000
+            ).toDateString()} is in the past. Skipping.`
+          );
+          // We still need to update the search date to avoid an infinite loop
+          searchFromTimestamp = nextOccurrence + DAY_IN_SECONDS;
+          continue;
+        }
+
+        // 2. Check if a workout is already logged for this exact date and name
+        const existingLog = await db.getAllAsync(
+          `SELECT workout_log_id FROM Workout_Log 
+           WHERE workout_date = ? AND workout_name = ? AND day_name = ?`,
+          [nextOccurrence, workout.workout_name, workout.day_name]
+        );
+
+        if (existingLog.length > 0) {
+          console.log(
+            `SKIPPING - Workout already scheduled for ${new Date(
+              nextOccurrence * 1000
+            ).toDateString()}`
+          );
+        } else {
+          // --- SCHEDULING ---
+          console.log(
+            `SCHEDULING - New workout for ${new Date(
+              nextOccurrence * 1000
+            ).toDateString()}`
+          );
+          await scheduleWorkout(
+            db,
+            workout,
+            nextOccurrence,
+            scheduleNotification,
+            notificationPermissionGranted
+          );
+        }
+
+        // --- PREPARE FOR NEXT ITERATION ---
+        // Set the start for the next search to be the day AFTER the one we just found.
+        // This is crucial to ensure we find the *next* occurrence in the next loop.
+        searchFromTimestamp = nextOccurrence + DAY_IN_SECONDS;
       }
-      
-      // This specific occurrence isn't scheduled yet - schedule it now
-      console.log(`SCHEDULING - New workout for ${nextDate}`);
-      await scheduleWorkout(db, workout, nextOccurrence);
     }
-    
+
     console.log("RECURRING CHECK COMPLETED");
     return true;
   } catch (error) {
-    console.error('Error in checkAndScheduleRecurringWorkouts:', error);
+    console.error("Error in checkAndScheduleRecurringWorkouts:", error);
     return false;
   }
 };
@@ -269,7 +323,10 @@ export const useRecurringWorkouts = () => {
     }
     
     return await checkAndScheduleRecurringWorkouts(
-      db
+      db, 
+      scheduleNotification,
+      currentPermissionStatus,
+      3
     );
   };
   
