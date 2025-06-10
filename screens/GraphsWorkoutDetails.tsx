@@ -110,6 +110,19 @@ export default function GraphsWorkoutDetails() {
     'rgba(99, 255, 132, 1)',   // Green
   ];
 
+  const timeChartDayColors = [
+    'rgb(255, 114, 38)',
+    'rgba(0, 168, 132, 1)',
+    'rgba(107, 107, 255, 1)',
+    'rgba(255, 165, 0, 1)',
+    'rgba(128, 0, 128, 1)',
+    'rgba(0, 128, 128, 1)',
+    'rgba(255, 20, 147, 1)',
+    'rgba(0, 191, 255, 1)',
+    'rgba(218, 165, 32, 1)',
+    'rgba(128, 128, 0, 1)',
+  ];
+
   // State variables
   const [allWorkouts, setAllWorkouts] = useState<DayOption[]>([]);
   const [selectedWorkout, setSelectedWorkout] = useState<string>('');
@@ -1167,6 +1180,20 @@ export default function GraphsWorkoutDetails() {
 
     const yValues = formattedChartData.map(point => point.y); // These are completion times in seconds
     
+    const dayNames = [...new Set(formattedChartData.map(p => p.dayName).filter(Boolean))] as string[];
+    const dayNameColorMap = dayNames.reduce((acc, dayName, index) => {
+      acc[dayName] = timeChartDayColors[index % timeChartDayColors.length];
+      return acc;
+    }, {} as Record<string, string>);
+
+    const getDotColor = (_: any, dataPointIndex: number) => {
+      const point = formattedChartData[dataPointIndex];
+      if (point && point.dayName) {
+        return dayNameColorMap[point.dayName] || theme.text;
+      }
+      return theme.text;
+    };
+    
     const chartHeight = 220;
     const yAxisWidth = 65; // This might not be directly used anymore, but good for reference if padding is needed
     const lineChartContentWidth = getChartWidth(chartData.length);
@@ -1177,15 +1204,15 @@ export default function GraphsWorkoutDetails() {
       backgroundGradientFrom: theme.card,
       backgroundGradientTo: theme.card,
       decimalPlaces: 1, 
-      color: (opacity = 1) => `rgba(255, 159, 64, ${opacity})`, 
+      color: (opacity = 1) => `rgba(255, 111, 21, ${opacity})`, // Default line color, overridden by dataset
       labelColor: (opacity = 1) => theme.text, 
       style: { borderRadius: 16 },
-      propsForDots: { r: '4', strokeWidth: '4', stroke: '#ff9f40' },
-      fillShadowGradientFrom: `rgba(255, 159, 64, 0.15)`,
-      fillShadowGradientTo: `rgba(255, 159, 64, 0.02)`,
+      propsForDots: { r: '5', strokeWidth: '4' },
+      fillShadowGradientFrom: `rgba(255, 111, 21, 0.15)`,
+      fillShadowGradientTo: `rgba(255, 111, 21, 0.02)`,
       fillShadowGradientFromOpacity: 0.5,
       fillShadowGradientToOpacity: 0.1,
-      useShadowColorFromDataset: true,
+      useShadowColorFromDataset: false,
       withShadow: true,
       withInnerLines: true,
       withOuterLines: true,
@@ -1200,7 +1227,6 @@ export default function GraphsWorkoutDetails() {
           color: timeChartConfig.color, 
           strokeWidth: 2
         }],
-        legend: [t('completionTime')]
       },
       width: lineChartContentWidth, 
       height: chartHeight,
@@ -1212,6 +1238,7 @@ export default function GraphsWorkoutDetails() {
       withHorizontalLabels: true, 
       paddingRight: 50,         
       segments: lineChartSegments,
+      getDotColor: getDotColor,
     };
 
     return (
@@ -1223,6 +1250,17 @@ export default function GraphsWorkoutDetails() {
         >
           <LineChart {...lineChartProps as any} />
         </ScrollView>
+        <View style={[styles.legendContainer, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <Text style={[styles.legendTitle, { color: theme.text }]}>{t('Workout Days')}</Text>
+          <View style={styles.legendItems}>
+            {dayNames.map(dayName => (
+              <View key={dayName} style={styles.legendItem}>
+                <View style={[styles.legendColor, { backgroundColor: dayNameColorMap[dayName] }]} />
+                <Text style={[styles.legendText, { color: theme.text }]}>{dayName}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
         {chartData.length > 5 && (
           <Text style={[styles.scrollHint, { color: theme.text }]}>
             {t('horizontalScrollHint')} →
