@@ -302,7 +302,7 @@
   "workoutReminderBody": "「{{dayName}}」のワークアウトの時間です！",
   "Workout in Progress": "ワークアウト進行中",
   "Workout in Progress Message": "ワークアウトを完了するのを忘れないでください！",
-
+  "Workout Days": "ワークアウト日",
 
   "_comment_GraphsWorkoutDetails": "これらはグラフ-ワークアウト詳細関連の文字列です。",
     "setGraph": "セット",

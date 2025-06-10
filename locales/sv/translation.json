@@ -314,6 +314,7 @@
     "setGraph": "Set",
     "Time": "Tid",
     "completionTime": "Slutförandetid",
+    "Workout Days": "Träningspassdagar",
     "horizontalScrollHint": "Skrolla horisontellt för att se mer data",
     "weightProgressionBySets": "Viktprogression per set",
     "About Sets Progression": "Om Setgraf",
