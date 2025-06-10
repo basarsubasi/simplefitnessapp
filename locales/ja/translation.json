@@ -352,6 +352,11 @@
       "Logs": "ログ",
       "Graph Type": "グラフの種類",
       "Metric": "メトリック",
-      "Exercise Stats": "エクササイズの統計"
+      "Exercise Stats": "エクササイズの統計",
+
+      "RepsCapital": "回数",
+      "RepsGraph": "回数グラフ",
+      "About Reps Progression": "回数グラフについて",
+      "repsGraphExplanation": "このグラフは、個々のセットで行った回数を示します。各線と色は、セットグラフと同様に異なるセット番号を表しますが、Y軸は重さの代わりに回数です。自重エクササイズの追跡に最適です！"
     
 }

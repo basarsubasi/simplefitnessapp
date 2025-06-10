@@ -344,7 +344,12 @@
   "Logs": "Protokolle",
   "Graph Type": "Diagrammtyp",
   "Metric": "Metrik",
-  "Exercise Stats": "Übungsstatistiken"
+  "Exercise Stats": "Übungsstatistiken",
+
+  "RepsCapital": "Wiederholungen",
+  "RepsGraph": "Wiederholungs-Graph",
+  "About Reps Progression": "Über den Wiederholungs-Graph",
+  "repsGraphExplanation": "Dieser Graph zeigt die Wiederholungen an, die Sie für einzelne Sätze gemacht haben. Jede Linie und Farbe repräsentiert eine andere Satznummer, ähnlich dem Satz-Graph, aber mit der Y-Achse als Wiederholungen anstelle von Gewichten. Perfekt zur Verfolgung von Körpergewichtsübungen!"
 
 
 }

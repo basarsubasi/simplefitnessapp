@@ -356,7 +356,13 @@
       "Logs": "Loggar",
       "Graph Type": "Graftyp",
       "Metric": "Mått",
-      "Exercise Stats": "Övningstatistik"
+      "Exercise Stats": "Övningstatistik",
+
+
+      "RepsCapital": "Repetitioner",
+      "RepsGraph": "Repetitionsgraf",
+      "About Reps Progression": "Om repetitionsgrafen",
+      "repsGraphExplanation": "Denna graf visar de repetitioner du har gjort för individuella set. Varje linje och färg representerar ett olika setnummer, likt Setgrafen, men med Y-axeln som repetitioner istället för vikter. Perfekt för att spåra kroppsviktsövningar!"
     
         
 
