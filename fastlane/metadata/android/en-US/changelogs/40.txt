@@ -1,0 +1,4 @@
+- A new graph added (Reps)
+- New  Template Workouts added (Home Workouts)
+- Minor design changes
+- Minor bug fixes
