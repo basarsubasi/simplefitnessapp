@@ -202,7 +202,7 @@ export default function EditRecurringWorkout() {
 
       if (success) {
         console.log('DEBUG: Successfully updated recurring workout');
-        navigation.navigate('MyCalendar');
+        navigation.navigate('MyCalendar', {refresh:true});
       } else {
         console.error('DEBUG: Failed to update recurring workout - returned false');
         Alert.alert(

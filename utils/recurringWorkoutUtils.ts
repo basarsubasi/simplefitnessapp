@@ -1,6 +1,7 @@
 // utils/recurringWorkoutUtils.ts
 
 import { useSQLiteContext } from 'expo-sqlite';
+import { useCallback } from 'react';
 
 // Constants
 const DAY_IN_SECONDS = 86400; // 24 hours in seconds
@@ -33,14 +34,10 @@ interface Exercise {
  * This version will schedule a specified number of upcoming occurrences.
  *
  * @param db The database connection.
- * @param scheduleNotification The function to schedule a notification.
- * @param notificationPermissionGranted Whether notification permission is granted.
  * @param scheduleAheadCount The number of upcoming occurrences to schedule.
  */
 export const checkAndScheduleRecurringWorkouts = async (
   db: any,
-  scheduleNotification: any,
-  notificationPermissionGranted: boolean,
   scheduleAheadCount: number = 2 // Schedule the next 2 occurrences by default
 ) => {
   try {
@@ -121,8 +118,6 @@ export const checkAndScheduleRecurringWorkouts = async (
             db,
             workout,
             nextOccurrence,
-            scheduleNotification,
-            notificationPermissionGranted
           );
         }
 
@@ -309,26 +304,14 @@ export const useRecurringWorkouts = () => {
   const db = useSQLiteContext();
 
   
-  // Check and schedule recurring workouts
-  const checkRecurringWorkouts = async () => {
-    // Get the latest permission status before checking workouts
+ const checkRecurringWorkouts = useCallback(async () => {
 
     
-    try {
-      // Double-check permissions are up-to-date
-    
-      console.log(`checked recurring workouts`);
-    } catch (error) {
-      console.error('Error:', error);
-    }
-    
-    return await checkAndScheduleRecurringWorkouts(
-      db, 
-      scheduleNotification,
-      currentPermissionStatus,
-      3
-    );
-  };
+return await checkAndScheduleRecurringWorkouts(
+    db,
+    3
+  );
+}, [db]);
   
   // Create a new recurring workout
   const createRecurringWorkout = async (data: {

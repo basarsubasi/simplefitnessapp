@@ -9,7 +9,7 @@ import {
   Modal,
   ViewStyle,
 } from 'react-native';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation, useRoute, type RouteProp } from '@react-navigation/native';
 import { useSQLiteContext } from 'expo-sqlite';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -23,6 +23,8 @@ type MyCalendarNavigationProp = StackNavigationProp<
   WorkoutLogStackParamList,
   'MyCalendar'
 >;
+
+type MyCalendarRouteProp = RouteProp<WorkoutLogStackParamList, 'MyCalendar'>;
 
 // Define the structure for a workout entry in our map
 interface WorkoutEntry {
@@ -50,6 +52,7 @@ interface ExerciseDetails {
 export default function MyCalendar() {
   const db = useSQLiteContext();
   const navigation = useNavigation<MyCalendarNavigationProp>();
+  const route = useRoute<MyCalendarRouteProp>();
   const { theme } = useTheme();
   const { t } = useTranslation();
   const { dateFormat, weightFormat } = useSettings();
@@ -85,9 +88,10 @@ export default function MyCalendar() {
     addColumn0();
     addColumn1();
     addColumn2();
-    checkRecurringWorkouts();
+    // checkRecurringWorkouts();
     setUntrackedWorkoutDetails([]);
   }, []); // Empty dependency array ensures this runs only once
+
 
   const addColumn1 = async () => {
     try {
@@ -333,6 +337,36 @@ export default function MyCalendar() {
       console.error('Error fetching untracked workout details:', error);
     }
   };
+
+
+useEffect(() => {
+  // Define an async function inside the effect
+  const handleRefresh = async () => {
+    console.log("DEBUG: Refresh signal received, starting async process.");
+
+    // 1. WAIT for the recurring workouts to be checked and saved to the DB.
+    await checkRecurringWorkouts();
+    console.log("Recurring workouts check complete.");
+
+    // 2. NOW that the database is updated, WAIT for the fetch to get the new data.
+    await fetchWorkoutsForGrid(currentDate);
+    console.log("Calendar grid data re-fetched.");
+
+    // 3. FINALLY, reset the refresh signal.
+    navigation.setParams({ refresh: false });
+  };
+
+  // Check for the refresh signal and call our async function
+  if (route.params?.refresh) {
+    handleRefresh();
+  }
+}, [
+  route.params?.refresh,
+  navigation,
+  fetchWorkoutsForGrid,
+  currentDate,
+  checkRecurringWorkouts,
+]);
 
   const closeUntrackedModal = () => {
     setUntrackedChoiceModalVisible(false);

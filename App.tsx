@@ -132,7 +132,7 @@
   };
 
   export type WorkoutLogStackParamList = {
-    MyCalendar: undefined; // No parameters for this route
+    MyCalendar: {refresh?:boolean};  // No parameters for this route
     LogWorkout: { selectedDate?: string };
     RecurringWorkoutOptions: undefined;
     CreateRecurringWorkout: undefined;
