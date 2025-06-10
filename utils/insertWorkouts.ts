@@ -19,7 +19,7 @@ export const insertWorkouts = async (db: any) => {
           (1, 'Push Day'),
           (1, 'Pull Day'),
           (1, 'Leg Day'),
-          (2, 'Cycle'),
+          (2, 'Newbie Gains Cycle'),
           (3, 'Chest'),
           (3, 'Back'),
           (3, 'Shoulders'),
