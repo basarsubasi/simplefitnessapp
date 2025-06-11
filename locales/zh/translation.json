@@ -360,5 +360,6 @@
       "RepsGraph": "次数图",
       "About Reps Progression": "关于次数图",
       "repsGraphExplanation": "此图表显示您为单个组完成的次数。每条线和颜色代表不同的组号，类似于组数图，但 Y 轴是次数而不是重量。非常适合跟踪自重训练！",
-      "Workout Days": "锻炼天数"
+      "Workout Days": "锻炼天数",
+      "settingsFirstWeekday": "一周的第一天"
 }
