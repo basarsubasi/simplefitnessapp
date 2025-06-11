@@ -395,7 +395,10 @@
     "About Reps Progression": "About Reps Graph",
     "repsGraphExplanation": "This graph shows the reps you've done for individual sets. Each line and color represents a different set number like the Sets Graph but with the Y axis being the reps instead of weights. Perfect for tracking bodyweight exercises!",
 
-    "Workout Days": "Workout Days"
+    "Workout Days": "Workout Days",
+
+
+    "settingsFirstWeekday": "First Day of the Week"
 
     }
   
