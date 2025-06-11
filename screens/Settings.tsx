@@ -408,34 +408,6 @@ export default function Settings() {
     {t('settingsFirstWeekday') || 'First Day of the Week'}
   </Text>
   <View style={styles.buttonGroup}>
-    {/* Sunday Button */}
-    <TouchableOpacity
-      style={[
-        styles.button,
-        firstWeekday === 'Sunday' && styles.activeButton,
-      ]}
-      onPress={() => handleFirstWeekdayChange('Sunday')}
-    >
-      <View style={styles.buttonContent}>
-        <Text
-          style={[
-            styles.buttonText,
-            firstWeekday === 'Sunday' && styles.activeButtonText,
-          ]}
-        >
-          {t('Sunday')}
-        </Text>
-        {firstWeekday === 'Sunday' && (
-          <Ionicons
-            name='checkmark'
-            size={18}
-            color='white'
-            style={styles.tickIcon}
-          />
-        )}
-      </View>
-    </TouchableOpacity>
-
     {/* Monday Button */}
     <TouchableOpacity
       style={[
@@ -463,6 +435,35 @@ export default function Settings() {
         )}
       </View>
     </TouchableOpacity>
+
+        {/* Sunday Button */}
+    <TouchableOpacity
+      style={[
+        styles.button,
+        firstWeekday === 'Sunday' && styles.activeButton,
+      ]}
+      onPress={() => handleFirstWeekdayChange('Sunday')}
+    >
+      <View style={styles.buttonContent}>
+        <Text
+          style={[
+            styles.buttonText,
+            firstWeekday === 'Sunday' && styles.activeButtonText,
+          ]}
+        >
+          {t('Sunday')}
+        </Text>
+        {firstWeekday === 'Sunday' && (
+          <Ionicons
+            name='checkmark'
+            size={18}
+            color='white'
+            style={styles.tickIcon}
+          />
+        )}
+      </View>
+    </TouchableOpacity>
+    
   </View>
 </View>
 {/* --- END OF NEW SECTION --- */}
