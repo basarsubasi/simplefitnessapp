@@ -91,8 +91,8 @@ android {
         applicationId 'tr.com.basarsubasi.simplefitnessapp'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 40
-        versionName "1.7.2"
+        versionCode 41
+        versionName "1.7.3"
     }
     signingConfigs {
         debug {
