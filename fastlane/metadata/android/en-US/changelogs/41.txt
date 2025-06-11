@@ -1,0 +1,4 @@
+
+    - Now you can select the first day of the week on the calendar (Sunday/Monday)
+    -Initializing the settings better on first launch
+
