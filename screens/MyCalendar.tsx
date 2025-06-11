@@ -9,7 +9,12 @@ import {
   Modal,
   ViewStyle,
 } from 'react-native';
-import { useFocusEffect, useNavigation, useRoute, type RouteProp } from '@react-navigation/native';
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+  type RouteProp,
+} from '@react-navigation/native';
 import { useSQLiteContext } from 'expo-sqlite';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -56,34 +61,35 @@ export default function MyCalendar() {
   const route = useRoute<MyCalendarRouteProp>();
   const { theme } = useTheme();
   const { t } = useTranslation();
-  const { dateFormat, weightFormat } = useSettings();
+  const { dateFormat, weightFormat, firstWeekday } = useSettings(); // <-- Added firstWeekday
   const { cancelNotification } = useNotifications();
   const { checkRecurringWorkouts } = useRecurringWorkouts();
 
   // State for the calendar
   const [currentDate, setCurrentDate] = useState(new Date());
   const [workouts, setWorkouts] = useState<Map<string, WorkoutEntry[]>>(
-    new Map()
+    new Map(),
   );
 
   // State for the modal
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedDateWorkouts, setSelectedDateWorkouts] = useState<WorkoutEntry[]>([]);
-  const [detailedWorkout, setDetailedWorkout] = useState<WorkoutEntry | null>(null);
+  const [selectedDateWorkouts, setSelectedDateWorkouts] = useState<
+    WorkoutEntry[]
+  >([]);
+  const [detailedWorkout, setDetailedWorkout] = useState<WorkoutEntry | null>(
+    null,
+  );
   const [exercises, setExercises] = useState<ExerciseDetails[]>([]);
   const [completionTime, setCompletionTime] = useState<number | null>(null);
   const [untrackedChoiceModalVisible, setUntrackedChoiceModalVisible] =
     useState(false);
-  const [
-    selectedUntrackedWorkout,
-    setSelectedUntrackedWorkout,
-  ] = useState<WorkoutEntry | null>(null);
-  const [
-    untrackedWorkoutDetails,
-    setUntrackedWorkoutDetails,
-  ] = useState<ExerciseDetails[]>([]);
+  const [selectedUntrackedWorkout, setSelectedUntrackedWorkout] =
+    useState<WorkoutEntry | null>(null);
+  const [untrackedWorkoutDetails, setUntrackedWorkoutDetails] = useState<
+    ExerciseDetails[]
+  >([]);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  
+
   // Run this check only ONCE when the component mounts
   useEffect(() => {
     console.log('MyCalendar: Component mounted, checking recurring workouts.');
@@ -94,19 +100,20 @@ export default function MyCalendar() {
     setUntrackedWorkoutDetails([]);
   }, []); // Empty dependency array ensures this runs only once
 
-
   const addColumn1 = async () => {
     try {
       // Check if column exists first
       const tableInfo = await db.getAllAsync(
-        "PRAGMA table_info(Workout_Log);"
+        'PRAGMA table_info(Workout_Log);',
       );
       const columnExists = tableInfo.some(
-        (column: any) => column.name === 'completion_time'
+        (column: any) => column.name === 'completion_time',
       );
-      
+
       if (!columnExists) {
-        await db.runAsync('ALTER TABLE Workout_Log ADD COLUMN completion_time INTEGER;');
+        await db.runAsync(
+          'ALTER TABLE Workout_Log ADD COLUMN completion_time INTEGER;',
+        );
         console.log('Column added successfully');
       } else {
         console.log('Column already exists, skipping');
@@ -119,15 +126,15 @@ export default function MyCalendar() {
   const addColumn0 = async () => {
     try {
       // Check if column exists first
-      const tableInfo = await db.getAllAsync(
-        "PRAGMA table_info(Weight_Log);"
-      );
+      const tableInfo = await db.getAllAsync('PRAGMA table_info(Weight_Log);');
       const columnExists = tableInfo.some(
-        (column: any) => column.name === 'completion_time'
+        (column: any) => column.name === 'completion_time',
       );
-      
+
       if (!columnExists) {
-        await db.runAsync('ALTER TABLE Weight_Log ADD COLUMN completion_time INTEGER;');
+        await db.runAsync(
+          'ALTER TABLE Weight_Log ADD COLUMN completion_time INTEGER;',
+        );
         console.log('Column added successfully');
       } else {
         console.log('Column already exists, skipping');
@@ -141,14 +148,16 @@ export default function MyCalendar() {
     try {
       // Check if column exists first
       const tableInfo = await db.getAllAsync(
-        "PRAGMA table_info(Workout_Log);"
+        'PRAGMA table_info(Workout_Log);',
       );
       const columnExists = tableInfo.some(
-        (column: any) => column.name === 'notification_id'
+        (column: any) => column.name === 'notification_id',
       );
-      
+
       if (!columnExists) {
-        await db.runAsync('ALTER TABLE Workout_Log ADD COLUMN notification_id TEXT;');
+        await db.runAsync(
+          'ALTER TABLE Workout_Log ADD COLUMN notification_id TEXT;',
+        );
         console.log('Column added successfully');
       } else {
         console.log('Column already exists, skipping');
@@ -164,8 +173,14 @@ export default function MyCalendar() {
         // Calculate the start and end of the visible grid
         const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
         const dayOfWeek = firstDayOfMonth.getDay(); // 0=Sun, 1=Mon...
-        // To make Monday the first day of the week
-        const daysToSubtract = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+
+        // MODIFIED: Adjust start day based on `firstWeekday` setting
+        const daysToSubtract =
+          firstWeekday === 'Monday'
+            ? dayOfWeek === 0
+              ? 6
+              : dayOfWeek - 1
+            : dayOfWeek;
 
         const gridStartDate = new Date(firstDayOfMonth);
         gridStartDate.setDate(gridStartDate.getDate() - daysToSubtract);
@@ -188,22 +203,22 @@ export default function MyCalendar() {
         }>(
           `SELECT DISTINCT workout_log_id FROM Weight_Log 
            WHERE workout_log_id IN (SELECT workout_log_id FROM Workout_Log WHERE workout_date BETWEEN ? AND ?);`,
-          [startTimestamp, endTimestamp]
+          [startTimestamp, endTimestamp],
         );
         const loggedWorkoutIds = new Set(
-          loggedWorkoutIdsResult.map((item) => item.workout_log_id)
+          loggedWorkoutIdsResult.map((item) => item.workout_log_id),
         );
 
         const workoutsMap = new Map<string, WorkoutEntry[]>();
         allWorkoutsInRange.forEach((workout) => {
           const workoutDate = new Date(workout.workout_date * 1000);
           const dateKey = `${workoutDate.getFullYear()}-${String(
-            workoutDate.getMonth() + 1
+            workoutDate.getMonth() + 1,
           ).padStart(2, '0')}-${String(workoutDate.getDate()).padStart(
             2,
-            '0'
+            '0',
           )}`;
-          
+
           const entry: WorkoutEntry = {
             workout,
             isLogged: loggedWorkoutIds.has(workout.workout_log_id),
@@ -222,7 +237,7 @@ export default function MyCalendar() {
         console.error('Error fetching workouts for grid:', error);
       }
     },
-    [db]
+    [db, firstWeekday], // <-- Added firstWeekday dependency
   );
 
   // Refresh the calendar data every time the screen is focused
@@ -230,12 +245,12 @@ export default function MyCalendar() {
     useCallback(() => {
       console.log('MyCalendar: Screen focused, fetching workouts for grid.');
       fetchWorkoutsForGrid(currentDate);
-    }, [currentDate, fetchWorkoutsForGrid])
+    }, [currentDate, fetchWorkoutsForGrid]),
   );
 
   const fetchWorkoutDetails = async (
     workout_log_id: number,
-    isLogged: boolean
+    isLogged: boolean,
   ) => {
     try {
       setExercises([]);
@@ -265,7 +280,7 @@ export default function MyCalendar() {
           WHERE wl.workout_log_id = ?
           ORDER BY le.exercise_name, wl.set_number;
         `,
-          [workout_log_id]
+          [workout_log_id],
         );
 
         if (loggedData.length > 0) {
@@ -282,7 +297,7 @@ export default function MyCalendar() {
               if (!exerciseGroup || !exerciseGroup.logs) {
                 // This path should be logically impossible.
                 throw new Error(
-                  `Failed to find or create group for exercise: ${item.exercise_name}`
+                  `Failed to find or create group for exercise: ${item.exercise_name}`,
                 );
               }
 
@@ -293,7 +308,7 @@ export default function MyCalendar() {
               });
               return acc;
             },
-            {} as Record<string, ExerciseDetails>
+            {} as Record<string, ExerciseDetails>,
           );
 
           setExercises(Object.values(grouped));
@@ -303,11 +318,9 @@ export default function MyCalendar() {
             { exercise_name: string; sets: number; reps: number }
           >(
             `SELECT exercise_name, sets, reps FROM Logged_Exercises WHERE workout_log_id = ?;`,
-            [workout_log_id]
+            [workout_log_id],
           );
-          setExercises(
-            planned.map((p) => ({ ...p, logs: [] }))
-          );
+          setExercises(planned.map((p) => ({ ...p, logs: [] })));
         }
       } else {
         // For upcoming workouts
@@ -315,11 +328,9 @@ export default function MyCalendar() {
           { exercise_name: string; sets: number; reps: number }
         >(
           `SELECT exercise_name, sets, reps FROM Logged_Exercises WHERE workout_log_id = ?;`,
-          [workout_log_id]
+          [workout_log_id],
         );
-        setExercises(
-          planned.map((p) => ({ ...p, logs: [] }))
-        );
+        setExercises(planned.map((p) => ({ ...p, logs: [] })));
       }
     } catch (error) {
       console.error('Error fetching workout details:', error);
@@ -332,7 +343,7 @@ export default function MyCalendar() {
         { exercise_name: string; sets: number; reps: number }
       >(
         `SELECT exercise_name, sets, reps FROM Logged_Exercises WHERE workout_log_id = ?;`,
-        [workout_log_id]
+        [workout_log_id],
       );
       setUntrackedWorkoutDetails(planned.map((p) => ({ ...p, logs: [] })));
     } catch (error) {
@@ -340,35 +351,34 @@ export default function MyCalendar() {
     }
   };
 
+  useEffect(() => {
+    // Define an async function inside the effect
+    const handleRefresh = async () => {
+      console.log('DEBUG: Refresh signal received, starting async process.');
 
-useEffect(() => {
-  // Define an async function inside the effect
-  const handleRefresh = async () => {
-    console.log("DEBUG: Refresh signal received, starting async process.");
+      // 1. WAIT for the recurring workouts to be checked and saved to the DB.
+      await checkRecurringWorkouts();
+      console.log('Recurring workouts check complete.');
 
-    // 1. WAIT for the recurring workouts to be checked and saved to the DB.
-    await checkRecurringWorkouts();
-    console.log("Recurring workouts check complete.");
+      // 2. NOW that the database is updated, WAIT for the fetch to get the new data.
+      await fetchWorkoutsForGrid(currentDate);
+      console.log('Calendar grid data re-fetched.');
 
-    // 2. NOW that the database is updated, WAIT for the fetch to get the new data.
-    await fetchWorkoutsForGrid(currentDate);
-    console.log("Calendar grid data re-fetched.");
+      // 3. FINALLY, reset the refresh signal.
+      navigation.setParams({ refresh: false });
+    };
 
-    // 3. FINALLY, reset the refresh signal.
-    navigation.setParams({ refresh: false });
-  };
-
-  // Check for the refresh signal and call our async function
-  if (route.params?.refresh) {
-    handleRefresh();
-  }
-}, [
-  route.params?.refresh,
-  navigation,
-  fetchWorkoutsForGrid,
-  currentDate,
-  checkRecurringWorkouts,
-]);
+    // Check for the refresh signal and call our async function
+    if (route.params?.refresh) {
+      handleRefresh();
+    }
+  }, [
+    route.params?.refresh,
+    navigation,
+    fetchWorkoutsForGrid,
+    currentDate,
+    checkRecurringWorkouts,
+  ]);
 
   const closeUntrackedModal = () => {
     setUntrackedChoiceModalVisible(false);
@@ -406,21 +416,21 @@ useEffect(() => {
               }
               await db.runAsync(
                 `DELETE FROM Workout_Log WHERE workout_log_id = ?;`,
-                [workout_log_id]
+                [workout_log_id],
               );
               await db.runAsync(
                 `DELETE FROM Weight_Log WHERE workout_log_id = ?;`,
-                [workout_log_id]
+                [workout_log_id],
               );
               await db.runAsync(
                 `DELETE FROM Logged_Exercises WHERE workout_log_id = ?;`,
-                [workout_log_id]
+                [workout_log_id],
               );
               fetchWorkoutsForGrid(currentDate); // Refresh the calendar
 
               // Refresh the modal content
               const updatedWorkouts = selectedDateWorkouts.filter(
-                (w) => w.workout.workout_log_id !== workout_log_id
+                (w) => w.workout.workout_log_id !== workout_log_id,
               );
 
               // If no workouts are left for this date, close the modal
@@ -435,7 +445,7 @@ useEffect(() => {
             }
           },
         },
-      ]
+      ],
     );
   };
 
@@ -479,7 +489,7 @@ useEffect(() => {
     if (hours > 0) {
       return `${String(hours).padStart(
         2,
-        '0'
+        '0',
       )}:${paddedMinutes}:${paddedSeconds}`;
     }
     return `${paddedMinutes}:${paddedSeconds}`;
@@ -487,13 +497,13 @@ useEffect(() => {
 
   const handlePrevMonth = () => {
     setCurrentDate(
-      (prevDate) => new Date(prevDate.getFullYear(), prevDate.getMonth() - 1, 1)
+      (prevDate) => new Date(prevDate.getFullYear(), prevDate.getMonth() - 1, 1),
     );
   };
 
   const handleNextMonth = () => {
     setCurrentDate(
-      (prevDate) => new Date(prevDate.getFullYear(), prevDate.getMonth() + 1, 1)
+      (prevDate) => new Date(prevDate.getFullYear(), prevDate.getMonth() + 1, 1),
     );
   };
 
@@ -510,7 +520,7 @@ useEffect(() => {
       'September',
       'October',
       'November',
-      'December'
+      'December',
     ];
     return t(months[date.getMonth()]);
   };
@@ -522,8 +532,14 @@ useEffect(() => {
 
     const firstDayOfMonth = new Date(year, month, 1);
     const dayOfWeek = firstDayOfMonth.getDay(); // 0=Sun, 1=Mon...
-    // To make Monday the first day of the week
-    const daysToSubtract = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+
+    // MODIFIED: Adjust start day based on `firstWeekday` setting
+    const daysToSubtract =
+      firstWeekday === 'Monday'
+        ? dayOfWeek === 0
+          ? 6
+          : dayOfWeek - 1
+        : dayOfWeek;
 
     const gridStartDate = new Date(firstDayOfMonth);
     gridStartDate.setDate(gridStartDate.getDate() - daysToSubtract);
@@ -539,7 +555,7 @@ useEffect(() => {
 
       const dateKey = `${cellYear}-${String(cellMonth + 1).padStart(
         2,
-        '0'
+        '0',
       )}-${String(day).padStart(2, '0')}`;
       const workoutEntries = workouts.get(dateKey);
 
@@ -549,7 +565,8 @@ useEffect(() => {
         today.getMonth() === cellMonth &&
         today.getDate() === day;
       const isPast = cellDate.setHours(0, 0, 0, 0) < today.setHours(0, 0, 0, 0);
-      const isFuture = cellDate.setHours(0, 0, 0, 0) > today.setHours(0, 0, 0, 0);
+      const isFuture =
+        cellDate.setHours(0, 0, 0, 0) > today.setHours(0, 0, 0, 0);
 
       const cellStyle: ViewStyle[] = [styles.dayCell];
       const textStyle: any[] = [
@@ -586,24 +603,46 @@ useEffect(() => {
               style={[
                 styles.todayIndicator,
                 {
-                  backgroundColor: isAnyLogged
-                    ? theme.buttonText
-                    : theme.text,
+                  backgroundColor: isAnyLogged ? theme.buttonText : theme.text,
                 },
               ]}
             />
           )}
           {workoutEntries && workoutEntries.length > 1 && (
-             <View style={[
-                styles.multipleWorkoutIndicator, 
-                { backgroundColor: isAnyLogged ? theme.buttonText : theme.text }
-            ]} />
+            <View
+              style={[
+                styles.multipleWorkoutIndicator,
+                { backgroundColor: isAnyLogged ? theme.buttonText : theme.text },
+              ]}
+            />
           )}
-        </TouchableOpacity>
+        </TouchableOpacity>,
       );
     }
     return days;
   };
+
+  // MODIFIED: Create weekday labels based on `firstWeekday` setting
+  const weekDays =
+    firstWeekday === 'Monday'
+      ? [
+          t('Mon'),
+          t('Tue'),
+          t('Wed'),
+          t('Thu'),
+          t('Fri'),
+          t('Sat'),
+          t('Sun'),
+        ]
+      : [
+          t('Sun'),
+          t('Mon'),
+          t('Tue'),
+          t('Wed'),
+          t('Thu'),
+          t('Fri'),
+          t('Sat'),
+        ];
 
   return (
     <ScrollView
@@ -611,7 +650,12 @@ useEffect(() => {
       contentContainerStyle={[styles.contentContainer, { paddingTop: 70 }]}
     >
       <View style={styles.titleContainer}>
-        <Ionicons name="calendar" size={30} color={theme.text} style={styles.titleIcon} />
+        <Ionicons
+          name='calendar'
+          size={30}
+          color={theme.text}
+          style={styles.titleIcon}
+        />
         <Text style={[styles.title, { color: theme.text }]}>
           {t('myCalendar')}
         </Text>
@@ -626,7 +670,7 @@ useEffect(() => {
           onPress={() => navigation.navigate('RecurringWorkoutOptions')}
         >
           <Ionicons
-            name="infinite"
+            name='infinite'
             size={22}
             color={theme.buttonText}
             style={styles.icon}
@@ -646,25 +690,17 @@ useEffect(() => {
       >
         <View style={styles.calendarHeader}>
           <TouchableOpacity onPress={handlePrevMonth}>
-            <Ionicons name="chevron-back" size={24} color={theme.text} />
+            <Ionicons name='chevron-back' size={24} color={theme.text} />
           </TouchableOpacity>
           <Text style={[styles.calendarMonthText, { color: theme.text }]}>
             {`${getMonthName(currentDate)} ${currentDate.getFullYear()}`}
           </Text>
           <TouchableOpacity onPress={handleNextMonth}>
-            <Ionicons name="chevron-forward" size={24} color={theme.text} />
+            <Ionicons name='chevron-forward' size={24} color={theme.text} />
           </TouchableOpacity>
         </View>
         <View style={styles.weekDaysContainer}>
-          {[
-            t('Mon'),
-            t('Tue'),
-            t('Wed'),
-            t('Thu'),
-            t('Fri'),
-            t('Sat'),
-            t('Sun')
-          ].map((day, index) => (
+          {weekDays.map((day, index) => (
             <Text
               key={index}
               style={[styles.weekDayText, { color: theme.text }]}
@@ -749,7 +785,7 @@ useEffect(() => {
       <Modal
         visible={modalVisible}
         transparent={true}
-        animationType="fade"
+        animationType='fade'
         onRequestClose={() => {
           setModalVisible(false);
           setDetailedWorkout(null);
@@ -772,7 +808,7 @@ useEffect(() => {
                     setCompletionTime(null);
                   }}
                 >
-                  <Ionicons name="arrow-back" size={24} color={theme.text} />
+                  <Ionicons name='arrow-back' size={24} color={theme.text} />
                 </TouchableOpacity>
               ) : (
                 <View style={styles.modalLeftButton} />
@@ -785,7 +821,7 @@ useEffect(() => {
                   setDetailedWorkout(null);
                 }}
               >
-                <Ionicons name="close" size={24} color={theme.text} />
+                <Ionicons name='close' size={24} color={theme.text} />
               </TouchableOpacity>
             </View>
 
@@ -800,7 +836,11 @@ useEffect(() => {
                 </Text>
                 {completionTime && (
                   <View style={styles.completionTimeContainer}>
-                    <Ionicons name="time-outline" size={16} color={theme.text} />
+                    <Ionicons
+                      name='time-outline'
+                      size={16}
+                      color={theme.text}
+                    />
                     <Text
                       style={[styles.completionTimeText, { color: theme.text }]}
                     >
@@ -877,7 +917,7 @@ useEffect(() => {
 
                   const isUpcoming =
                     new Date(
-                      selectedDateWorkouts[0].workout.workout_date * 1000
+                      selectedDateWorkouts[0].workout.workout_date * 1000,
                     ).setHours(0, 0, 0, 0) > new Date().setHours(0, 0, 0, 0);
 
                   return (
@@ -886,7 +926,7 @@ useEffect(() => {
                         {!isUpcoming && (
                           <View style={styles.modalLegendItem}>
                             <Ionicons
-                              name="checkmark-circle"
+                              name='checkmark-circle'
                               size={20}
                               color={theme.buttonBackground}
                             />
@@ -902,7 +942,7 @@ useEffect(() => {
                         )}
                         <View style={styles.modalLegendItem}>
                           <Ionicons
-                            name="ellipse-outline"
+                            name='ellipse-outline'
                             size={20}
                             color={isUpcoming ? 'grey' : theme.text}
                           />
@@ -932,7 +972,7 @@ useEffect(() => {
                                 setDetailedWorkout(entry);
                                 fetchWorkoutDetails(
                                   entry.workout.workout_log_id,
-                                  entry.isLogged
+                                  entry.isLogged,
                                 );
                               } else {
                                 setModalVisible(false);
@@ -962,13 +1002,13 @@ useEffect(() => {
                             <View>
                               {entry.isLogged ? (
                                 <Ionicons
-                                  name="checkmark-circle"
+                                  name='checkmark-circle'
                                   size={24}
                                   color={theme.buttonBackground}
                                 />
                               ) : (
                                 <Ionicons
-                                  name="ellipse-outline"
+                                  name='ellipse-outline'
                                   size={24}
                                   color={isUpcoming ? 'grey' : theme.text}
                                 />
@@ -998,7 +1038,7 @@ useEffect(() => {
                   }}
                 >
                   <Ionicons
-                    name="add"
+                    name='add'
                     size={22}
                     color={theme.buttonText}
                     style={styles.icon}
@@ -1022,7 +1062,7 @@ useEffect(() => {
       <Modal
         visible={untrackedChoiceModalVisible}
         transparent={true}
-        animationType="fade"
+        animationType='fade'
         onRequestClose={closeUntrackedModal}
       >
         <View
@@ -1036,7 +1076,7 @@ useEffect(() => {
               style={[styles.modalCloseButton, { right: 10 }]}
               onPress={closeUntrackedModal}
             >
-              <Ionicons name="close" size={24} color={theme.text} />
+              <Ionicons name='close' size={24} color={theme.text} />
             </TouchableOpacity>
             <Text style={[styles.modalTitle, { color: theme.text }]}>
               {selectedUntrackedWorkout?.workout.workout_name}
@@ -1086,7 +1126,7 @@ useEffect(() => {
               }}
             >
               <Ionicons
-                name="stopwatch-outline"
+                name='stopwatch-outline'
                 size={22}
                 color={theme.buttonText}
                 style={styles.icon}
@@ -1112,7 +1152,7 @@ useEffect(() => {
               }}
             >
               <Ionicons
-                name="stats-chart"
+                name='stats-chart'
                 size={22}
                 color={theme.buttonText}
                 style={styles.icon}
@@ -1279,7 +1319,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 10, 
+    marginVertical: 10,
   },
   legendIconText: {
     fontSize: 12,
