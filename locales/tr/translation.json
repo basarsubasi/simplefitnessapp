@@ -384,6 +384,7 @@
     "graphTipText": "İpucu: Grafikteki noktalara basarak o antrenman seansı hakkında ek bilgi edinebilirsiniz.",
 
     "RepsCapital": "Tekrarlar",
+    "settingsFirstWeekday": "Haftanın İlk Günü",
     "RepsGraph": "Tekrar Grafiği",
     "About Reps Progression": "Tekrar Grafiği Hakkında",
     "repsGraphExplanation": "Bu grafik, bireysel setler içinde yaptığınız tekrarları gösterir. Her çizgi ve renk, Set Grafiği'nde olduğu gibi farklı bir seti temsil eder, ancak Y ekseni ağırlıklar yerine tekrarları gösterir. Vücut ağırlığı egzersizlerini takip etmek için mükkemmel!",
