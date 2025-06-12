@@ -733,13 +733,15 @@ export default function MyCalendar() {
         <View style={styles.daysGrid}>{renderCalendarGrid()}</View>
       </View>
 
-      {/* Legend Section */}
-      <View style={styles.legendContainer}>
+    {
+      /* Legend Section */
+    }
+    <View style={styles.legendContainer}>
+      {/* First Row of Legend */}
+      <View style={styles.legendRow}>
         <View style={styles.legendItem}>
           <View style={styles.legendIcon}>
-            <Text style={[styles.legendIconText, { color: theme.text }]}>
-              1
-            </Text>
+            <Text style={[styles.legendIconText, { color: theme.text }]}>1</Text>
             <View
               style={[
                 styles.todayIndicator,
@@ -751,53 +753,46 @@ export default function MyCalendar() {
             {t('Today')}
           </Text>
         </View>
-        <View style={styles.legendRow}>
-          <View style={styles.legendItem}>
-            <View
-              style={[
-                styles.legendIcon,
-                { backgroundColor: theme.buttonBackground },
-              ]}
-            >
-              <Text
-                style={[styles.legendIconText, { color: theme.buttonText }]}
-              >
-                2
-              </Text>
-            </View>
-            <Text style={[styles.legendText, { color: theme.text }]}>
-              {t('Logged')}
+        <View style={styles.legendItem}>
+          <View
+            style={[styles.legendIcon, { backgroundColor: theme.buttonBackground }]}
+          >
+            <Text style={[styles.legendIconText, { color: theme.buttonText }]}>
+              2
             </Text>
           </View>
-          <View style={styles.legendItem}>
-            <View
-              style={[
-                styles.legendIcon,
-                styles.untrackedDay,
-                { borderColor: theme.text },
-              ]}
-            >
-              <Text style={[styles.legendIconText, { color: theme.text }]}>
-                3
-              </Text>
-            </View>
-            <Text style={[styles.legendText, { color: theme.text }]}>
-              {t('Untracked')}
-            </Text>
-          </View>
-          <View style={styles.legendItem}>
-            <View style={[styles.legendIcon, styles.upcomingDay]}>
-              <Text style={[styles.legendIconText, { color: theme.text }]}>
-                4
-              </Text>
-            </View>
-            <Text style={[styles.legendText, { color: theme.text }]}>
-              {t('Upcoming')}
-            </Text>
-          </View>
+          <Text style={[styles.legendText, { color: theme.text }]}>
+            {t('Logged')}
+          </Text>
         </View>
       </View>
-
+            
+      {/* Second Row of Legend */}
+      <View style={styles.legendRow}>
+        <View style={styles.legendItem}>
+          <View
+            style={[
+              styles.legendIcon,
+              styles.untrackedDay,
+              { borderColor: theme.text },
+            ]}
+          >
+            <Text style={[styles.legendIconText, { color: theme.text }]}>3</Text>
+          </View>
+          <Text style={[styles.legendText, { color: theme.text }]}>
+            {t('Untracked')}
+          </Text>
+        </View>
+        <View style={styles.legendItem}>
+          <View style={[styles.legendIcon, styles.upcomingDay]}>
+            <Text style={[styles.legendIconText, { color: theme.text }]}>4</Text>
+          </View>
+          <Text style={[styles.legendText, { color: theme.text }]}>
+            {t('Upcoming')}
+          </Text>
+        </View>
+      </View>
+    </View>
       <Text style={[styles.tipText, { color: theme.text }]}>
         {t('scheduleTip')}
       </Text>
@@ -1339,8 +1334,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     marginTop: verticalScale(5),
-    marginLeft: scale(40),
-  },
+   },
   legendItem: {
     flexDirection: 'row',
     alignItems: 'center',
