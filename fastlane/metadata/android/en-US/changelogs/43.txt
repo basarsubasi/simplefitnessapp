@@ -1,0 +1,3 @@
+
+- Implemented device based scaling in My Calendar screen to prevent layout breakage due to dimensions differences, now it should scale nicely regardless of individual device dimensions.
+- Some styling changes
