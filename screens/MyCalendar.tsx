@@ -18,6 +18,12 @@ import {
 import { useSQLiteContext } from 'expo-sqlite';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { StackNavigationProp } from '@react-navigation/stack';
+// Import the scaling utilities
+import {
+  scale,
+  verticalScale,
+  moderateScale,
+} from 'react-native-size-matters';
 import { WorkoutLogStackParamList } from '../App';
 import { useSettings } from '../context/SettingsContext';
 import { useTheme } from '../context/ThemeContext';
@@ -520,7 +526,43 @@ export default function MyCalendar() {
     return t(months[date.getMonth()]);
   };
 
-  const renderCalendarDays = () => {
+  // MODIFIED: Create weekday labels based on `firstWeekday` setting
+  const weekDays =
+    firstWeekday === 'Monday'
+      ? [
+          t('Mon'),
+          t('Tue'),
+          t('Wed'),
+          t('Thu'),
+          t('Fri'),
+          t('Sat'),
+          t('Sun'),
+        ]
+      : [
+          t('Sun'),
+          t('Mon'),
+          t('Tue'),
+          t('Wed'),
+          t('Thu'),
+          t('Fri'),
+          t('Sat'),
+        ];
+
+  // CORE FIX: This function now renders all 49 grid items (7 labels + 42 days)
+  // into a single array, ensuring they all share the same parent and layout rules.
+  const renderCalendarGrid = () => {
+    const gridItems = [];
+
+    // 1. Add weekday labels
+    weekDays.forEach((day, index) => {
+      gridItems.push(
+        <View key={`weekday-${index}`} style={styles.gridCell}>
+          <Text style={[styles.weekDayText, { color: theme.text }]}>{day}</Text>
+        </View>,
+      );
+    });
+
+    // 2. Add date cells
     const month = currentDate.getMonth();
     const year = currentDate.getFullYear();
     const today = new Date();
@@ -528,7 +570,6 @@ export default function MyCalendar() {
     const firstDayOfMonth = new Date(year, month, 1);
     const dayOfWeek = firstDayOfMonth.getDay(); // 0=Sun, 1=Mon...
 
-    // MODIFIED: Adjust start day based on `firstWeekday` setting
     const daysToSubtract =
       firstWeekday === 'Monday'
         ? dayOfWeek === 0
@@ -539,7 +580,6 @@ export default function MyCalendar() {
     const gridStartDate = new Date(firstDayOfMonth);
     gridStartDate.setDate(gridStartDate.getDate() - daysToSubtract);
 
-    const days = [];
     for (let i = 0; i < 42; i++) {
       const cellDate = new Date(gridStartDate);
       cellDate.setDate(gridStartDate.getDate() + i);
@@ -563,7 +603,7 @@ export default function MyCalendar() {
       const isFuture =
         cellDate.setHours(0, 0, 0, 0) > today.setHours(0, 0, 0, 0);
 
-      const cellStyle: ViewStyle[] = [styles.dayCell];
+      const dayCellStyles: ViewStyle[] = [styles.dayCellContainer];
       const textStyle: any[] = [
         styles.dayText,
         isCurrentMonth
@@ -575,69 +615,55 @@ export default function MyCalendar() {
       if (workoutEntries && workoutEntries.length > 0) {
         isAnyLogged = workoutEntries.some((entry) => entry.isLogged);
         if (isAnyLogged) {
-          cellStyle.push({ backgroundColor: theme.buttonBackground });
+          dayCellStyles.push({ backgroundColor: theme.buttonBackground });
           textStyle.splice(1, 1, { color: theme.buttonText });
         } else if (isPast || isToday) {
-          cellStyle.push(styles.untrackedDay, { borderColor: theme.text });
+          dayCellStyles.push(styles.untrackedDay, { borderColor: theme.text });
         } else if (isFuture) {
-          cellStyle.push(styles.upcomingDay);
+          dayCellStyles.push(styles.upcomingDay);
         }
       }
 
-      days.push(
+      gridItems.push(
         <TouchableOpacity
           key={dateKey}
-          style={cellStyle}
+          style={styles.gridCell}
           onPress={() => {
             handleDatePress(cellDate, workoutEntries);
           }}
         >
-          <Text style={textStyle}>{day}</Text>
-          {isToday && (
-            <View
-              style={[
-                styles.todayIndicator,
-                {
-                  backgroundColor: isAnyLogged ? theme.buttonText : theme.text,
-                },
-              ]}
-            />
-          )}
-          {workoutEntries && workoutEntries.length > 1 && (
-            <View
-              style={[
-                styles.multipleWorkoutIndicator,
-                { backgroundColor: isAnyLogged ? theme.buttonText : theme.text },
-              ]}
-            />
-          )}
+          <View style={dayCellStyles}>
+            <Text style={textStyle}>{day}</Text>
+            {isToday && (
+              <View
+                style={[
+                  styles.todayIndicator,
+                  {
+                    backgroundColor: isAnyLogged
+                      ? theme.buttonText
+                      : theme.text,
+                  },
+                ]}
+              />
+            )}
+            {workoutEntries && workoutEntries.length > 1 && (
+              <View
+                style={[
+                  styles.multipleWorkoutIndicator,
+                  {
+                    backgroundColor: isAnyLogged
+                      ? theme.buttonText
+                      : theme.text,
+                  },
+                ]}
+              />
+            )}
+          </View>
         </TouchableOpacity>,
       );
     }
-    return days;
+    return gridItems;
   };
-
-  // MODIFIED: Create weekday labels based on `firstWeekday` setting
-  const weekDays =
-    firstWeekday === 'Monday'
-      ? [
-          t('Mon'),
-          t('Tue'),
-          t('Wed'),
-          t('Thu'),
-          t('Fri'),
-          t('Sat'),
-          t('Sun'),
-        ]
-      : [
-          t('Sun'),
-          t('Mon'),
-          t('Tue'),
-          t('Wed'),
-          t('Thu'),
-          t('Fri'),
-          t('Sat'),
-        ];
 
   return (
     <ScrollView
@@ -647,7 +673,7 @@ export default function MyCalendar() {
       <View style={styles.titleContainer}>
         <Ionicons
           name='calendar'
-          size={30}
+          size={scale(30)}
           color={theme.text}
           style={styles.titleIcon}
         />
@@ -666,7 +692,7 @@ export default function MyCalendar() {
         >
           <Ionicons
             name='infinite'
-            size={22}
+            size={scale(22)}
             color={theme.buttonText}
             style={styles.icon}
           />
@@ -685,26 +711,21 @@ export default function MyCalendar() {
       >
         <View style={styles.calendarHeader}>
           <TouchableOpacity onPress={handlePrevMonth}>
-            <Ionicons name='chevron-back' size={24} color={theme.text} />
+            <Ionicons name='chevron-back' size={scale(24)} color={theme.text} />
           </TouchableOpacity>
           <Text style={[styles.calendarMonthText, { color: theme.text }]}>
             {`${getMonthName(currentDate)} ${currentDate.getFullYear()}`}
           </Text>
           <TouchableOpacity onPress={handleNextMonth}>
-            <Ionicons name='chevron-forward' size={24} color={theme.text} />
+            <Ionicons
+              name='chevron-forward'
+              size={scale(24)}
+              color={theme.text}
+            />
           </TouchableOpacity>
         </View>
-        <View style={styles.weekDaysContainer}>
-          {weekDays.map((day, index) => (
-            <Text
-              key={index}
-              style={[styles.weekDayText, { color: theme.text }]}
-            >
-              {day}
-            </Text>
-          ))}
-        </View>
-        <View style={styles.daysGrid}>{renderCalendarDays()}</View>
+        {/* CORE FIX: The entire grid is now rendered here */}
+        <View style={styles.daysGrid}>{renderCalendarGrid()}</View>
       </View>
 
       {/* Legend Section */}
@@ -803,7 +824,11 @@ export default function MyCalendar() {
                     setCompletionTime(null);
                   }}
                 >
-                  <Ionicons name='arrow-back' size={24} color={theme.text} />
+                  <Ionicons
+                    name='arrow-back'
+                    size={scale(24)}
+                    color={theme.text}
+                  />
                 </TouchableOpacity>
               ) : (
                 <View style={styles.modalLeftButton} />
@@ -816,7 +841,7 @@ export default function MyCalendar() {
                   setDetailedWorkout(null);
                 }}
               >
-                <Ionicons name='close' size={24} color={theme.text} />
+                <Ionicons name='close' size={scale(24)} color={theme.text} />
               </TouchableOpacity>
             </View>
 
@@ -833,7 +858,7 @@ export default function MyCalendar() {
                   <View style={styles.completionTimeContainer}>
                     <Ionicons
                       name='time-outline'
-                      size={16}
+                      size={scale(16)}
                       color={theme.text}
                     />
                     <Text
@@ -922,7 +947,7 @@ export default function MyCalendar() {
                           <View style={styles.modalLegendItem}>
                             <Ionicons
                               name='checkmark-circle'
-                              size={20}
+                              size={scale(20)}
                               color={theme.buttonBackground}
                             />
                             <Text
@@ -938,7 +963,7 @@ export default function MyCalendar() {
                         <View style={styles.modalLegendItem}>
                           <Ionicons
                             name='ellipse-outline'
-                            size={20}
+                            size={scale(20)}
                             color={isUpcoming ? 'grey' : theme.text}
                           />
                           <Text
@@ -998,13 +1023,13 @@ export default function MyCalendar() {
                               {entry.isLogged ? (
                                 <Ionicons
                                   name='checkmark-circle'
-                                  size={24}
+                                  size={scale(24)}
                                   color={theme.buttonBackground}
                                 />
                               ) : (
                                 <Ionicons
                                   name='ellipse-outline'
-                                  size={24}
+                                  size={scale(24)}
                                   color={isUpcoming ? 'grey' : theme.text}
                                 />
                               )}
@@ -1034,7 +1059,7 @@ export default function MyCalendar() {
                 >
                   <Ionicons
                     name='add'
-                    size={22}
+                    size={scale(22)}
                     color={theme.buttonText}
                     style={styles.icon}
                   />
@@ -1071,7 +1096,7 @@ export default function MyCalendar() {
               style={[styles.modalCloseButton, { right: 10 }]}
               onPress={closeUntrackedModal}
             >
-              <Ionicons name='close' size={24} color={theme.text} />
+              <Ionicons name='close' size={scale(24)} color={theme.text} />
             </TouchableOpacity>
             <Text style={[styles.modalTitle, { color: theme.text }]}>
               {selectedUntrackedWorkout?.workout.workout_name}
@@ -1083,14 +1108,18 @@ export default function MyCalendar() {
               </Text>
             )}
             <ScrollView
-              style={{ width: '100%', maxHeight: 200, marginVertical: 20 }}
+              style={{
+                width: '100%',
+                maxHeight: 200,
+                marginVertical: verticalScale(20),
+              }}
             >
               {untrackedWorkoutDetails.map((exercise, index) => (
                 <View key={index} style={styles.modalExercise}>
                   <Text
                     style={[
                       styles.modalExerciseName,
-                      { color: theme.text, fontSize: 18 },
+                      { color: theme.text, fontSize: moderateScale(18) },
                     ]}
                   >
                     {exercise.exercise_name}
@@ -1098,7 +1127,7 @@ export default function MyCalendar() {
                   <Text
                     style={[
                       styles.modalExerciseDetails,
-                      { color: theme.text, fontSize: 14 },
+                      { color: theme.text, fontSize: moderateScale(14) },
                     ]}
                   >
                     {exercise.sets} {t('Sets')} x {exercise.reps} {t('Reps')}
@@ -1122,7 +1151,7 @@ export default function MyCalendar() {
             >
               <Ionicons
                 name='stopwatch-outline'
-                size={22}
+                size={scale(22)}
                 color={theme.buttonText}
                 style={styles.icon}
               />
@@ -1135,7 +1164,10 @@ export default function MyCalendar() {
             <TouchableOpacity
               style={[
                 styles.choiceButton,
-                { backgroundColor: theme.buttonBackground, marginTop: 15 },
+                {
+                  backgroundColor: theme.buttonBackground,
+                  marginTop: verticalScale(15),
+                },
               ]}
               onPress={() => {
                 if (!selectedUntrackedWorkout) return;
@@ -1148,7 +1180,7 @@ export default function MyCalendar() {
             >
               <Ionicons
                 name='stats-chart'
-                size={22}
+                size={scale(22)}
                 color={theme.buttonText}
                 style={styles.icon}
               />
@@ -1168,20 +1200,20 @@ export default function MyCalendar() {
 const styles = StyleSheet.create({
   contentContainer: {
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingBottom: 40,
+    paddingHorizontal: scale(20),
+    paddingBottom: verticalScale(40),
   },
   titleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 20,
+    marginBottom: verticalScale(20),
   },
   titleIcon: {
-    marginRight: 10,
+    marginRight: scale(10),
   },
   title: {
-    fontSize: 32,
+    fontSize: moderateScale(32),
     fontWeight: '900',
     textAlign: 'center',
   },
@@ -1190,12 +1222,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: '100%',
     maxWidth: 400,
-    marginBottom: 30,
+    marginBottom: verticalScale(30),
   },
   actionButton: {
     borderRadius: 20,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    paddingVertical: verticalScale(10),
+    paddingHorizontal: scale(20),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -1203,27 +1235,31 @@ const styles = StyleSheet.create({
   },
   actionButtonText: {
     fontWeight: 'bold',
-    fontSize: 14,
+    fontSize: moderateScale(14),
     textAlign: 'center',
   },
   icon: {
-    marginRight: 8,
+    marginRight: scale(8),
   },
   tipText: {
-    marginTop: 10,
+    marginTop: verticalScale(10),
     textAlign: 'center',
-    fontSize: 14,
+    fontSize: moderateScale(14),
     fontStyle: 'italic',
     opacity: 0.8,
   },
-  emptyText: { fontSize: 16, textAlign: 'center', opacity: 0.7 },
+  emptyText: {
+    fontSize: moderateScale(16),
+    textAlign: 'center',
+    opacity: 0.7,
+  },
   // Calendar Styles
   calendarContainer: {
     width: '100%',
     maxWidth: 400,
     borderRadius: 20,
-    padding: 15,
-    marginTop: 5,
+    padding: moderateScale(15),
+    marginTop: verticalScale(5),
     borderWidth: 1,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -1235,50 +1271,48 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 15,
+    marginBottom: verticalScale(10),
   },
   calendarMonthText: {
-    fontSize: 20,
+    fontSize: moderateScale(20),
     fontWeight: 'bold',
-  },
-  weekDaysContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginBottom: 10,
-  },
-  weekDayText: {
-    fontSize: 14,
-    fontWeight: '600',
-    width: 32,
-    textAlign: 'center',
-    opacity: 0.6,
   },
   daysGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-around',
   },
-  dayCell: {
-    width: 40,
-    height: 40,
+  // A generic cell that takes up 1/7th of the width
+  gridCell: {
+    width: `${100 / 7}%`,
     justifyContent: 'center',
     alignItems: 'center',
-    margin: 2,
-    borderRadius: 20,
+    paddingVertical: verticalScale(2),
+  },
+  weekDayText: {
+    fontSize: moderateScale(14),
+    fontWeight: '600',
+    opacity: 0.6,
+paddingVertical: verticalScale(10),
+  },
+
+  // The touchable container for a date number, which is made circular
+  dayCellContainer: {
+    width: '90%', // Make it slightly smaller than the grid cell to create gaps
+    aspectRatio: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 100, // A large number to ensure it's always a circle
   },
   dayText: {
-    fontSize: 16,
+    fontSize: moderateScale(16),
     fontWeight: '500',
   },
-  otherMonthDayText: {
-    opacity: 0.3,
-  },
   todayIndicator: {
-    width: 16,
-    height: 3,
+    width: scale(16),
+    height: verticalScale(2),
     borderRadius: 2,
     position: 'absolute',
-    bottom: 4,
+    bottom: verticalScale(3),
   },
   untrackedDay: {
     borderWidth: 1,
@@ -1293,35 +1327,36 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 20,
-    paddingHorizontal: 10,
+    marginTop: verticalScale(20),
+    paddingHorizontal: scale(10),
   },
   legendRow: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: 5,
+    marginTop: verticalScale(5),
+    marginLeft: scale(40),
   },
   legendItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginHorizontal: 10,
-    marginVertical: 5,
+    marginHorizontal: scale(10),
+    marginVertical: verticalScale(5),
   },
   legendIcon: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    marginRight: 8,
+    width: scale(24),
+    height: scale(24),
+    borderRadius: scale(12),
+    marginRight: scale(8),
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 10,
+    marginVertical: verticalScale(10),
   },
   legendIconText: {
-    fontSize: 12,
+    fontSize: moderateScale(12),
     fontWeight: 'bold',
   },
   legendText: {
-    fontSize: 14,
+    fontSize: moderateScale(14),
   },
   // Modal Styles
   modalContainer: {
@@ -1331,7 +1366,7 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     borderRadius: 20,
-    padding: 20,
+    padding: moderateScale(20),
     width: '90%',
     maxWidth: 400,
     alignItems: 'center',
@@ -1342,90 +1377,102 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     position: 'absolute',
-    top: 15,
+    top: verticalScale(15),
     paddingLeft: 0,
     paddingRight: 0,
     zIndex: 1,
   },
   modalLeftButton: {
-    padding: 5,
+    padding: moderateScale(5),
   },
   modalRightButton: {
-    padding: 5,
+    padding: moderateScale(5),
   },
   modalTitle: {
-    fontSize: 24,
+    fontSize: moderateScale(24),
     fontWeight: '900',
-    marginBottom: 10,
+    marginBottom: verticalScale(10),
     textAlign: 'center',
-    marginTop: 20,
+    marginTop: verticalScale(20),
   },
   modalSubtitle: {
-    fontSize: 18,
+    fontSize: moderateScale(18),
     fontWeight: '700',
-    marginBottom: 20,
+    marginBottom: verticalScale(20),
     textAlign: 'center',
   },
-  modalExercise: { marginBottom: 15, width: '100%' },
-  modalExerciseName: { fontSize: 20, fontWeight: '800', textAlign: 'center' },
-  modalExerciseDetails: { fontSize: 16, textAlign: 'center', opacity: 0.8 },
+  modalExercise: { marginBottom: verticalScale(15), width: '100%' },
+  modalExerciseName: {
+    fontSize: moderateScale(20),
+    fontWeight: '800',
+    textAlign: 'center',
+  },
+  modalExerciseDetails: {
+    fontSize: moderateScale(16),
+    textAlign: 'center',
+    opacity: 0.8,
+  },
   multipleWorkoutIndicator: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
+    width: scale(6),
+    height: scale(6),
+    borderRadius: scale(3),
     position: 'absolute',
-    top: 5,
-    right: 5,
+    top: verticalScale(5),
+    right: scale(5),
   },
   modalWorkoutItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 15,
+    padding: moderateScale(15),
     borderRadius: 15,
-    marginBottom: 10,
+    marginBottom: verticalScale(10),
     borderWidth: 0,
   },
   modalWorkoutName: {
-    fontSize: 18,
+    fontSize: moderateScale(18),
     fontWeight: 'bold',
   },
   modalWorkoutDay: {
-    fontSize: 14,
+    fontSize: moderateScale(14),
     opacity: 0.8,
   },
   modalLegendContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 15,
-    marginTop: 5,
+    marginBottom: verticalScale(15),
+    marginTop: verticalScale(5),
   },
   modalLegendItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginHorizontal: 15,
+    marginHorizontal: scale(15),
   },
   modalLegendText: {
-    marginLeft: 5,
-    fontSize: 14,
+    marginLeft: scale(5),
+    fontSize: moderateScale(14),
   },
   completionTimeContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 15,
+    marginBottom: verticalScale(15),
   },
   completionTimeText: {
-    fontSize: 16,
+    fontSize: moderateScale(16),
     fontWeight: '600',
   },
   choiceButton: {
     borderRadius: 20,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    paddingVertical: verticalScale(12),
+    paddingHorizontal: scale(16),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     width: '80%',
   },
-  modalCloseButton: { position: 'absolute', top: 10, marginRight: 10 },
+  modalCloseButton: {
+    position: 'absolute',
+    top: verticalScale(10),
+    marginRight: scale(10),
+  },
 });
