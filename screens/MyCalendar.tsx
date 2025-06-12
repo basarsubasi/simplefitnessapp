@@ -8,6 +8,7 @@ import {
   Alert,
   Modal,
   ViewStyle,
+  Platform,
 } from 'react-native';
 import {
   useFocusEffect,
@@ -66,7 +67,7 @@ export default function MyCalendar() {
   const route = useRoute<MyCalendarRouteProp>();
   const { theme } = useTheme();
   const { t } = useTranslation();
-  const { dateFormat, weightFormat, firstWeekday } = useSettings(); // <-- Added firstWeekday
+  const { dateFormat, weightFormat, firstWeekday } = useSettings();
   const { checkRecurringWorkouts } = useRecurringWorkouts();
 
   // State for the calendar
@@ -178,7 +179,6 @@ export default function MyCalendar() {
         const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
         const dayOfWeek = firstDayOfMonth.getDay(); // 0=Sun, 1=Mon...
 
-        // MODIFIED: Adjust start day based on `firstWeekday` setting
         const daysToSubtract =
           firstWeekday === 'Monday'
             ? dayOfWeek === 0
@@ -205,7 +205,7 @@ export default function MyCalendar() {
         const loggedWorkoutIdsResult = await db.getAllAsync<{
           workout_log_id: number;
         }>(
-          `SELECT DISTINCT workout_log_id FROM Weight_Log 
+          `SELECT DISTINCT workout_log_id FROM Weight_Log
            WHERE workout_log_id IN (SELECT workout_log_id FROM Workout_Log WHERE workout_date BETWEEN ? AND ?);`,
           [startTimestamp, endTimestamp],
         );
@@ -241,7 +241,7 @@ export default function MyCalendar() {
         console.error('Error fetching workouts for grid:', error);
       }
     },
-    [db, firstWeekday], // <-- Added firstWeekday dependency
+    [db, firstWeekday],
   );
 
   // Refresh the calendar data every time the screen is focused
@@ -299,7 +299,6 @@ export default function MyCalendar() {
 
               const exerciseGroup = acc[item.exercise_name];
               if (!exerciseGroup || !exerciseGroup.logs) {
-                // This path should be logically impossible.
                 throw new Error(
                   `Failed to find or create group for exercise: ${item.exercise_name}`,
                 );
@@ -317,7 +316,6 @@ export default function MyCalendar() {
 
           setExercises(Object.values(grouped));
         } else {
-          // Fallback to planned if no logs
           const planned = await db.getAllAsync<
             { exercise_name: string; sets: number; reps: number }
           >(
@@ -327,7 +325,6 @@ export default function MyCalendar() {
           setExercises(planned.map((p) => ({ ...p, logs: [] })));
         }
       } else {
-        // For upcoming workouts
         const planned = await db.getAllAsync<
           { exercise_name: string; sets: number; reps: number }
         >(
@@ -356,23 +353,15 @@ export default function MyCalendar() {
   };
 
   useEffect(() => {
-    // Define an async function inside the effect
     const handleRefresh = async () => {
       console.log('DEBUG: Refresh signal received, starting async process.');
-
-      // 1. WAIT for the recurring workouts to be checked and saved to the DB.
       await checkRecurringWorkouts();
       console.log('Recurring workouts check complete.');
-
-      // 2. NOW that the database is updated, WAIT for the fetch to get the new data.
       await fetchWorkoutsForGrid(currentDate);
       console.log('Calendar grid data re-fetched.');
-
-      // 3. FINALLY, reset the refresh signal.
       navigation.setParams({ refresh: false });
     };
 
-    // Check for the refresh signal and call our async function
     if (route.params?.refresh) {
       handleRefresh();
     }
@@ -398,8 +387,8 @@ export default function MyCalendar() {
   const handleDatePress = (date: Date, workoutEntries?: WorkoutEntry[]) => {
     setSelectedDate(date);
     setSelectedDateWorkouts(workoutEntries || []);
-    setDetailedWorkout(null); // Reset detailed view
-    setExercises([]); // Reset exercises
+    setDetailedWorkout(null);
+    setExercises([]);
     setModalVisible(true);
   };
 
@@ -427,14 +416,12 @@ export default function MyCalendar() {
                 `DELETE FROM Logged_Exercises WHERE workout_log_id = ?;`,
                 [workout_log_id],
               );
-              fetchWorkoutsForGrid(currentDate); // Refresh the calendar
+              fetchWorkoutsForGrid(currentDate);
 
-              // Refresh the modal content
               const updatedWorkouts = selectedDateWorkouts.filter(
                 (w) => w.workout.workout_log_id !== workout_log_id,
               );
 
-              // If no workouts are left for this date, close the modal
               if (updatedWorkouts.length === 0) {
                 setModalVisible(false);
               } else {
@@ -526,7 +513,6 @@ export default function MyCalendar() {
     return t(months[date.getMonth()]);
   };
 
-  // MODIFIED: Create weekday labels based on `firstWeekday` setting
   const weekDays =
     firstWeekday === 'Monday'
       ? [
@@ -548,12 +534,9 @@ export default function MyCalendar() {
           t('Sat'),
         ];
 
-  // CORE FIX: This function now renders all 49 grid items (7 labels + 42 days)
-  // into a single array, ensuring they all share the same parent and layout rules.
   const renderCalendarGrid = () => {
     const gridItems = [];
 
-    // 1. Add weekday labels
     weekDays.forEach((day, index) => {
       gridItems.push(
         <View key={`weekday-${index}`} style={styles.gridCell}>
@@ -562,13 +545,12 @@ export default function MyCalendar() {
       );
     });
 
-    // 2. Add date cells
     const month = currentDate.getMonth();
     const year = currentDate.getFullYear();
     const today = new Date();
 
     const firstDayOfMonth = new Date(year, month, 1);
-    const dayOfWeek = firstDayOfMonth.getDay(); // 0=Sun, 1=Mon...
+    const dayOfWeek = firstDayOfMonth.getDay();
 
     const daysToSubtract =
       firstWeekday === 'Monday'
@@ -724,70 +706,82 @@ export default function MyCalendar() {
             />
           </TouchableOpacity>
         </View>
-        {/* CORE FIX: The entire grid is now rendered here */}
         <View style={styles.daysGrid}>{renderCalendarGrid()}</View>
       </View>
 
-    {
-      /* Legend Section */
-    }
-    <View style={styles.legendContainer}>
-      {/* First Row of Legend */}
-      <View style={styles.legendRow}>
-        <View style={styles.legendItem}>
-          <View style={styles.legendIcon}>
-            <Text style={[styles.legendIconText, { color: theme.text }]}>1</Text>
-            <View
-              style={[
-                styles.todayIndicator,
-                { backgroundColor: theme.text, bottom: -6 },
-              ]}
-            />
-          </View>
-          <Text style={[styles.legendText, { color: theme.text }]}>
-            {t('Today')}
-          </Text>
-        </View>
-        <View style={styles.legendItem}>
-          <View
-            style={[styles.legendIcon, { backgroundColor: theme.buttonBackground }]}
-          >
-            <Text style={[styles.legendIconText, { color: theme.buttonText }]}>
-              2
+      {/* Legend Section */}
+      <View style={styles.legendContainer}>
+        {/* First Column of Legend */}
+        <View style={styles.legendColumn}>
+          {/* Today Item */}
+          <View style={styles.legendItem}>
+            <View style={styles.todayLegendIcon}>
+              <Text style={[styles.legendIconText, { color: theme.text }]}>
+                1
+              </Text>
+              <View
+                style={[
+                  styles.todayIndicator,
+                  { backgroundColor: theme.text, bottom: -4 },
+                ]}
+              />
+            </View>
+            <Text style={[styles.legendText, { color: theme.text }]}>
+              {t('Today')}
             </Text>
           </View>
-          <Text style={[styles.legendText, { color: theme.text }]}>
-            {t('Logged')}
-          </Text>
+          {/* Untracked Item */}
+          <View style={styles.legendItem}>
+            <View
+              style={[
+                styles.legendIcon,
+                styles.untrackedLegendIcon,
+                { borderColor: theme.text },
+              ]}
+            >
+              <Text style={[styles.legendIconText, { color: theme.text }]}>
+                3
+              </Text>
+            </View>
+            <Text style={[styles.legendText, { color: theme.text }]}>
+              {t('Untracked')}
+            </Text>
+          </View>
+        </View>
+
+        {/* Second Column of Legend */}
+        <View style={styles.legendColumn}>
+          {/* Logged Item */}
+          <View style={styles.legendItem}>
+            <View
+              style={[
+                styles.legendIcon,
+                { backgroundColor: theme.buttonBackground },
+              ]}
+            >
+              <Text
+                style={[styles.legendIconText, { color: theme.buttonText }]}
+              >
+                2
+              </Text>
+            </View>
+            <Text style={[styles.legendText, { color: theme.text }]}>
+              {t('Logged')}
+            </Text>
+          </View>
+          {/* Upcoming Item */}
+          <View style={styles.legendItem}>
+            <View style={[styles.legendIcon, styles.upcomingDay]}>
+              <Text style={[styles.legendIconText, { color: theme.text }]}>
+                4
+              </Text>
+            </View>
+            <Text style={[styles.legendText, { color: theme.text }]}>
+              {t('Upcoming')}
+            </Text>
+          </View>
         </View>
       </View>
-            
-      {/* Second Row of Legend */}
-      <View style={styles.legendRow}>
-        <View style={styles.legendItem}>
-          <View
-            style={[
-              styles.legendIcon,
-              styles.untrackedDay,
-              { borderColor: theme.text },
-            ]}
-          >
-            <Text style={[styles.legendIconText, { color: theme.text }]}>3</Text>
-          </View>
-          <Text style={[styles.legendText, { color: theme.text }]}>
-            {t('Untracked')}
-          </Text>
-        </View>
-        <View style={styles.legendItem}>
-          <View style={[styles.legendIcon, styles.upcomingDay]}>
-            <Text style={[styles.legendIconText, { color: theme.text }]}>4</Text>
-          </View>
-          <Text style={[styles.legendText, { color: theme.text }]}>
-            {t('Upcoming')}
-          </Text>
-        </View>
-      </View>
-    </View>
       <Text style={[styles.tipText, { color: theme.text }]}>
         {t('scheduleTip')}
       </Text>
@@ -1276,7 +1270,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
-  // A generic cell that takes up 1/7th of the width
   gridCell: {
     width: `${100 / 7}%`,
     justifyContent: 'center',
@@ -1289,14 +1282,12 @@ const styles = StyleSheet.create({
     opacity: 0.6,
     paddingVertical: verticalScale(1),
   },
-
-  // The touchable container for a date number, which is made circular
   dayCellContainer: {
-    width: '90%', // Make it slightly smaller than the grid cell to create gaps
+    width: '90%',
     aspectRatio: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 100, // A large number to ensure it's always a circle
+    borderRadius: 100,
   },
   dayText: {
     fontSize: moderateScale(16),
@@ -1317,24 +1308,19 @@ const styles = StyleSheet.create({
   },
   // Legend Styles
   legendContainer: {
-    width: '100%',
-    maxWidth: 400,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: verticalScale(20),
-    paddingHorizontal: scale(10),
-  },
-  legendRow: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: verticalScale(5),
-   },
+    width: '100%',
+    maxWidth: 400,
+    marginTop: verticalScale(20),
+  },
+  legendColumn: {
+    marginHorizontal: scale(25),
+  },
   legendItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginHorizontal: scale(10),
-    marginVertical: verticalScale(5),
+    marginBottom: verticalScale(20),
   },
   legendIcon: {
     width: scale(24),
@@ -1343,11 +1329,23 @@ const styles = StyleSheet.create({
     marginRight: scale(8),
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: verticalScale(10),
+  },
+  todayLegendIcon: {
+    width: scale(24),
+    height: scale(24),
+    marginRight: scale(8),
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  untrackedLegendIcon: {
+    borderWidth: 2,
+    backgroundColor: 'transparent',
   },
   legendIconText: {
     fontSize: moderateScale(12),
     fontWeight: 'bold',
+    lineHeight: Platform.OS === 'ios' ? moderateScale(24) : moderateScale(22),
   },
   legendText: {
     fontSize: moderateScale(14),
