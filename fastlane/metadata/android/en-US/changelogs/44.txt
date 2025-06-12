@@ -1,0 +1,2 @@
+
+- Fixed the annoying icon alignment on the My Calendar screen

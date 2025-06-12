@@ -2,7 +2,7 @@
   "expo": {
     "name": "Simple",
     "slug": "simplefitnessappbeta",
-    "version": "1.7.4",
+    "version": "1.7.5",
     "orientation": "portrait",
     "icon": "./assets/simpleicon.png",
     "newArchEnabled": true,
@@ -17,7 +17,7 @@
 
     "android": {
       "blockedPermissions": ["android.permission.INTERNET", "android.permission.RECIEVE_BOOT_COMPLETED"],
-      "versionCode": 43,
+      "versionCode": 44,
       "adaptiveIcon": {
         "foregroundImage": "./assets/simpleicon.png",
         "backgroundColor": "#ffffff"
