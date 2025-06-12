@@ -1320,7 +1320,7 @@ paddingVertical: verticalScale(10),
     bottom: verticalScale(3),
   },
   untrackedDay: {
-    borderWidth: 1,
+    borderWidth: 2,
   },
   upcomingDay: {
     backgroundColor: 'rgba(128, 128, 128, 0.2)',
