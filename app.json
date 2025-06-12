@@ -17,7 +17,7 @@
 
     "android": {
       "blockedPermissions": ["android.permission.INTERNET", "android.permission.RECIEVE_BOOT_COMPLETED"],
-      "versionCode": 42,
+      "versionCode": 43,
       "adaptiveIcon": {
         "foregroundImage": "./assets/simpleicon.png",
         "backgroundColor": "#ffffff"
