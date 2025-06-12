@@ -1297,7 +1297,7 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(14),
     fontWeight: '600',
     opacity: 0.6,
-paddingVertical: verticalScale(10),
+    paddingVertical: verticalScale(1),
   },
 
   // The touchable container for a date number, which is made circular
