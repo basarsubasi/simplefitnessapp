@@ -71,7 +71,8 @@ const styles = ScaledSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 20,
-    paddingTop: 20,
+    paddingTop: 70,
+    
   },
   headerContainer: {
     position: 'relative',
