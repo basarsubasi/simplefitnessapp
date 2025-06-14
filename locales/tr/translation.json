@@ -393,7 +393,7 @@
 
 
 
-    "workoutDetailsTip": "İpucu: Bir egzersize bir web bağlantısını eklemek, veya var olan bir bağlantıyı düzenlemek veya silmek için egzersizin adına dokunun.",
+    "workoutDetailsTip": "İpucu: Bir egzersize bir web bağlantısı eklemek, veya var olan bir bağlantıyı düzenlemek veya silmek için egzersizin adına dokunun.",
 "webLink": "Web Bağlantısı",
 "webLinkPlaceholder": "https://example.com (opsiyonel)",
 "invalidLinkTitle": "Geçersiz Bağlantı",
