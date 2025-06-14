@@ -379,8 +379,6 @@ const AppContent = () => {
               height: 60,
               paddingVertical: 10,
             },
-            tabBarActiveTintColor: theme.text, // Active icon color
-            tabBarInactiveTintColor: theme.inactivetint, // Inactive icon color
           }}
         >
           <Bottom.Screen
@@ -515,10 +513,19 @@ const AppContent = () => {
 
     return (
       <Pressable onPress={onPress} style={styles.tabButton}>
-        <Ionicons   
-        name={props.iconName} 
-        size={24} 
-        color={isSelected ? theme.text : theme.inactivetint}  />
+        <Ionicons
+          name={props.iconName}
+          size={24}
+          color={theme.text} // Always theme.text
+        />
+        <View
+          style={{
+            height: 2,
+            width: '40%',
+            backgroundColor: isSelected ? theme.text : 'transparent',
+            marginTop: 5,
+          }}
+        />
       </Pressable>
     );
   };
