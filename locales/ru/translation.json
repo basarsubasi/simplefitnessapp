@@ -365,7 +365,8 @@
       "workoutDetailsTip": "Совет: Вы можете добавить, отредактировать или удалить веб-ссылку для упражнения, нажав на его название.",
 "webLink": "Веб-ссылка",
 "webLinkPlaceholder": "https://example.com (необязательно)",
-"invalidLink": "Ссылка должна начинаться с \"http://\" или \"https://\".",
+"invalidLinkTitle": "Неверная ссылка",
+"invalidLinkMessage": "Ссылка должна начинаться с \"http://\" или \"https://\".",
 "exerciseDetails": "Добавить веб-ссылку"
         
 

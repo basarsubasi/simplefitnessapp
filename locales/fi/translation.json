@@ -366,7 +366,8 @@
       "workoutDetailsTip": "Vinkki: Voit lisätä, muokata tai poistaa harjoituksen verkkolinkin napauttamalla sen nimeä.",
 "webLink": "Verkkolinkki",
 "webLinkPlaceholder": "https://example.com (valinnainen)",
-"invalidLink": "Linkin on aloituttava \"http://\" tai \"https://\".",
+"invalidLinkTitle": "Virheellinen linkki",
+"invalidLinkMessage": "Linkin on aloituttava \"http://\" tai \"https://\".",
 "exerciseDetails": "Lisää verkkolinkki"
     
     

@@ -368,7 +368,8 @@
       "workoutDetailsTip": "Wskazówka: Możesz dodać, edytować lub usunąć link do ćwiczenia, stukając w jego nazwę.",
 "webLink": "Link internetowy",
 "webLinkPlaceholder": "https://example.com (opcjonalnie)",
-"invalidLink": "Link musi zaczynać się od \"http://\" lub \"https://\".",
+"invalidLinkTitle": "Nieprawidłowy link",
+"invalidLinkMessage": "Link musi zaczynać się od \"http://\" lub \"https://\".",
 "exerciseDetails": "Dodaj link internetowy"
 
     

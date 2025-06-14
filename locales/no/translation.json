@@ -372,7 +372,8 @@
       "workoutDetailsTip": "Tip: Du kan legge til, redigere eller slette en weblink for en øvelse ved å trykke på navnet.",
 "webLink": "Weblink",
 "webLinkPlaceholder": "https://example.com (valgfritt)",
-"invalidLink": "Lenken må begynne med \"http://\" eller \"https://\".",
+"invalidLinkTitle": "Ugyldig lenke",
+"invalidLinkMessage": "Lenken må begynne med \"http://\" eller \"https://\".",
 "exerciseDetails": "Legg til weblink"
 
         

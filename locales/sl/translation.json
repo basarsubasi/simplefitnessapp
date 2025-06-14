@@ -365,7 +365,8 @@
       "workoutDetailsTip": "Nasvet: Z dotikom imena vaje lahko dodate, urejate ali izbrišete spletno povezavo.",
 "webLink": "Spletna povezava",
 "webLinkPlaceholder": "https://example.com (neobvezno)",
-"invalidLink": "Povezava se mora začeti z \"http://\" ali \"https://\".",
+"invalidLinkTitle": "Neveljavna povezava",
+"invalidLinkMessage": "Povezava se mora začeti z \"http://\" ali \"https://\".",
 "exerciseDetails": "Dodaj spletno povezavo"
         
 
