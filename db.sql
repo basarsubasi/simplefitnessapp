@@ -23,7 +23,8 @@ CREATE TABLE IF NOT EXISTS Template_Exercises (
     exercise_name TEXT NOT NULL,
     sets INTEGER NOT NULL,
     reps INTEGER NOT NULL,
-    FOREIGN KEY (day_id) REFERENCES Template_Days(day_id) ON DELETE CASCADE
+    web_link TEXT,
+    FOREIGN KEY (day_id) REFERENCES Template_Days(day_id) ON DELETE CASCADE,
     UNIQUE(day_id, exercise_name)
 );
 
