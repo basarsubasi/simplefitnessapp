@@ -361,6 +361,16 @@
       "RepsCapital": "Repetări",
       "RepsGraph": "Grafic Repetări",
       "About Reps Progression": "Despre Graficul Repetări",
-      "repsGraphExplanation": "Acest grafic arată repetările pe care le-ați făcut pentru seturi individuale. Fiecare linie și culoare reprezintă un număr diferit de set, la fel ca graficul seturilor, dar cu axa Y fiind repetările în loc de greutăți. Perfect pentru urmărirea exercițiilor cu greutatea corporală!"
+      "repsGraphExplanation": "Acest grafic arată repetările pe care le-ați făcut pentru seturi individuale. Fiecare linie și culoare reprezintă un număr diferit de set, la fel ca graficul seturilor, dar cu axa Y fiind repetările în loc de greutăți. Perfect pentru urmărirea exercițiilor cu greutatea corporală!",
+
+
+
+
+      "workoutDetailsTip": "Sfat: Poți adăuga, edita sau șterge un link web către un exercițiu apăsând pe numele acestuia.",
+"webLink": "Link web",
+"webLinkPlaceholder": "https://example.com (opțional)",
+"invalidLink": "Linkul trebuie să înceapă cu \"http://\" sau \"https://\".",
+"exerciseDetails": "Adaugă un link web"
   }
+
   
