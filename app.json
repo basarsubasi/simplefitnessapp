@@ -14,7 +14,7 @@
     "ios": {
       "supportsTablet" : false,
       "bundleIdentifier": "com.basarsubasi.simplefitnessapp",
-      "buildNumber": "1.5.8"
+      "buildNumber": "1.5.9"
     },
     "android": {
       "versionCode": 40,
