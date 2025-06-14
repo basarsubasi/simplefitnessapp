@@ -1,0 +1,7 @@
+
+ - Now the active tab bar has a line under it, and tab icons no longer become grey when they are inactive.
+ - Added link custom support to the exercises.
+ - Added links to the template workout's exercises.
+
+
+
