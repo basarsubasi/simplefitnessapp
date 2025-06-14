@@ -50,6 +50,7 @@ CREATE TABLE IF NOT EXISTS Exercises (
     exercise_name TEXT NOT NULL,
     sets INTEGER NOT NULL,
     reps INTEGER NOT NULL,
+    web_link TEXT,
     FOREIGN KEY (day_id) REFERENCES Days(day_id) ON DELETE CASCADE
 );
 
@@ -83,8 +84,9 @@ CREATE TABLE IF NOT EXISTS Logged_Exercises (
     exercise_name TEXT NOT NULL, -- Store exercise name
     sets INTEGER NOT NULL, -- Store sets at the time of logging
     reps INTEGER NOT NULL, -- Store reps at the time of logging
+    web_link TEXT,
     FOREIGN KEY (workout_log_id) REFERENCES Workout_Log(workout_log_id) ON DELETE CASCADE
-);
+);  
 
 ALTER TABLE Workout_Log ADD COLUMN notification_id TEXT;
 

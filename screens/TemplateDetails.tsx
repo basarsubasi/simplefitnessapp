@@ -119,9 +119,9 @@ async function insertWorkoutIntoRealTables(workoutName: string, days: any[]) {
       // 3. Insert each exercise
       for (const exercise of day.exercises) {
         await db.runAsync(
-          `INSERT  INTO Exercises (day_id, exercise_name, sets, reps) 
-           VALUES (?, ?, ?, ?)`,
-          [newDayId, exercise.exercise_name, exercise.sets, exercise.reps]
+          `INSERT  INTO Exercises (day_id, exercise_name, sets, reps, web_link) 
+           VALUES (?, ?, ?, ?, ?)`,
+          [newDayId, exercise.exercise_name, exercise.sets, exercise.reps, exercise.web_link]
         );
       }
     }
