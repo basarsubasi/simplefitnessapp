@@ -21,7 +21,7 @@ type WorkoutListNavigationProp = StackNavigationProp<WorkoutStackParamList, 'Wor
 type Day = {
   day_id: number;
   day_name: string;
-  exercises: { exercise_name: string; sets: number; reps: number; web_link: string | null }[];
+  exercises: { exercise_id: number; exercise_name: string; sets: number; reps: number; web_link: string | null }[];
 };
 export default function WorkoutDetails() {
   const db = useSQLiteContext();
@@ -44,6 +44,10 @@ export default function WorkoutDetails() {
   const [exerciseName, setExerciseName] = useState('');
   const [exerciseSets, setExerciseSets] = useState('');
   const [exerciseReps, setExerciseReps] = useState('');
+  const [exerciseWebLink, setExerciseWebLink] = useState('');
+  const [showWebLinkModal, setShowWebLinkModal] = useState(false);
+  const [editingExercise, setEditingExercise] = useState<{ exercise_id: number; web_link: string | null } | null>(null);
+  const [webLinkInput, setWebLinkInput] = useState('');
   const navigation = useNavigation<WorkoutListNavigationProp>();
   const [isReordering, setIsReordering] = useState(false);
   const fadeAnim = useRef(new Animated.Value(1)).current;
@@ -72,8 +76,8 @@ export default function WorkoutDetails() {
 
     const daysWithExercises = await Promise.all(
       daysResult.map(async (day) => {
-        const exercises = await db.getAllAsync<{ exercise_name: string; sets: number; reps: number; web_link: string }>(
-          'SELECT exercise_name, sets, reps, web_link FROM Exercises WHERE day_id = ?',
+        const exercises = await db.getAllAsync<{ exercise_id: number; exercise_name: string; sets: number; reps: number; web_link: string }>(
+          'SELECT exercise_id, exercise_name, sets, reps, web_link FROM Exercises WHERE day_id = ?',
           [day.day_id]
         );
         return { ...day, exercises };
@@ -221,8 +225,8 @@ export default function WorkoutDetails() {
           console.log(`Updating log ${log.workout_log_id} for day: ${day.day_name}`);
   
           // Fetch updated exercises for the day
-          const exercises = await db.getAllAsync<{ exercise_name: string; sets: number; reps: number }>(
-            'SELECT exercise_name, sets, reps FROM Exercises WHERE day_id = ?;',
+          const exercises = await db.getAllAsync<{ exercise_name: string; sets: number; reps: number; web_link: string | null }>(
+            'SELECT exercise_name, sets, reps, web_link FROM Exercises WHERE day_id = ?;',
             [day.day_id]
           );
   
@@ -232,8 +236,8 @@ export default function WorkoutDetails() {
           // Insert updated exercises into the log
           const insertExercisePromises = exercises.map((exercise) =>
             db.runAsync(
-              'INSERT INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?);',
-              [log.workout_log_id, exercise.exercise_name, exercise.sets, exercise.reps]
+              'INSERT INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps, web_link) VALUES (?, ?, ?, ?, ?);',
+              [log.workout_log_id, exercise.exercise_name, exercise.sets, exercise.reps, exercise.web_link]
             )
           );
   
@@ -276,6 +280,7 @@ export default function WorkoutDetails() {
     setExerciseName('');
     setExerciseSets('');
     setExerciseReps('');
+    setExerciseWebLink('');
     setShowExerciseModal(true);
   };
 
@@ -287,6 +292,7 @@ export default function WorkoutDetails() {
   const addExercise = async () => {
     const sets = exerciseSets.trim();
     const reps = exerciseReps.trim();
+    const webLink = exerciseWebLink.trim();
 
     if (!exerciseName.trim()) {
       Alert.alert(t('errorTitle'), t('exerciseNameValidationError'));
@@ -302,11 +308,19 @@ export default function WorkoutDetails() {
       Alert.alert(t('errorTitle'), t('repsValidationError'));
       return;
     }
+    
+    if (webLink && !webLink.startsWith('http://') && !webLink.startsWith('https://')) {
+      Alert.alert(
+        'Invalid Link',
+        'The link must start with "http://" or "https://".'
+      );
+      return;
+    }
 
     if (currentDayId) {
       await db.runAsync(
-        'INSERT INTO Exercises (day_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?);',
-        [currentDayId, exerciseName.trim(), parseInt(sets, 10), parseInt(reps, 10)]
+        'INSERT INTO Exercises (day_id, exercise_name, sets, reps, web_link) VALUES (?, ?, ?, ?, ?);',
+        [currentDayId, exerciseName.trim(), parseInt(sets, 10), parseInt(reps, 10), webLink || null]
       );
       await updateWorkoutLogsForAdditions(workout_id);
       fetchWorkoutDetails();
@@ -478,8 +492,8 @@ export default function WorkoutDetails() {
           console.log(`Updating log ${log.workout_log_id} for day: ${day.day_name}`);
   
           // Fetch updated exercises for the day
-          const exercises = await db.getAllAsync<{ exercise_name: string; sets: number; reps: number }>(
-            'SELECT exercise_name, sets, reps FROM Exercises WHERE day_id = ?;',
+          const exercises = await db.getAllAsync<{ exercise_name: string; sets: number; reps: number; web_link: string | null }>(
+            'SELECT exercise_name, sets, reps, web_link FROM Exercises WHERE day_id = ?;',
             [day.day_id]
           );
   
@@ -489,8 +503,8 @@ export default function WorkoutDetails() {
           // Insert updated exercises into the log
           const insertExercisePromises = exercises.map((exercise) =>
             db.runAsync(
-              'INSERT INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?);',
-              [log.workout_log_id, exercise.exercise_name, exercise.sets, exercise.reps]
+              'INSERT INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps, web_link) VALUES (?, ?, ?, ?, ?);',
+              [log.workout_log_id, exercise.exercise_name, exercise.sets, exercise.reps, exercise.web_link]
             )
           );
   
@@ -501,6 +515,49 @@ export default function WorkoutDetails() {
       }
     } catch (error) {
       console.error('Error updating workout logs after reordering days:', error);
+    }
+  };
+
+  const openWebLinkModal = (exercise: { exercise_id: number; web_link: string | null }) => {
+    setEditingExercise(exercise);
+    setWebLinkInput(exercise.web_link || '');
+    setShowWebLinkModal(true);
+  };
+
+  const closeWebLinkModal = () => {
+    setShowWebLinkModal(false);
+    setEditingExercise(null);
+    setWebLinkInput('');
+  };
+
+  const handleSaveWebLink = async () => {
+    if (!editingExercise) return;
+
+    const trimmedLink = webLinkInput.trim();
+
+    // Validation
+    if (trimmedLink && !trimmedLink.startsWith('http://') && !trimmedLink.startsWith('https://')) {
+      Alert.alert(
+        'Invalid Link',
+        'The link must start with "http://" or "https://".'
+      );
+      return;
+    }
+
+    try {
+      await db.runAsync(
+        'UPDATE Exercises SET web_link = ? WHERE exercise_id = ?',
+        [trimmedLink || null, editingExercise.exercise_id]
+      );
+      
+      // Update logs as well
+      await updateWorkoutLogsForAdditions(workout_id);
+      
+      fetchWorkoutDetails();
+      closeWebLinkModal();
+    } catch (error) {
+      console.error('Error updating web link:', error);
+      Alert.alert(t('errorTitle'), 'Failed to update web link.');
     }
   };
 
@@ -620,6 +677,7 @@ export default function WorkoutDetails() {
           day.exercises.map((exercise, index) => (
             <TouchableOpacity
               key={index}
+              onPress={() => openWebLinkModal(exercise)}
               onLongPress={() => handleDeleteExercise(day.day_id, exercise.exercise_name, workout_id)}
                 activeOpacity={0.6}
                 delayLongPress={500}
@@ -741,6 +799,16 @@ export default function WorkoutDetails() {
             }
           }}
         />
+        <Text style={[styles.inputLabel, { color: theme.text, marginTop: 10 }]}>{t('webLink')}</Text>
+        <TextInput
+          style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
+          placeholder={t('webLinkPlaceholder')}
+          placeholderTextColor={theme.text}
+          value={exerciseWebLink}
+          onChangeText={setExerciseWebLink}
+          autoCapitalize="none"
+          keyboardType="url"
+        />
         <TouchableOpacity style={[styles.saveButton, { backgroundColor: theme.buttonBackground }]} onPress={addExercise}>
           <Text style={[styles.saveButtonText, { color: theme.buttonText }]}>{t('Save')}</Text>
         </TouchableOpacity>
@@ -748,6 +816,30 @@ export default function WorkoutDetails() {
           <Text style={[styles.cancelButtonText, { color: theme.text }]}>{t('Cancel')}</Text>
         </TouchableOpacity>
       </View>
+    </View>
+  </Modal>
+
+  <Modal visible={showWebLinkModal} animationType="fade" transparent>
+    <View style={[styles.modalContainer, { backgroundColor: 'rgba(0, 0, 0, 0.5)' }]}>
+        <View style={[styles.modalContent, { backgroundColor: theme.card }]}>
+            <Text style={[styles.modalTitle, { color: theme.text }]}>{t('exerciseDetails')}</Text>
+            <Text style={[styles.inputLabel, { color: theme.text }]}>{t('webLink')}</Text>
+            <TextInput
+                style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
+                placeholder={t('webLinkPlaceholder')}
+                placeholderTextColor={theme.text}
+                value={webLinkInput}
+                onChangeText={setWebLinkInput}
+                autoCapitalize="none"
+                keyboardType="url"
+            />
+            <TouchableOpacity style={[styles.saveButton, { backgroundColor: theme.buttonBackground }]} onPress={handleSaveWebLink}>
+                <Text style={[styles.saveButtonText, { color: theme.buttonText }]}>{t('Save')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.cancelButton, { backgroundColor: theme.card }]} onPress={closeWebLinkModal}>
+                <Text style={[styles.cancelButtonText, { color: theme.text }]}>{t('Cancel')}</Text>
+            </TouchableOpacity>
+        </View>
     </View>
   </Modal>
     </View>
@@ -886,6 +978,12 @@ const styles = StyleSheet.create({
       fontSize: 20,
       fontWeight: 'bold',
       marginBottom: 15,
+    },
+    inputLabel: {
+      alignSelf: 'stretch',
+      textAlign: 'left',
+      fontSize: 16,
+      marginBottom: 5,
     },
     input: {
       width: '100%',
