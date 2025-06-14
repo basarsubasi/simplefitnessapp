@@ -189,16 +189,16 @@ export default function LogWorkout() {
       );
 
       // Fetch all exercises associated with the selected day
-      const exercises = await db.getAllAsync<{ exercise_name: string; sets: number; reps: number }>(
-        'SELECT exercise_name, sets, reps FROM Exercises WHERE day_id = ?;',
+      const exercises = await db.getAllAsync<{ exercise_name: string; sets: number; reps: number, web_link: string | null }>(
+        'SELECT exercise_name, sets, reps, web_link FROM Exercises WHERE day_id = ?;',
         [selectedDay]
       );
 
       // Insert exercises into the Logged_Exercises table
       const insertExercisePromises = exercises.map((exercise) =>
         db.runAsync(
-          'INSERT INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?);',
-          [workoutLogId, exercise.exercise_name, exercise.sets, exercise.reps]
+          'INSERT INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps, web_link) VALUES (?, ?, ?, ?, ?);',
+          [workoutLogId, exercise.exercise_name, exercise.sets, exercise.reps, exercise.web_link]
         )
       );
 
