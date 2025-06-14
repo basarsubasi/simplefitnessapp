@@ -364,7 +364,8 @@
       "workoutDetailsTip": "ヒント: 名前をタップすると、エクササイズにウェブリンクを追加、編集、または削除できます。",
 "webLink": "ウェブリンク",
 "webLinkPlaceholder": "https://example.com (任意)",
-"invalidLink": "リンクは\"http://\"または\"https://\"で始まる必要があります。",
+"invalidLinkTitle": "無効なリンク",
+"invalidLinkMessage": "リンクは\"http://\"または\"https://\"で始まる必要があります。",
 "exerciseDetails": "ウェブリンクを追加"
     
 }

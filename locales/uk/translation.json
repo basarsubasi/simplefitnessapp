@@ -367,7 +367,8 @@
       "workoutDetailsTip": "Порада: Ви можете додати, редагувати або видалити веб-посилання до вправи, натиснувши на її назву.",
 "webLink": "Веб-посилання",
 "webLinkPlaceholder": "https://example.com (необов’язково)",
-"invalidLink": "Посилання повинно починатися з \"http://\" або \"https://\".",
+"invalidLinkTitle": "Неправильне посилання",
+"invalidLinkMessage": "Посилання повинно починатися з \"http://\" або \"https://\".",
 "exerciseDetails": "Додати веб-посилання"
 
     

@@ -367,7 +367,8 @@
       "workoutDetailsTip": "提示：您可以点击练习名称来添加、编辑或删除网页链接。",
 "webLink": "网页链接",
 "webLinkPlaceholder": "https://example.com（可选）",
-"invalidLink": "链接必须以 \"http://\" 或 \"https://\" 开头。",
+"invalidLinkTitle": "无效链接",
+"invalidLinkMessage": "链接必须以 \"http://\" 或 \"https://\" 开头。",
 "exerciseDetails": "添加网页链接"
 
 

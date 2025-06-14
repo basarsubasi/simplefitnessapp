@@ -369,7 +369,8 @@
       "workoutDetailsTip": "Sfat: Poți adăuga, edita sau șterge un link web către un exercițiu apăsând pe numele acestuia.",
 "webLink": "Link web",
 "webLinkPlaceholder": "https://example.com (opțional)",
-"invalidLink": "Linkul trebuie să înceapă cu \"http://\" sau \"https://\".",
+"invalidLinkTitle": "Link invalid",
+"invalidLinkMessage": "Linkul trebuie să înceapă cu \"http://\" sau \"https://\".",
 "exerciseDetails": "Adaugă un link web"
   }
 
