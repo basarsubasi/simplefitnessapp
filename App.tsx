@@ -390,50 +390,65 @@ const AppContent = () => {
           <Bottom.Screen
             name="Home"
             component={Home}
-            options={{
-              tabBarButton: (props) => (
-                <TabButton {...props} iconName="home" />
-              ),
-            }}
+            options={({ navigation }) => ({
+              tabBarButton: (props) => {
+                const state = navigation.getState();
+                const currentRouteName = state.routes[state.index].name;
+                const isSelected = currentRouteName === "Home";
+                return <TabButton {...props} iconName="home" isSelected={isSelected} />;
+              },
+            })}
           />
           <Bottom.Screen
             name="My Workouts"
             component={WorkoutStack}
-            options={{
-              tabBarButton: (props) => (
-                <TabButton {...props} iconName="barbell" />
-              ),
-            }}
+            options={({ navigation }) => ({
+              tabBarButton: (props) => {
+                const state = navigation.getState();
+                const currentRouteName = state.routes[state.index].name;
+                const isSelected = currentRouteName === "My Workouts";
+                return <TabButton {...props} iconName="barbell" isSelected={isSelected} />;
+              },
+            })}
           />
 
           <Bottom.Screen
             name="My Calendar"
             component={WorkoutLogStack}
-            options={{
-              tabBarButton: (props) => (
-                <TabButton {...props} iconName="calendar" />
-              ),
-            }}
+            options={({ navigation }) => ({
+              tabBarButton: (props) => {
+                const state = navigation.getState();
+                const currentRouteName = state.routes[state.index].name;
+                const isSelected = currentRouteName === "My Calendar";
+                return <TabButton {...props} iconName="calendar" isSelected={isSelected} />;
+              },
+            })}
           />
 
           <Bottom.Screen
             name="My Progress"
             component={WeightLogStack}
-            options={{
-              tabBarButton: (props) => (
-                <TabButton {...props} iconName="trending-up" />
-              ),
-            }}
+            options={({ navigation }) => ({
+              tabBarButton: (props) => {
+                const state = navigation.getState();
+                const currentRouteName = state.routes[state.index].name;
+                const isSelected = currentRouteName === "My Progress";
+                return <TabButton {...props} iconName="trending-up" isSelected={isSelected} />;
+              },
+            })}
           />
 
        <Bottom.Screen
          name="Settings"
          component={Settings}
-         options={{
-           tabBarButton: (props) => (
-             <TabButton {...props} iconName="settings-sharp" />
-           ),
-         }}
+         options={({ navigation }) => ({
+          tabBarButton: (props) => {
+            const state = navigation.getState();
+            const currentRouteName = state.routes[state.index].name;
+            const isSelected = currentRouteName === "Settings";
+            return <TabButton {...props} iconName="settings-sharp" isSelected={isSelected} />;
+          },
+        })}
        />
 
                  </Bottom.Navigator>
@@ -511,8 +526,7 @@ const AppContent = () => {
 
   // Custom TabButton component to handle icon rendering
   const TabButton = (props: any) => {
-    const { accessibilityState, onPress } = props;
-    const isSelected = accessibilityState?.selected; // Use optional chaining
+    const { onPress, isSelected } = props;
     const { theme } = useTheme(); // Retrieve the theme here
 
 
