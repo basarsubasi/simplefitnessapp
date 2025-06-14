@@ -29,54 +29,54 @@ export const insertWorkouts = async (db: any) => {
   
         // Insert Exercises into Template_Exercises
       await db.runAsync(          
-        `INSERT OR IGNORE INTO Template_Exercises (day_id, exercise_name, sets, reps)
+        `INSERT OR IGNORE INTO Template_Exercises (day_id, exercise_name, sets, reps, web_link)
           VALUES 
-          (1, 'Bench Press', 6, 8),
-          (1, 'Incline Bench Press', 4, 8),
-          (1, 'Cable Crossovers', 4, 12),
-          (1, 'Dumbell Shoulder Press', 4, 12),
-          (1, 'Lateral Raises', 4, 15),
-          (1, 'Skull Crushers', 4, 12),
-          (2, 'Deadlift', 4, 8),
-          (2, 'Lat Pulldown', 4, 12),
-          (2, 'T-Bar Row', 4, 8),
-          (2, 'Hammer Curl', 4, 12),
-          (3, 'Back Squat', 6, 12),
-          (3, 'Leg Extension', 4, 12),
-          (3, 'Leg Curl', 4, 12),
-          (3, 'Leg Press', 4, 8),
-          (3, 'Calf Raise', 4, 15),
-          (4, 'Chest Press Machine', 3, 12),
-          (4, 'Dumbell Fly', 3, 12),
-          (4, 'Shoulder Press Machine', 3, 12),
-          (4, 'Lateral Raises', 3, 12),
-          (4, 'Lat Pulldown', 3, 12),
-          (4, 'Dumbell Curl', 3, 12),
-          (4, 'Triceps Pushdown', 3, 12),
-          (4, 'Goblet Squat', 3, 12),
-          (5, 'Bench Press', 6, 6),
-          (5, 'Incline Bench Press', 6, 6),
-          (5, 'Decline Bench Press', 6, 6),
-          (5, 'Dumbell Fly', 6, 12),
-          (5, 'Incline Dumbell Fly', 6, 12),
-          (6, 'Lat Pulldown', 6, 12),
-          (6, 'Barbell Row', 6, 6),
-          (6, 'Seated Row', 6, 6),
-          (6, 'Deadlift', 6, 6),
-          (7, 'Arnold Press', 6, 6),
-          (7, 'Military Press', 6, 6),
-          (7, 'Lateral Raises', 6, 20),
-          (7, 'Front Raises', 6, 12),
-          (8, 'Barbell Curl', 6, 12),
-          (8, 'Concentration Curl', 6, 12),
-          (8, 'Scott Curl', 6, 12),
-          (8, 'Close Grip Bench Press', 6, 12),
-          (8, 'V Pushdown', 6, 12),
-          (8, 'Skull Crushers', 6, 12),
-          (9, 'Back Squat', 6, 6),
-          (9, 'Leg Press', 6, 6),
-          (9, 'Leg Curl', 6, 12),
-          (9, 'Leg Extension', 6, 12);`
+          (1, 'Bench Press', 6, 8, 'https://example.com'),
+          (1, 'Incline Bench Press', 4, 8, 'https://example.com'),
+          (1, 'Cable Crossovers', 4, 12, 'https://example.com'),
+          (1, 'Dumbell Shoulder Press', 4, 12, 'https://example.com'),
+          (1, 'Lateral Raises', 4, 15, 'https://example.com'),
+          (1, 'Skull Crushers', 4, 12, 'https://example.com'),
+          (2, 'Deadlift', 4, 8, 'https://example.com'),
+          (2, 'Lat Pulldown', 4, 12, 'https://example.com'),
+          (2, 'T-Bar Row', 4, 8, 'https://example.com'),
+          (2, 'Hammer Curl', 4, 12, 'https://example.com'),
+          (3, 'Back Squat', 6, 12, 'https://example.com'),
+          (3, 'Leg Extension', 4, 12, 'https://example.com'),
+          (3, 'Leg Curl', 4, 12, 'https://example.com'),
+          (3, 'Leg Press', 4, 8, 'https://example.com'),
+          (3, 'Calf Raise', 4, 15, 'https://example.com'),
+          (4, 'Chest Press Machine', 3, 12, 'https://example.com'),
+          (4, 'Dumbell Fly', 3, 12, 'https://example.com'),
+          (4, 'Shoulder Press Machine', 3, 12, 'https://example.com'),
+          (4, 'Lateral Raises', 3, 12, 'https://example.com'),
+          (4, 'Lat Pulldown', 3, 12, 'https://example.com'),
+          (4, 'Dumbell Curl', 3, 12, 'https://example.com'),
+          (4, 'Triceps Pushdown', 3, 12, 'https://example.com'),
+          (4, 'Goblet Squat', 3, 12, 'https://example.com'),
+          (5, 'Bench Press', 6, 6, 'https://example.com'),
+          (5, 'Incline Bench Press', 6, 6, 'https://example.com'),
+          (5, 'Decline Bench Press', 6, 6, 'https://example.com'),
+          (5, 'Dumbell Fly', 6, 12, 'https://example.com'),
+          (5, 'Incline Dumbell Fly', 6, 12, 'https://example.com'),
+          (6, 'Lat Pulldown', 6, 12, 'https://example.com'),
+          (6, 'Barbell Row', 6, 6, 'https://example.com'),
+          (6, 'Seated Row', 6, 6, 'https://example.com'),
+          (6, 'Deadlift', 6, 6, 'https://example.com'),
+          (7, 'Arnold Press', 6, 6, 'https://example.com'),
+          (7, 'Military Press', 6, 6, 'https://example.com'),
+          (7, 'Lateral Raises', 6, 20, 'https://example.com'),
+          (7, 'Front Raises', 6, 12, 'https://example.com'),
+          (8, 'Barbell Curl', 6, 12, 'https://example.com'),
+          (8, 'Concentration Curl', 6, 12, 'https://example.com'),
+          (8, 'Scott Curl', 6, 12, 'https://example.com'),
+          (8, 'Close Grip Bench Press', 6, 12, 'https://example.com'),
+          (8, 'V Pushdown', 6, 12, 'https://example.com'),
+          (8, 'Skull Crushers', 6, 12, 'https://example.com'),
+          (9, 'Back Squat', 6, 6, 'https://example.com'),
+          (9, 'Leg Press', 6, 6, 'https://example.com'),
+          (9, 'Leg Curl', 6, 12, 'https://example.com'),
+          (9, 'Leg Extension', 6, 12, 'https://example.com');`
         );
 
         await db.runAsync(
@@ -104,74 +104,74 @@ export const insertWorkouts = async (db: any) => {
 
       // Insert Exercises into Template_Exercises
       await db.runAsync(
-          `INSERT OR IGNORE INTO Template_Exercises (day_id, exercise_name, sets, reps)
+          `INSERT OR IGNORE INTO Template_Exercises (day_id, exercise_name, sets, reps, web_link)
           VALUES 
           -- Upper Lower: Upper (Strength)
-          (10, 'Bench Press', 5, 5),
-          (10, 'Dumbell Incline Bench Press', 5, 5),
-          (10, 'Overhead Press', 5, 5),
-          (10, 'Arnold Press', 5, 5),
-          (10, 'Barbell Row', 5, 5),
-          (10, 'Dumbell Row', 5, 5),
+          (10, 'Bench Press', 5, 5, 'https://example.com'),
+          (10, 'Dumbell Incline Bench Press', 5, 5, 'https://example.com'),
+          (10, 'Overhead Press', 5, 5, 'https://example.com'),
+          (10, 'Arnold Press', 5, 5, 'https://example.com'),
+          (10, 'Barbell Row', 5, 5, 'https://example.com'),
+          (10, 'Dumbell Row', 5, 5, 'https://example.com'),
 
           -- Upper Lower: Lower (Strength)
-          (11, 'Back Squat', 6, 6),
-          (11, 'Front Squat', 6, 6),
-          (11, 'Deadlift', 6, 6),
-          (11, 'Barbell Hip Thrust', 6, 6),
+          (11, 'Back Squat', 6, 6, 'https://example.com'),
+          (11, 'Front Squat', 6, 6, 'https://example.com'),
+          (11, 'Deadlift', 6, 6, 'https://example.com'),
+          (11, 'Barbell Hip Thrust', 6, 6, 'https://example.com'),
 
           -- Upper Lower: Upper (Hypertrophy)
-          (12, 'Bench Press', 4, 15),
-          (12, 'Cable Crossovers', 4, 15),
-          (12, 'Dumbell Shoulder Press', 4, 15),
-          (12, 'Lateral Raises', 6, 15),
-          (12, 'Lat Pulldown', 4, 15),
-          (12, 'Seated Row', 4, 15),
-          (12, 'Triceps Pushdown', 4, 15),
-          (12, 'Biceps Curl', 4, 15),
+          (12, 'Bench Press', 4, 15, 'https://example.com'),
+          (12, 'Cable Crossovers', 4, 15, 'https://example.com'),
+          (12, 'Dumbell Shoulder Press', 4, 15, 'https://example.com'),
+          (12, 'Lateral Raises', 6, 15, 'https://example.com'),
+          (12, 'Lat Pulldown', 4, 15, 'https://example.com'),
+          (12, 'Seated Row', 4, 15, 'https://example.com'),
+          (12, 'Triceps Pushdown', 4, 15, 'https://example.com'),
+          (12, 'Biceps Curl', 4, 15, 'https://example.com'),
 
           -- Upper Lower: Lower (Hypertrophy)
-          (13, 'Bulgarian Split Squat', 4, 15),
-          (13, 'Goblet Squat', 4, 15),
-          (13, 'Leg Press', 4, 15),
-          (13, 'Leg Extension', 4, 15),
-          (13, 'Leg Curl', 4, 15),
-          (13, 'Calf Raises', 4, 15),
+          (13, 'Bulgarian Split Squat', 4, 15, 'https://example.com'),
+          (13, 'Goblet Squat', 4, 15, 'https://example.com'),
+          (13, 'Leg Press', 4, 15, 'https://example.com'),
+          (13, 'Leg Extension', 4, 15, 'https://example.com'),
+          (13, 'Leg Curl', 4, 15, 'https://example.com'),
+          (13, 'Calf Raises', 4, 15, 'https://example.com'),
 
           -- Optimize!: Chest & Arms
-          (14, 'Bench Press', 6, 8),
-          (14, 'Incline Dumbell Press', 4, 12),
-          (14, 'Pec Deck Machine', 4, 12),
-          (14, 'Dumbell Curl', 4, 12),
-          (14, 'Triceps Pushdown', 4, 12),
+          (14, 'Bench Press', 6, 8, 'https://example.com'),
+          (14, 'Incline Dumbell Press', 4, 12, 'https://example.com'),
+          (14, 'Pec Deck Machine', 4, 12, 'https://example.com'),
+          (14, 'Dumbell Curl', 4, 12, 'https://example.com'),
+          (14, 'Triceps Pushdown', 4, 12, 'https://example.com'),
 
           -- Optimize!: Back & Shoulders
-          (15, 'Dumbell Shoulder Press', 6, 12),
-          (15, 'Lateral Raises', 6, 15),
-          (15, 'Front Raises', 4, 12),
-          (15, 'Lat Pulldown', 6, 12),
-          (15, 'T-Bar Row', 6, 12),
+          (15, 'Dumbell Shoulder Press', 6, 12, 'https://example.com'),
+          (15, 'Lateral Raises', 6, 15, 'https://example.com'),
+          (15, 'Front Raises', 4, 12, 'https://example.com'),
+          (15, 'Lat Pulldown', 6, 12, 'https://example.com'),
+          (15, 'T-Bar Row', 6, 12, 'https://example.com'),
 
           -- Optimize!: Legs
-          (16, 'Back Squat', 4, 10),
-          (16, 'Leg Press', 4, 12),
-          (16, 'Leg Curl', 4, 12),
-          (16, 'Leg Extension', 4, 12),
-          (16, 'Calf Raises', 4, 12),
+          (16, 'Back Squat', 4, 10, 'https://example.com'),
+          (16, 'Leg Press', 4, 12, 'https://example.com'),
+          (16, 'Leg Curl', 4, 12, 'https://example.com'),
+          (16, 'Leg Extension', 4, 12, 'https://example.com'),
+          (16, 'Calf Raises', 4, 12, 'https://example.com'),
 
           -- Split it!: First Half
-          (17, 'Bench Press', 3, 10),
-          (17, 'Dumbell Fly', 3, 12),
-          (17, 'Shoulder Press Machine', 3, 10),
-          (17, 'Lateral Raises', 3, 15),
-          (17, 'Dumbell Curl', 3, 12),
+          (17, 'Bench Press', 3, 10, 'https://example.com'),
+          (17, 'Dumbell Fly', 3, 12, 'https://example.com'),
+          (17, 'Shoulder Press Machine', 3, 10, 'https://example.com'),
+          (17, 'Lateral Raises', 3, 15, 'https://example.com'),
+          (17, 'Dumbell Curl', 3, 12, 'https://example.com'),
 
           -- Split it!: Second Half
-          (18, 'Lat Pulldown', 3, 12),
-          (18, 'Dumbell Row', 3, 12),
-          (18, 'Goblet Squat', 3, 12),
-          (18, 'Hack Squat', 3, 12),
-          (18, 'Triceps Pushdown', 3, 12);`
+          (18, 'Lat Pulldown', 3, 12, 'https://example.com'),
+          (18, 'Dumbell Row', 3, 12, 'https://example.com'),
+          (18, 'Goblet Squat', 3, 12, 'https://example.com'),
+          (18, 'Hack Squat', 3, 12, 'https://example.com'),
+          (18, 'Triceps Pushdown', 3, 12, 'https://example.com');`
       );
   
         console.log('Initial  Template workouts inserted into the database.');
@@ -198,36 +198,36 @@ export const insertWorkouts = async (db: any) => {
   // Insert more Exercises into Template_Exercises
   
   await db.runAsync(
-    `INSERT OR IGNORE INTO Template_Exercises (day_id, exercise_name, sets, reps)
+    `INSERT OR IGNORE INTO Template_Exercises (day_id, exercise_name, sets, reps, web_link)
     VALUES
     -- Home Alone Exercises (day_id: 19)
-    (19, 'Push Ups', 4, 10),
-    (19, 'Lateral Raises', 4, 12),
-    (19, 'Dumbell Curl', 4, 12),
-    (19, 'Goblet Squats', 4, 12),
+    (19, 'Push Ups', 4, 10, 'https://example.com'),
+    (19, 'Lateral Raises', 4, 12, 'https://example.com'),
+    (19, 'Dumbell Curl', 4, 12, 'https://example.com'),
+    (19, 'Goblet Squats', 4, 12, 'https://example.com'),
 
     -- Calisthenics+ Exercises (day_id: 20)
-    (20, 'Diamond Push Ups', 4, 10),
-    (20, 'Pull ups', 4, 10),
-    (20, 'Straight Push Ups', 4, 20),
-    (20, 'Dumbell Shoulder Press', 4, 12),
-    (20, 'Lateral Raises', 4, 20),
-    (20, 'Concentration Curl', 4, 12),
-    (20, 'Lunge', 4, 12),
-    (20, 'Goblet Squats', 4, 12),
+    (20, 'Diamond Push Ups', 4, 10, 'https://example.com'),
+    (20, 'Pull ups', 4, 10, 'https://example.com'),
+    (20, 'Straight Push Ups', 4, 20, 'https://example.com'),
+    (20, 'Dumbell Shoulder Press', 4, 12, 'https://example.com'),
+    (20, 'Lateral Raises', 4, 20, 'https://example.com'),
+    (20, 'Concentration Curl', 4, 12, 'https://example.com'),
+    (20, 'Lunge', 4, 12, 'https://example.com'),
+    (20, 'Goblet Squats', 4, 12, 'https://example.com'),
 
     -- Bodyweight Beast Exercises (day_id: 21)
-    (21, 'Devils Press', 4, 12),
-    (21, 'Pull ups', 6, 15),
-    (21, 'Decline Push Ups', 4, 25),
-    (21, 'Incline Push Ups', 4, 25),
-    (21, 'Plyometric Push Ups', 4, 12),
-    (21, 'Arnold Press', 4, 12),
-    (21, 'Lateral Raises', 6, 25),
-    (21, 'Front Raises', 4, 12),
-    (21, 'Hammer Curl', 4, 12),
-    (21, 'Jumping Lunge', 4, 12),
-    (21, 'Bulgarian Split Squats', 4, 12);`
+    (21, 'Devils Press', 4, 12, 'https://example.com'),
+    (21, 'Pull ups', 6, 15, 'https://example.com'),
+    (21, 'Decline Push Ups', 4, 25, 'https://example.com'),
+    (21, 'Incline Push Ups', 4, 25, 'https://example.com'),
+    (21, 'Plyometric Push Ups', 4, 12, 'https://example.com'),
+    (21, 'Arnold Press', 4, 12, 'https://example.com'),
+    (21, 'Lateral Raises', 6, 25, 'https://example.com'),
+    (21, 'Front Raises', 4, 12, 'https://example.com'),
+    (21, 'Hammer Curl', 4, 12, 'https://example.com'),
+    (21, 'Jumping Lunge', 4, 12, 'https://example.com'),
+    (21, 'Bulgarian Split Squats', 4, 12, 'https://example.com');`
   );
 
   console.log(
