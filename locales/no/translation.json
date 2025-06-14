@@ -365,7 +365,15 @@
       "RepsCapital": "Repetisjoner",
       "RepsGraph": "Repetisjonsgraf",
       "About Reps Progression": "Om repetisjonsgrafen",
-      "repsGraphExplanation": "Denne grafen viser repetisjonene du har gjort for individuelle sett. Hver linje og farge representerer et annet settnummer, som Settgrafen, men med Y-aksen som repetisjoner i stedet for vekter. Perfekt for å spore kroppsvektøvelser!"
+      "repsGraphExplanation": "Denne grafen viser repetisjonene du har gjort for individuelle sett. Hver linje og farge representerer et annet settnummer, som Settgrafen, men med Y-aksen som repetisjoner i stedet for vekter. Perfekt for å spore kroppsvektøvelser!",
+
+
+
+      "workoutDetailsTip": "Tip: Du kan legge til, redigere eller slette en weblink for en øvelse ved å trykke på navnet.",
+"webLink": "Weblink",
+"webLinkPlaceholder": "https://example.com (valgfritt)",
+"invalidLink": "Lenken må begynne med \"http://\" eller \"https://\".",
+"exerciseDetails": "Legg til weblink"
 
         
 

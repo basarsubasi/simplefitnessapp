@@ -361,7 +361,15 @@
       "RepsCapital": "Herhalingen",
       "RepsGraph": "Herhalingen Grafiek",
       "About Reps Progression": "Over Herhalingen Grafiek",
-      "repsGraphExplanation": "Deze grafiek toont de herhalingen die je per individuele set hebt gedaan. Elke lijn en kleur vertegenwoordigt een ander setnummer, net als de Sets Grafiek, maar met de y-as als herhalingen in plaats van gewichten. Perfect voor het bijhouden van lichaamsgewichtoefeningen!"
+      "repsGraphExplanation": "Deze grafiek toont de herhalingen die je per individuele set hebt gedaan. Elke lijn en kleur vertegenwoordigt een ander setnummer, net als de Sets Grafiek, maar met de y-as als herhalingen in plaats van gewichten. Perfect voor het bijhouden van lichaamsgewichtoefeningen!",
+
+
+
+      "workoutDetailsTip": "Tip: Je kunt een weblink aan een oefening toevoegen, bewerken of verwijderen door op de naam te tikken.",
+"webLink": "Weblink",
+"webLinkPlaceholder": "https://example.com (optioneel)",
+"invalidLink": "De link moet beginnen met \"http://\" of \"https://\".",
+"exerciseDetails": "Weblink toevoegen"
     
     
     

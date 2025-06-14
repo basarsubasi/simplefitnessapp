@@ -360,7 +360,14 @@
       "RepsCapital": "Toistot",
       "RepsGraph": "Toistokäyrä",
       "About Reps Progression": "Tietoa toistokäyrästä",
-      "repsGraphExplanation": "Tämä kaavio näyttää yksittäisille sarjoille tehdyt toistot. Jokainen viiva ja väri edustaa eri sarjanumeroa kuten sarjakaaviossa, mutta y-akselilla on toistot painojen sijaan. Täydellinen kehonpainoharjoitusten seuraamiseen!"
+      "repsGraphExplanation": "Tämä kaavio näyttää yksittäisille sarjoille tehdyt toistot. Jokainen viiva ja väri edustaa eri sarjanumeroa kuten sarjakaaviossa, mutta y-akselilla on toistot painojen sijaan. Täydellinen kehonpainoharjoitusten seuraamiseen!",
+
+
+      "workoutDetailsTip": "Vinkki: Voit lisätä, muokata tai poistaa harjoituksen verkkolinkin napauttamalla sen nimeä.",
+"webLink": "Verkkolinkki",
+"webLinkPlaceholder": "https://example.com (valinnainen)",
+"invalidLink": "Linkin on aloituttava \"http://\" tai \"https://\".",
+"exerciseDetails": "Lisää verkkolinkki"
     
     
 

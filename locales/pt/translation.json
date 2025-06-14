@@ -361,7 +361,15 @@
       "RepsCapital": "Repetições",
       "RepsGraph": "Gráfico de Repetições",
       "About Reps Progression": "Sobre o Gráfico de Repetições",
-      "repsGraphExplanation": "Este gráfico mostra as repetições que você fez para séries individuais. Cada linha e cor representa um número de série diferente, como o Gráfico de Séries, mas com o eixo Y sendo as repetições em vez dos pesos. Perfeito para acompanhar exercícios de peso corporal!"
+      "repsGraphExplanation": "Este gráfico mostra as repetições que você fez para séries individuais. Cada linha e cor representa um número de série diferente, como o Gráfico de Séries, mas com o eixo Y sendo as repetições em vez dos pesos. Perfeito para acompanhar exercícios de peso corporal!",
+
+
+
+      "workoutDetailsTip": "Dica: Você pode adicionar, editar ou excluir um link da web para um exercício tocando em seu nome.",
+"webLink": "Link da web",
+"webLinkPlaceholder": "https://example.com (opcional)",
+"invalidLink": "O link deve começar com \"http://\" ou \"https://\".",
+"exerciseDetails": "Adicionar link da web"
     
 
         
