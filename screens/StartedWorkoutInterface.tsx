@@ -13,7 +13,8 @@ import {
   Platform,
   Switch,
   Modal,
-  AppState
+  AppState,
+  Linking
 } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -44,6 +45,7 @@ interface Exercise {
   sets: number;
   reps: number;
   logged_exercise_id: number;
+  web_link: string | null;
 }
 
 interface ExerciseSet {
@@ -55,6 +57,7 @@ interface ExerciseSet {
   reps_done: number;
   weight: string;
   completed: boolean;
+  web_link: string | null;
 }
 
 export default function StartedWorkoutInterface() {
@@ -334,6 +337,24 @@ export default function StartedWorkoutInterface() {
     }
   };
   
+  const handleLinkPress = async (url: string | null) => {
+    if (!url) {
+      Alert.alert(t('noLinkAvailable'));
+      return;
+    }
+    try {
+      const supported = await Linking.canOpenURL(url);
+      if (supported) {
+        await Linking.openURL(url);
+      } else {
+        Alert.alert(`${t('cannotOpenURL')}: ${url}`);
+      }
+    } catch (error) {
+      console.error('Error opening URL:', error);
+      Alert.alert(t('errorOpeningURL'));
+    }
+  };
+  
   const fetchWorkoutDetails = async () => {
     try {
       setLoading(true);
@@ -353,7 +374,7 @@ export default function StartedWorkoutInterface() {
         setWorkout(workoutResult[0]);
         
         const exercisesResult = await db.getAllAsync<Exercise>(
-          `SELECT exercise_name, sets, reps, logged_exercise_id 
+          `SELECT exercise_name, sets, reps, logged_exercise_id, web_link
            FROM Logged_Exercises 
            WHERE workout_log_id = ?;`,
           [workout_log_id]
@@ -373,7 +394,8 @@ export default function StartedWorkoutInterface() {
               reps_goal: exercise.reps,
               reps_done: exercise.reps,
               weight: '',
-              completed: false
+              completed: false,
+              web_link: exercise.web_link || null
             });
           }
         });
@@ -552,7 +574,14 @@ export default function StartedWorkoutInterface() {
           keyExtractor={(item) => item.logged_exercise_id.toString()}
           renderItem={({ item }) => (
             <View style={[styles.exerciseItem, { backgroundColor: theme.card, borderColor: theme.border }]}>
-              <Text style={[styles.exerciseName, { color: theme.text }]}>{item.exercise_name}</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Text style={[styles.exerciseName, { color: theme.text, flex: 1 }]}>{item.exercise_name}</Text>
+                {item.web_link && (
+                  <TouchableOpacity onPress={() => handleLinkPress(item.web_link)} style={{ marginLeft: 10, marginBottom: 10 }}>
+                    <Ionicons name="link-outline" size={22} color={theme.text} />
+                  </TouchableOpacity>
+                )}
+              </View>
               <Text style={[styles.exerciseDetails, { color: theme.text }]}>
                 {item.sets} {t('Sets')} × {item.reps} {t('Reps')}
               </Text>
@@ -649,9 +678,16 @@ export default function StartedWorkoutInterface() {
         </View>
         
         <View style={[styles.currentExerciseCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <Text style={[styles.currentExerciseName, { color: theme.text }]}>
-            {currentSet.exercise_name}
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
+            <Text style={[styles.currentExerciseName, { color: theme.text }]}>
+              {currentSet.exercise_name}
+            </Text>
+            {currentSet.web_link && (
+              <TouchableOpacity onPress={() => handleLinkPress(currentSet.web_link)} style={{ marginLeft: 10, marginBottom: 10 }}>
+                <Ionicons name="link-outline" size={24} color={theme.text} />
+              </TouchableOpacity>
+            )}
+          </View>
           <Text style={[styles.setInfo, { color: theme.text }]}>
            {currentSet.set_number}/{currentSet.total_sets}
           </Text>
@@ -996,7 +1032,14 @@ export default function StartedWorkoutInterface() {
 
                 return (
                   <View style={itemStyle}>
-                    <Text style={nameStyle}>{item.exercise_name}</Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <Text style={nameStyle}>{item.exercise_name}</Text>
+                      {item.web_link && (
+                        <TouchableOpacity onPress={() => handleLinkPress(item.web_link)} style={{ marginLeft: 10, marginBottom: 10 }}>
+                          <Ionicons name="link-outline" size={22} color={isCurrent ? theme.buttonText : theme.text} />
+                        </TouchableOpacity>
+                      )}
+                    </View>
                     <Text style={detailStyle}>
                       {item.sets} {t('Sets')} × {item.reps} {t('Reps')}
                     </Text>
