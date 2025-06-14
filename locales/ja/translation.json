@@ -358,6 +358,13 @@
       "RepsCapital": "回数",
       "RepsGraph": "回数グラフ",
       "About Reps Progression": "回数グラフについて",
-      "repsGraphExplanation": "このグラフは、個々のセットで行った回数を示します。各線と色は、セットグラフと同様に異なるセット番号を表しますが、Y軸は重さの代わりに回数です。自重エクササイズの追跡に最適です！"
+      "repsGraphExplanation": "このグラフは、個々のセットで行った回数を示します。各線と色は、セットグラフと同様に異なるセット番号を表しますが、Y軸は重さの代わりに回数です。自重エクササイズの追跡に最適です！",
+
+
+      "workoutDetailsTip": "ヒント: 名前をタップすると、エクササイズにウェブリンクを追加、編集、または削除できます。",
+"webLink": "ウェブリンク",
+"webLinkPlaceholder": "https://example.com (任意)",
+"invalidLink": "リンクは\"http://\"または\"https://\"で始まる必要があります。",
+"exerciseDetails": "ウェブリンクを追加"
     
 }

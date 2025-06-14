@@ -359,7 +359,17 @@
       "About Reps Progression": "O wykresie powtórzeń",
       "repsGraphExplanation": "Ten wykres pokazuje wykonane powtórzenia dla poszczególnych serii. Każda linia i kolor reprezentuje inny numer serii, podobnie jak wykres serii, ale oś Y to powtórzenia zamiast ciężarów. Idealny do śledzenia ćwiczeń z masą ciała!",
 
-      "Workout Days": "Dni treningu"
+      "Workout Days": "Dni treningu",
+
+
+
+
+
+      "workoutDetailsTip": "Wskazówka: Możesz dodać, edytować lub usunąć link do ćwiczenia, stukając w jego nazwę.",
+"webLink": "Link internetowy",
+"webLinkPlaceholder": "https://example.com (opcjonalnie)",
+"invalidLink": "Link musi zaczynać się od \"http://\" lub \"https://\".",
+"exerciseDetails": "Dodaj link internetowy"
 
     
 }

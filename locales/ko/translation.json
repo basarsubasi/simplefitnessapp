@@ -354,7 +354,15 @@
       "RepsCapital": "반복 횟수",
       "RepsGraph": "반복 횟수 그래프",
       "About Reps Progression": "반복 횟수 그래프 정보",
-      "repsGraphExplanation": "이 그래프는 개별 세트별 반복 횟수를 보여줍니다. 각 선과 색상은 세트 그래프와 마찬가지로 다른 세트 번호를 나타내지만, Y축은 무게 대신 반복 횟수입니다. 맨몸 운동 추적에 완벽합니다!"
+      "repsGraphExplanation": "이 그래프는 개별 세트별 반복 횟수를 보여줍니다. 각 선과 색상은 세트 그래프와 마찬가지로 다른 세트 번호를 나타내지만, Y축은 무게 대신 반복 횟수입니다. 맨몸 운동 추적에 완벽합니다!",
+
+
+
+      "workoutDetailsTip": "팁: 이름을 눌러 운동에 웹 링크를 추가, 편집 또는 삭제할 수 있습니다.",
+"webLink": "웹 링크",
+"webLinkPlaceholder": "https://example.com (선택 사항)",
+"invalidLink": "링크는 \"http://\" 또는 \"https://\"로 시작해야 합니다.",
+"exerciseDetails": "웹 링크 추가"
     
 
 
