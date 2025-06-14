@@ -404,7 +404,8 @@
     "workoutDetailsTip": "Tip: You can add, edit or delete a web link to an exercise by pressing to it's name.",
     "webLink": "Web Link",
     "webLinkPlaceholder": "https://example.com (optional)",
-    "invalidLink": "The link must start with \"http://\" or \"https://\".",
+    "invalidLinkTitle": "Invalid Link",
+    "invalidLinkMessage": "The link must start with \"http://\" or \"https://\".",
     "exerciseDetails": "Add a Web Link"
   
     }

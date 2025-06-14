@@ -368,7 +368,8 @@
       "workoutDetailsTip": "Tip: Je kunt een weblink aan een oefening toevoegen, bewerken of verwijderen door op de naam te tikken.",
 "webLink": "Weblink",
 "webLinkPlaceholder": "https://example.com (optioneel)",
-"invalidLink": "De link moet beginnen met \"http://\" of \"https://\".",
+"invalidLinkTitle": "Ongeldige link",
+"invalidLinkMessage": "De link moet beginnen met \"http://\" of \"https://\".",
 "exerciseDetails": "Weblink toevoegen"
     
     

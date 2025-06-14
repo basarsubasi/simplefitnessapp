@@ -361,7 +361,8 @@
       "workoutDetailsTip": "Suggerimento: puoi aggiungere, modificare o eliminare un collegamento web a un esercizio toccando il suo nome.",
 "webLink": "Collegamento web",
 "webLinkPlaceholder": "https://example.com (facoltativo)",
-"invalidLink": "Il collegamento deve iniziare con \"http://\" o \"https://\".",
+"invalidLinkTitle": "Collegamento non valido",
+"invalidLinkMessage": "Il collegamento deve iniziare con \"http://\" o \"https://\".",
 "exerciseDetails": "Aggiungi un collegamento web"
         
 

@@ -396,7 +396,8 @@
     "workoutDetailsTip": "İpucu: Bir egzersize bir web bağlantısını eklemek, veya var olan bir bağlantıyı düzenlemek veya silmek için egzersizin adına dokunun.",
 "webLink": "Web Bağlantısı",
 "webLinkPlaceholder": "https://example.com (opsiyonel)",
-"invalidLink": "Bağlantı \"http://\" veya \"https://\" ile başlamalıdır.",
+"invalidLinkTitle": "Geçersiz Bağlantı",
+"invalidLinkMessage": "Bağlantı \"http://\" veya \"https://\" ile başlamalıdır.",
 "exerciseDetails": "Web Bağlantısı Ekle"
             
         

@@ -358,7 +358,8 @@
   "workoutDetailsTip": "Tip: Můžete přidat, upravit nebo odstranit webový odkaz k cvičení klepnutím na jeho název.",
 "webLink": "Webový odkaz",
 "webLinkPlaceholder": "https://example.com (volitelně)",
-"invalidLink": "Odkaz musí začínat \"http://\" nebo \"https://\".",
+"invalidLinkTitle": "Neplatný odkaz",
+"invalidLinkMessage": "Odkaz musí začínat \"http://\" nebo \"https://\".",
 "exerciseDetails": "Přidat webový odkaz"
 
 

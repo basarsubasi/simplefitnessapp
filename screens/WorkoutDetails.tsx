@@ -311,8 +311,8 @@ export default function WorkoutDetails() {
     
     if (webLink && !webLink.startsWith('http://') && !webLink.startsWith('https://')) {
       Alert.alert(
-        'Invalid Link',
-        'The link must start with "http://" or "https://".'
+        t('invalidLinkTitle'),
+        t('invalidLinkMessage')
       );
       return;
     }
@@ -538,8 +538,8 @@ export default function WorkoutDetails() {
     // Validation
     if (trimmedLink && !trimmedLink.startsWith('http://') && !trimmedLink.startsWith('https://')) {
       Alert.alert(
-        'Invalid Link',
-        'The link must start with "http://" or "https://".'
+        t('invalidLinkTitle'),
+        t('invalidLinkMessage')
       );
       return;
     }
