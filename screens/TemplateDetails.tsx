@@ -1,6 +1,6 @@
 import { useFocusEffect } from '@react-navigation/native'; // Import useFocusEffect
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, Modal, TextInput } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, Modal, TextInput, Linking } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useSQLiteContext } from 'expo-sqlite';
@@ -21,7 +21,7 @@ type WorkoutListNavigationProp = StackNavigationProp<WorkoutStackParamList, 'Tem
 type Day = {
   day_id: number;
   day_name: string;
-  exercises: { exercise_name: string; sets: number; reps: number }[];
+  exercises: { exercise_name: string; sets: number; reps: number; web_link: string | null }[];
 };
 export default function TemplateDetails() {
   const db = useSQLiteContext();
@@ -66,8 +66,9 @@ interface LastRowIdResult {
           exercise_name: string;
           sets: number;
           reps: number;
+          web_link: string;
         }>(
-          'SELECT exercise_id, exercise_name, sets, reps FROM Template_Exercises WHERE day_id = ? ORDER BY exercise_id',
+          'SELECT exercise_id, exercise_name, sets, reps, web_link FROM Template_Exercises WHERE day_id = ? ORDER BY exercise_id',
           [day.day_id]
         );
         return { ...day, exercises };
@@ -135,6 +136,24 @@ async function insertWorkoutIntoRealTables(workoutName: string, days: any[]) {
   }
 }
 
+const handleLinkPress = async (url: string | null) => {
+  if (!url) {
+    Alert.alert(t('noLinkAvailable'));
+    return;
+  }
+  try {
+    const supported = await Linking.canOpenURL(url);
+    if (supported) {
+      await Linking.openURL(url);
+    } else {
+      Alert.alert(`${t('cannotOpenURL')}: ${url}`);
+    }
+  } catch (error) {
+    console.error('Error opening URL:', error);
+    Alert.alert(t('errorOpeningURL'));
+  }
+};
+
 const handleSaveWorkout = async () => {
   try {
     await insertWorkoutIntoRealTables(workoutName, days);
@@ -174,7 +193,6 @@ const handleSaveWorkout = async () => {
         <View style={styles.dayHeader}>
           <Text style={[styles.dayTitle, { color: theme.text }]}>{day.day_name}</Text>
           {/* Add Exercise Button */}
-       
         </View>
 
         {/* Exercises */}
@@ -185,14 +203,22 @@ const handleSaveWorkout = async () => {
               activeOpacity={0.8}
               style={[styles.exerciseContainer, { backgroundColor: theme.card, borderColor: theme.border }]}
             >
-              <AutoSizeText
-                fontSize={18}
-                numberOfLines={3}
-                mode={ResizeTextMode.max_lines}
-                style={[styles.exerciseName, { color: theme.text }]}
-              >
-                {exercise.exercise_name}
-              </AutoSizeText>
+              <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, marginRight: 8 }}>
+                <AutoSizeText
+                  fontSize={18}
+                  numberOfLines={3}
+                  mode={ResizeTextMode.max_lines}
+                  style={[styles.exerciseName, { color: theme.text, flex: 1, flexShrink: 1 }]}
+                >
+                  {exercise.exercise_name}
+                </AutoSizeText>
+                {exercise.web_link && (
+                  <TouchableOpacity onPress={() => handleLinkPress(exercise.web_link)} style={{ marginLeft: 10 }}>
+                    <Ionicons name="link-outline" size={22} color={theme.text} />
+                  </TouchableOpacity>
+                )}
+              </View>
+
               <View style={styles.exerciseDetails}>
                 <Text style={{ color: theme.text, fontSize: 16, textAlign: 'right' }}>
                   {exercise.sets} <Text>{t('Sets')}</Text>
@@ -306,9 +332,9 @@ const styles = StyleSheet.create({
       maxWidth: '100%',  // Prevent overflow
     },
     exerciseName: {
-      flex: 1,  // Allow text to use remaining space
       fontWeight: '700',
       color: '#000000',
+      marginRight: 4,
     },
     exerciseDetails: {
       minWidth: 70,
