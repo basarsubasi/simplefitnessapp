@@ -720,13 +720,18 @@ export default function WorkoutDetails() {
       </Animated.View>
     )}
     ListFooterComponent={
-      <TouchableOpacity
-        style={[styles.addDayButton, { backgroundColor: theme.buttonBackground }]}
-        onPress={openAddDayModal}
-      >
-        <Ionicons name="add" size={28} color={theme.buttonText} />
-        <Text style={[styles.addDayButtonText, { color: theme.buttonText }]}>{t('addDayFromDetails')}</Text>
-      </TouchableOpacity>
+      <>
+        <TouchableOpacity
+          style={[styles.addDayButton, { backgroundColor: theme.buttonBackground }]}
+          onPress={openAddDayModal}
+        >
+          <Ionicons name="add" size={28} color={theme.buttonText} />
+          <Text style={[styles.addDayButtonText, { color: theme.buttonText }]}>{t('addDayFromDetails')}</Text>
+        </TouchableOpacity>
+        <Text style={[styles.tipText, { color: theme.text }]}>
+          {t('workoutDetailsTip')}
+        </Text>
+      </>
     }
     ListEmptyComponent={
       <Text style={[styles.emptyText, { color: theme.text }]}>
@@ -1024,6 +1029,14 @@ const styles = StyleSheet.create({
       shadowOpacity: 0.1,
       shadowRadius: 4,
       elevation: 2,
+    },
+    tipText: {
+      textAlign: 'center',
+      fontSize: 14,
+      fontStyle: 'italic',
+      marginTop: 20,
+      marginBottom: 20,
+      paddingHorizontal: 10,
     },
   });
   

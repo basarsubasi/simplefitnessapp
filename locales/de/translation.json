@@ -352,8 +352,13 @@
   "RepsCapital": "Wiederholungen",
   "RepsGraph": "Wiederholungs-Graph",
   "About Reps Progression": "Über den Wiederholungs-Graph",
-  "repsGraphExplanation": "Dieser Graph zeigt die Wiederholungen an, die Sie für einzelne Sätze gemacht haben. Jede Linie und Farbe repräsentiert eine andere Satznummer, ähnlich dem Satz-Graph, aber mit der Y-Achse als Wiederholungen anstelle von Gewichten. Perfekt zur Verfolgung von Körpergewichtsübungen!"
+  "repsGraphExplanation": "Dieser Graph zeigt die Wiederholungen an, die Sie für einzelne Sätze gemacht haben. Jede Linie und Farbe repräsentiert eine andere Satznummer, ähnlich dem Satz-Graph, aber mit der Y-Achse als Wiederholungen anstelle von Gewichten. Perfekt zur Verfolgung von Körpergewichtsübungen!",
 
+  "workoutDetailsTip": "Tipp: Sie können einen Weblink zu einer Übung hinzufügen, bearbeiten oder löschen, indem Sie auf den Namen tippen.",
+"webLink": "Weblink",
+"webLinkPlaceholder": "https://example.com (optional)",
+"invalidLink": "Der Link muss mit \"http://\" oder \"https://\" beginnen.",
+"exerciseDetails": "Weblink hinzufügen"
 
 }
   
