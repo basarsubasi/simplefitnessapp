@@ -60,18 +60,18 @@ export const insertWorkouts = async (db: any) => {
           (5, 'Dumbell Fly', 6, 12, 'https://www.youtube.com/watch?v=JFm8KbhjibM'),
           (5, 'Incline Dumbell Fly', 6, 12, 'https://www.youtube.com/watch?v=JFm8KbhjibM'),
           (6, 'Lat Pulldown', 6, 12, 'https://www.youtube.com/watch?v=hnSqbBk15tw'),
-          (6, 'Barbell Row', 6, 6, 'https://example.com'),
-          (6, 'Seated Row', 6, 6, 'https://example.com'),
+          (6, 'Barbell Row', 6, 6, 'https://www.youtube.com/watch?v=6FZHJGzMFEc'),
+          (6, 'Seated Row', 6, 6, 'https://www.youtube.com/watch?v=UCXxvVItLoM'),
           (6, 'Deadlift', 6, 6, 'https://www.youtube.com/watch?v=CN_7cz3P-1U'),
-          (7, 'Arnold Press', 6, 6, 'https://example.com'),
-          (7, 'Military Press', 6, 6, 'https://example.com'),
+          (7, 'Arnold Press', 6, 6, 'https://www.youtube.com/watch?v=6Z15_WdXmVw'),
+          (7, 'Military Press', 6, 6, 'https://www.youtube.com/watch?v=G2qpTG1Eh40'),
           (7, 'Lateral Raises', 6, 20, 'https://www.youtube.com/watch?v=PzsMitRdI_8'),
-          (7, 'Front Raises', 6, 12, 'https://example.com'),
-          (8, 'Barbell Curl', 6, 12, 'https://example.com'),
-          (8, 'Concentration Curl', 6, 12, 'https://example.com'),
-          (8, 'Scott Curl', 6, 12, 'https://example.com'),
-          (8, 'Close Grip Bench Press', 6, 12, 'https://example.com'),
-          (8, 'V Pushdown', 6, 12, 'https://example.com'),
+          (7, 'Front Raises', 6, 12, 'https://www.youtube.com/watch?v=hRJ6tR5-if0'),
+          (8, 'Barbell Curl', 6, 12, 'https://www.youtube.com/watch?v=54x2WF1_Suc'),
+          (8, 'Concentration Curl', 6, 12, 'https://www.youtube.com/watch?v=VMbDQ8PZazY'),
+          (8, 'Scott Curl', 6, 12, 'https://www.youtube.com/watch?v=PJdMzP9yAus'),
+          (8, 'Close Grip Bench Press', 6, 12, 'https://www.youtube.com/watch?v=FiQUzPtS90E'),
+          (8, 'V Pushdown', 6, 12, 'https://www.youtube.com/watch?v=-xa-6cQaZKY'),
           (8, 'Skull Crushers', 6, 12, 'https://www.youtube.com/watch?v=l3rHYPtMUo8'),
           (9, 'Back Squat', 6, 6, 'https://www.youtube.com/watch?v=ultWZbUMPL8'),
           (9, 'Leg Press', 6, 6, 'https://www.youtube.com/watch?v=nDh_BlnLCGc'),
@@ -107,31 +107,31 @@ export const insertWorkouts = async (db: any) => {
           `INSERT OR IGNORE INTO Template_Exercises (day_id, exercise_name, sets, reps, web_link)
           VALUES 
           -- Upper Lower: Upper (Strength)
-          (10, 'Bench Press', 5, 5, 'https://example.com'),
-          (10, 'Dumbell Incline Bench Press', 5, 5, 'https://example.com'),
-          (10, 'Overhead Press', 5, 5, 'https://example.com'),
-          (10, 'Arnold Press', 5, 5, 'https://example.com'),
-          (10, 'Barbell Row', 5, 5, 'https://example.com'),
-          (10, 'Dumbell Row', 5, 5, 'https://example.com'),
+          (10, 'Bench Press', 5, 5, 'https://www.youtube.com/watch?v=gRVjAtPip0Y'),
+          (10, 'Incline Dumbell Press', 5, 5, 'https://www.youtube.com/watch?v=8fXfwG4ftaQ'),
+          (10, 'Overhead Press', 5, 5, 'https://www.youtube.com/watch?v=cGnhixvC8uA'),
+          (10, 'Arnold Press', 5, 5, 'https://www.youtube.com/watch?v=6Z15_WdXmVw'),
+          (10, 'Barbell Row', 5, 5, 'https://www.youtube.com/watch?v=6FZHJGzMFEc'),
+          (10, 'Dumbell Row', 5, 5, 'https://www.youtube.com/watch?v=DMo3HJoawrU'),
 
           -- Upper Lower: Lower (Strength)
           (11, 'Back Squat', 6, 6, 'https://www.youtube.com/watch?v=ultWZbUMPL8'),
-          (11, 'Front Squat', 6, 6, 'https://example.com'),
+          (11, 'Front Squat', 6, 6, 'https://www.youtube.com/watch?v=HHxNbhP16UE'),
           (11, 'Deadlift', 6, 6, 'https://www.youtube.com/watch?v=CN_7cz3P-1U'),
-          (11, 'Barbell Hip Thrust', 6, 6, 'https://example.com'),
+          (11, 'Barbell Hip Thrust', 6, 6, 'https://www.youtube.com/watch?v=5S8SApGU_Lk'),
 
           -- Upper Lower: Upper (Hypertrophy)
-          (12, 'Bench Press', 4, 15, 'https://example.com'),
+          (12, 'Bench Press', 4, 15, 'https://www.youtube.com/watch?v=gRVjAtPip0Y'),
           (12, 'Cable Crossovers', 4, 15, 'https://www.youtube.com/watch?v=taI4XduLpTk'),
           (12, 'Dumbell Shoulder Press', 4, 15, 'https://www.youtube.com/watch?v=qEwKCR5JCog'),
           (12, 'Lateral Raises', 6, 15, 'https://www.youtube.com/watch?v=PzsMitRdI_8'),
           (12, 'Lat Pulldown', 4, 15, 'https://www.youtube.com/watch?v=hnSqbBk15tw'),
-          (12, 'Seated Row', 4, 15, 'https://example.com'),
+          (12, 'Seated Row', 4, 15, 'https://www.youtube.com/watch?v=UCXxvVItLoM'),
           (12, 'Triceps Pushdown', 4, 15, 'https://www.youtube.com/watch?v=1FjkhpZsaxc'),
-          (12, 'Biceps Curl', 4, 15, 'https://example.com'),
+          (12, 'Biceps Curl', 4, 15, 'https://www.youtube.com/watch?v=MKWBV29S6c0'),
 
           -- Upper Lower: Lower (Hypertrophy)
-          (13, 'Bulgarian Split Squat', 4, 15, 'https://example.com'),
+          (13, 'Bulgarian Split Squat', 4, 15, 'https://www.youtube.com/watch?v=r3jzvjt-0l8'),
           (13, 'Goblet Squat', 4, 15, 'https://www.youtube.com/watch?v=0OWbS1WiUGU'),
           (13, 'Leg Press', 4, 15, 'https://www.youtube.com/watch?v=nDh_BlnLCGc'),
           (13, 'Leg Extension', 4, 15, 'https://www.youtube.com/watch?v=m0FOpMEgero'),
@@ -139,16 +139,16 @@ export const insertWorkouts = async (db: any) => {
           (13, 'Calf Raises', 4, 15, 'https://www.youtube.com/watch?v=c5Kv6-fnTj8'),
 
           -- Optimize!: Chest & Arms
-          (14, 'Bench Press', 6, 8, 'https://example.com'),
-          (14, 'Incline Dumbell Press', 4, 12, 'https://example.com'),
-          (14, 'Pec Deck Machine', 4, 12, 'https://example.com'),
+          (14, 'Bench Press', 6, 8, 'https://www.youtube.com/watch?v=gRVjAtPip0Y'),
+          (14, 'Incline Dumbell Press', 4, 12, 'https://www.youtube.com/watch?v=8fXfwG4ftaQ'),
+          (14, 'Pec Deck Machine', 4, 12, 'https://www.youtube.com/watch?v=FDay9wFe5uE'),
           (14, 'Dumbell Curl', 4, 12, 'https://www.youtube.com/watch?v=MKWBV29S6c0'),
           (14, 'Triceps Pushdown', 4, 12, 'https://www.youtube.com/watch?v=1FjkhpZsaxc'),
 
           -- Optimize!: Back & Shoulders
           (15, 'Dumbell Shoulder Press', 6, 12, 'https://www.youtube.com/watch?v=qEwKCR5JCog'),
           (15, 'Lateral Raises', 6, 15, 'https://www.youtube.com/watch?v=PzsMitRdI_8'),
-          (15, 'Front Raises', 4, 12, 'https://example.com'),
+          (15, 'Front Raises', 4, 12, 'https://www.youtube.com/watch?v=hRJ6tR5-if0'),
           (15, 'Lat Pulldown', 6, 12, 'https://www.youtube.com/watch?v=hnSqbBk15tw'),
           (15, 'T-Bar Row', 6, 12, 'https://www.youtube.com/watch?v=VmrKhFyC4cM'),
 
@@ -160,7 +160,7 @@ export const insertWorkouts = async (db: any) => {
           (16, 'Calf Raises', 4, 12, 'https://www.youtube.com/watch?v=c5Kv6-fnTj8'),
 
           -- Split it!: First Half
-          (17, 'Bench Press', 3, 10, 'https://example.com'),
+          (17, 'Bench Press', 3, 10, 'https://www.youtube.com/watch?v=gRVjAtPip0Y'),
           (17, 'Dumbell Fly', 3, 12, 'https://www.youtube.com/watch?v=JFm8KbhjibM'),
           (17, 'Shoulder Press Machine', 3, 10, 'https://www.youtube.com/watch?v=WvLMauqrnK8'),
           (17, 'Lateral Raises', 3, 15, 'https://www.youtube.com/watch?v=PzsMitRdI_8'),
@@ -168,9 +168,9 @@ export const insertWorkouts = async (db: any) => {
 
           -- Split it!: Second Half
           (18, 'Lat Pulldown', 3, 12, 'https://www.youtube.com/watch?v=hnSqbBk15tw'),
-          (18, 'Dumbell Row', 3, 12, 'https://example.com'),
+          (18, 'Dumbell Row', 3, 12, 'https://www.youtube.com/watch?v=DMo3HJoawrU'),
           (18, 'Goblet Squat', 3, 12, 'https://www.youtube.com/watch?v=0OWbS1WiUGU'),
-          (18, 'Hack Squat', 3, 12, 'https://example.com'),
+          (18, 'Hack Squat', 3, 12, 'https://www.youtube.com/watch?v=rYgNArpwE7E'),
           (18, 'Triceps Pushdown', 3, 12, 'https://www.youtube.com/watch?v=1FjkhpZsaxc');`
       );
   
@@ -201,33 +201,33 @@ export const insertWorkouts = async (db: any) => {
     `INSERT OR IGNORE INTO Template_Exercises (day_id, exercise_name, sets, reps, web_link)
     VALUES
     -- Home Alone Exercises (day_id: 19)
-    (19, 'Push Ups', 4, 10, 'https://example.com'),
+    (19, 'Straight Push Ups', 4, 10, 'https://www.youtube.com/watch/4Bc1tPaYkOo'),
     (19, 'Lateral Raises', 4, 12, 'https://www.youtube.com/watch?v=PzsMitRdI_8'),
     (19, 'Dumbell Curl', 4, 12, 'https://www.youtube.com/watch?v=MKWBV29S6c0'),
     (19, 'Goblet Squats', 4, 12, 'https://www.youtube.com/watch?v=0OWbS1WiUGU'),
 
     -- Calisthenics+ Exercises (day_id: 20)
-    (20, 'Diamond Push Ups', 4, 10, 'https://example.com'),
-    (20, 'Pull ups', 4, 10, 'https://example.com'),
-    (20, 'Straight Push Ups', 4, 20, 'https://example.com'),
+    (20, 'Diamond Push Ups', 4, 10, 'https://www.youtube.com/watch?v=XtU2VQVuLYs'),
+    (20, 'Pull ups', 4, 10, 'https://www.youtube.com/watch?v=FVqgCT9H1pg'),
+    (20, 'Straight Push Ups', 4, 20, 'https://www.youtube.com/watch/4Bc1tPaYkOo'),
     (20, 'Dumbell Shoulder Press', 4, 12, 'https://www.youtube.com/watch?v=qEwKCR5JCog'),
     (20, 'Lateral Raises', 4, 20, 'https://www.youtube.com/watch?v=PzsMitRdI_8'),
-    (20, 'Concentration Curl', 4, 12, 'https://example.com'),
-    (20, 'Lunge', 4, 12, 'https://example.com'),
+    (20, 'Concentration Curl', 4, 12, 'https://www.youtube.com/watch?v=VMbDQ8PZazY'),
+    (20, 'Lunge', 4, 12, 'https://www.youtube.com/watch?v=tTej-ax9XiA'),
     (20, 'Goblet Squats', 4, 12, 'https://www.youtube.com/watch?v=0OWbS1WiUGU'),
 
     -- Bodyweight Beast Exercises (day_id: 21)
-    (21, 'Devils Press', 4, 12, 'https://example.com'),
-    (21, 'Pull ups', 6, 15, 'https://example.com'),
-    (21, 'Decline Push Ups', 4, 25, 'https://example.com'),
-    (21, 'Incline Push Ups', 4, 25, 'https://example.com'),
-    (21, 'Plyometric Push Ups', 4, 12, 'https://example.com'),
-    (21, 'Arnold Press', 4, 12, 'https://example.com'),
+    (21, 'Devils Press', 4, 12, 'https://www.youtube.com/watch?v=hc6dfJHRcD0'),
+    (21, 'Pull ups', 6, 15, 'https://www.youtube.com/watch?v=FVqgCT9H1pg'),
+    (21, 'Decline Push Ups', 4, 25, 'https://www.youtube.com/watch?v=QBlYp-EwHlo'),
+    (21, 'Incline Push Ups', 4, 25, 'https://www.youtube.com/watch?v=Gvm5Q29UHbk'),
+    (21, 'Plyometric Push Ups', 4, 12, 'https://www.youtube.com/watch?v=QcAAKuEgYjw'),
+    (21, 'Arnold Press', 4, 12, 'https://www.youtube.com/watch?v=6Z15_WdXmVw'),
     (21, 'Lateral Raises', 6, 25, 'https://www.youtube.com/watch?v=PzsMitRdI_8'),
-    (21, 'Front Raises', 4, 12, 'https://example.com'),
+    (21, 'Front Raises', 4, 12, 'https://www.youtube.com/watch?v=hRJ6tR5-if0'),
     (21, 'Hammer Curl', 4, 12, 'https://www.youtube.com/watch?v=VuEclXR7sZY'),
-    (21, 'Jumping Lunge', 4, 12, 'https://example.com'),
-    (21, 'Bulgarian Split Squats', 4, 12, 'https://example.com');`
+    (21, 'Jumping Lunge', 4, 12, 'https://www.youtube.com/watch?v=cIkkHg8YZQU'),
+    (21, 'Bulgarian Split Squats', 4, 12, 'https://www.youtube.com/watch?v=r3jzvjt-0l8');`
   );
 
   console.log(
