@@ -128,7 +128,7 @@ export const insertWorkouts = async (db: any) => {
           (12, 'Lat Pulldown', 4, 15, 'https://www.youtube.com/watch?v=hnSqbBk15tw'),
           (12, 'Seated Row', 4, 15, 'https://www.youtube.com/watch?v=UCXxvVItLoM'),
           (12, 'Triceps Pushdown', 4, 15, 'https://www.youtube.com/watch?v=1FjkhpZsaxc'),
-          (12, 'Biceps Curl', 4, 15, 'https://www.youtube.com/watch?v=MKWBV29S6c0'),
+          (12, 'Dumbell Curl', 4, 15, 'https://www.youtube.com/watch?v=MKWBV29S6c0'),
 
           -- Upper Lower: Lower (Hypertrophy)
           (13, 'Bulgarian Split Squat', 4, 15, 'https://www.youtube.com/watch?v=r3jzvjt-0l8'),
