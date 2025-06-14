@@ -522,6 +522,7 @@ const AppContent = () => {
             width: '40%',
             backgroundColor: isSelected ? theme.text : 'transparent',
             marginTop: 5,
+            borderRadius: 100,
           }}
         />
       </Pressable>
