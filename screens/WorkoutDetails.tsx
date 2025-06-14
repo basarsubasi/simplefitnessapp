@@ -1,6 +1,6 @@
 import { useFocusEffect } from '@react-navigation/native'; // Import useFocusEffect
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, Modal, TextInput, Animated } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, Modal, TextInput, Animated, Linking } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useSQLiteContext } from 'expo-sqlite';
@@ -21,7 +21,7 @@ type WorkoutListNavigationProp = StackNavigationProp<WorkoutStackParamList, 'Wor
 type Day = {
   day_id: number;
   day_name: string;
-  exercises: { exercise_name: string; sets: number; reps: number }[];
+  exercises: { exercise_name: string; sets: number; reps: number; web_link: string | null }[];
 };
 export default function WorkoutDetails() {
   const db = useSQLiteContext();
@@ -72,8 +72,8 @@ export default function WorkoutDetails() {
 
     const daysWithExercises = await Promise.all(
       daysResult.map(async (day) => {
-        const exercises = await db.getAllAsync<{ exercise_name: string; sets: number; reps: number }>(
-          'SELECT exercise_name, sets, reps FROM Exercises WHERE day_id = ?',
+        const exercises = await db.getAllAsync<{ exercise_name: string; sets: number; reps: number; web_link: string }>(
+          'SELECT exercise_name, sets, reps, web_link FROM Exercises WHERE day_id = ?',
           [day.day_id]
         );
         return { ...day, exercises };
@@ -504,6 +504,24 @@ export default function WorkoutDetails() {
     }
   };
 
+  const handleLinkPress = async (url: string | null) => {
+    if (!url) {
+      Alert.alert(t('noLinkAvailable'));
+      return;
+    }
+    try {
+      const supported = await Linking.canOpenURL(url);
+      if (supported) {
+        await Linking.openURL(url);
+      } else {
+        Alert.alert(`${t('cannotOpenURL')}: ${url}`);
+      }
+    } catch (error) {
+      console.error('Error opening URL:', error);
+      Alert.alert(t('errorOpeningURL'));
+    }
+  };
+
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
   <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
@@ -613,19 +631,26 @@ export default function WorkoutDetails() {
                   }
                 ]}
             >
-   <AutoSizeText
-                fontSize={18}
-                numberOfLines={3}
-                mode={ResizeTextMode.max_lines}
-                style={[styles.exerciseName, { color: theme.text }]}
-              >
-                {exercise.exercise_name}
-              </AutoSizeText>
+              <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, marginRight: 8 }}>
+                <AutoSizeText
+                  fontSize={18}
+                  numberOfLines={3}
+                  mode={ResizeTextMode.max_lines}
+                  style={[styles.exerciseName, { color: theme.text, flexShrink: 1, flex: 1 }]}
+                >
+                  {exercise.exercise_name}
+                </AutoSizeText>
+                {exercise.web_link && (
+                  <TouchableOpacity onPress={() => handleLinkPress(exercise.web_link)} style={{ marginLeft: 10 }}>
+                    <Ionicons name="link-outline" size={22} color={theme.text} />
+                  </TouchableOpacity>
+                )}
+              </View>
               <View style={styles.exerciseDetails}>
                 <Text style={{ color: theme.text, fontSize: 16, textAlign: 'right' }}>
-                  {exercise.sets} <Text>{t('Sets')}</Text>
+                  {exercise.sets} <Text style={{ color: theme.text }}>{t('Sets')}</Text>
                   {' • '}
-                  {exercise.reps} <Text>{t('Reps')}</Text>
+                  {exercise.reps} <Text style={{ color: theme.text }}>{t('Reps')}</Text>
                 </Text>
               </View>
             </TouchableOpacity>

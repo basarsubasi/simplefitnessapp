@@ -9,6 +9,7 @@ import { Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { useTheme } from '../context/ThemeContext';
 import { useTranslation } from 'react-i18next';
+import { addWebLinkColumn } from '../utils/linkUtils';
 
 
 
@@ -23,7 +24,11 @@ export default function Workouts() {
    // Use useFocusEffect to fetch workouts when the screen is focused
    useFocusEffect(
     React.useCallback(() => {
-      db.withTransactionAsync(getWorkouts);
+      const addWebLinkColumntoworkouts = async () => {
+        await addWebLinkColumn(db);
+        db.withTransactionAsync(getWorkouts);
+      };
+      addWebLinkColumntoworkouts();
     }, [db])
   );
 
