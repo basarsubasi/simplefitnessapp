@@ -104,7 +104,7 @@ export default function Workouts() {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
-      <WorkoutList workouts={workouts} deleteWorkout={deleteWorkout} />
+      <WorkoutList workouts={workouts} deleteWorkout={deleteWorkout} getWorkouts={getWorkouts} />
     </View>
     
   );

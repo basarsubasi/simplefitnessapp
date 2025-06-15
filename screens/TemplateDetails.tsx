@@ -204,6 +204,11 @@ const handleSaveWorkout = async () => {
               style={[styles.exerciseContainer, { backgroundColor: theme.card, borderColor: theme.border }]}
             >
               <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, marginRight: 8 }}>
+                {exercise.web_link && (
+                  <TouchableOpacity onPress={() => handleLinkPress(exercise.web_link)} style={{ marginRight: 10 }}>
+                    <Ionicons name="link-outline" size={22} color={theme.text} />
+                  </TouchableOpacity>
+                )}
                 <AutoSizeText
                   fontSize={18}
                   numberOfLines={3}
@@ -212,17 +217,12 @@ const handleSaveWorkout = async () => {
                 >
                   {exercise.exercise_name}
                 </AutoSizeText>
-                {exercise.web_link && (
-                  <TouchableOpacity onPress={() => handleLinkPress(exercise.web_link)} style={{ marginLeft: 10 }}>
-                    <Ionicons name="link-outline" size={22} color={theme.text} />
-                  </TouchableOpacity>
-                )}
               </View>
 
               <View style={styles.exerciseDetails}>
                 <Text style={{ color: theme.text, fontSize: 16, textAlign: 'right' }}>
                   {exercise.sets} <Text>{t('Sets')}</Text>
-                  {' • '}
+                  {'  '}
                   {exercise.reps} <Text>{t('Reps')}</Text>
                 </Text>
               </View>
@@ -325,7 +325,8 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       backgroundColor: '#F7F7F7',
       borderRadius: 15,
-      padding: 12,
+      paddingVertical: 12,
+      paddingHorizontal: 3,
       marginBottom: 8,
       borderWidth: 0,
       borderColor: 'rgba(0, 0, 0, 0.1)',
