@@ -1,6 +1,9 @@
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import { Alert } from 'react-native';
+import i18n from './i18n'; // Import the i18n instance
+
+
 
 // Define the structure of the exported JSON
 interface ExportedExercise {
@@ -62,7 +65,7 @@ export const exportWorkout = async (db: any, workoutId: number) => {
 
     // 4. Create JSON and save to a file
     const jsonString = JSON.stringify(exportedWorkout, null, 2);
-    const fileName = `${workout.workout_name.replace(/\s+/g, '_')}_workout.json`;
+    const fileName = `SimpleWorkout_${workout.workout_name.replace(/\s+/g, '_')}.json`;
     const filePath = FileSystem.documentDirectory + fileName;
 
     await FileSystem.writeAsStringAsync(filePath, jsonString);
@@ -71,14 +74,14 @@ export const exportWorkout = async (db: any, workoutId: number) => {
     if (await Sharing.isAvailableAsync()) {
       await Sharing.shareAsync(filePath, {
         mimeType: 'application/json',
-        dialogTitle: `Share ${workout.workout_name}`,
+        dialogTitle: `Export ${workout.workout_name}`,
       });
     } else {
       Alert.alert('Sharing not available', 'Sharing is not available on this device.');
     }
   } catch (error) {
     console.error('Error exporting workout:', error);
-    Alert.alert('Export Failed', 'An error occurred while exporting the workout.');
+    Alert.alert(i18n.t('exportFailedTitle'), i18n.t('exportFailedMessage'));
   }
 };
 
@@ -102,7 +105,7 @@ export const importWorkout = async (db: any, jsonString: string): Promise<boolea
       const existingWorkout = await db.getFirstAsync('SELECT workout_id FROM Workouts WHERE workout_name = ?', [workoutName]);
 
       if (existingWorkout) {
-        Alert.alert('Import Failed', 'A workout with this name already exists.');
+        Alert.alert(i18n.t('importFailedTitle'), i18n.t('workoutAlreadyExistsError'));
         return false;
       }
   
@@ -133,11 +136,10 @@ export const importWorkout = async (db: any, jsonString: string): Promise<boolea
         }
       });
   
-      Alert.alert('Import Successful', `Workout "${workoutData.workout_name}" was imported successfully.`);
       return true;
     } catch (error) {
       console.error('Error importing workout:', error);
-      Alert.alert('Import Failed', 'An error occurred while importing the workout. Please check the file format.');
+      Alert.alert(i18n.t('importFailedTitle'), i18n.t('fileNotSelectedError'));
       return false;
     }
   }; 

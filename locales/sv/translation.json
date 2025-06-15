@@ -372,7 +372,9 @@
 "webLinkPlaceholder": "https://example.com (valfritt)",
 "invalidLinkTitle": "Ogiltlig länk",
 "invalidLinkMessage": "Länken måste börja med \"http://\" eller \"https://\".", 
-"exerciseDetails": "Lägg till webblänk"   
+"exerciseDetails": "Lägg till webblänk",
+"fileNotSelectedError": "Ingen fil vald eller filen är ogiltig.",
+"workoutAlreadyExistsError": "En träning med detta namn finns redan."
     
         
 

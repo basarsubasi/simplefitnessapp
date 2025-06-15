@@ -366,6 +366,8 @@
 "webLinkPlaceholder": "https://example.com (任意)",
 "invalidLinkTitle": "無効なリンク",
 "invalidLinkMessage": "リンクは\"http://\"または\"https://\"で始まる必要があります。",
-"exerciseDetails": "ウェブリンクを追加"
+"exerciseDetails": "ウェブリンクを追加",
+"fileNotSelectedError": "ファイルが選択されていないか、無効です。",
+"workoutAlreadyExistsError": "この名前のワークアウトはすでに存在します。"
     
 }

@@ -397,7 +397,9 @@
 "webLinkPlaceholder": "https://example.com (opsiyonel)",
 "invalidLinkTitle": "Geçersiz Bağlantı",
 "invalidLinkMessage": "Bağlantı \"http://\" veya \"https://\" ile başlamalıdır.",
-"exerciseDetails": "Web Bağlantısı Ekle"
+"exerciseDetails": "Web Bağlantısı Ekle",
+"fileNotSelectedError": "Dosya seçilmedi veya dosya geçersiz.",
+"workoutAlreadyExistsError": "Bu adla bir antrenman zaten mevcut."
             
         
     

@@ -370,7 +370,9 @@
 "webLinkPlaceholder": "https://example.com (optioneel)",
 "invalidLinkTitle": "Ongeldige link",
 "invalidLinkMessage": "De link moet beginnen met \"http://\" of \"https://\".",
-"exerciseDetails": "Weblink toevoegen"
+"exerciseDetails": "Weblink toevoegen",
+"fileNotSelectedError": "Geen bestand geselecteerd of bestand is ongeldig.",
+"workoutAlreadyExistsError": "Een training met deze naam bestaat al."
     
     
     
