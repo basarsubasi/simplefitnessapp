@@ -2,6 +2,7 @@ import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import { Alert } from 'react-native';
 import i18n from './i18n'; // Import the i18n instance
+import slugify from 'slugify';
 
 
 
@@ -65,7 +66,18 @@ export const exportWorkout = async (db: any, workoutId: number) => {
 
     // 4. Create JSON and save to a file
     const jsonString = JSON.stringify(exportedWorkout, null, 2);
-    const fileName = `SimpleWorkout_${workout.workout_name.replace(/\s+/g, '_')}.json`;
+
+    // Sanitize the workout name using the slugify package
+    const sanitizedName = slugify(workout.workout_name, {
+      replacement: '_',  // Replace spaces with an underscore
+      remove: /[*+~.()'"!:@]/g, // Remove a set of special characters
+      lower: false,      // Keep the original case
+      strict: false,      // Strip special characters even if they are replacement-adjacent
+      locale: 'en',      // Use English-based transliteration
+      trim: true         // Trim leading/trailing whitespace
+    });
+
+    const fileName = `SimpleWorkout_${sanitizedName}.json`;
     const filePath = FileSystem.documentDirectory + fileName;
 
     await FileSystem.writeAsStringAsync(filePath, jsonString);
