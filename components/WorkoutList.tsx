@@ -79,7 +79,7 @@ export default function WorkoutList({
           activeOpacity={0.7}
           onPress={handleImportWorkout}
         >
-          <Ionicons name="download-outline" size={24} color={theme.buttonText} />
+          <Ionicons name="download-outline" size={25} color={theme.buttonText} />
         </TouchableOpacity>
       </View>
 
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
     fontStyle: 'italic', // Italic for emphasis
   },
   createButton: {
-    borderRadius: 15,
+    borderRadius: 50,
     paddingVertical: 15,
     paddingHorizontal: 15,
     flexDirection: 'row',
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   importButton: {
-    borderRadius: 15,
+    borderRadius: 50,
     paddingTop: 15,
     paddingBottom: 15,
     paddingHorizontal: 15,

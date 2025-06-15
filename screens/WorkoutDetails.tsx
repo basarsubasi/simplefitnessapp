@@ -9,6 +9,7 @@ import { useTheme } from '../context/ThemeContext';
 import { WorkoutStackParamList } from '../App';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useTranslation } from 'react-i18next';
+import { exportWorkout } from '../utils/workoutSharingUtils';
 
 
 
@@ -579,6 +580,10 @@ export default function WorkoutDetails() {
     }
   };
 
+  const handleExportWorkout = (workoutId: number) => {
+    exportWorkout(db, workoutId);
+  };
+
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
   <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
@@ -602,6 +607,13 @@ export default function WorkoutDetails() {
   
 
 </View>
+
+<TouchableOpacity
+  style={styles.exportButton}
+  onPress={() => handleExportWorkout(workout_id)}
+>
+  <Ionicons name="share-outline" size={28} color={theme.text} />
+</TouchableOpacity>
 
 
   <FlatList
@@ -876,7 +888,6 @@ const styles = StyleSheet.create({
     titleContainer: {
       flexDirection: 'row',
       alignItems: 'center',
-      marginBottom: 30, 
     },
     
     editIcon: {
@@ -891,8 +902,7 @@ const styles = StyleSheet.create({
       fontSize: 36,
       fontWeight: '900',
       textAlign: 'center',
-      marginBottom: 30,
-      color: '#000000',
+      marginBottom: 10,
     },
     dayContainer: {
       padding: 20,
@@ -1040,6 +1050,10 @@ const styles = StyleSheet.create({
       marginTop: 20,
       marginBottom: 20,
       paddingHorizontal: 10,
+    },
+    exportButton: {
+      alignItems: 'center',
+      marginBottom: 15,
     },
   });
   
