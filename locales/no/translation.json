@@ -374,7 +374,9 @@
 "webLinkPlaceholder": "https://example.com (valgfritt)",
 "invalidLinkTitle": "Ugyldig lenke",
 "invalidLinkMessage": "Lenken må begynne med \"http://\" eller \"https://\".",
-"exerciseDetails": "Legg til weblink"
+"exerciseDetails": "Legg til weblink",
+"fileNotSelectedError": "Ingen fil valgt eller filen er ugyldig.",
+"workoutAlreadyExistsError": "En treningsøkt med dette navnet eksisterer allerede."
 
         
 

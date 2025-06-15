@@ -366,7 +366,9 @@
 "webLinkPlaceholder": "https://example.com (facultatif)",
 "invalidLinkTitle": "Lien invalide",
 "invalidLinkMessage": "Le lien doit commencer par \"http://\" ou \"https://\".",
-"exerciseDetails": "Ajouter un lien web"
+"exerciseDetails": "Ajouter un lien web",
+"fileNotSelectedError": "Aucun fichier sélectionné ou fichier invalide.",
+"workoutAlreadyExistsError": "Un entraînement avec ce nom existe déjà."
 
 
 

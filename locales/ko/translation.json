@@ -363,7 +363,9 @@
 "webLinkPlaceholder": "https://example.com (선택 사항)",
 "invalidLinkTitle": "유효하지 않은 링크",
 "invalidLinkMessage": "링크는 \"http://\" 또는 \"https://\"로 시작해야 합니다.",
-"exerciseDetails": "웹 링크 추가"
+"exerciseDetails": "웹 링크 추가",
+"fileNotSelectedError": "파일이 선택되지 않았거나 유효하지 않습니다.",
+"workoutAlreadyExistsError": "이 이름의 운동이 이미 존재합니다."
     
 
 

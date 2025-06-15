@@ -368,7 +368,9 @@
 "webLinkPlaceholder": "https://example.com (valinnainen)",
 "invalidLinkTitle": "Virheellinen linkki",
 "invalidLinkMessage": "Linkin on aloituttava \"http://\" tai \"https://\".",
-"exerciseDetails": "Lisää verkkolinkki"
+"exerciseDetails": "Lisää verkkolinkki",
+"fileNotSelectedError": "Ei valittua tai virheellistä tiedostoa.",
+"workoutAlreadyExistsError": "Harjoitus tällä nimellä on jo olemassa."
     
     
 

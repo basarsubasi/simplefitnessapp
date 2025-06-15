@@ -369,7 +369,9 @@
 "webLinkPlaceholder": "https://example.com (необов’язково)",
 "invalidLinkTitle": "Неправильне посилання",
 "invalidLinkMessage": "Посилання повинно починатися з \"http://\" або \"https://\".",
-"exerciseDetails": "Додати веб-посилання"
+"exerciseDetails": "Додати веб-посилання",
+"fileNotSelectedError": "Не вибрано файлу або файл недійсний.",
+"workoutAlreadyExistsError": "Тренування з такою назвою вже існує."
 
     
 }

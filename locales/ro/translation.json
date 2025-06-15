@@ -371,7 +371,9 @@
 "webLinkPlaceholder": "https://example.com (opțional)",
 "invalidLinkTitle": "Link invalid",
 "invalidLinkMessage": "Linkul trebuie să înceapă cu \"http://\" sau \"https://\".",
-"exerciseDetails": "Adaugă un link web"
+"exerciseDetails": "Adaugă un link web",
+"fileNotSelectedError": "Niciun fișier selectat sau fișier invalid.",
+"workoutAlreadyExistsError": "Un antrenament cu acest nume există deja."
   }
 
   

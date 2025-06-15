@@ -369,7 +369,9 @@
 "webLinkPlaceholder": "https://example.com（可选）",
 "invalidLinkTitle": "无效链接",
 "invalidLinkMessage": "链接必须以 \"http://\" 或 \"https://\" 开头。",
-"exerciseDetails": "添加网页链接"
+"exerciseDetails": "添加网页链接",
+"fileNotSelectedError": "未选择文件或文件无效。",
+"workoutAlreadyExistsError": "此名称的锻炼已存在。"
 
 
 
