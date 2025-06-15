@@ -606,6 +606,8 @@ export default function WorkoutDetails() {
 
   <FlatList
     data={days}
+    showsVerticalScrollIndicator={false}
+    showsHorizontalScrollIndicator={false}
     keyExtractor={(item) => item.day_id.toString()}
     renderItem={({ item: day, index }) => (
       <Animated.View
@@ -690,6 +692,11 @@ export default function WorkoutDetails() {
                 ]}
             >
               <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, marginRight: 8 }}>
+                {exercise.web_link && (
+                  <TouchableOpacity onPress={() => handleLinkPress(exercise.web_link)} style={{ marginRight: 10 }}>
+                    <Ionicons name="link-outline" size={22} color={theme.text} />
+                  </TouchableOpacity>
+                )}
                 <AutoSizeText
                   fontSize={18}
                   numberOfLines={3}
@@ -698,16 +705,11 @@ export default function WorkoutDetails() {
                 >
                   {exercise.exercise_name}
                 </AutoSizeText>
-                {exercise.web_link && (
-                  <TouchableOpacity onPress={() => handleLinkPress(exercise.web_link)} style={{ marginLeft: 10 }}>
-                    <Ionicons name="link-outline" size={22} color={theme.text} />
-                  </TouchableOpacity>
-                )}
               </View>
               <View style={styles.exerciseDetails}>
                 <Text style={{ color: theme.text, fontSize: 16, textAlign: 'right' }}>
                   {exercise.sets} <Text style={{ color: theme.text }}>{t('Sets')}</Text>
-                  {' • '}
+                  {'  '}
                   {exercise.reps} <Text style={{ color: theme.text }}>{t('Reps')}</Text>
                 </Text>
               </View>
@@ -923,7 +925,8 @@ const styles = StyleSheet.create({
       justifyContent: 'space-between',
       alignItems: 'center',
       backgroundColor: '#F7F7F7',
-      padding: 12,
+      paddingVertical: 12,
+      paddingHorizontal: 3,
       marginBottom: 8,
       borderWidth: 0,
       borderColor: 'rgba(0, 0, 0, 0.1)',

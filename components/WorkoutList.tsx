@@ -7,6 +7,10 @@ import { TouchableOpacity, Text, StyleSheet, ScrollView, View } from 'react-nati
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '../context/ThemeContext'; // Adjust the path to your ThemeContext
 import { useTranslation } from 'react-i18next';
+import { useSQLiteContext } from 'expo-sqlite';
+import { exportWorkout, importWorkout } from '../utils/workoutSharingUtils';
+import * as DocumentPicker from 'expo-document-picker';
+import * as FileSystem from 'expo-file-system';
 
 
 type WorkoutListNavigationProp = StackNavigationProp<WorkoutStackParamList, 'WorkoutsList'>;
@@ -14,15 +18,41 @@ type WorkoutListNavigationProp = StackNavigationProp<WorkoutStackParamList, 'Wor
 export default function WorkoutList({
   workouts,
   deleteWorkout,
+  getWorkouts,
 }: {
   workouts: Workout[];
   deleteWorkout: (workout_id: number, workout_name: string) => Promise<void>;
+  getWorkouts: () => Promise<void>;
 }) {
   const navigation = useNavigation<WorkoutListNavigationProp>();
   const { theme } = useTheme(); // Get the current theme
   const { t } = useTranslation(); // Initialize translations
+  const db = useSQLiteContext();
   const sortedWorkouts = [...workouts].sort((a, b) => b.workout_id - a.workout_id);
   
+
+  const handleExportWorkout = (workoutId: number) => {
+    exportWorkout(db, workoutId);
+  };
+
+  const handleImportWorkout = async () => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: 'application/json',
+      });
+
+      if (result.assets && result.assets[0]) {
+        const fileUri = result.assets[0].uri;
+        const jsonString = await FileSystem.readAsStringAsync(fileUri);
+        const success = await importWorkout(db, jsonString);
+        if (success) {
+          getWorkouts(); // Refresh the list
+        }
+      }
+    } catch (error) {
+      console.error('Error importing workout:', error);
+    }
+  };
 
   return (
     <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
@@ -32,15 +62,26 @@ export default function WorkoutList({
         <Text style={[styles.title, { color: theme.text }]}>{t('MyWorkouts')}</Text>
       </View>
 
-      {/* Create New Workout Button */}
-      <TouchableOpacity
-        style={[styles.createButton, { backgroundColor: theme.buttonBackground}]}
-        activeOpacity={0.7}
-        onPress={() => navigation.navigate('CreateWorkout')}
-      >
-        <Text style={[styles.createButtonText, { color: theme.buttonText }]}>{t('CreateAWorkoutButton')}</Text>
-        <Text style={[styles.plus, { color: theme.buttonText }]}>+</Text>
-      </TouchableOpacity>
+      {/* Action Buttons */}
+      <View style={styles.actionButtonsContainer}>
+        {/* Create New Workout Button */}
+        <TouchableOpacity
+          style={[styles.createButton, { backgroundColor: theme.buttonBackground }]}
+          activeOpacity={0.7}
+          onPress={() => navigation.navigate('CreateWorkout')}
+        >
+          <Text style={[styles.createButtonText, { color: theme.buttonText }]}>{t('CreateAWorkoutButton')}</Text>
+        </TouchableOpacity>
+
+        {/* Import Workout Button */}
+        <TouchableOpacity
+          style={[styles.importButton, { backgroundColor: theme.buttonBackground }]}
+          activeOpacity={0.7}
+          onPress={handleImportWorkout}
+        >
+          <Ionicons name="download-outline" size={24} color={theme.buttonText} />
+        </TouchableOpacity>
+      </View>
 
       <TouchableOpacity
           style={[
@@ -73,7 +114,12 @@ export default function WorkoutList({
           onLongPress={() => deleteWorkout(workout.workout_id, workout.workout_name)}
           onPress={() => navigation.navigate('WorkoutDetails', { workout_id: workout.workout_id })}
         >
-          <Text style={[styles.workoutText, { color: theme.text }]}>{workout.workout_name}</Text>
+          <View style={styles.workoutNameWrapper}>
+            <Text style={[styles.workoutText, { color: theme.text }]}>{workout.workout_name}</Text>
+            <TouchableOpacity onPress={() => handleExportWorkout(workout.workout_id)}>
+              <Ionicons name="share-outline" size={24} color={theme.text} style={styles.shareIcon} />
+            </TouchableOpacity>
+          </View>
           <Ionicons name="chevron-forward" size={20} color={theme.text} />
         </TouchableOpacity>
         
@@ -115,28 +161,42 @@ const styles = StyleSheet.create({
     fontStyle: 'italic', // Italic for emphasis
   },
   createButton: {
-    borderRadius: 20,
-    paddingVertical: 10,
-    paddingHorizontal: 15 ,
+    borderRadius: 15,
+    paddingVertical: 15,
+    paddingHorizontal: 15,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 20,
-    marginBottom: 20, // Add space below the button
+    flex: 1, // Take up available space
+    marginRight: 10, // Add space to the right
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 5,
     elevation: 2,
   },
+  importButton: {
+    borderRadius: 15,
+    paddingTop: 15,
+    paddingBottom: 15,
+    paddingHorizontal: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 2,
+  },
+  actionButtonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 20,
+    marginBottom: 20,
+  },
   createButtonText: {
     fontSize: 18,
     fontWeight: 'bold',
-    flex: 1,
   },
-  plus: {
-    fontSize: 28,
-    fontWeight: 'bold',
-  },
+
   workoutCard: {
     backgroundColor: '#F7F7F7',
     paddingVertical: 16,
@@ -158,4 +218,11 @@ const styles = StyleSheet.create({
     fontSize: 20, // Slightly larger
     fontWeight: '700', // More bold
   },
+  workoutNameWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  shareIcon: {
+    marginLeft: 10,
+  }
 });
