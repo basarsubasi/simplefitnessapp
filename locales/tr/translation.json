@@ -393,12 +393,12 @@
 
 
 
-    "workoutDetailsTip": "İpucu: Bir egzersize bir web bağlantısı eklemek, veya var olan bir bağlantıyı düzenlemek veya silmek için egzersizin adına dokunun.",
+    "workoutDetailsTip": "İpucu: Bir egzersiz hakkında ek bilgi görmek için egzersizin adına dokunabilirsiniz.",
 "webLink": "Web Bağlantısı",
 "webLinkPlaceholder": "https://example.com (opsiyonel)",
 "invalidLinkTitle": "Geçersiz Bağlantı",
 "invalidLinkMessage": "Bağlantı \"http://\" veya \"https://\" ile başlamalıdır.",
-"exerciseDetails": "Web Bağlantısı Ekle",
+"exerciseDetails": "Egzersiz Detayları",
 "fileNotSelectedError": "Dosya seçilmedi veya dosya geçersiz.",
 "workoutAlreadyExistsError": "Bu adla bir antrenman zaten mevcut."
             

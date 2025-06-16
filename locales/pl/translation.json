@@ -365,12 +365,12 @@
 
 
 
-      "workoutDetailsTip": "Wskazówka: Możesz dodać, edytować lub usunąć link do ćwiczenia, stukając w jego nazwę.",
+      "workoutDetailsTip": "Wskazówka: Możesz zobaczyć dodatkowe informacje o ćwiczeniu, stukając w jego nazwę.",
 "webLink": "Link internetowy",
 "webLinkPlaceholder": "https://example.com (opcjonalnie)",
 "invalidLinkTitle": "Nieprawidłowy link",
 "invalidLinkMessage": "Link musi zaczynać się od \"http://\" lub \"https://\".",
-"exerciseDetails": "Dodaj link internetowy",
+"exerciseDetails": "Szczegóły ćwiczenia",
 "fileNotSelectedError": "Nie wybrano pliku lub plik jest nieprawidłowy.",
 "workoutAlreadyExistsError": "Trening o tej nazwie już istnieje."
 

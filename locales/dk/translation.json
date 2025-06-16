@@ -358,12 +358,12 @@
       "About Reps Progression": "Om gentagelsesgrafen",
       "repsGraphExplanation": "Denne graf viser de gentagelser, du har udført for individuelle sæt. Hver linje og farve repræsenterer et forskelligt sætnummer, ligesom sætgrafen, men med y-aksen som gentagelser i stedet for vægte. Perfekt til at spore kropsvægtsøvelser!",
 
-      "workoutDetailsTip": "Tip: Du kan tilføje, redigere eller slette et weblink til en øvelse ved at trykke på dens navn.",
+      "workoutDetailsTip": "Tip: Du kan se yderligere oplysninger om en øvelse ved at trykke på dens navn.",
 "webLink": "Weblink",
 "webLinkPlaceholder": "https://example.com (valgfrit)",
 "invalidLinkTitle": "Ugyldig link",
 "invalidLinkMessage": "Linket skal starte med \"http://\" eller \"https://\".",
-"exerciseDetails": "Tilføj et weblink",
+"exerciseDetails": "Øvelsesdetaljer",
 "fileNotSelectedError": "Ingen fil valgt eller filen er ugyldig.",
 "workoutAlreadyExistsError": "En træning med dette navn eksisterer allerede."
     

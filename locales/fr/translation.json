@@ -361,12 +361,12 @@
       "repsGraphExplanation": "Ce graphique montre les répétitions que vous avez effectuées pour des séries individuelles. Chaque ligne et couleur représente un numéro de série différent, comme le graphique des séries, mais avec l'axe Y indiquant les répétitions au lieu des poids. Parfait pour suivre les exercices au poids du corps !",
 
 
-      "workoutDetailsTip": "Astuce : Vous pouvez ajouter, modifier ou supprimer un lien web pour un exercice en appuyant sur son nom.",
+      "workoutDetailsTip": "Astuce : Vous pouvez voir des informations supplémentaires sur un exercice en appuyant sur son nom.",
 "webLink": "Lien web",
 "webLinkPlaceholder": "https://example.com (facultatif)",
 "invalidLinkTitle": "Lien invalide",
 "invalidLinkMessage": "Le lien doit commencer par \"http://\" ou \"https://\".",
-"exerciseDetails": "Ajouter un lien web",
+"exerciseDetails": "Détails de l'exercice",
 "fileNotSelectedError": "Aucun fichier sélectionné ou fichier invalide.",
 "workoutAlreadyExistsError": "Un entraînement avec ce nom existe déjà."
 

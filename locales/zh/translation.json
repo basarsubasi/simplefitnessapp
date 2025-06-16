@@ -364,12 +364,12 @@
 
 
 
-      "workoutDetailsTip": "提示：您可以点击练习名称来添加、编辑或删除网页链接。",
+      "workoutDetailsTip": "提示：您可以点击练习名称来查看更多信息。",
 "webLink": "网页链接",
 "webLinkPlaceholder": "https://example.com（可选）",
 "invalidLinkTitle": "无效链接",
 "invalidLinkMessage": "链接必须以 \"http://\" 或 \"https://\" 开头。",
-"exerciseDetails": "添加网页链接",
+"exerciseDetails": "练习详情",
 "fileNotSelectedError": "未选择文件或文件无效。",
 "workoutAlreadyExistsError": "此名称的锻炼已存在。"
 
