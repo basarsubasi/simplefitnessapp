@@ -365,7 +365,21 @@
 "invalidLinkMessage": "Linket skal starte med \"http://\" eller \"https://\".",
 "exerciseDetails": "Øvelsesdetaljer",
 "fileNotSelectedError": "Ingen fil valgt eller filen er ugyldig.",
-"workoutAlreadyExistsError": "En træning med dette navn eksisterer allerede."
+"workoutAlreadyExistsError": "En træning med dette navn eksisterer allerede.",
+"Unspecified": "Unspecified",
+"Chest": "Chest",
+"Back": "Back",
+"Shoulders": "Shoulders",
+"Biceps": "Biceps",
+"Triceps": "Triceps",
+"Forearms": "Forearms",
+"Abs": "Abs",
+"Legs": "Legs",
+"Glutes": "Glutes",
+"Hamstrings": "Hamstrings",
+"Calves": "Calves",
+"Quads": "Quads",
+"muscleGroup": "Muskelgruppe"
     
   }
   

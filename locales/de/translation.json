@@ -361,7 +361,21 @@
 "invalidLinkMessage": "Der Link muss mit \"http://\" oder \"https://\" beginnen.",
 "exerciseDetails": "Übungsdetails",
 "fileNotSelectedError": "Kein Datei ausgewählt oder Datei ungültig.",
-"workoutAlreadyExistsError": "Ein Workout mit diesem Namen existiert bereits."
+"workoutAlreadyExistsError": "Ein Workout mit diesem Namen existiert bereits.",
+"Unspecified": "Unspezifiziert",
+"Chest": "Brust",
+"Back": "Rücken",
+"Shoulders": "Schultern",
+"Biceps": "Biceps",
+"Triceps": "Triceps",
+"Forearms": "Vorarm",
+"Abs": "Bauch",
+"Legs": "Beine",
+"Glutes": "Glute",
+"Hamstrings": "Hüftmuskeln",
+"Calves": "Kalven",
+"Quads": "Kotflügel",
+"muscleGroup": "Muskelgruppe"
 
 }
   

@@ -21,7 +21,7 @@ type WorkoutListNavigationProp = StackNavigationProp<WorkoutStackParamList, 'Tem
 type Day = {
   day_id: number;
   day_name: string;
-  exercises: { exercise_name: string; sets: number; reps: number; web_link: string | null }[];
+  exercises: { exercise_name: string; sets: number; reps: number; web_link: string | null; muscle_group: string | null }[];
 };
 export default function TemplateDetails() {
   const db = useSQLiteContext();
@@ -40,6 +40,21 @@ interface LastRowIdResult {
   const [days, setDays] = useState<Day[]>([]);
   const navigation = useNavigation<WorkoutListNavigationProp>();
 
+  const muscleGroupData = [
+    { label: t('Unspecified'), value: null },
+    { label: t('Chest'), value: 'chest' },
+    { label:t('Back'), value: 'back' },
+    { label: t('Shoulders'), value: 'shoulders' },
+    { label: t('Biceps'), value: 'biceps' },
+    { label: t('Triceps'), value: 'triceps' },
+    { label: t('Forearms'), value: 'forearms' },
+    { label: t('Abs'), value: 'abs' },
+    { label: t('Legs'), value: 'legs' },
+    { label: t('Glutes'), value: 'glutes' },
+    { label: t('Hamstrings'), value: 'hamstrings' },
+    { label: t('Calves'), value: 'calves' },
+    { label: t('Quads'), value: 'quads' },
+  ];
 
   useFocusEffect(
     React.useCallback(() => {
@@ -67,8 +82,9 @@ interface LastRowIdResult {
           sets: number;
           reps: number;
           web_link: string;
+          muscle_group: string | null;
         }>(
-          'SELECT exercise_id, exercise_name, sets, reps, web_link FROM Template_Exercises WHERE day_id = ? ORDER BY exercise_id',
+          'SELECT exercise_id, exercise_name, sets, reps, web_link, muscle_group FROM Template_Exercises WHERE day_id = ? ORDER BY exercise_id',
           [day.day_id]
         );
         return { ...day, exercises };
@@ -119,9 +135,9 @@ async function insertWorkoutIntoRealTables(workoutName: string, days: any[]) {
       // 3. Insert each exercise
       for (const exercise of day.exercises) {
         await db.runAsync(
-          `INSERT  INTO Exercises (day_id, exercise_name, sets, reps, web_link) 
-           VALUES (?, ?, ?, ?, ?)`,
-          [newDayId, exercise.exercise_name, exercise.sets, exercise.reps, exercise.web_link]
+          `INSERT  INTO Exercises (day_id, exercise_name, sets, reps, web_link, muscle_group) 
+           VALUES (?, ?, ?, ?, ?, ?)`,
+          [newDayId, exercise.exercise_name, exercise.sets, exercise.reps, exercise.web_link, exercise.muscle_group]
         );
       }
     }
@@ -197,7 +213,9 @@ const handleSaveWorkout = async () => {
 
         {/* Exercises */}
         {day.exercises.length > 0 ? (
-          day.exercises.map((exercise, index) => (
+          day.exercises.map((exercise, index) => {
+            const muscleGroupInfo = muscleGroupData.find(mg => mg.value === exercise.muscle_group);
+            return (
             <TouchableOpacity
               key={index}
               activeOpacity={0.8}
@@ -209,14 +227,24 @@ const handleSaveWorkout = async () => {
                     <Ionicons name="link-outline" size={22} color={theme.text} />
                   </TouchableOpacity>
                 )}
-                <AutoSizeText
-                  fontSize={18}
-                  numberOfLines={3}
-                  mode={ResizeTextMode.max_lines}
-                  style={[styles.exerciseName, { color: theme.text, flex: 1, flexShrink: 1 }]}
-                >
-                  {exercise.exercise_name}
-                </AutoSizeText>
+                 <View style={styles.exerciseInfoContainer}>
+                  <AutoSizeText
+                    fontSize={18}
+                    numberOfLines={3}
+                    mode={ResizeTextMode.max_lines}
+                    style={[styles.exerciseName, { color: theme.text }]}
+                  >
+                    {exercise.exercise_name}
+                  </AutoSizeText>
+                  {muscleGroupInfo && muscleGroupInfo.value && (
+                  <View style={[styles.muscleGroupBadge, { backgroundColor: theme.buttonBackground, marginLeft: 8 }]}>
+                    <Text style={[styles.muscleGroupBadgeText, { color: theme.buttonText }]}>
+                      {muscleGroupInfo.label}
+                    </Text>
+                  </View>
+                )}
+                </View>
+
               </View>
 
               <View style={styles.exerciseDetails}>
@@ -227,7 +255,8 @@ const handleSaveWorkout = async () => {
                 </Text>
               </View>
             </TouchableOpacity>
-          ))
+          );
+          })
         ) : (
           <Text style={[styles.noExercisesText, { color: theme.text }]}>{t('noExercises')} </Text>
         )}
@@ -332,6 +361,12 @@ const styles = StyleSheet.create({
       borderColor: 'rgba(0, 0, 0, 0.1)',
       maxWidth: '100%',  // Prevent overflow
     },
+    exerciseInfoContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      flex: 1,
+      flexWrap: 'wrap',
+    },
     exerciseName: {
       fontWeight: '700',
       color: '#000000',
@@ -341,7 +376,17 @@ const styles = StyleSheet.create({
       minWidth: 70,
       alignItems: 'flex-end',
     },
-    
+    muscleGroupBadge: {
+      paddingVertical: 4,
+      paddingHorizontal: 10,
+      borderRadius: 15,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    muscleGroupBadgeText: {
+      fontSize: 12,
+      fontWeight: '600',
+    },
     noExercisesText: {
       textAlign: 'center',
       fontSize: 16,

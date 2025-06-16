@@ -368,6 +368,20 @@
 "invalidLinkMessage": "リンクは\"http://\"または\"https://\"で始まる必要があります。",
 "exerciseDetails": "エクササイズの詳細",
 "fileNotSelectedError": "ファイルが選択されていないか、無効です。",
-"workoutAlreadyExistsError": "この名前のワークアウトはすでに存在します。"
+"workoutAlreadyExistsError": "この名前のワークアウトはすでに存在します。",
+"Unspecified": "未指定",
+"Chest": "胸",
+"Back": "背中",
+"Shoulders": "肩",
+"Biceps": "上腕三頭筋",
+"Triceps": "上腕二頭筋",
+"Forearms": "前腕",
+"Abs": "腹筋",
+"Legs": "脚",
+"Glutes": "ヒップ",
+"Hamstrings": "ハムストリングス",
+"Calves": "足首",
+"Quads": "大腿四頭筋",
+"muscleGroup": "筋肉グループ"
     
 }

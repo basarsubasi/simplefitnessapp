@@ -369,7 +369,21 @@
 "invalidLinkMessage": "Povezava se mora začeti z \"http://\" ali \"https://\".",
 "exerciseDetails": "Podrobnosti vaje",
 "fileNotSelectedError": "Ni izbranega datoteke ali datoteke ni veljavna.",
-"workoutAlreadyExistsError": "Trening z tem imenom že obstaja."
+"workoutAlreadyExistsError": "Trening z tem imenom že obstaja.",
+"Unspecified": "Nespecificirano",
+"Chest": "Prsi",
+"Back": "Pleči",
+"Shoulders": "Obrt",
+"Biceps": "Biceps",
+"Triceps": "Triceps",
+"Forearms": "Predramena",
+"Abs": "Trebuh",
+"Legs": "Nogi",
+"Glutes": "Glutes",
+"Hamstrings": "Koleni",
+"Calves": "Calves",
+"Quads": "Quads",
+"muscleGroup": "Muskelgruppa"
         
 
     
