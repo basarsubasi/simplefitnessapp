@@ -12,6 +12,7 @@ interface ExportedExercise {
   sets: number;
   reps: number;
   web_link: string | null;
+  muscle_group: string | null;
 }
 
 interface ExportedDay {
@@ -48,7 +49,7 @@ export const exportWorkout = async (db: any, workoutId: number) => {
     // 3. Fetch exercises for each day
     for (const day of days) {
       const exercises = await db.getAllAsync(
-        'SELECT exercise_name, sets, reps, web_link FROM Exercises WHERE day_id = ?',
+        'SELECT exercise_name, sets, reps, web_link, muscle_group FROM Exercises WHERE day_id = ?',
         [day.day_id]
       );
 
@@ -59,6 +60,7 @@ export const exportWorkout = async (db: any, workoutId: number) => {
           sets: ex.sets,
           reps: ex.reps,
           web_link: ex.web_link,
+          muscle_group: ex.muscle_group,
         })),
       };
       exportedWorkout.days.push(exportedDay);
@@ -141,8 +143,8 @@ export const importWorkout = async (db: any, jsonString: string): Promise<boolea
   
           for (const exercise of day.exercises) {
             await db.runAsync(
-              'INSERT INTO Exercises (day_id, exercise_name, sets, reps, web_link) VALUES (?, ?, ?, ?, ?)',
-              [newDayId, exercise.exercise_name, exercise.sets, exercise.reps, exercise.web_link || null]
+              'INSERT INTO Exercises (day_id, exercise_name, sets, reps, web_link, muscle_group) VALUES (?, ?, ?, ?, ?, ?)',
+              [newDayId, exercise.exercise_name, exercise.sets, exercise.reps, exercise.web_link || null, exercise.muscle_group || null]
             );
           }
         }

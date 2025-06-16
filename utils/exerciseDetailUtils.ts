@@ -17,3 +17,20 @@ export const addWebLinkColumn = async (db: SQLiteDatabase) => {
         console.error('Error adding web_link column:', error);
     }
 };
+
+export const addMuscleGroupColumn = async (db: SQLiteDatabase) => {
+    const tables = ['Exercises', 'Logged_Exercises'];
+    try {
+        for (const table of tables) {
+            const columns = await db.getAllAsync<any>(`PRAGMA table_info(${table});`);
+            const columnExists = columns.some((col: any) => col.name === 'muscle_group');
+
+            if (!columnExists) {
+                await db.runAsync(`ALTER TABLE ${table} ADD COLUMN muscle_group TEXT;`);
+                console.log(`'muscle_group' column added to '${table}' table.`);
+            }
+        }
+    } catch (error) {
+        console.error('Error adding muscle_group column:', error);
+    }
+};
