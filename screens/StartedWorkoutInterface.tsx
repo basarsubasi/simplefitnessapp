@@ -46,6 +46,7 @@ interface Exercise {
   reps: number;
   logged_exercise_id: number;
   web_link: string | null;
+  muscle_group: string | null;
 }
 
 interface ExerciseSet {
@@ -58,6 +59,7 @@ interface ExerciseSet {
   weight: string;
   completed: boolean;
   web_link: string | null;
+  muscle_group: string | null;
 }
 
 export default function StartedWorkoutInterface() {
@@ -156,31 +158,7 @@ export default function StartedWorkoutInterface() {
     debugMode: __DEV__
   });
   
-  // Handle AppState changes for notifications
-  useEffect(() => {
-    const handleAppStateChange = async (nextAppState: AppStateStatus) => {
-      if (nextAppState === 'background' || nextAppState === 'inactive') {
-        stopWorkoutTimer();
-        stopRestTimer();
-      } else if (nextAppState === 'active') {
-        // App is in the foreground, timers will be managed by user interaction
-      }
-    };
-    
-    const appStateSubscription = AppState.addEventListener('change', handleAppStateChange);
-    
-    return () => {
-      appStateSubscription.remove();
-    };
-  }, [
-    timerState.workoutStarted, 
-    timerState.workoutStage, 
-    timerState.restRemaining,
-    timerState.currentSetIndex,
-    workout_log_id,
-    timerState.workoutStartTime
-  ]);
-  
+
 
   // Load rest timer preferences when component mounts
   useEffect(() => {
@@ -296,7 +274,7 @@ export default function StartedWorkoutInterface() {
         setWorkout(workoutResult[0]);
         
         const exercisesResult = await db.getAllAsync<Exercise>(
-          `SELECT exercise_name, sets, reps, logged_exercise_id, web_link
+          `SELECT exercise_name, sets, reps, logged_exercise_id, web_link, muscle_group
            FROM Logged_Exercises 
            WHERE workout_log_id = ?;`,
           [workout_log_id]
@@ -317,7 +295,8 @@ export default function StartedWorkoutInterface() {
               reps_done: exercise.reps,
               weight: '',
               completed: false,
-              web_link: exercise.web_link || null
+              web_link: exercise.web_link || null,
+              muscle_group: exercise.muscle_group || null
             });
           }
         });
@@ -439,8 +418,23 @@ export default function StartedWorkoutInterface() {
     if (nextIndex >= allSets.length) return false;
     return allSets[currentIndex].exercise_name !== allSets[nextIndex].exercise_name;
   };
+
+  const muscleGroupData = [
+    { label: t('None'), value: null },
+    { label: t('Chest'), value: 'chest' },
+    { label: t('Back'), value: 'back' },
+    { label: t('Shoulders'), value: 'shoulders' },
+    { label: t('Biceps'), value: 'biceps' },
+    { label: t('Triceps'), value: 'triceps' },
+    { label: t('Forearms'), value: 'forearms' },
+    { label: t('Abs'), value: 'abs' },
+    { label: t('Glutes'), value: 'glutes' },
+    { label: t('Hamstrings'), value: 'hamstrings' },
+    { label: t('Calves'), value: 'calves' },
+    { label: t('Quads'), value: 'quads' },
+  ];
   
-  // Render functions remain the same, but update references to use timerState
+  // Rest of the render functions remain the same...
   const renderOverview = () => {
     return (
       <View style={styles.overviewContainer}>
@@ -465,21 +459,31 @@ export default function StartedWorkoutInterface() {
         <FlatList
           data={exercises}
           keyExtractor={(item) => item.logged_exercise_id.toString()}
-          renderItem={({ item }) => (
-            <View style={[styles.exerciseItem, { backgroundColor: theme.card, borderColor: theme.border }]}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                <Text style={[styles.exerciseName, { color: theme.text, flex: 1 }]}>{item.exercise_name}</Text>
-                {item.web_link && (
-                  <TouchableOpacity onPress={() => handleLinkPress(item.web_link)} style={{ marginLeft: 10, marginBottom: 10 }}>
-                    <Ionicons name="link-outline" size={22} color={theme.text} />
-                  </TouchableOpacity>
+          renderItem={({ item }) => {
+            const muscleGroupInfo = muscleGroupData.find(mg => mg.value === item.muscle_group);
+            return (
+              <View style={[styles.exerciseItem, { backgroundColor: theme.card, borderColor: theme.border }]}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <Text style={[styles.exerciseName, { color: theme.text, flex: 1 }]}>{item.exercise_name}</Text>
+                  {item.web_link && (
+                    <TouchableOpacity onPress={() => handleLinkPress(item.web_link)} style={{ marginLeft: 10, marginBottom: 10 }}>
+                      <Ionicons name="link-outline" size={22} color={theme.text} />
+                    </TouchableOpacity>
+                  )}
+                </View>
+                <Text style={[styles.exerciseDetails, { color: theme.text }]}>
+                  {item.sets} {t('Sets')} × {item.reps} {t('Reps')}
+                </Text>
+                {muscleGroupInfo && muscleGroupInfo.value && (
+                  <View style={[styles.muscleGroupBadgeOverview, { backgroundColor: theme.card, borderColor: theme.border }]}>
+                    <Text style={[styles.muscleGroupBadgeText, { color: theme.text }]}>
+                      {t(muscleGroupInfo.label)}
+                    </Text>
+                  </View>
                 )}
               </View>
-              <Text style={[styles.exerciseDetails, { color: theme.text }]}>
-                {item.sets} {t('Sets')} × {item.reps} {t('Reps')}
-              </Text>
-            </View>
-          )}
+            )
+          }}
           scrollEnabled={false}
           style={styles.exercisesList}
         />
@@ -544,6 +548,8 @@ export default function StartedWorkoutInterface() {
     const currentSet = allSets[timerState.currentSetIndex];
     if (!currentSet) return null;
     
+    const muscleGroupInfo = muscleGroupData.find(mg => mg.value === currentSet.muscle_group);
+    
     const isLastSet = timerState.currentSetIndex === allSets.length - 1;
     
     return (
@@ -566,6 +572,15 @@ export default function StartedWorkoutInterface() {
               </TouchableOpacity>
             )}
           </View>
+          {muscleGroupInfo && muscleGroupInfo.value && (
+            <View style={{alignItems: 'center', marginBottom: 10}}>
+              <View style={[styles.muscleGroupBadgeMain, { backgroundColor: theme.card, borderColor: theme.border }]}>
+                <Text style={[styles.muscleGroupBadgeText, { color: theme.text }]}>
+                  {t(muscleGroupInfo.label)}
+                </Text>
+              </View>
+            </View>
+          )}
           <Text style={[styles.setInfo, { color: theme.text }]}>
            {currentSet.set_number}/{currentSet.total_sets}
           </Text>
@@ -702,6 +717,8 @@ export default function StartedWorkoutInterface() {
       ? allSets[timerState.currentSetIndex + 1] 
       : null;
     
+    const muscleGroupInfo = nextSet ? muscleGroupData.find(mg => mg.value === nextSet.muscle_group) : null;
+    
     return (
       <View style={styles.restScreenContainer}>
         <View style={[styles.restCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
@@ -731,8 +748,8 @@ export default function StartedWorkoutInterface() {
         {nextSet && (
           <View style={[styles.upNextCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
             <Text style={[styles.upNextLabel, { color: theme.text }]}>{t('upNext')}</Text>
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
-              <Text style={[styles.upNextExercise, { color: theme.text }]}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 5 }}>
+              <Text style={[styles.upNextExercise, { color: theme.text, flex: 1 }]}>
                 {nextSet.exercise_name}
               </Text>
               {nextSet.web_link && (
@@ -741,6 +758,13 @@ export default function StartedWorkoutInterface() {
                 </TouchableOpacity>
               )}
             </View>
+            {muscleGroupInfo && muscleGroupInfo.value && (
+              <View style={[styles.muscleGroupBadgeModal, { backgroundColor: theme.card, borderColor: theme.border, marginBottom: 10, marginTop: 0 }]}>
+                <Text style={[styles.muscleGroupBadgeText, { color: theme.text }]}>
+                  {t(muscleGroupInfo.label)}
+                </Text>
+              </View>
+            )}
             <Text style={[styles.upNextSetInfo, { color: theme.text }]}>
               {t('upcomingSet')}: {nextSet.set_number}
             </Text>
@@ -893,6 +917,7 @@ export default function StartedWorkoutInterface() {
               keyExtractor={(item) => item.logged_exercise_id.toString()}
               renderItem={({ item }) => {
                 const isCurrent = item.exercise_name === currentExerciseNameFromSet;
+                const muscleGroupInfo = muscleGroupData.find(mg => mg.value === item.muscle_group);
                 const itemStyle = [
                   styles.modalExerciseItem,
                   { borderColor: theme.border },
@@ -928,6 +953,23 @@ export default function StartedWorkoutInterface() {
                     <Text style={detailStyle}>
                       {item.sets} {t('Sets')} × {item.reps} {t('Reps')}
                     </Text>
+                    {muscleGroupInfo && muscleGroupInfo.value && (
+                      <View style={[
+                        styles.muscleGroupBadgeModal, 
+                        { 
+                          backgroundColor: isCurrent ? theme.text : theme.background, 
+                          borderColor: isCurrent ? theme.buttonText : theme.border,
+                          marginTop: 8
+                        }
+                      ]}>
+                        <Text style={[
+                          styles.muscleGroupBadgeText, 
+                          { color: isCurrent ? (theme.type === 'dark' ? '#000' : '#fff') : theme.text }
+                        ]}>
+                          {t(muscleGroupInfo.label)}
+                        </Text>
+                      </View>
+                    )}
                   </View>
                 );
               }}
@@ -1080,7 +1122,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 5,
   },
   workoutDay: {
     fontSize: 18,
@@ -1319,6 +1360,7 @@ const styles = StyleSheet.create({
   },
   upNextSetInfo: {
     fontSize: 16,
+    fontWeight: '600',
   },
   skipRestButton: {
     alignItems: 'center',
@@ -1429,4 +1471,36 @@ const styles = StyleSheet.create({
   modalExerciseDetails: {
     fontSize: 14,
   },
-}); 
+  muscleGroupBadgeMain: {
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    borderRadius: 15,
+    borderWidth: 1,
+    alignSelf: 'center',
+  },
+  muscleGroupBadgeOverview: {
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    borderRadius: 15,
+    borderWidth: 1,
+    alignSelf: 'flex-start',
+    marginTop: 10,
+  },
+
+
+  muscleGroupBadgeModal: {
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    borderRadius: 15,
+    borderWidth: 1,
+    alignSelf: 'flex-start',
+    marginTop: 10,
+  },
+
+  muscleGroupBadgeText: {
+    fontSize: 12,
+    fontWeight: '600',
+  },
+
+  
+});
