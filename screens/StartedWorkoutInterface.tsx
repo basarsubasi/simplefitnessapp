@@ -595,23 +595,25 @@ export default function StartedWorkoutInterface() {
             return (
               <View style={[styles.exerciseItem, { backgroundColor: theme.card, borderColor: theme.border }]}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <Text style={[styles.exerciseName, { color: theme.text, flex: 1 }]}>{item.exercise_name}</Text>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', flexShrink: 1,}}>
+                    <Text style={[styles.exerciseName, { color: theme.text, marginRight: 8 }]}>{item.exercise_name}</Text>
+                    {muscleGroupInfo && muscleGroupInfo.value && (
+                      <View style={[styles.muscleGroupBadgeOverview, { backgroundColor: theme.card, borderColor: theme.border }]}>
+                        <Text style={[styles.muscleGroupBadgeText, { color: theme.text }]}>
+                          {t(muscleGroupInfo.label)}
+                        </Text>
+                      </View>
+                    )}
+                  </View>
                   {item.web_link && (
-                    <TouchableOpacity onPress={() => handleLinkPress(item.web_link)} style={{ marginLeft: 10, marginBottom: 10 }}>
+                    <TouchableOpacity onPress={() => handleLinkPress(item.web_link)} style={{ marginLeft: 10 }}>
                       <Ionicons name="link-outline" size={22} color={theme.text} />
                     </TouchableOpacity>
                   )}
                 </View>
-                <Text style={[styles.exerciseDetails, { color: theme.text }]}>
+                <Text style={[styles.exerciseDetails, { color: theme.text, marginTop: 4 }]}>
                   {item.sets} {t('Sets')} × {item.reps} {t('Reps')}
                 </Text>
-                {muscleGroupInfo && muscleGroupInfo.value && (
-                  <View style={[styles.muscleGroupBadgeOverview, { backgroundColor: theme.card, borderColor: theme.border }]}>
-                    <Text style={[styles.muscleGroupBadgeText, { color: theme.text }]}>
-                      {t(muscleGroupInfo.label)}
-                    </Text>
-                  </View>
-                )}
               </View>
             )
           }}
@@ -1098,32 +1100,33 @@ export default function StartedWorkoutInterface() {
 
                 return (
                   <View style={itemStyle}>
-                    {muscleGroupInfo && muscleGroupInfo.value && (
-                      <View style={[
-                        styles.muscleGroupBadgeModal, 
-                        { 
-                          backgroundColor: isCurrent ? theme.text : theme.card, 
-                          borderColor: isCurrent ? theme.buttonText : theme.border,
-                          marginBottom: 8
-                        }
-                      ]}>
-                        <Text style={[
-                          styles.muscleGroupBadgeText, 
-                          { color: isCurrent ? (theme.type === 'dark' ? '#000' : '#fff') : theme.text }
-                        ]}>
-                          {t(muscleGroupInfo.label)}
-                        </Text>
-                      </View>
-                    )}
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <Text style={nameStyle}>{item.exercise_name}</Text>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', flexShrink: 1 }}>
+                        <Text style={[nameStyle, { marginRight: 8 }]}>{item.exercise_name}</Text>
+                        {muscleGroupInfo && muscleGroupInfo.value && (
+                          <View style={[
+                            styles.muscleGroupBadgeModal,
+                            { 
+                              backgroundColor: isCurrent ? theme.text : theme.card,
+                              borderColor: isCurrent ? theme.buttonText : theme.border,
+                            }
+                          ]}>
+                            <Text style={[
+                              styles.muscleGroupBadgeText,
+                              { color: isCurrent ? (theme.type === 'dark' ? '#000' : '#fff') : theme.text }
+                            ]}>
+                              {t(muscleGroupInfo.label)}
+                            </Text>
+                          </View>
+                        )}
+                      </View>
                       {item.web_link && (
-                        <TouchableOpacity onPress={() => handleLinkPress(item.web_link)} style={{ marginLeft: 10, marginBottom: 10 }}>
+                        <TouchableOpacity onPress={() => handleLinkPress(item.web_link)} style={{ marginLeft: 10 }}>
                           <Ionicons name="link-outline" size={22} color={isCurrent ? theme.buttonText : theme.text} />
                         </TouchableOpacity>
                       )}
                     </View>
-                    <Text style={detailStyle}>
+                    <Text style={[detailStyle, { marginTop: 4 }]}>
                       {item.sets} {t('Sets')} × {item.reps} {t('Reps')}
                     </Text>
                   </View>
@@ -1621,7 +1624,6 @@ const styles = StyleSheet.create({
   modalExerciseName: {
     fontSize: 17,
     fontWeight: '600',
-    marginBottom: 4,
   },
   modalExerciseDetails: {
     fontSize: 14,
@@ -1639,7 +1641,6 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     borderWidth: 1,
     alignSelf: 'flex-start',
-    marginTop: 10,
   },
   muscleGroupBadgeModal: {
     paddingVertical: 4,
