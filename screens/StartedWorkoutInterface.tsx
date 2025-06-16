@@ -853,9 +853,16 @@ export default function StartedWorkoutInterface() {
         {nextSet && (
           <View style={[styles.upNextCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
             <Text style={[styles.upNextLabel, { color: theme.text }]}>{t('upNext')}</Text>
-            <Text style={[styles.upNextExercise, { color: theme.text }]}>
-              {nextSet.exercise_name}
-            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
+              <Text style={[styles.upNextExercise, { color: theme.text }]}>
+                {nextSet.exercise_name}
+              </Text>
+              {nextSet.web_link && (
+                <TouchableOpacity onPress={() => handleLinkPress(nextSet.web_link)} style={{ marginLeft: 10 }}>
+                  <Ionicons name="link-outline" size={22} color={theme.text} />
+                </TouchableOpacity>
+              )}
+            </View>
             <Text style={[styles.upNextSetInfo, { color: theme.text }]}>
               {t('upcomingSet')}: {nextSet.set_number}
             </Text>
@@ -1431,7 +1438,6 @@ const styles = StyleSheet.create({
   upNextExercise: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 5,
   },
   upNextSetInfo: {
     fontSize: 16,
