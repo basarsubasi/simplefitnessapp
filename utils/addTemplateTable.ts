@@ -35,6 +35,7 @@ export const addTables = async (db: any) => {
             sets INTEGER NOT NULL,
             reps INTEGER NOT NULL,
             web_link TEXT,
+            muscle_group TEXT,
             FOREIGN KEY (day_id) REFERENCES Template_Days(day_id) ON DELETE CASCADE,
             UNIQUE(day_id, exercise_name)
           );`

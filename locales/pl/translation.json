@@ -372,7 +372,21 @@
 "invalidLinkMessage": "Link musi zaczynać się od \"http://\" lub \"https://\".",
 "exerciseDetails": "Szczegóły ćwiczenia",
 "fileNotSelectedError": "Nie wybrano pliku lub plik jest nieprawidłowy.",
-"workoutAlreadyExistsError": "Trening o tej nazwie już istnieje."
+"workoutAlreadyExistsError": "Trening o tej nazwie już istnieje.",
+"Unspecified": "Nieokreślony",
+"Chest": "Klatka piersiowa",
+"Back": "Plecy",
+"Shoulders": "Barki",
+"Biceps": "Biceps",
+"Triceps": "Triceps",
+"Forearms": "Przedramię",
+"Abs": "Brzuch",
+"Legs": "Nogi",
+"Glutes": "Uda",
+"Hamstrings": "Mięśnie goleni",
+"Calves": "Łydki",
+"Quads": "Mięśnie udowe",
+"muscleGroup": "Grupa mięśniowa"
 
     
 }

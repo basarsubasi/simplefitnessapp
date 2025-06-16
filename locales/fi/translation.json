@@ -370,7 +370,21 @@
 "invalidLinkMessage": "Linkin on aloituttava \"http://\" tai \"https://\".",
 "exerciseDetails": "Harjoituksen tiedot",
 "fileNotSelectedError": "Ei valittua tai virheellistä tiedostoa.",
-"workoutAlreadyExistsError": "Harjoitus tällä nimellä on jo olemassa."
+"workoutAlreadyExistsError": "Harjoitus tällä nimellä on jo olemassa.",
+"Unspecified": "Ei määritelty",
+"Chest": "Hauki",
+"Back": "Selkä",
+"Shoulders": "Kärjet",
+"Biceps": "Biceps",
+"Triceps": "Triceps",
+"Forearms": "Forearms",
+"Abs": "Abs",
+"Legs": "Jalat",
+"Glutes": "Glutes",
+"Hamstrings": "Hamstrings",
+"Calves": "Calves",
+"Quads": "Quads",
+"muscleGroup": "Muskelryhmä"
     
     
 

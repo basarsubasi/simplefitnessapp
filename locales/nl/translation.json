@@ -372,7 +372,21 @@
 "invalidLinkMessage": "De link moet beginnen met \"http://\" of \"https://\".",
 "exerciseDetails": "Oefening Details",
 "fileNotSelectedError": "Geen bestand geselecteerd of bestand is ongeldig.",
-"workoutAlreadyExistsError": "Een training met deze naam bestaat al."
+"workoutAlreadyExistsError": "Een training met deze naam bestaat al.",
+"Unspecified": "Niet gespecificeerd",
+"Chest": "Borst",
+"Back": "Rug",
+"Shoulders": "Schouders",
+"Biceps": "Biceps",
+"Triceps": "Triceps",
+"Forearms": "Voorarmen",
+"Abs": "Buik",
+"Legs": "Benen",
+"Glutes": "Bekken",
+"Hamstrings": "Hamstrings",
+"Calves": "Calves",
+"Quads": "Quads",
+"muscleGroup": "Muskelgroep"
     
     
     

@@ -407,6 +407,28 @@
     "exerciseDetails": "Exercise Details",
 
     "fileNotSelectedError": "No file was selected or the file is invalid.",
-    "workoutAlreadyExistsError": "A workout with this name already exists."
+    "workoutAlreadyExistsError": "A workout with this name already exists.",
+
+    "Unspecified": "Unspecified",
+    "Chest": "Chest",
+    "Back": "Back",
+    "Shoulders": "Shoulders",
+    "Biceps": "Biceps",
+    "Triceps": "Triceps",
+    "Forearms": "Forearms",
+    "Abs": "Abs",
+    "Legs": "Legs",
+    "Glutes": "Glutes",
+    "Hamstrings": "Hamstrings",
+    "Calves": "Calves",
+    "Quads": "Quads",
+
+    "muscleGroup": "Muscle Group"
+
+
+
+
+
+
     }
   

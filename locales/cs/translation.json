@@ -362,7 +362,21 @@
 "invalidLinkMessage": "Odkaz musí začínat \"http://\" nebo \"https://\".",
 "exerciseDetails": "Detaily cviku",
 "fileNotSelectedError": "Nebyl vybrán žádný soubor nebo je soubor neplatný.",
-"workoutAlreadyExistsError": "Trénink s tímto názvem již existuje."
+"workoutAlreadyExistsError": "Trénink s tímto názvem již existuje.",
+"Unspecified": "Nespecifikováno",
+"Chest": "Hruď",
+"Back": "Zad",
+"Shoulders": "Paže",
+"Biceps": "Bicepsy",
+"Triceps": "Tricepsy",
+"Forearms": "Forearms",
+"Abs": "Břicho",
+"Legs": "Nohy",
+"Glutes": "Kotníky",
+"Hamstrings": "Hýždě",
+"Calves": "Kalve",
+"Quads": "Kotníky",
+"muscleGroup": "Skupina svalů"
 
 
 

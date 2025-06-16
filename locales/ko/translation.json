@@ -365,7 +365,21 @@
 "invalidLinkMessage": "링크는 \"http://\" 또는 \"https://\"로 시작해야 합니다.",
 "exerciseDetails": "운동 세부 정보",
 "fileNotSelectedError": "파일이 선택되지 않았거나 유효하지 않습니다.",
-"workoutAlreadyExistsError": "이 이름의 운동이 이미 존재합니다."
+"workoutAlreadyExistsError": "이 이름의 운동이 이미 존재합니다.",
+"Unspecified": "미지정",
+"Chest": "가슴",
+"Back": "등",
+"Shoulders": "어깨",
+"Biceps": "이두근",
+"Triceps": "삼두근",
+"Forearms": "손목",
+"Abs": "복근",
+"Legs": "다리",
+"Glutes": "엉덩이",
+"Hamstrings": "히스트린",
+"Calves": "종아리",
+"Quads": "대퇴사두근",
+"muscleGroup": "근육 그룹"
     
 
 

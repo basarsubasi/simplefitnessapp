@@ -369,7 +369,21 @@
 "invalidLinkMessage": "Ссылка должна начинаться с \"http://\" или \"https://\".",
 "exerciseDetails": "Детали упражнения",
 "fileNotSelectedError": "Не выбран файл или файл недействителен.",
-"workoutAlreadyExistsError": "Тренировка с таким названием уже существует."
+"workoutAlreadyExistsError": "Тренировка с таким названием уже существует.",
+"Unspecified": "Не указано",
+"Chest": "Грудь",
+"Back": "Спина",
+"Shoulders": "Плечи",
+"Biceps": "Бицепс",
+"Triceps": "Трицепс",
+"Forearms": "Предплечье",
+"Abs": "Живот",
+"Legs": "Ноги",
+"Glutes": "Ягодицы",
+"Hamstrings": "Голени",
+"Calves": "Икры",
+"Quads": "Квадрицепс",
+"muscleGroup": "Группа мышц"
         
 
     

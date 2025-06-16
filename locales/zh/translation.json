@@ -371,7 +371,22 @@
 "invalidLinkMessage": "链接必须以 \"http://\" 或 \"https://\" 开头。",
 "exerciseDetails": "练习详情",
 "fileNotSelectedError": "未选择文件或文件无效。",
-"workoutAlreadyExistsError": "此名称的锻炼已存在。"
+"workoutAlreadyExistsError": "此名称的锻炼已存在。",
+"Unspecified": "未指定",
+"Chest": "胸",
+"Back": "背",
+"Shoulders": "肩",
+"Biceps": "二头肌",
+"Triceps": "三头肌",
+"Forearms": "前臂",
+"Abs": "腹肌",
+"Legs": "腿",
+"Glutes": "臀",
+"Hamstrings": "Hamstrings",
+"Calves": "腓肠肌",
+"Quads": "Quads",
+"muscleGroup": "肌肉群"
+
 
 
 
