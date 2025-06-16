@@ -24,7 +24,7 @@ type WorkoutListNavigationProp = StackNavigationProp<WorkoutStackParamList, 'Wor
 async function createWorkout(
   db: any, // Pass the database context
   workoutName: string,
-  days: { dayName: string; exercises: { exerciseName: string; sets: number; reps: number }[] }[]
+  days: { dayName: string; exercises: { exerciseName: string; sets: number; reps: number; muscle_group: string | null }[] }[]
 ) {
   await db.withTransactionAsync(async () => {
     console.log('Starting transaction...');
@@ -61,8 +61,8 @@ async function createWorkout(
         for (const exercise of day.exercises) {
           console.log(`Inserting exercise: ${exercise.exerciseName}`);
           await db.runAsync(
-            'INSERT INTO Exercises (day_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?);',
-            [dayId, exercise.exerciseName, exercise.sets, exercise.reps]
+            'INSERT INTO Exercises (day_id, exercise_name, sets, reps, muscle_group) VALUES (?, ?, ?, ?, ?);',
+            [dayId, exercise.exerciseName, exercise.sets, exercise.reps, exercise.muscle_group]
           );
         }
       }
@@ -79,21 +79,31 @@ export default function CreateWorkout() {
   const { t } = useTranslation(); // Initialize translations
   const [workoutName, setWorkoutName] = useState('');
   const [days, setDays] = useState<
-    { dayName: string; exercises: { exerciseName: string; sets: string; reps: string }[] }[]
+    { dayName: string; exercises: { exerciseName: string; sets: string; reps: string; muscle_group: string | null }[] }[]
   >([]);
   const navigation = useNavigation<WorkoutListNavigationProp>();
+
+  const muscleGroupData = [
+    { label: 'None', value: null },
+    { label: 'Chest', value: 'chest' },
+    { label: 'Back', value: 'back' },
+    { label: 'Shoulders', value: 'shoulders' },
+    { label: 'Arms', value: 'arms' },
+    { label: 'Abs', value: 'abs' },
+    { label: 'Legs', value: 'legs' },
+  ];
 
   const addDay = () => {
     setDays((prev) => [
       ...prev,
-      { dayName: '', exercises: [{ exerciseName: '', sets: '', reps: '' }] },
+      { dayName: '', exercises: [{ exerciseName: '', sets: '', reps: '', muscle_group: null }] },
     ]);
   };
 
   const addExercise = (dayIndex: number) => {
     setDays((prev) => {
       const updatedDays = [...prev];
-      updatedDays[dayIndex].exercises.push({ exerciseName: '', sets: '', reps: '' });
+      updatedDays[dayIndex].exercises.push({ exerciseName: '', sets: '', reps: '', muscle_group: null });
       return updatedDays;
     });
   };
@@ -255,72 +265,103 @@ export default function CreateWorkout() {
               />
 
               {item.exercises.map((exercise, exerciseIndex) => (
-                <TouchableOpacity
-                  key={exerciseIndex}
-                  activeOpacity={0.8}
-                  style={styles.exerciseRow}
-                >
-                  <TextInput
-                    style={[
-                      styles.exerciseInput,
-                      {
-                        backgroundColor: theme.card,
-                        color: theme.text,
-                      },
-                    ]}
-                    placeholder={t('exerciseNamePlaceholder')}
-                    placeholderTextColor={theme.text}
-                    value={exercise.exerciseName}
-                    onChangeText={(text) => {
-                      const updatedDays = [...days];
-      updatedDays[index].exercises[exerciseIndex].exerciseName =
-                        text;
-                      setDays(updatedDays);
+                <View key={exerciseIndex}>
+                  <TouchableOpacity
+                    activeOpacity={0.8}
+                    style={styles.exerciseRow}
+                  >
+                    <TextInput
+                      style={[
+                        styles.exerciseInput,
+                        {
+                          backgroundColor: theme.card,
+                          color: theme.text,
+                        },
+                      ]}
+                      placeholder={t('exerciseNamePlaceholder')}
+                      placeholderTextColor={theme.text}
+                      value={exercise.exerciseName}
+                      onChangeText={(text) => {
+                        const updatedDays = [...days];
+        updatedDays[index].exercises[exerciseIndex].exerciseName =
+                          text;
+                        setDays(updatedDays);
+                      }}
+                    />
+                    <TextInput
+                      style={[
+                        styles.smallInput,
+                        {
+                          backgroundColor: theme.card,
+                          color: theme.text,
+                        },
+                      ]}
+                      placeholder={t('setsPlaceholder')}
+                      placeholderTextColor={theme.text}
+                      keyboardType="numeric"
+                      value={exercise.sets}
+                      onChangeText={(text) => {
+                        const sanitizedText = text.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+                        const updatedDays = [...days];
+                        updatedDays[index].exercises[
+                          exerciseIndex
+                        ].sets = sanitizedText; // Allow empty string
+                        setDays(updatedDays);
+                      }}
+                    />
+                    <TextInput
+                      style={[
+                        styles.smallInput,
+                        {
+                          backgroundColor: theme.card,
+                          color: theme.text,
+                        },
+                      ]}
+                      placeholder={t('repsPlaceholder')}
+                      placeholderTextColor={theme.text}
+                      keyboardType="numeric"
+                      value={exercise.reps}
+                      onChangeText={(text) => {
+                        const sanitizedText = text.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+                        const updatedDays = [...days];
+                        updatedDays[index].exercises[
+                          exerciseIndex
+                        ].reps = sanitizedText; // Allow empty string
+                        setDays(updatedDays);
+                      }}
+                    />
+                  </TouchableOpacity>
+                  <FlatList
+                    data={muscleGroupData}
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    keyExtractor={(item) => item.label}
+                    style={{ marginVertical: 10 }}
+                    renderItem={({ item: muscleGroupItem }) => {
+                      const isSelected = exercise.muscle_group === muscleGroupItem.value;
+                      return (
+                        <TouchableOpacity
+                          style={[
+                            styles.muscleGroupButton,
+                            { 
+                              backgroundColor: isSelected ? theme.buttonBackground : theme.card,
+                              borderColor: theme.border,
+                            }
+                          ]}
+                          onPress={() => {
+                            const updatedDays = [...days];
+                            updatedDays[index].exercises[exerciseIndex].muscle_group = muscleGroupItem.value;
+                            setDays(updatedDays);
+                          }}
+                        >
+                          <Text style={{ color: isSelected ? theme.buttonText : theme.text }}>
+                            {t(muscleGroupItem.label)}
+                          </Text>
+                        </TouchableOpacity>
+                      );
                     }}
                   />
-                  <TextInput
-                    style={[
-                      styles.smallInput,
-                      {
-                        backgroundColor: theme.card,
-                        color: theme.text,
-                      },
-                    ]}
-                    placeholder={t('setsPlaceholder')}
-                    placeholderTextColor={theme.text}
-                    keyboardType="numeric"
-                    value={exercise.sets}
-                    onChangeText={(text) => {
-                      const sanitizedText = text.replace(/[^0-9]/g, ''); // Remove non-numeric characters
-                      const updatedDays = [...days];
-                      updatedDays[index].exercises[
-                        exerciseIndex
-                      ].sets = sanitizedText; // Allow empty string
-                      setDays(updatedDays);
-                    }}
-                  />
-                  <TextInput
-                    style={[
-                      styles.smallInput,
-                      {
-                        backgroundColor: theme.card,
-                        color: theme.text,
-                      },
-                    ]}
-                    placeholder={t('repsPlaceholder')}
-                    placeholderTextColor={theme.text}
-                    keyboardType="numeric"
-                    value={exercise.reps}
-                    onChangeText={(text) => {
-                      const sanitizedText = text.replace(/[^0-9]/g, ''); // Remove non-numeric characters
-                      const updatedDays = [...days];
-                      updatedDays[index].exercises[
-                        exerciseIndex
-                      ].reps = sanitizedText; // Allow empty string
-                      setDays(updatedDays);
-                    }}
-                  />
-                </TouchableOpacity>
+                </View>
               ))}
 
               <TouchableOpacity
@@ -473,5 +514,18 @@ const styles = StyleSheet.create({
   saveButtonText: {
     fontWeight: 'bold',
     fontSize: 18,
+  },
+  muscleGroupButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 20,
+    height: 40,
+    elevation: 1,
+    shadowOpacity: 0,
+    borderWidth: 1,
+    marginRight: 10,
+    marginBottom: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
