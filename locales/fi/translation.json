@@ -363,12 +363,12 @@
       "repsGraphExplanation": "Tämä kaavio näyttää yksittäisille sarjoille tehdyt toistot. Jokainen viiva ja väri edustaa eri sarjanumeroa kuten sarjakaaviossa, mutta y-akselilla on toistot painojen sijaan. Täydellinen kehonpainoharjoitusten seuraamiseen!",
 
 
-      "workoutDetailsTip": "Vinkki: Voit lisätä, muokata tai poistaa harjoituksen verkkolinkin napauttamalla sen nimeä.",
+      "workoutDetailsTip": "Vinkki: Voit nähdä lisätietoja harjoituksesta napauttamalla sen nimeä.",
 "webLink": "Verkkolinkki",
 "webLinkPlaceholder": "https://example.com (valinnainen)",
 "invalidLinkTitle": "Virheellinen linkki",
 "invalidLinkMessage": "Linkin on aloituttava \"http://\" tai \"https://\".",
-"exerciseDetails": "Lisää verkkolinkki",
+"exerciseDetails": "Harjoituksen tiedot",
 "fileNotSelectedError": "Ei valittua tai virheellistä tiedostoa.",
 "workoutAlreadyExistsError": "Harjoitus tällä nimellä on jo olemassa."
     

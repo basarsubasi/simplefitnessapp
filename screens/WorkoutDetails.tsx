@@ -1013,7 +1013,6 @@ const styles = StyleSheet.create({
     dayTitle: {
       fontSize: 24,
       fontWeight: '800',
-      color: '#000000',
     },
     exerciseContainer: {
       flexDirection: 'row',
@@ -1036,7 +1035,7 @@ const styles = StyleSheet.create({
       alignItems: 'flex-end',
     },
     muscleGroupBadge: {
-      paddingTop: 4,
+      paddingVertical: 4,
       paddingHorizontal: 10,
       borderRadius: 15,
       borderWidth: 1,
@@ -1056,14 +1055,12 @@ const styles = StyleSheet.create({
     addDayButton: {
       flexDirection: 'row',
       alignItems: 'center',
-      backgroundColor: '#000000',
       borderRadius: 20,
       padding: 12,
       marginTop: 1,
       justifyContent: 'center',
     },
     addDayButtonText: {
-      color: '#FFFFFF',
       fontSize: 18,
       fontWeight: '800',
       marginLeft: 8,
@@ -1080,7 +1077,6 @@ const styles = StyleSheet.create({
       alignItems: 'center',
     },
     modalContent: {
-      backgroundColor: '#FFFFFF',
       borderRadius: 15,
       padding: 20,
       width: '80%',
@@ -1096,6 +1092,7 @@ const styles = StyleSheet.create({
       textAlign: 'left',
       fontSize: 16,
       marginBottom: 5,
+      fontWeight: '600',
     },
     input: {
       width: '100%',
@@ -1106,14 +1103,12 @@ const styles = StyleSheet.create({
       marginBottom: 10,
     },
     saveButton: {
-      backgroundColor: '#000000',
       borderRadius: 8,
       paddingVertical: 10,
       paddingHorizontal: 20,
       marginBottom: 10,
     },
     saveButtonText: {
-      color: '#FFFFFF',
       fontWeight: 'bold',
     },
     cancelButton: {
@@ -1124,7 +1119,6 @@ const styles = StyleSheet.create({
       paddingHorizontal: 20,
     },
     cancelButtonText: {
-      color: '#000000',
       fontWeight: 'bold',
     },
     animatedDayContainer: {

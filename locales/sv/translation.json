@@ -367,12 +367,12 @@
       "repsGraphExplanation": "Denna graf visar de repetitioner du har gjort för individuella set. Varje linje och färg representerar ett olika setnummer, likt Setgrafen, men med Y-axeln som repetitioner istället för vikter. Perfekt för att spåra kroppsviktsövningar!",
 
 
-      "workoutDetailsTip": "Tip: Du kan lägga till, redigera eller ta bort en weblänk för en övning genom att trycka på dess namn.",
+        "workoutDetailsTip": "Tip: Du kan lägga till, redigera eller ta bort en weblänk för en övning genom att trycka på dess namn.",
 "webLink": "Webblänk",
 "webLinkPlaceholder": "https://example.com (valfritt)",
 "invalidLinkTitle": "Ogiltlig länk",
 "invalidLinkMessage": "Länken måste börja med \"http://\" eller \"https://\".", 
-"exerciseDetails": "Lägg till webblänk",
+"exerciseDetails": "Övningdetaljer",
 "fileNotSelectedError": "Ingen fil vald eller filen är ogiltig.",
 "workoutAlreadyExistsError": "En träning med detta namn finns redan."
     

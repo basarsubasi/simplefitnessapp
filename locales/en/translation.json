@@ -399,12 +399,12 @@
     "settingsFirstWeekday": "First Day of the Week",
 
 
-    "workoutDetailsTip": "Tip: You can add, edit or delete a web link to an exercise by pressing to it's name.",
+    "workoutDetailsTip": "Tip: You can see additional information about an exercise by pressing to it's name.",
     "webLink": "Web Link",
     "webLinkPlaceholder": "https://example.com (optional)",
     "invalidLinkTitle": "Invalid Link",
     "invalidLinkMessage": "The link must start with \"http://\" or \"https://\".",
-    "exerciseDetails": "Add a Web Link",
+    "exerciseDetails": "Exercise Details",
 
     "fileNotSelectedError": "No file was selected or the file is invalid.",
     "workoutAlreadyExistsError": "A workout with this name already exists."

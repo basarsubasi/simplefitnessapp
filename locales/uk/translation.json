@@ -364,12 +364,12 @@
 
 
 
-      "workoutDetailsTip": "Порада: Ви можете додати, редагувати або видалити веб-посилання до вправи, натиснувши на її назву.",
+      "workoutDetailsTip": "Порада: Ви можете побачити додаткову інформацію про вправу, натиснувши на її назву.",
 "webLink": "Веб-посилання",
 "webLinkPlaceholder": "https://example.com (необов’язково)",
 "invalidLinkTitle": "Неправильне посилання",
 "invalidLinkMessage": "Посилання повинно починатися з \"http://\" або \"https://\".",
-"exerciseDetails": "Додати веб-посилання",
+"exerciseDetails": "Деталі вправи",
 "fileNotSelectedError": "Не вибрано файлу або файл недійсний.",
 "workoutAlreadyExistsError": "Тренування з такою назвою вже існує."
 

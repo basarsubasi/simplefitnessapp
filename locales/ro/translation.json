@@ -366,12 +366,12 @@
 
 
 
-      "workoutDetailsTip": "Sfat: Poți adăuga, edita sau șterge un link web către un exercițiu apăsând pe numele acestuia.",
+      "workoutDetailsTip": "Sfat: Poți vedere informații suplimentare despre un exercițiu apăsând pe numele acestuia.",
 "webLink": "Link web",
 "webLinkPlaceholder": "https://example.com (opțional)",
 "invalidLinkTitle": "Link invalid",
 "invalidLinkMessage": "Linkul trebuie să înceapă cu \"http://\" sau \"https://\".",
-"exerciseDetails": "Adaugă un link web",
+"exerciseDetails": "Detalii exercițiu",
 "fileNotSelectedError": "Niciun fișier selectat sau fișier invalid.",
 "workoutAlreadyExistsError": "Un antrenament cu acest nume există deja."
   }

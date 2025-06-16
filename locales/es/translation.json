@@ -357,12 +357,12 @@
       "About Reps Progression": "Acerca del gráfico de repeticiones",
       "repsGraphExplanation": "Este gráfico muestra las repeticiones que has hecho para series individuales. Cada línea y color representa un número de serie diferente, como el gráfico de series, pero con el eje Y siendo las repeticiones en lugar de los pesos. ¡Perfecto para seguir ejercicios de peso corporal!",
 
-      "workoutDetailsTip": "Consejo: Puedes añadir, editar o eliminar un enlace web de un ejercicio tocando su nombre.",
+      "workoutDetailsTip": "Consejo: Puedes ver información adicional sobre un ejercicio tocando su nombre.",
 "webLink": "Enlace web",
 "webLinkPlaceholder": "https://example.com (opcional)",
 "invalidLinkTitle": "Enlace inválido",
 "invalidLinkMessage": "El enlace debe comenzar con \"http://\" o \"https://\".",
-"exerciseDetails": "Añadir un enlace web",
+"exerciseDetails": "Detalles del ejercicio",
 "fileNotSelectedError": "No se ha seleccionado ningún archivo o el archivo no es válido.",
 "workoutAlreadyExistsError": "Ya existe un entrenamiento con este nombre."
 
