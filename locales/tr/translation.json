@@ -400,7 +400,21 @@
 "invalidLinkMessage": "Bağlantı \"http://\" veya \"https://\" ile başlamalıdır.",
 "exerciseDetails": "Egzersiz Detayları",
 "fileNotSelectedError": "Dosya seçilmedi veya dosya geçersiz.",
-"workoutAlreadyExistsError": "Bu adla bir antrenman zaten mevcut."
+"workoutAlreadyExistsError": "Bu adla bir antrenman zaten mevcut.",
+"Unspecified": "Belirtilmemiş",
+"Chest": "Göğüs",
+"Back": "Sırt",
+"Shoulders": "Omuz",
+"Biceps": "Ön kol",
+"Triceps": "Arka kol",
+"Forearms": "Bilek",
+"Abs": "Karın",
+"Legs": "Bacak",
+"Glutes": "Kalça", 
+"Hamstrings": "Arka Bacak",
+"Calves": "Kalf",
+"Quads": "Ön Bacak",
+"muscleGroup": "Kas Grubu"
             
         
     

@@ -591,7 +591,7 @@ export default function WorkoutDetails() {
   };
 
   const muscleGroupData = [
-    { label: t('None'), value: null },
+    { label: t('Unspecified'), value: null },
     { label: t('Chest'), value: 'chest' },
     { label: t('Back'), value: 'back' },
     { label: t('Shoulders'), value: 'shoulders' },
@@ -599,6 +599,7 @@ export default function WorkoutDetails() {
     { label: t('Triceps'), value: 'triceps' },
     { label: t('Forearms'), value: 'forearms' },
     { label: t('Abs'), value: 'abs' },
+    { label: t('Legs'), value: 'legs' },
     { label: t('Glutes'), value: 'glutes' },
     { label: t('Hamstrings'), value: 'hamstrings' },
     { label: t('Calves'), value: 'calves' },
