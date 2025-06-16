@@ -708,16 +708,6 @@ export default function StartedWorkoutInterface() {
         </View>
         
         <View style={[styles.currentExerciseCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
-            <Text style={[styles.currentExerciseName, { color: theme.text }]}>
-              {currentSet.exercise_name}
-            </Text>
-            {currentSet.web_link && (
-              <TouchableOpacity onPress={() => handleLinkPress(currentSet.web_link)} style={{ marginLeft: 10, marginBottom: 10 }}>
-                <Ionicons name="link-outline" size={24} color={theme.text} />
-              </TouchableOpacity>
-            )}
-          </View>
           {muscleGroupInfo && muscleGroupInfo.value && (
             <View style={{alignItems: 'center', marginBottom: 10}}>
               <View style={[styles.muscleGroupBadgeMain, { backgroundColor: theme.card, borderColor: theme.border }]}>
@@ -727,6 +717,24 @@ export default function StartedWorkoutInterface() {
               </View>
             </View>
           )}
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
+            {/* Left spacer to balance the icon on the right */}
+            <View style={{ width: 60 }} />
+
+            {/* Exercise name, now perfectly centered */}
+            <Text style={[styles.currentExerciseName, { color: theme.text, flex: 1 }]}>
+              {currentSet.exercise_name}
+            </Text>
+
+            {/* Icon container, same width as the spacer */}
+            <View style={{ width: 60, alignItems: 'flex-start' }}>
+              {currentSet.web_link && (
+                <TouchableOpacity onPress={() => handleLinkPress(currentSet.web_link)}>
+                  <Ionicons name="link-outline" size={24} color={theme.text} />
+                </TouchableOpacity>
+              )}
+            </View>
+          </View>
           <Text style={[styles.setInfo, { color: theme.text }]}>
            {currentSet.set_number}/{currentSet.total_sets}
           </Text>
@@ -895,22 +903,24 @@ export default function StartedWorkoutInterface() {
           <View style={[styles.upNextCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
             <Text style={[styles.upNextLabel, { color: theme.text }]}>{t('upNext')}</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 5 }}>
-              <Text style={[styles.upNextExercise, { color: theme.text, flex: 1 }]}>
-                {nextSet.exercise_name}
-              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', flexShrink: 1 }}>
+                <Text style={[styles.upNextExercise, { color: theme.text, marginRight: 8 }]}>
+                  {nextSet.exercise_name}
+                </Text>
+                {muscleGroupInfo && muscleGroupInfo.value && (
+                  <View style={[styles.muscleGroupBadgeModal, { backgroundColor: theme.card, borderColor: theme.border }]}>
+                    <Text style={[styles.muscleGroupBadgeText, { color: theme.text }]}>
+                      {t(muscleGroupInfo.label)}
+                    </Text>
+                  </View>
+                )}
+              </View>
               {nextSet.web_link && (
                 <TouchableOpacity onPress={() => handleLinkPress(nextSet.web_link)} style={{ marginLeft: 10 }}>
                   <Ionicons name="link-outline" size={22} color={theme.text} />
                 </TouchableOpacity>
               )}
             </View>
-            {muscleGroupInfo && muscleGroupInfo.value && (
-              <View style={[styles.muscleGroupBadgeModal, { backgroundColor: theme.card, borderColor: theme.border, marginBottom: 10, marginTop: 0 }]}>
-                <Text style={[styles.muscleGroupBadgeText, { color: theme.text }]}>
-                  {t(muscleGroupInfo.label)}
-                </Text>
-              </View>
-            )}
             <Text style={[styles.upNextSetInfo, { color: theme.text }]}>
               {t('upcomingSet')}: {nextSet.set_number}
             </Text>
@@ -1088,6 +1098,23 @@ export default function StartedWorkoutInterface() {
 
                 return (
                   <View style={itemStyle}>
+                    {muscleGroupInfo && muscleGroupInfo.value && (
+                      <View style={[
+                        styles.muscleGroupBadgeModal, 
+                        { 
+                          backgroundColor: isCurrent ? theme.text : theme.card, 
+                          borderColor: isCurrent ? theme.buttonText : theme.border,
+                          marginBottom: 8
+                        }
+                      ]}>
+                        <Text style={[
+                          styles.muscleGroupBadgeText, 
+                          { color: isCurrent ? (theme.type === 'dark' ? '#000' : '#fff') : theme.text }
+                        ]}>
+                          {t(muscleGroupInfo.label)}
+                        </Text>
+                      </View>
+                    )}
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                       <Text style={nameStyle}>{item.exercise_name}</Text>
                       {item.web_link && (
@@ -1099,23 +1126,6 @@ export default function StartedWorkoutInterface() {
                     <Text style={detailStyle}>
                       {item.sets} {t('Sets')} × {item.reps} {t('Reps')}
                     </Text>
-                    {muscleGroupInfo && muscleGroupInfo.value && (
-                      <View style={[
-                        styles.muscleGroupBadgeModal, 
-                        { 
-                          backgroundColor: isCurrent ? theme.text : theme.background, 
-                          borderColor: isCurrent ? theme.buttonText : theme.border,
-                          marginTop: 8
-                        }
-                      ]}>
-                        <Text style={[
-                          styles.muscleGroupBadgeText, 
-                          { color: isCurrent ? (theme.type === 'dark' ? '#000' : '#fff') : theme.text }
-                        ]}>
-                          {t(muscleGroupInfo.label)}
-                        </Text>
-                      </View>
-                    )}
                   </View>
                 );
               }}
@@ -1374,7 +1384,6 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 10,
   },
   setInfo: {
     fontSize: 18,
@@ -1632,21 +1641,15 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     marginTop: 10,
   },
-
-
   muscleGroupBadgeModal: {
     paddingVertical: 4,
     paddingHorizontal: 10,
     borderRadius: 15,
     borderWidth: 1,
     alignSelf: 'flex-start',
-    marginTop: 10,
   },
-
   muscleGroupBadgeText: {
     fontSize: 12,
     fontWeight: '600',
   },
-
-  
 });
