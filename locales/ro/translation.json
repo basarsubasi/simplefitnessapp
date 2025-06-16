@@ -373,7 +373,21 @@
 "invalidLinkMessage": "Linkul trebuie să înceapă cu \"http://\" sau \"https://\".",
 "exerciseDetails": "Detalii exercițiu",
 "fileNotSelectedError": "Niciun fișier selectat sau fișier invalid.",
-"workoutAlreadyExistsError": "Un antrenament cu acest nume există deja."
+"workoutAlreadyExistsError": "Un antrenament cu acest nume există deja.",
+"Unspecified": "Nespecificat",
+"Chest": "Chest",
+"Back": "Spate",
+"Shoulders": "Echer",
+"Biceps": "Biceps",
+"Triceps": "Triceps",
+"Forearms": "Forearms",
+"Abs": "Abdomen",
+"Legs": "Legs",
+"Glutes": "Glutes",
+"Hamstrings": "Hamstrings",
+"Calves": "Calves",
+"Quads": "Quads",
+"muscleGroup": "Grup muscular"
   }
 
   
