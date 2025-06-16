@@ -709,45 +709,57 @@ export default function WorkoutDetails() {
 
         {/* Exercises */}
         {day.exercises.length > 0 ? (
-          day.exercises.map((exercise, index) => (
-            <TouchableOpacity
-              key={index}
-              onPress={() => openWebLinkModal(exercise)}
-              onLongPress={() => handleDeleteExercise(day.day_id, exercise.exercise_name, workout_id)}
-                activeOpacity={0.6}
-                delayLongPress={500}
-                style={[
-                  styles.exerciseContainer, 
-                  { 
-                    backgroundColor: theme.card, 
-                    borderColor: theme.border 
-                  }
-                ]}
-            >
-              <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, marginRight: 8 }}>
-                {exercise.web_link && (
-                  <TouchableOpacity onPress={() => handleLinkPress(exercise.web_link)} style={{ marginRight: 10 }}>
-                    <Ionicons name="link-outline" size={22} color={theme.text} />
-                  </TouchableOpacity>
-                )}
-                <AutoSizeText
-                  fontSize={18}
-                  numberOfLines={3}
-                  mode={ResizeTextMode.max_lines}
-                  style={[styles.exerciseName, { color: theme.text, flexShrink: 1, flex: 1 }]}
-                >
-                  {exercise.exercise_name}
-                </AutoSizeText>
-              </View>
-              <View style={styles.exerciseDetails}>
-                <Text style={{ color: theme.text, fontSize: 16, textAlign: 'right' }}>
-                  {exercise.sets} <Text style={{ color: theme.text }}>{t('Sets')}</Text>
-                  {'  '}
-                  {exercise.reps} <Text style={{ color: theme.text }}>{t('Reps')}</Text>
-                </Text>
-              </View>
-            </TouchableOpacity>
-          ))
+          day.exercises.map((exercise, index) => {
+            const muscleGroupInfo = muscleGroupData.find(mg => mg.value === exercise.muscle_group);
+            return (
+              <TouchableOpacity
+                key={index}
+                onPress={() => openWebLinkModal(exercise)}
+                onLongPress={() => handleDeleteExercise(day.day_id, exercise.exercise_name, workout_id)}
+                  activeOpacity={0.6}
+                  delayLongPress={500}
+                  style={[
+                    styles.exerciseContainer, 
+                    { 
+                      backgroundColor: theme.card, 
+                      borderColor: theme.border 
+                    }
+                  ]}
+              >
+                <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, marginRight: 8 }}>
+                  {exercise.web_link && (
+                    <TouchableOpacity onPress={() => handleLinkPress(exercise.web_link)} style={{ alignSelf: 'flex-start', marginRight: 10, marginTop: 2 }}>
+                      <Ionicons name="link-outline" size={22} color={theme.text} />
+                    </TouchableOpacity>
+                  )}
+                  <View style={{ flex: 1 }}>
+                    <AutoSizeText
+                      fontSize={18}
+                      numberOfLines={3}
+                      mode={ResizeTextMode.max_lines}
+                      style={[styles.exerciseName, { color: theme.text }]}
+                    >
+                      {exercise.exercise_name}
+                    </AutoSizeText>
+                    {muscleGroupInfo && muscleGroupInfo.value && (
+                      <View style={[styles.muscleGroupBadge, { backgroundColor: theme.card, borderColor: theme.border }]}>
+                        <Text style={[styles.muscleGroupBadgeText, { color: theme.text }]}>
+                          {muscleGroupInfo.label}
+                        </Text>
+                      </View>
+                    )}
+                  </View>
+                </View>
+                <View style={styles.exerciseDetails}>
+                  <Text style={{ color: theme.text, fontSize: 16, textAlign: 'right' }}>
+                    {exercise.sets} <Text style={{ color: theme.text }}>{t('Sets')}</Text>
+                    {'  '}
+                    {exercise.reps} <Text style={{ color: theme.text }}>{t('Reps')}</Text>
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            )
+          })
         ) : (
           <Text style={[styles.noExercisesText, { color: theme.text }]}>{t('noExercises')} </Text>
         )}
@@ -1010,7 +1022,7 @@ const styles = StyleSheet.create({
       backgroundColor: '#F7F7F7',
       paddingVertical: 12,
       paddingHorizontal: 3,
-      marginBottom: 8,
+      marginBottom: 5,
       borderWidth: 0,
       borderColor: 'rgba(0, 0, 0, 0.1)',
       maxWidth: '100%',  // Prevent overflow
@@ -1024,7 +1036,18 @@ const styles = StyleSheet.create({
       minWidth: 70,
       alignItems: 'flex-end',
     },
-    
+    muscleGroupBadge: {
+      marginTop: 8,
+      paddingTop: 4,
+      paddingHorizontal: 10,
+      borderRadius: 15,
+      borderWidth: 1,
+      alignSelf: 'flex-start',
+    },
+    muscleGroupBadgeText: {
+        fontSize: 12,
+        fontWeight: '600',
+    },
     noExercisesText: {
       textAlign: 'center',
       fontSize: 16,
