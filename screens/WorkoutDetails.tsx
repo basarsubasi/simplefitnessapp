@@ -10,6 +10,7 @@ import { WorkoutStackParamList } from '../App';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useTranslation } from 'react-i18next';
 import { exportWorkout } from '../utils/workoutSharingUtils';
+import { addMuscleGroupColumn } from '../utils/exerciseDetailUtils';
 
 
 
@@ -22,7 +23,7 @@ type WorkoutListNavigationProp = StackNavigationProp<WorkoutStackParamList, 'Wor
 type Day = {
   day_id: number;
   day_name: string;
-  exercises: { exercise_id: number; exercise_name: string; sets: number; reps: number; web_link: string | null }[];
+  exercises: { exercise_id: number; exercise_name: string; sets: number; reps: number; web_link: string | null; muscle_group: string | null }[];
 };
 export default function WorkoutDetails() {
   const db = useSQLiteContext();
@@ -46,9 +47,11 @@ export default function WorkoutDetails() {
   const [exerciseSets, setExerciseSets] = useState('');
   const [exerciseReps, setExerciseReps] = useState('');
   const [exerciseWebLink, setExerciseWebLink] = useState('');
+  const [newExerciseMuscleGroup, setNewExerciseMuscleGroup] = useState<string | null>(null);
   const [showWebLinkModal, setShowWebLinkModal] = useState(false);
-  const [editingExercise, setEditingExercise] = useState<{ exercise_id: number; web_link: string | null } | null>(null);
+  const [editingExercise, setEditingExercise] = useState<{ exercise_id: number; web_link: string | null; muscle_group: string | null } | null>(null);
   const [webLinkInput, setWebLinkInput] = useState('');
+  const [editingMuscleGroup, setEditingMuscleGroup] = useState<string | null>(null);
   const navigation = useNavigation<WorkoutListNavigationProp>();
   const [isReordering, setIsReordering] = useState(false);
   const fadeAnim = useRef(new Animated.Value(1)).current;
@@ -77,8 +80,8 @@ export default function WorkoutDetails() {
 
     const daysWithExercises = await Promise.all(
       daysResult.map(async (day) => {
-        const exercises = await db.getAllAsync<{ exercise_id: number; exercise_name: string; sets: number; reps: number; web_link: string }>(
-          'SELECT exercise_id, exercise_name, sets, reps, web_link FROM Exercises WHERE day_id = ?',
+        const exercises = await db.getAllAsync<{ exercise_id: number; exercise_name: string; sets: number; reps: number; web_link: string; muscle_group: string | null }>(
+          'SELECT exercise_id, exercise_name, sets, reps, web_link, muscle_group FROM Exercises WHERE day_id = ?',
           [day.day_id]
         );
         return { ...day, exercises };
@@ -226,8 +229,8 @@ export default function WorkoutDetails() {
           console.log(`Updating log ${log.workout_log_id} for day: ${day.day_name}`);
   
           // Fetch updated exercises for the day
-          const exercises = await db.getAllAsync<{ exercise_name: string; sets: number; reps: number; web_link: string | null }>(
-            'SELECT exercise_name, sets, reps, web_link FROM Exercises WHERE day_id = ?;',
+          const exercises = await db.getAllAsync<{ exercise_name: string; sets: number; reps: number; web_link: string | null; muscle_group: string | null }>(
+            'SELECT exercise_name, sets, reps, web_link, muscle_group FROM Exercises WHERE day_id = ?;',
             [day.day_id]
           );
   
@@ -237,8 +240,8 @@ export default function WorkoutDetails() {
           // Insert updated exercises into the log
           const insertExercisePromises = exercises.map((exercise) =>
             db.runAsync(
-              'INSERT INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps, web_link) VALUES (?, ?, ?, ?, ?);',
-              [log.workout_log_id, exercise.exercise_name, exercise.sets, exercise.reps, exercise.web_link]
+              'INSERT INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps, web_link, muscle_group) VALUES (?, ?, ?, ?, ?, ?);',
+              [log.workout_log_id, exercise.exercise_name, exercise.sets, exercise.reps, exercise.web_link, exercise.muscle_group]
             )
           );
   
@@ -282,6 +285,7 @@ export default function WorkoutDetails() {
     setExerciseSets('');
     setExerciseReps('');
     setExerciseWebLink('');
+    setNewExerciseMuscleGroup(null);
     setShowExerciseModal(true);
   };
 
@@ -320,8 +324,8 @@ export default function WorkoutDetails() {
 
     if (currentDayId) {
       await db.runAsync(
-        'INSERT INTO Exercises (day_id, exercise_name, sets, reps, web_link) VALUES (?, ?, ?, ?, ?);',
-        [currentDayId, exerciseName.trim(), parseInt(sets, 10), parseInt(reps, 10), webLink || null]
+        'INSERT INTO Exercises (day_id, exercise_name, sets, reps, web_link, muscle_group) VALUES (?, ?, ?, ?, ?, ?);',
+        [currentDayId, exerciseName.trim(), parseInt(sets, 10), parseInt(reps, 10), webLink || null, newExerciseMuscleGroup || null]
       );
       await updateWorkoutLogsForAdditions(workout_id);
       fetchWorkoutDetails();
@@ -493,8 +497,8 @@ export default function WorkoutDetails() {
           console.log(`Updating log ${log.workout_log_id} for day: ${day.day_name}`);
   
           // Fetch updated exercises for the day
-          const exercises = await db.getAllAsync<{ exercise_name: string; sets: number; reps: number; web_link: string | null }>(
-            'SELECT exercise_name, sets, reps, web_link FROM Exercises WHERE day_id = ?;',
+          const exercises = await db.getAllAsync<{ exercise_name: string; sets: number; reps: number; web_link: string | null; muscle_group: string | null }>(
+            'SELECT exercise_name, sets, reps, web_link, muscle_group FROM Exercises WHERE day_id = ?;',
             [day.day_id]
           );
   
@@ -504,8 +508,8 @@ export default function WorkoutDetails() {
           // Insert updated exercises into the log
           const insertExercisePromises = exercises.map((exercise) =>
             db.runAsync(
-              'INSERT INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps, web_link) VALUES (?, ?, ?, ?, ?);',
-              [log.workout_log_id, exercise.exercise_name, exercise.sets, exercise.reps, exercise.web_link]
+              'INSERT INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps, web_link, muscle_group) VALUES (?, ?, ?, ?, ?, ?);',
+              [log.workout_log_id, exercise.exercise_name, exercise.sets, exercise.reps, exercise.web_link, exercise.muscle_group]
             )
           );
   
@@ -519,9 +523,10 @@ export default function WorkoutDetails() {
     }
   };
 
-  const openWebLinkModal = (exercise: { exercise_id: number; web_link: string | null }) => {
+  const openWebLinkModal = (exercise: { exercise_id: number; web_link: string | null; muscle_group: string | null }) => {
     setEditingExercise(exercise);
     setWebLinkInput(exercise.web_link || '');
+    setEditingMuscleGroup(exercise.muscle_group);
     setShowWebLinkModal(true);
   };
 
@@ -529,6 +534,7 @@ export default function WorkoutDetails() {
     setShowWebLinkModal(false);
     setEditingExercise(null);
     setWebLinkInput('');
+    setEditingMuscleGroup(null);
   };
 
   const handleSaveWebLink = async () => {
@@ -547,8 +553,8 @@ export default function WorkoutDetails() {
 
     try {
       await db.runAsync(
-        'UPDATE Exercises SET web_link = ? WHERE exercise_id = ?',
-        [trimmedLink || null, editingExercise.exercise_id]
+        'UPDATE Exercises SET web_link = ?, muscle_group = ? WHERE exercise_id = ?',
+        [trimmedLink || null, editingMuscleGroup, editingExercise.exercise_id]
       );
       
       // Update logs as well
@@ -583,6 +589,16 @@ export default function WorkoutDetails() {
   const handleExportWorkout = (workoutId: number) => {
     exportWorkout(db, workoutId);
   };
+
+  const muscleGroupData = [
+    { label: t('po'), value: null },
+    { label: 'Chest', value: 'chest' },
+    { label: 'Back', value: 'back' },
+    { label: 'Shoulders', value: 'shoulders' },
+    { label: 'Arms', value: 'arms' },
+    { label: 'Abs', value: 'abs' },
+    { label: 'Legs', value: 'legs' },
+  ];
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
@@ -828,6 +844,32 @@ export default function WorkoutDetails() {
           autoCapitalize="none"
           keyboardType="url"
         />
+        <Text style={[styles.inputLabel, { color: theme.text, marginTop: 10 }]}>{t('muscleGroup')}</Text>
+        <FlatList
+          data={muscleGroupData}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          keyExtractor={(item) => item.label}
+          renderItem={({ item }) => {
+            const isSelected = newExerciseMuscleGroup === item.value;
+            
+            return (
+              <TouchableOpacity
+                style={[
+                  styles.muscleGroupButton,
+                  { 
+                    backgroundColor: isSelected ? theme.buttonBackground : theme.card,
+                    borderColor: theme.border,
+                  }
+                ]}
+                onPress={() => setNewExerciseMuscleGroup(item.value)}
+              >
+                <Text style={{ color: isSelected ? theme.buttonText : theme.text }}>{t(item.label)}</Text>
+              </TouchableOpacity>
+            );
+          }}
+          style={{ marginBottom: 15 }}
+        />
         <TouchableOpacity style={[styles.saveButton, { backgroundColor: theme.buttonBackground }]} onPress={addExercise}>
           <Text style={[styles.saveButtonText, { color: theme.buttonText }]}>{t('Save')}</Text>
         </TouchableOpacity>
@@ -851,6 +893,32 @@ export default function WorkoutDetails() {
                 onChangeText={setWebLinkInput}
                 autoCapitalize="none"
                 keyboardType="url"
+            />
+            <Text style={[styles.inputLabel, { color: theme.text, marginTop: 15 }]}>{t('muscleGroup')}</Text>
+            <FlatList
+              data={muscleGroupData}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              keyExtractor={(item) => item.label}
+              renderItem={({ item }) => {
+                const isSelected = editingMuscleGroup === item.value;
+                
+                return (
+                  <TouchableOpacity
+                    style={[
+                      styles.muscleGroupButton,
+                      { 
+                        backgroundColor: isSelected ? theme.buttonBackground : theme.card,
+                        borderColor: theme.border,
+                      }
+                    ]}
+                    onPress={() => setEditingMuscleGroup(item.value)}
+                  >
+                    <Text style={{ color: isSelected ? theme.buttonText : theme.text }}>{t(item.label)}</Text>
+                  </TouchableOpacity>
+                );
+              }}
+              style={{ marginBottom: 15 }}
             />
             <TouchableOpacity style={[styles.saveButton, { backgroundColor: theme.buttonBackground }]} onPress={handleSaveWebLink}>
                 <Text style={[styles.saveButtonText, { color: theme.buttonText }]}>{t('Save')}</Text>
@@ -1054,6 +1122,15 @@ const styles = StyleSheet.create({
     exportButton: {
       alignItems: 'center',
       marginBottom: 15,
+    },
+    muscleGroupButton: {
+      paddingVertical: 8,
+      paddingHorizontal: 12,
+      borderRadius: 20,
+      borderWidth: 1,
+      marginRight: 10,
+      justifyContent: 'center',
+      alignItems: 'center',
     },
   });
   
