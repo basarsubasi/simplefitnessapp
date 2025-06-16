@@ -84,13 +84,18 @@ export default function CreateWorkout() {
   const navigation = useNavigation<WorkoutListNavigationProp>();
 
   const muscleGroupData = [
-    { label: 'None', value: null },
-    { label: 'Chest', value: 'chest' },
-    { label: 'Back', value: 'back' },
-    { label: 'Shoulders', value: 'shoulders' },
-    { label: 'Arms', value: 'arms' },
-    { label: 'Abs', value: 'abs' },
-    { label: 'Legs', value: 'legs' },
+    { label: t('None'), value: null },
+    { label: t('Chest'), value: 'chest' },
+    { label: t('Back'), value: 'back' },
+    { label: t('Shoulders'), value: 'shoulders' },
+    { label: t('Biceps'), value: 'biceps' },
+    { label: t('Triceps'), value: 'triceps' },
+    { label: t('Forearms'), value: 'forearms' },
+    { label: t('Abs'), value: 'abs' },
+    { label: t('Glutes'), value: 'glutes' },
+    { label: t('Hamstrings'), value: 'hamstrings' },
+    { label: t('Calves'), value: 'calves' },
+    { label: t('Quads'), value: 'quads' },
   ];
 
   const addDay = () => {
