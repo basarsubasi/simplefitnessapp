@@ -358,12 +358,12 @@
       "About Reps Progression": "Informazioni sul Grafico Ripetizioni",
       "repsGraphExplanation": "Questo grafico mostra le ripetizioni che hai fatto per i singoli set. Ogni linea e colore rappresenta un numero di set diverso come il Grafico Set ma con l'asse y che indica le ripetizioni invece dei pesi. Perfetto per monitorare gli esercizi a corpo libero!",
 
-      "workoutDetailsTip": "Suggerimento: puoi aggiungere, modificare o eliminare un collegamento web a un esercizio toccando il suo nome.",
+      "workoutDetailsTip": "Suggerimento: puoi vedere informazioni aggiuntive su un esercizio toccando il suo nome.",
 "webLink": "Collegamento web",
 "webLinkPlaceholder": "https://example.com (facoltativo)",
 "invalidLinkTitle": "Collegamento non valido",
 "invalidLinkMessage": "Il collegamento deve iniziare con \"http://\" o \"https://\".",
-"exerciseDetails": "Aggiungi un collegamento web",
+"exerciseDetails": "Dettagli esercizio",
 "fileNotSelectedError": "Nessun file selezionato o file non valido.",
 "workoutAlreadyExistsError": "Un allenamento con questo nome esiste già."
         

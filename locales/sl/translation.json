@@ -362,12 +362,12 @@
 
 
 
-      "workoutDetailsTip": "Nasvet: Z dotikom imena vaje lahko dodate, urejate ali izbrišete spletno povezavo.",
+      "workoutDetailsTip": "Nasvet: Lahko si ogledate dodatne informacije o vaji s pritiskom na njeno ime.",
 "webLink": "Spletna povezava",
 "webLinkPlaceholder": "https://example.com (neobvezno)",
 "invalidLinkTitle": "Neveljavna povezava",
 "invalidLinkMessage": "Povezava se mora začeti z \"http://\" ali \"https://\".",
-"exerciseDetails": "Dodaj spletno povezavo",
+"exerciseDetails": "Podrobnosti vaje",
 "fileNotSelectedError": "Ni izbranega datoteke ali datoteke ni veljavna.",
 "workoutAlreadyExistsError": "Trening z tem imenom že obstaja."
         
