@@ -732,12 +732,12 @@ export default function WorkoutDetails() {
                       <Ionicons name="link-outline" size={22} color={theme.text} />
                     </TouchableOpacity>
                   )}
-                  <View style={{ flex: 1 }}>
+                  <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}>
                     <AutoSizeText
                       fontSize={18}
                       numberOfLines={3}
                       mode={ResizeTextMode.max_lines}
-                      style={[styles.exerciseName, { color: theme.text }]}
+                      style={[styles.exerciseName, { color: theme.text, marginRight: 8 }]}
                     >
                       {exercise.exercise_name}
                     </AutoSizeText>
@@ -1028,7 +1028,6 @@ const styles = StyleSheet.create({
       maxWidth: '100%',  // Prevent overflow
     },
     exerciseName: {
-      flex: 1,  // Allow text to use remaining space
       fontWeight: '700',
       color: '#000000',
     },
@@ -1037,7 +1036,6 @@ const styles = StyleSheet.create({
       alignItems: 'flex-end',
     },
     muscleGroupBadge: {
-      marginTop: 8,
       paddingTop: 4,
       paddingHorizontal: 10,
       borderRadius: 15,
