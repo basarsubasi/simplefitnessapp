@@ -369,12 +369,12 @@
 
 
 
-      "workoutDetailsTip": "Tip: Du kan legge til, redigere eller slette en weblink for en øvelse ved å trykke på navnet.",
+      "workoutDetailsTip": "Tip: Du kan se ekstra informasjon om en øvelse ved å trykke på navnet.",
 "webLink": "Weblink",
 "webLinkPlaceholder": "https://example.com (valgfritt)",
 "invalidLinkTitle": "Ugyldig lenke",
 "invalidLinkMessage": "Lenken må begynne med \"http://\" eller \"https://\".",
-"exerciseDetails": "Legg til weblink",
+"exerciseDetails": "Øvelsesdetaljer",
 "fileNotSelectedError": "Ingen fil valgt eller filen er ugyldig.",
 "workoutAlreadyExistsError": "En treningsøkt med dette navnet eksisterer allerede."
 

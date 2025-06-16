@@ -365,12 +365,12 @@
 
 
 
-      "workoutDetailsTip": "Tip: Je kunt een weblink aan een oefening toevoegen, bewerken of verwijderen door op de naam te tikken.",
+      "workoutDetailsTip": "Tip: Je kunt zie extra informatie over een oefening door op de naam te tikken.",
 "webLink": "Weblink",
 "webLinkPlaceholder": "https://example.com (optioneel)",
 "invalidLinkTitle": "Ongeldige link",
 "invalidLinkMessage": "De link moet beginnen met \"http://\" of \"https://\".",
-"exerciseDetails": "Weblink toevoegen",
+"exerciseDetails": "Oefening Details",
 "fileNotSelectedError": "Geen bestand geselecteerd of bestand is ongeldig.",
 "workoutAlreadyExistsError": "Een training met deze naam bestaat al."
     
