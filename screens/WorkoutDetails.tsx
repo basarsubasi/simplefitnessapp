@@ -591,13 +591,18 @@ export default function WorkoutDetails() {
   };
 
   const muscleGroupData = [
-    { label: t('po'), value: null },
-    { label: 'Chest', value: 'chest' },
-    { label: 'Back', value: 'back' },
-    { label: 'Shoulders', value: 'shoulders' },
-    { label: 'Arms', value: 'arms' },
-    { label: 'Abs', value: 'abs' },
-    { label: 'Legs', value: 'legs' },
+    { label: t('None'), value: null },
+    { label: t('Chest'), value: 'chest' },
+    { label: t('Back'), value: 'back' },
+    { label: t('Shoulders'), value: 'shoulders' },
+    { label: t('Biceps'), value: 'biceps' },
+    { label: t('Triceps'), value: 'triceps' },
+    { label: t('Forearms'), value: 'forearms' },
+    { label: t('Abs'), value: 'abs' },
+    { label: t('Glutes'), value: 'glutes' },
+    { label: t('Hamstrings'), value: 'hamstrings' },
+    { label: t('Calves'), value: 'calves' },
+    { label: t('Quads'), value: 'quads' },
   ];
 
   return (
@@ -1127,8 +1132,12 @@ const styles = StyleSheet.create({
       paddingVertical: 8,
       paddingHorizontal: 12,
       borderRadius: 20,
+      height: 40,
+      elevation: 1,
+      shadowOpacity: 0,
       borderWidth: 1,
       marginRight: 10,
+      marginBottom: 25,
       justifyContent: 'center',
       alignItems: 'center',
     },
