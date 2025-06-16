@@ -9,7 +9,9 @@ import { Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { useTheme } from '../context/ThemeContext';
 import { useTranslation } from 'react-i18next';
-import { addWebLinkColumn } from '../utils/linkUtils';
+import { addWebLinkColumn } from '../utils/exerciseDetailUtils';
+import { addMuscleGroupColumn } from '../utils/exerciseDetailUtils';
+
 
 
 
@@ -26,6 +28,7 @@ export default function Workouts() {
     React.useCallback(() => {
       const addWebLinkColumntoworkouts = async () => {
         await addWebLinkColumn(db);
+        await addMuscleGroupColumn(db);
         db.withTransactionAsync(getWorkouts);
       };
       addWebLinkColumntoworkouts();
