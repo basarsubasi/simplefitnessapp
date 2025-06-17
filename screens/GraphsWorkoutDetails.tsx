@@ -16,7 +16,7 @@ import { useSQLiteContext } from 'expo-sqlite';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '../context/ThemeContext';
 import { useTranslation } from 'react-i18next';
-import { LineChart } from 'react-native-chart-kit';
+import { LineChart, BarChart } from 'react-native-chart-kit';
 import { useSettings } from '../context/SettingsContext';
 import StickyYAxis from '../components/StickyYAxis';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -42,7 +42,7 @@ type LogData = {
   dayName?: string; // For time data
 };
 type TimeFrame = 'week' | 'month' | 'year' | 'all';
-type CalculationType = 'CES' | '1RM' | 'Sets' | 'Reps' | 'Time';
+type CalculationType = 'CES' | '1RM' | 'Sets' | 'Reps' | 'Time' | 'MuscleDistribution';
 type GraphMode = 'Exercise' | 'Time' | 'Overall';
 type ProcessedDataPoint = {
   x: string; // Date string for display
@@ -96,6 +96,12 @@ type WorkoutCESData = {
   total_ces: number;
 };
 
+// Add new type for Muscle Group Distribution data
+type MuscleDistributionData = {
+  muscle_group: string;
+  exercise_count: number;
+};
+
 export default function GraphsWorkoutDetails() {
   const navigation = useNavigation<GraphsNavigationProp>();
   const db = useSQLiteContext();
@@ -144,6 +150,7 @@ export default function GraphsWorkoutDetails() {
   const [logData, setLogData] = useState<LogData[]>([]);
   const [timeLogData, setTimeLogData] = useState<TimeLogData[]>([]);
   const [workoutCESData, setWorkoutCESData] = useState<WorkoutCESData[]>([]);
+  const [muscleDistributionData, setMuscleDistributionData] = useState<MuscleDistributionData[]>([]);
   const [chartData, setChartData] = useState<ProcessedDataPoint[]>([]);
   const [setsData, setSetsData] = useState<SetProgressData[]>([]);
 
@@ -272,6 +279,8 @@ export default function GraphsWorkoutDetails() {
         fetchTimeData();
       } else if (calculationType === 'CES') {
         fetchWorkoutCESData();
+      } else if (calculationType === 'MuscleDistribution') {
+        fetchMuscleGroupDistributionData();
       }
     } else if (selectedExercise) {
       fetchData();
@@ -283,6 +292,8 @@ export default function GraphsWorkoutDetails() {
       setCalculationType('Sets');
     } else if (graphMode === 'Time') {
       setCalculationType('Time');
+    } else if (graphMode === 'Overall') {
+      setCalculationType('Sets');
     }
     // No action for 'Overall' yet as it has no metrics.
   }, [graphMode]);
@@ -304,6 +315,14 @@ export default function GraphsWorkoutDetails() {
           setChartData([]);
           setSetsData([]);
         }
+      } else if (calculationType === 'MuscleDistribution') {
+        // For muscle distribution, we don't need to process it into `chartData`
+        // as the bar chart will consume `muscleDistributionData` directly.
+        // We just need to make sure we clear other chart data.
+        if (muscleDistributionData.length === 0) {
+          setChartData([]);
+          setSetsData([]);
+        }
       }
     } else { // Exercise mode
       if (logData.length > 0) {
@@ -313,7 +332,7 @@ export default function GraphsWorkoutDetails() {
         setSetsData([]);
       }
     }
-  }, [logData, timeLogData, workoutCESData, calculationType, timeFrame, graphMode]);
+  }, [logData, timeLogData, workoutCESData, muscleDistributionData, calculationType, timeFrame, graphMode]);
 
   const fetchWorkoutsWithLogs = async () => {
     setIsInitialLoading(true);
@@ -515,6 +534,29 @@ export default function GraphsWorkoutDetails() {
       setWorkoutCESData(result);
     } catch (error) {
       console.error('Error fetching workout CES data:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchMuscleGroupDistributionData = async () => {
+    setIsLoading(true);
+    try {
+      const result = await db.getAllAsync<MuscleDistributionData>(
+        `SELECT
+            COALESCE(e.muscle_group, 'Unspecified') as muscle_group,
+            COUNT(e.exercise_id) as exercise_count
+         FROM Exercises e
+         JOIN Days d ON e.day_id = d.day_id
+         JOIN Workouts w ON d.workout_id = w.workout_id
+         WHERE w.workout_name = ?
+         GROUP BY COALESCE(e.muscle_group, 'Unspecified')
+         ORDER BY exercise_count DESC;`,
+        [selectedWorkout]
+      );
+      setMuscleDistributionData(result);
+    } catch (error) {
+      console.error('Error fetching muscle group distribution data:', error);
     } finally {
       setIsLoading(false);
     }
@@ -918,6 +960,48 @@ export default function GraphsWorkoutDetails() {
     }
   };
 
+  const getChartTitle = () => {
+    if (graphMode === 'Exercise') {
+        switch (calculationType) {
+            case 'CES': return t('Combined Effort Score');
+            case '1RM': return t('Estimated 1RM');
+            case 'Sets': return t('SetsGraph');
+            case 'Reps': return t('RepsGraph');
+            default: return '';
+        }
+    }
+    if (graphMode === 'Time') {
+        switch (calculationType) {
+            case 'Time': return t('TimeGraph');
+            case 'CES': return t('Workout Volume');
+            case 'MuscleDistribution': return t('Muscle Distribution');
+            default: return '';
+        }
+    }
+    return '';
+  };
+
+  const getChartExplanation = () => {
+    if (graphMode === 'Exercise') {
+        switch (calculationType) {
+            case 'CES': return { title: t('About CES'), text: t('CESExplanation') };
+            case '1RM': return { title: t('About 1RM'), text: t('1RMExplanation') };
+            case 'Sets': return { title: t('About Sets Progression'), text: t('setsGraphExplanation') };
+            case 'Reps': return { title: t('About Reps Progression'), text: t('repsGraphExplanation') };
+            default: return { title: '', text: '' };
+        }
+    }
+    if (graphMode === 'Time') {
+        switch (calculationType) {
+            case 'Time': return { title: t('About Completion Time'), text: t('timeGraphExplanation') };
+            case 'CES': return { title: t('About Workout Volume'), text: t('workoutVolumeExplanation') };
+            case 'MuscleDistribution': return { title: t('About Muscle Distribution'), text: t('muscleDistributionExplanation') };
+            default: return { title: '', text: '' };
+        }
+    }
+    return { title: '', text: '' };
+  };
+
   const handleDataPointClick = async (data: any) => {
     if (graphMode === 'Time') {
       // For time chart, fetch the workout session details
@@ -1198,6 +1282,41 @@ export default function GraphsWorkoutDetails() {
               {t('RepsCapital')}
             </Text>
           </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[
+              styles.toggleButton,
+              calculationType === 'MuscleDistribution' && styles.toggleButtonActive,
+              {
+                backgroundColor:
+                  calculationType === 'MuscleDistribution'
+                    ? theme.buttonBackground
+                    : theme.card,
+              },
+            ]}
+            onPress={() => setCalculationType('MuscleDistribution')}
+          >
+            <Ionicons
+              name="analytics"
+              size={20}
+              color={
+                calculationType === 'MuscleDistribution' ? theme.buttonText : theme.text
+              }
+            />
+            <Text
+              style={[
+                styles.toggleText,
+                {
+                  color:
+                    calculationType === 'MuscleDistribution'
+                      ? theme.buttonText
+                      : theme.text,
+                },
+              ]}
+            >
+              {t('Distribution')}
+            </Text>
+          </TouchableOpacity>
         </View>
       );
     }
@@ -1271,6 +1390,40 @@ export default function GraphsWorkoutDetails() {
               ]}
             >
               {t('Volume')}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.toggleButton,
+              calculationType === 'MuscleDistribution' && styles.toggleButtonActive,
+              {
+                backgroundColor:
+                  calculationType === 'MuscleDistribution'
+                    ? theme.buttonBackground
+                    : theme.card,
+              },
+            ]}
+            onPress={() => setCalculationType('MuscleDistribution')}
+          >
+            <Ionicons
+              name="analytics"
+              size={20}
+              color={
+                calculationType === 'MuscleDistribution' ? theme.buttonText : theme.text
+              }
+            />
+            <Text
+              style={[
+                styles.toggleText,
+                {
+                  color:
+                    calculationType === 'MuscleDistribution'
+                      ? theme.buttonText
+                      : theme.text,
+                },
+              ]}
+            >
+              {t('Distribution')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -1449,13 +1602,14 @@ export default function GraphsWorkoutDetails() {
       backgroundColor: theme.card,
       backgroundGradientFrom: theme.card,
       backgroundGradientTo: theme.card,
-      decimalPlaces: 1, 
-      color: (opacity = 1) => `rgba(255, 111, 21, ${opacity})`, // Default line color, overridden by dataset
+      backgroundGradientFromOpacity: 1,
+      backgroundGradientToOpacity: 1,
+      color: (opacity = 1) => `rgba(107, 107, 255, ${opacity})`, // Default line color, overridden by dataset
       labelColor: (opacity = 1) => theme.text, 
       style: { borderRadius: 16 },
       propsForDots: { r: '6', strokeWidth: '4' },
-      fillShadowGradientFrom: `rgba(255, 111, 21, 0.15)`,
-      fillShadowGradientTo: `rgba(255, 111, 21, 0.02)`,
+      fillShadowGradientFrom: `rgba(107, 107, 255, 0.15)`,
+      fillShadowGradientTo: `rgba(107, 107, 255, 0.02)`,
       fillShadowGradientFromOpacity: 0.5,
       fillShadowGradientToOpacity: 0.1,
       useShadowColorFromDataset: false,
@@ -1570,15 +1724,17 @@ export default function GraphsWorkoutDetails() {
       backgroundColor: theme.card,
       backgroundGradientFrom: theme.card,
       backgroundGradientTo: theme.card,
-      decimalPlaces: 0,
-      color: (opacity = 1) => `rgba(75, 192, 192, ${opacity})`,
+      backgroundGradientFromOpacity: 1,
+      backgroundGradientToOpacity: 1,
+      color: (opacity = 1) => `rgba(0, 171, 142, ${opacity})`, 
       labelColor: (opacity = 1) => theme.text,
       style: { borderRadius: 16 },
       propsForDots: { r: '6', strokeWidth: '4' },
-      fillShadowGradientFrom: `rgba(75, 192, 192, 0.15)`,
-      fillShadowGradientTo: `rgba(75, 192, 192, 0.02)`,
+      fillShadowGradientFrom: `rgba(0, 171, 142, 0.15)`,
+      fillShadowGradientTo: `rgba(0, 171, 142, 0.02)`,
       fillShadowGradientFromOpacity: 0.5,
       fillShadowGradientToOpacity: 0.1,
+
       useShadowColorFromDataset: false,
       withShadow: true,
       withInnerLines: true,
@@ -1802,6 +1958,68 @@ export default function GraphsWorkoutDetails() {
     );
   };
 
+  const renderMuscleDistributionChart = () => {
+    if (muscleDistributionData.length === 0) {
+      return (
+        <View style={styles.noDataContainer}>
+          <Ionicons name="pie-chart-outline" size={60} color={theme.text} style={{ opacity: 0.5 }} />
+          <Text style={[styles.noDataText, { color: theme.text }]}>
+            {t('No data available for the selected criteria')}
+          </Text>
+        </View>
+      );
+    }
+
+    const labels = muscleDistributionData.map(d => d.muscle_group);
+    const data = muscleDistributionData.map(d => d.exercise_count);
+    const chartWidth = getChartWidth(labels.length);
+
+    const chartConfig = {
+      backgroundGradientFrom: theme.card,
+      backgroundGradientTo: theme.card,
+      color: (opacity = 1) => `rgba(255, 114, 38, ${opacity})`,
+      labelColor: (opacity = 1) => theme.text,
+      barPercentage: 0.7,
+      decimalPlaces: 0,
+      style: {
+        borderRadius: 16,
+      },
+      fillShadowGradientFrom: 'rgba(255, 114, 38, 1)',
+      fillShadowGradientTo: 'rgba(255, 114, 38, 1)',
+      fillShadowGradientFromOpacity: 1,
+      fillShadowGradientToOpacity: 1,
+      legend: [t('Muscle Distribution')],
+    };
+    
+
+    return (
+      <View style={styles.chartContainer}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <BarChart
+            data={{
+              labels,
+              datasets: [{ data }],
+            }}
+            width={chartWidth}
+            height={220}
+            chartConfig={chartConfig}
+            verticalLabelRotation={30}
+            fromZero
+            showValuesOnTopOfBars={false}
+            style={styles.chart}
+            yAxisLabel=""
+            yAxisSuffix=""
+          />
+        </ScrollView>
+        {labels.length > 5 && (
+          <Text style={[styles.scrollHint, { color: theme.text }]}>
+            {t('horizontalScrollHint')} →
+          </Text>
+        )}
+      </View>
+    );
+  };
+
   // Define renderChart AFTER the individual chart rendering functions
   const renderChart = () => {
     if (graphMode === 'Time') {
@@ -1809,6 +2027,8 @@ export default function GraphsWorkoutDetails() {
         return renderTimeChart();
       } else if (calculationType === 'CES') {
         return renderVolumeChart();
+      } else if (calculationType === 'MuscleDistribution') {
+        return renderMuscleDistributionChart();
       }
     } else if (calculationType === 'Sets' || calculationType === 'Reps') {
       return renderSetsChart();
@@ -1863,10 +2083,7 @@ export default function GraphsWorkoutDetails() {
           <View style={[styles.tooltipContainer, { backgroundColor: theme.card, borderColor: theme.border }]}>
             <View style={styles.tooltipHeader}>
               <Text style={[styles.tooltipTitle, { color: theme.text }]}>
-                {graphMode === 'Time' 
-                  ? `${selectedPoint.dayName} - ${formattedDate}`
-                  : `${selectedDay} - ${formattedDate}`
-                }
+                {getChartTitle()}
               </Text>
               <TouchableOpacity onPress={closeTooltip}>
                 <Ionicons name="close" size={24} color={theme.text} />
@@ -1875,6 +2092,9 @@ export default function GraphsWorkoutDetails() {
             
             {graphMode === 'Time' ? (
               <>
+                <Text style={[styles.tooltipSubtitle, { color: theme.text, marginBottom: 5 }]}>
+                  {selectedPoint.dayName} - {formattedDate}
+                </Text>
                 <Text style={[styles.tooltipSubtitle, { color: theme.text }]}>
                   {calculationType === 'Time'
                     ? `${t('completionTime')}: ${formatTimeFromSeconds(selectedPoint.y)}`
@@ -1925,8 +2145,8 @@ export default function GraphsWorkoutDetails() {
               </>
             ) : calculationType === 'Sets' || calculationType === 'Reps' ? (
               <View style={styles.tooltipSetsList}>
-                <Text style={[styles.tooltipSetsHeader, { color: theme.text }]}>
-                      {selectedExercise}:
+                <Text style={[styles.tooltipSetsHeader, { color: theme.text, marginBottom: 15 }]}>
+                      {selectedExercise} - {formattedDate}
                  </Text>
                 <FlatList
                   data={dateData}
@@ -1944,6 +2164,9 @@ export default function GraphsWorkoutDetails() {
               </View>
             ) : (
               <>
+                <Text style={[styles.tooltipSubtitle, { color: theme.text, marginBottom: 5 }]}>
+                  {selectedExercise} - {formattedDate}
+                </Text>
                 <Text style={[styles.tooltipSubtitle, { color: theme.text }]}>
                   {calculationType === 'CES' 
                     ? `${t('CES')}: ${selectedPoint.y.toFixed(1)}`
@@ -1953,7 +2176,7 @@ export default function GraphsWorkoutDetails() {
                 
                 <View style={styles.tooltipSetsList}>
                   <Text style={[styles.tooltipSetsHeader, { color: theme.text }]}>
-                    {selectedExercise}:
+                    {t('Sets Logged')}:
                   </Text>
                   <FlatList
                     data={selectedPoint.originalData}
@@ -2300,13 +2523,7 @@ export default function GraphsWorkoutDetails() {
               {/* Graph Section */}
               <View style={styles.graphSection}>
                 <Text style={[styles.sectionTitle, { color: theme.text }]}>
-                  {calculationType === 'CES'
-                    ? t('Combined Effort Score')
-                    : calculationType === '1RM'
-                    ? t('Estimated 1RM')
-                    : calculationType === 'Sets'
-                    ? t('SetsGraph')
-                    : t('RepsGraph')}
+                  {getChartTitle()}
                 </Text>
 
                 {isLoading ? (
@@ -2330,28 +2547,16 @@ export default function GraphsWorkoutDetails() {
                   ]}
                 >
                   <Text style={[styles.infoTitle, { color: theme.text }]}>
-                    {calculationType === 'CES'
-                      ? t('About CES')
-                      : calculationType === '1RM'
-                      ? t('About 1RM')
-                      : calculationType === 'Sets'
-                      ? t('About Sets Progression')
-                      : t('About Reps Progression')}
+                    {getChartExplanation().title}
                   </Text>
                   <Text style={[styles.infoText, { color: theme.text }]}>
-                    {calculationType === 'CES'
-                      ? t('CESExplanation')
-                      : calculationType === '1RM'
-                      ? t('1RMExplanation')
-                      : calculationType === 'Sets'
-                      ? t('setsGraphExplanation')
-                      : t('repsGraphExplanation')}
+                    {getChartExplanation().text}
                   </Text>
                 </View>
               </View>
 
               {/* Timeframe selector */}
-              {renderTimeFrameButtons()}
+              {calculationType !== 'MuscleDistribution' && renderTimeFrameButtons()}
 
 
             </>
@@ -2363,7 +2568,7 @@ export default function GraphsWorkoutDetails() {
               {/* Graph Section */}
               <View style={styles.graphSection}>
                 <Text style={[styles.sectionTitle, { color: theme.text }]}>
-                  {calculationType === 'Time' ? t('TimeGraph') : t('Workout Volume')}
+                  {getChartTitle()}
                 </Text>
 
                 {isLoading ? (
@@ -2387,16 +2592,16 @@ export default function GraphsWorkoutDetails() {
                   ]}
                 >
                   <Text style={[styles.infoTitle, { color: theme.text }]}>
-                    {calculationType === 'Time' ? t('About Completion Time') : t('About Workout Volume')}
+                    {getChartExplanation().title}
                   </Text>
                   <Text style={[styles.infoText, { color: theme.text }]}>
-                    {calculationType === 'Time' ? t('timeGraphExplanation') : t('workoutVolumeExplanation')}
+                    {getChartExplanation().text}
                   </Text>
                 </View>
               </View>
 
               {/* Timeframe selector */}
-              {renderTimeFrameButtons()}
+              {calculationType !== 'MuscleDistribution' && renderTimeFrameButtons()}
 
 
             </>
@@ -2418,7 +2623,7 @@ export default function GraphsWorkoutDetails() {
                 </View>
               </View>
                {/* Timeframe selector */}
-               {renderTimeFrameButtons()}
+               {calculationType !== 'MuscleDistribution' && renderTimeFrameButtons()}
             </>
           )}
 
