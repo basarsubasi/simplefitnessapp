@@ -31,6 +31,7 @@ import { useTheme } from '../context/ThemeContext';
 import { useTranslation } from 'react-i18next';
 import { useNotifications } from '../utils/useNotifications';
 import { useRecurringWorkouts } from '../utils/recurringWorkoutUtils';
+import { addMuscleGroupToWeightLog } from '../utils/exerciseDetailUtils';
 
 type MyCalendarNavigationProp = StackNavigationProp<
   WorkoutLogStackParamList,
@@ -103,6 +104,7 @@ export default function MyCalendar() {
     addColumn0();
     addColumn1();
     addColumn2();
+    addMuscleGroupToWeightLog(db);
     // checkRecurringWorkouts();
     setUntrackedWorkoutDetails([]);
   }, []); // Empty dependency array ensures this runs only once
