@@ -827,15 +827,17 @@ export default function StartedWorkoutInterface() {
               exercise_name, 
               set_number, 
               weight_logged, 
-              reps_logged
-            ) VALUES (?, ?, ?, ?, ?, ?);`,
+              reps_logged,
+              muscle_group
+            ) VALUES (?, ?, ?, ?, ?, ?, ?);`,
             [
               workout_log_id,
               set.exercise_id,
               set.exercise_name,
               set.set_number,
               parseFloat(set.weight),
-              set.reps_done
+              set.reps_done,
+              set.muscle_group
             ]
           );
         }

@@ -34,7 +34,7 @@ export default function AllLogs() {
     {}
   );
   const [logs, setLogs] = useState<{
-    [key: string]: { [id: number]: { exerciseName: string; sets: any[], loggedExerciseId: number } };
+    [key: string]: { [compositeKey: string]: { exerciseName: string; sets: any[]; loggedExerciseId: number; muscle_group: string | null; } };
   }>({});
 
   const [datePickerVisible, setDatePickerVisible] = useState<{
@@ -45,6 +45,22 @@ export default function AllLogs() {
     start: Date | null;
     end: Date | null;
   }>({ start: null, end: null });
+
+  const muscleGroupData = [
+    { label: t('Unspecified'), value: null },
+    { label: t('Chest'), value: 'chest' },
+    { label: t('Back'), value: 'back' },
+    { label: t('Shoulders'), value: 'shoulders' },
+    { label: t('Biceps'), value: 'biceps' },
+    { label: t('Triceps'), value: 'triceps' },
+    { label: t('Forearms'), value: 'forearms' },
+    { label: t('Abs'), value: 'abs' },
+    { label: t('Legs'), value: 'legs' },
+    { label:t('Glutes'), value: 'glutes' },
+    { label: t('Hamstrings'), value: 'hamstrings' },
+    { label: t('Calves'), value: 'calves' },
+    { label: t('Quads'), value: 'quads' },
+  ];
 
   useEffect(() => {
     fetchDays();
@@ -111,10 +127,12 @@ export default function AllLogs() {
         weight_logged: number;
         reps_logged: number;
         logged_exercise_id: number;
+        muscle_group: string | null;
       }>(
         `SELECT Workout_Log.workout_name, Weight_Log.exercise_name, 
                 Weight_Log.set_number, Weight_Log.weight_logged, 
-                Weight_Log.reps_logged, Weight_Log.logged_exercise_id
+                Weight_Log.reps_logged, Weight_Log.logged_exercise_id,
+                Weight_Log.muscle_group
          FROM Weight_Log
          INNER JOIN Workout_Log 
          ON Weight_Log.workout_log_id = Workout_Log.workout_log_id
@@ -132,8 +150,9 @@ export default function AllLogs() {
           logged_exercise_id: number;
           sets: number;
           reps: number;
+          muscle_group: string | null;
         }>(
-          `SELECT exercise_name, logged_exercise_id, sets, reps
+          `SELECT exercise_name, logged_exercise_id, sets, reps, muscle_group
            FROM Logged_Exercises
            WHERE workout_log_id = ?
            ORDER BY logged_exercise_id ASC;`,
@@ -144,13 +163,14 @@ export default function AllLogs() {
         
         if (exercisesResult.length > 0) {
           // Create placeholder logs for these exercises
-          const placeholderLogs: { [key: string]: { loggedExerciseId: number; exerciseName: string; sets: any[] } } = {};
+          const placeholderLogs: { [key: string]: { loggedExerciseId: number; exerciseName: string; sets: any[]; muscle_group: string | null; } } = {};
           
           exercisesResult.forEach(exercise => {
             const compositeKey = `${exercise.logged_exercise_id}_${exercise.exercise_name}`;
             placeholderLogs[compositeKey] = {
               loggedExerciseId: exercise.logged_exercise_id,
               exerciseName: exercise.exercise_name,
+              muscle_group: exercise.muscle_group,
               sets: [{ 
                 set_number: 1, 
                 workout_name: 'Workout', 
@@ -170,19 +190,20 @@ export default function AllLogs() {
       }
 
       const groupedLogs = result.reduce((acc, log) => {
-        const { logged_exercise_id, exercise_name, ...setDetails } = log;
+        const { logged_exercise_id, exercise_name, muscle_group, ...setDetails } = log;
         const compositeKey = `${logged_exercise_id}_${exercise_name}`;
         
         if (!acc[compositeKey]) {
           acc[compositeKey] = {
             loggedExerciseId: logged_exercise_id,
             exerciseName: exercise_name,
-            sets: []
+            sets: [],
+            muscle_group: muscle_group
           };
         }
         acc[compositeKey].sets.push(setDetails);
         return acc;
-      }, {} as { [key: string]: { loggedExerciseId: number; exerciseName: string; sets: any[] } });
+      }, {} as { [key: string]: { loggedExerciseId: number; exerciseName: string; sets: any[], muscle_group: string | null } });
 
       setLogs((prev) => ({
         ...prev,
@@ -383,11 +404,22 @@ export default function AllLogs() {
                 </Text>
                 {Object.values(logs[key])
                   .sort((a, b) => a.loggedExerciseId - b.loggedExerciseId)
-                  .map(({ exerciseName, sets, loggedExerciseId }) => (
+                  .map(({ exerciseName, sets, loggedExerciseId, muscle_group }) => {
+                    const muscleGroupInfo = muscleGroupData.find(mg => mg.value === muscle_group);
+                    return(
                     <View key={`${loggedExerciseId}_${exerciseName}`} style={styles.logItem}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', marginBottom: 5 }}>
                       <Text style={[styles.exerciseName, { color: theme.text }]}>
                         {exerciseName}
                       </Text>
+                      {muscleGroupInfo && muscleGroupInfo.value && (
+                        <View style={[styles.muscleGroupBadge, { backgroundColor: theme.card, borderColor: theme.border, marginLeft: 8 }]}>
+                          <Text style={[styles.muscleGroupBadgeText, { color: theme.text }]}>
+                            {muscleGroupInfo.label}
+                          </Text>
+                        </View>
+                      )}
+                      </View>
                       {sets.map((set, index) => (
                         <Text
                           key={index}
@@ -397,7 +429,7 @@ export default function AllLogs() {
                         </Text>
                       ))}
                     </View>
-                  ))}
+                  )})}
           </View>
         )}
       </View>
@@ -587,6 +619,18 @@ const styles = StyleSheet.create({
   completionTime: {
     fontSize: 14,
     opacity: 0.8,
+  },
+  muscleGroupBadge: {
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    borderRadius: 15,
+    borderWidth: 1,
+    alignSelf: 'flex-start',
+    marginLeft: 8,
+  },
+  muscleGroupBadgeText: {
+      fontSize: 12,
+      fontWeight: '600',
   },
 });
 

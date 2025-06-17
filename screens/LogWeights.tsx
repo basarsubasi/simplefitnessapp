@@ -12,7 +12,6 @@ import { useSQLiteContext } from 'expo-sqlite';
 import { WorkoutLog, LoggedExercise } from '../utils/types';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useSettings } from '../context/SettingsContext';
-
 import { useTheme } from '../context/ThemeContext';
 import { KeyboardAwareFlatList, KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useTranslation } from 'react-i18next';
@@ -35,6 +34,23 @@ export default function LogWeights() {
   const [reps, setReps] = useState<{ [key: string]: string }>({});
   const [exerciseSets, setExerciseSets] = useState<{ [key: string]: number[] }>({});
   const { weightFormat, dateFormat } = useSettings();
+
+  const muscleGroupData = [
+    { label: t('Unspecified'), value: null },
+    { label: t('Chest'), value: 'chest' },
+    { label: t('Back'), value: 'back' },
+    { label: t('Shoulders'), value: 'shoulders' },
+    { label: t('Biceps'), value: 'biceps' },
+    { label: t('Triceps'), value: 'triceps' },
+    { label: t('Forearms'), value: 'forearms' },
+    { label: t('Abs'), value: 'abs' },
+    { label: t('Legs'), value: 'legs' },
+    { label: t('Glutes'), value: 'glutes' },
+    { label: t('Hamstrings'), value: 'hamstrings' },
+    { label: t('Calves'), value: 'calves' },
+    { label: t('Quads'), value: 'quads' },
+  ];
+
   useEffect(() => {
     const passedWorkoutLogId = route.params?.workout_log_id;
     if (passedWorkoutLogId) {
@@ -202,8 +218,8 @@ export default function LogWeights() {
 
             await db.runAsync(
               `INSERT INTO Weight_Log 
-               (workout_log_id, logged_exercise_id, exercise_name, set_number, weight_logged, reps_logged)
-               VALUES (?, ?, ?, ?, ?, ?);`,
+               (workout_log_id, logged_exercise_id, exercise_name, set_number, weight_logged, reps_logged, muscle_group)
+               VALUES (?, ?, ?, ?, ?, ?, ?);`,
               [
                 selectedWorkout.workout_log_id,
                 exercise.logged_exercise_id,
@@ -211,6 +227,7 @@ export default function LogWeights() {
                 setNumber,
                 weight,
                 repsCount,
+                exercise.muscle_group || null,
               ]
             );
           }
@@ -227,9 +244,19 @@ export default function LogWeights() {
 
 
   const renderExercise = (exercise: LoggedExercise) => {
+    const muscleGroupInfo = muscleGroupData.find(mg => mg.value === exercise.muscle_group);
     return (
       <View style={[styles.exerciseContainer, { backgroundColor: theme.card, borderWidth: 1, borderColor: theme.border }]}>
-        <Text style={[styles.exerciseTitle, { color: theme.text }]}>{exercise.exercise_name}</Text>
+        <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap' }}>
+          <Text style={[styles.exerciseTitle, { color: theme.text }]}>{exercise.exercise_name}</Text>
+          {muscleGroupInfo && muscleGroupInfo.value && (
+            <View style={[styles.muscleGroupBadge, { backgroundColor: theme.card, borderColor: theme.border, marginLeft: 8 }]}>
+              <Text style={[styles.muscleGroupBadgeText, { color: theme.text }]}>
+                {muscleGroupInfo.label}
+              </Text>
+            </View>
+          )}
+        </View>
         <View style={styles.labelsRow}>
           <Text style={[styles.label, { color: theme.text }]}>{t('repsPlaceholder')}</Text>
           <Text style={[styles.label, { color: theme.text }]}>{t('Weight')} ({weightFormat})</Text>
@@ -421,8 +448,6 @@ const styles = StyleSheet.create({
   exerciseTitle: {
     fontSize: 22,
     fontWeight: 'bold',
-    marginBottom: 20,
-    marginTop: 0,
     textAlign: 'center',
   },
   labelsRow: {
@@ -476,5 +501,16 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#666666',
     fontSize: 16,
+  },
+  muscleGroupBadge: {
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    borderRadius: 15,
+    borderWidth: 1,
+    alignSelf: 'center',
+  },
+  muscleGroupBadgeText: {
+      fontSize: 12,
+      fontWeight: '600',
   },
 });
