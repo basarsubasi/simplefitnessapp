@@ -26,6 +26,8 @@ export interface Workout {
     exercise_name: string;
     sets: number;
     reps: number;
+    muscle_group: string | null;
+    web_link: string | null;
   }
   
 // Interface for the Workout_Log table
@@ -43,6 +45,8 @@ export interface LoggedExercise {
   exercise_name: string; // Exercise name (copied at the time of logging)
   sets: number; // Sets count (copied at the time of logging)
   reps: number; // Reps count (copied at the time of logging)
+  muscle_group: string | null; // Muscle group (copied at the time of logging)
+  web_link: string | null; // Web link (copied at the time of logging)
 }
 
 // Interface for the Weight_Log table
@@ -54,6 +58,8 @@ export interface WeightLog {
   set_number: number; // Which set (e.g., 1st set, 2nd set, etc.)
   weight_logged: number; // Weight logged for that set
   reps_logged: number; // Reps performed for that set
+  muscle_group: string | null; // Muscle group (copied at the time of logging)
+  web_link: string | null; // Web link (copied at the time of logging)
 }
 
 
