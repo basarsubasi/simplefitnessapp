@@ -1282,41 +1282,6 @@ export default function GraphsWorkoutDetails() {
               {t('RepsCapital')}
             </Text>
           </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[
-              styles.toggleButton,
-              calculationType === 'MuscleDistribution' && styles.toggleButtonActive,
-              {
-                backgroundColor:
-                  calculationType === 'MuscleDistribution'
-                    ? theme.buttonBackground
-                    : theme.card,
-              },
-            ]}
-            onPress={() => setCalculationType('MuscleDistribution')}
-          >
-            <Ionicons
-              name="analytics"
-              size={20}
-              color={
-                calculationType === 'MuscleDistribution' ? theme.buttonText : theme.text
-              }
-            />
-            <Text
-              style={[
-                styles.toggleText,
-                {
-                  color:
-                    calculationType === 'MuscleDistribution'
-                      ? theme.buttonText
-                      : theme.text,
-                },
-              ]}
-            >
-              {t('Distribution')}
-            </Text>
-          </TouchableOpacity>
         </View>
       );
     }
