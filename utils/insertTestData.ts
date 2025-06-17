@@ -21,37 +21,37 @@ export const insertTestData = async (db: any) => {
       await db.runAsync('INSERT OR IGNORE INTO Days (workout_id, day_name) VALUES (?, ?)', [3, 'Full Body B']);
   
       // Insert exercises for Push day
-      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?)', [1, 'Bench Press', 5, 8]);
-      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?)', [1, 'Overhead Press', 4, 8]);
-      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?)', [1, 'Incline Dumbbell Press', 3, 10]);
-      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?)', [1, 'Tricep Dips', 3, 12]);
-      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?)', [1, 'Lateral Raises', 3, 15]);
+      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps, muscle_group) VALUES (?, ?, ?, ?, ?)', [1, 'Bench Press', 5, 8, 'chest']);
+      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps, muscle_group) VALUES (?, ?, ?, ?, ?)', [1, 'Overhead Press', 4, 8, 'shoulders']);
+      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps, muscle_group) VALUES (?, ?, ?, ?, ?)', [1, 'Incline Dumbbell Press', 3, 10, 'chest']);
+      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps, muscle_group) VALUES (?, ?, ?, ?, ?)', [1, 'Tricep Dips', 3, 12, 'triceps']);
+      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps, muscle_group) VALUES (?, ?, ?, ?, ?)', [1, 'Lateral Raises', 3, 15, 'shoulders']);
   
       // Insert exercises for Pull day
-      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?)', [2, 'Deadlift', 4, 5]);
-      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?)', [2, 'Pull-ups', 4, 8]);
-      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?)', [2, 'Barbell Rows', 4, 8]);
-      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?)', [2, 'Face Pulls', 3, 15]);
-      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?)', [2, 'Bicep Curls', 3, 12]);
+      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps, muscle_group) VALUES (?, ?, ?, ?, ?)', [2, 'Deadlift', 4, 5, 'back']);
+      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps, muscle_group) VALUES (?, ?, ?, ?, ?)', [2, 'Pull-ups', 4, 8, 'back']);
+      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps, muscle_group) VALUES (?, ?, ?, ?, ?)', [2, 'Barbell Rows', 4, 8, 'back']);
+      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps, muscle_group) VALUES (?, ?, ?, ?, ?)', [2, 'Face Pulls', 3, 15, 'shoulders']);
+      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps, muscle_group) VALUES (?, ?, ?, ?, ?)', [2, 'Bicep Curls', 3, 12, 'biceps']);
   
       // Insert exercises for Legs day
-      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?)', [3, 'Squats', 5, 8]);
-      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?)', [3, 'Romanian Deadlift', 4, 10]);
-      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?)', [3, 'Leg Press', 3, 12]);
-      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?)', [3, 'Leg Curls', 3, 12]);
-      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?)', [3, 'Calf Raises', 4, 15]);
+      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps, muscle_group) VALUES (?, ?, ?, ?, ?)', [3, 'Squats', 5, 8, 'quads']);
+      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps, muscle_group) VALUES (?, ?, ?, ?, ?)', [3, 'Romanian Deadlift', 4, 10, 'hamstrings']);
+      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps, muscle_group) VALUES (?, ?, ?, ?, ?)', [3, 'Leg Press', 3, 12, 'quads']);
+      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps, muscle_group) VALUES (?, ?, ?, ?, ?)', [3, 'Leg Curls', 3, 12, 'hamstrings']);
+      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps, muscle_group) VALUES (?, ?, ?, ?, ?)', [3, 'Calf Raises', 4, 15, 'calves']);
   
       // Insert exercises for Upper day
-      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?)', [4, 'Bench Press', 4, 8]);
-      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?)', [4, 'Bent Over Rows', 4, 8]);
-      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?)', [4, 'Overhead Press', 3, 10]);
-      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?)', [4, 'Pull-ups', 3, 10]);
+      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps, muscle_group) VALUES (?, ?, ?, ?, ?)', [4, 'Bench Press', 4, 8, 'chest']);
+      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps, muscle_group) VALUES (?, ?, ?, ?, ?)', [4, 'Bent Over Rows', 4, 8, 'back']);
+      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps, muscle_group) VALUES (?, ?, ?, ?, ?)', [4, 'Overhead Press', 3, 10, 'shoulders']);
+      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps, muscle_group) VALUES (?, ?, ?, ?, ?)', [4, 'Pull-ups', 3, 10, 'back']);
   
       // Insert exercises for Lower day
-      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?)', [5, 'Squats', 4, 8]);
-      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?)', [5, 'Deadlift', 3, 5]);
-      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?)', [5, 'Bulgarian Split Squats', 3, 12]);
-      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?)', [5, 'Calf Raises', 4, 15]);
+      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps, muscle_group) VALUES (?, ?, ?, ?, ?)', [5, 'Squats', 4, 8, 'quads']);
+      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps, muscle_group) VALUES (?, ?, ?, ?, ?)', [5, 'Deadlift', 3, 5, 'back']);
+      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps, muscle_group) VALUES (?, ?, ?, ?, ?)', [5, 'Bulgarian Split Squats', 3, 12, 'quads']);
+      await db.runAsync('INSERT OR IGNORE INTO Exercises (day_id, exercise_name, sets, reps, muscle_group) VALUES (?, ?, ?, ?, ?)', [5, 'Calf Raises', 4, 15, 'calves']);
   
       // Generate workout log entries spanning 8 months (timestamps from June 2024 to January 2025)
       const workoutDates = [
@@ -109,14 +109,14 @@ export const insertTestData = async (db: any) => {
       let loggedExerciseId = 1;
       for (let sessionId = 1; sessionId <= workoutDates.length; sessionId++) {
         if ((sessionId - 1) % 3 === 0) { // Push day
-          await db.runAsync('INSERT OR IGNORE INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?)', 
-            [sessionId, 'Bench Press', 5, 8]);
-          await db.runAsync('INSERT OR IGNORE INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?)', 
-            [sessionId, 'Overhead Press', 4, 8]);
-          await db.runAsync('INSERT OR IGNORE INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?)', 
-            [sessionId, 'Incline Dumbbell Press', 3, 10]);
-          await db.runAsync('INSERT OR IGNORE INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?)', 
-            [sessionId, 'Tricep Dips', 3, 12]);
+          await db.runAsync('INSERT OR IGNORE INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps, muscle_group) VALUES (?, ?, ?, ?, ?)', 
+            [sessionId, 'Bench Press', 5, 8, 'chest']);
+          await db.runAsync('INSERT OR IGNORE INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps, muscle_group) VALUES (?, ?, ?, ?, ?)', 
+            [sessionId, 'Overhead Press', 4, 8, 'shoulders']);
+          await db.runAsync('INSERT OR IGNORE INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps, muscle_group) VALUES (?, ?, ?, ?, ?)', 
+            [sessionId, 'Incline Dumbbell Press', 3, 10, 'chest']);
+          await db.runAsync('INSERT OR IGNORE INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps, muscle_group) VALUES (?, ?, ?, ?, ?)', 
+            [sessionId, 'Tricep Dips', 3, 12, 'triceps']);
           loggedExerciseId += 4;
         }
       }
@@ -124,14 +124,14 @@ export const insertTestData = async (db: any) => {
       // Insert logged exercises for Pull sessions
       for (let sessionId = 1; sessionId <= workoutDates.length; sessionId++) {
         if ((sessionId - 1) % 3 === 1) { // Pull day
-          await db.runAsync('INSERT OR IGNORE INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?)', 
-            [sessionId, 'Deadlift', 4, 5]);
-          await db.runAsync('INSERT OR IGNORE INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?)', 
-            [sessionId, 'Pull-ups', 4, 8]);
-          await db.runAsync('INSERT OR IGNORE INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?)', 
-            [sessionId, 'Barbell Rows', 4, 8]);
-          await db.runAsync('INSERT OR IGNORE INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?)', 
-            [sessionId, 'Bicep Curls', 3, 12]);
+          await db.runAsync('INSERT OR IGNORE INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps, muscle_group) VALUES (?, ?, ?, ?, ?)', 
+            [sessionId, 'Deadlift', 4, 5, 'back']);
+          await db.runAsync('INSERT OR IGNORE INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps, muscle_group) VALUES (?, ?, ?, ?, ?)', 
+            [sessionId, 'Pull-ups', 4, 8, 'back']);
+          await db.runAsync('INSERT OR IGNORE INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps, muscle_group) VALUES (?, ?, ?, ?, ?)', 
+            [sessionId, 'Barbell Rows', 4, 8, 'back']);
+          await db.runAsync('INSERT OR IGNORE INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps, muscle_group) VALUES (?, ?, ?, ?, ?)', 
+            [sessionId, 'Bicep Curls', 3, 12, 'biceps']);
           loggedExerciseId += 4;
         }
       }
@@ -139,14 +139,14 @@ export const insertTestData = async (db: any) => {
       // Insert logged exercises for Legs sessions
       for (let sessionId = 1; sessionId <= workoutDates.length; sessionId++) {
         if ((sessionId - 1) % 3 === 2) { // Legs day
-          await db.runAsync('INSERT OR IGNORE INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?)', 
-            [sessionId, 'Squats', 5, 8]);
-          await db.runAsync('INSERT OR IGNORE INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?)', 
-            [sessionId, 'Romanian Deadlift', 4, 10]);
-          await db.runAsync('INSERT OR IGNORE INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?)', 
-            [sessionId, 'Leg Press', 3, 12]);
-          await db.runAsync('INSERT OR IGNORE INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?)', 
-            [sessionId, 'Calf Raises', 4, 15]);
+          await db.runAsync('INSERT OR IGNORE INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps, muscle_group) VALUES (?, ?, ?, ?, ?)', 
+            [sessionId, 'Squats', 5, 8, 'quads']);
+          await db.runAsync('INSERT OR IGNORE INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps, muscle_group) VALUES (?, ?, ?, ?, ?)', 
+            [sessionId, 'Romanian Deadlift', 4, 10, 'hamstrings']);
+          await db.runAsync('INSERT OR IGNORE INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps, muscle_group) VALUES (?, ?, ?, ?, ?)', 
+            [sessionId, 'Leg Press', 3, 12, 'quads']);
+          await db.runAsync('INSERT OR IGNORE INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps, muscle_group) VALUES (?, ?, ?, ?, ?)', 
+            [sessionId, 'Calf Raises', 4, 15, 'calves']);
           loggedExerciseId += 4;
         }
       }
@@ -176,7 +176,7 @@ export const insertTestData = async (db: any) => {
           ];
           
           for (const set of sets) {
-            benchProgressionData.push([sessionId, loggedExId, 'Bench Press', set.weight, set.reps, set.set]);
+            benchProgressionData.push([sessionId, loggedExId, 'Bench Press', set.weight, set.reps, set.set, 'chest']);
           }
           loggedExId += 4; // Skip to next push session's logged exercise IDs
         }
@@ -184,7 +184,7 @@ export const insertTestData = async (db: any) => {
   
       // Insert Bench Press weight data
       for (const data of benchProgressionData) {
-        await db.runAsync('INSERT OR IGNORE INTO Weight_Log (workout_log_id, logged_exercise_id, exercise_name, weight_logged, reps_logged, set_number) VALUES (?, ?, ?, ?, ?, ?)', data);
+        await db.runAsync('INSERT OR IGNORE INTO Weight_Log (workout_log_id, logged_exercise_id, exercise_name, weight_logged, reps_logged, set_number, muscle_group) VALUES (?, ?, ?, ?, ?, ?, ?)', data);
       }
   
       // Generate Overhead Press progression
@@ -209,7 +209,7 @@ export const insertTestData = async (db: any) => {
           ];
           
           for (const set of sets) {
-            ohpProgressionData.push([sessionId, loggedExId, 'Overhead Press', set.weight, set.reps, set.set]);
+            ohpProgressionData.push([sessionId, loggedExId, 'Overhead Press', set.weight, set.reps, set.set, 'shoulders']);
           }
           loggedExId += 4;
         }
@@ -217,7 +217,7 @@ export const insertTestData = async (db: any) => {
   
       // Insert OHP weight data
       for (const data of ohpProgressionData) {
-        await db.runAsync('INSERT OR IGNORE INTO Weight_Log (workout_log_id, logged_exercise_id, exercise_name, weight_logged, reps_logged, set_number) VALUES (?, ?, ?, ?, ?, ?)', data);
+        await db.runAsync('INSERT OR IGNORE INTO Weight_Log (workout_log_id, logged_exercise_id, exercise_name, weight_logged, reps_logged, set_number, muscle_group) VALUES (?, ?, ?, ?, ?, ?, ?)', data);
       }
   
       // Generate Deadlift progression
@@ -242,7 +242,7 @@ export const insertTestData = async (db: any) => {
           ];
           
           for (const set of sets) {
-            deadliftProgressionData.push([sessionId, loggedExId, 'Deadlift', set.weight, set.reps, set.set]);
+            deadliftProgressionData.push([sessionId, loggedExId, 'Deadlift', set.weight, set.reps, set.set, 'back']);
           }
           loggedExId += 4;
         }
@@ -250,7 +250,7 @@ export const insertTestData = async (db: any) => {
   
       // Insert Deadlift weight data
       for (const data of deadliftProgressionData) {
-        await db.runAsync('INSERT OR IGNORE INTO Weight_Log (workout_log_id, logged_exercise_id, exercise_name, weight_logged, reps_logged, set_number) VALUES (?, ?, ?, ?, ?, ?)', data);
+        await db.runAsync('INSERT OR IGNORE INTO Weight_Log (workout_log_id, logged_exercise_id, exercise_name, weight_logged, reps_logged, set_number, muscle_group) VALUES (?, ?, ?, ?, ?, ?, ?)', data);
       }
   
       // Generate Pull-ups progression (with added weight)
@@ -275,7 +275,7 @@ export const insertTestData = async (db: any) => {
           ];
           
           for (const set of sets) {
-            pullUpProgressionData.push([sessionId, loggedExId, 'Pull-ups', set.weight, set.reps, set.set]);
+            pullUpProgressionData.push([sessionId, loggedExId, 'Pull-ups', set.weight, set.reps, set.set, 'back']);
           }
           loggedExId += 4;
         }
@@ -283,7 +283,7 @@ export const insertTestData = async (db: any) => {
   
       // Insert Pull-ups weight data
       for (const data of pullUpProgressionData) {
-        await db.runAsync('INSERT OR IGNORE INTO Weight_Log (workout_log_id, logged_exercise_id, exercise_name, weight_logged, reps_logged, set_number) VALUES (?, ?, ?, ?, ?, ?)', data);
+        await db.runAsync('INSERT OR IGNORE INTO Weight_Log (workout_log_id, logged_exercise_id, exercise_name, weight_logged, reps_logged, set_number, muscle_group) VALUES (?, ?, ?, ?, ?, ?, ?)', data);
       }
   
       // Generate Squats progression
@@ -309,7 +309,7 @@ export const insertTestData = async (db: any) => {
           ];
           
           for (const set of sets) {
-            squatsProgressionData.push([sessionId, loggedExId, 'Squats', set.weight, set.reps, set.set]);
+            squatsProgressionData.push([sessionId, loggedExId, 'Squats', set.weight, set.reps, set.set, 'quads']);
           }
           loggedExId += 4;
         }
@@ -317,7 +317,7 @@ export const insertTestData = async (db: any) => {
   
       // Insert Squats weight data
       for (const data of squatsProgressionData) {
-        await db.runAsync('INSERT OR IGNORE INTO Weight_Log (workout_log_id, logged_exercise_id, exercise_name, weight_logged, reps_logged, set_number) VALUES (?, ?, ?, ?, ?, ?)', data);
+        await db.runAsync('INSERT OR IGNORE INTO Weight_Log (workout_log_id, logged_exercise_id, exercise_name, weight_logged, reps_logged, set_number, muscle_group) VALUES (?, ?, ?, ?, ?, ?, ?)', data);
       }
   
       console.log('Comprehensive test data inserted into the database.');
