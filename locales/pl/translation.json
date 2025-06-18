@@ -349,7 +349,7 @@
       "Logs": "Logi",
       "Graph Type": "Typ wykresu",
       "Metric": "Metryka",
-      "Exercise Stats": "Statystyki ćwiczeń",
+      "Exercise Stats": "Statystyki\nćwiczeń",
       "settingsFirstWeekday": "Pierwszy dzień tygodnia",
 
 
@@ -380,7 +380,7 @@
 "Biceps": "Biceps",
 "Triceps": "Triceps",
 "Forearms": "Przedramię",
-"Abs": "Brzuch",
+"Abs": "Brzuch",  
 "Legs": "Nogi",
 "Glutes": "Uda",
 "Hamstrings": "Mięśnie goleni",

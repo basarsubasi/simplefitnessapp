@@ -354,7 +354,7 @@
       "Logs": "Logboeken",
       "Graph Type": "Grafiektype",
       "Metric": "Metriek",
-      "Exercise Stats": "Oefeningstatistieken",
+      "Exercise Stats": "Oefening\nstatistieken",
       "settingsFirstWeekday": "Eerste dag van de week",
 
 
@@ -375,7 +375,7 @@
 "workoutAlreadyExistsError": "Een training met deze naam bestaat al.",
 "Unspecified": "Niet gespecificeerd",
 "Chest": "Borst",
-"Back": "Rug",
+"Back": "Rug",  
 "Shoulders": "Schouders",
 "Biceps": "Biceps",
 "Triceps": "Triceps",
