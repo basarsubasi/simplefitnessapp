@@ -98,6 +98,7 @@ type WorkoutCESData = {
 
 // Add new type for Muscle Group Distribution data
 type MuscleDistributionData = {
+  workout_name: string;
   muscle_group: string;
   exercise_count: number;
 };
@@ -153,6 +154,7 @@ export default function GraphsWorkoutDetails() {
   const [muscleDistributionData, setMuscleDistributionData] = useState<MuscleDistributionData[]>([]);
   const [chartData, setChartData] = useState<ProcessedDataPoint[]>([]);
   const [setsData, setSetsData] = useState<SetProgressData[]>([]);
+  const [distributionWorkout, setDistributionWorkout] = useState<string | null>(null);
 
   // Dropdown visibility state
   const [workoutDropdownVisible, setWorkoutDropdownVisible] = useState<boolean>(false);
@@ -297,6 +299,18 @@ export default function GraphsWorkoutDetails() {
     }
     // No action for 'Overall' yet as it has no metrics.
   }, [graphMode]);
+
+  useEffect(() => {
+    if (calculationType === 'MuscleDistribution' && muscleDistributionData.length > 0) {
+      const workoutNames = [...new Set(muscleDistributionData.map(d => d.workout_name))];
+      if (!distributionWorkout || !workoutNames.includes(distributionWorkout)) {
+          setDistributionWorkout(workoutNames[0]);
+      }
+    }
+    if (calculationType !== 'MuscleDistribution') {
+        setDistributionWorkout(null);
+    }
+  }, [muscleDistributionData, calculationType, distributionWorkout]);
 
   // Process log data into chart data
   useEffect(() => {
@@ -544,15 +558,14 @@ export default function GraphsWorkoutDetails() {
     try {
       const result = await db.getAllAsync<MuscleDistributionData>(
         `SELECT
+            w.workout_name,
             COALESCE(e.muscle_group, 'Unspecified') as muscle_group,
             COUNT(e.exercise_id) as exercise_count
          FROM Exercises e
          JOIN Days d ON e.day_id = d.day_id
          JOIN Workouts w ON d.workout_id = w.workout_id
-         WHERE w.workout_name = ?
-         GROUP BY COALESCE(e.muscle_group, 'Unspecified')
-         ORDER BY exercise_count DESC;`,
-        [selectedWorkout]
+         GROUP BY w.workout_name, COALESCE(e.muscle_group, 'Unspecified')
+         ORDER BY w.workout_name, exercise_count DESC;`
       );
       setMuscleDistributionData(result);
     } catch (error) {
@@ -1935,8 +1948,14 @@ export default function GraphsWorkoutDetails() {
       );
     }
 
-    const labels = muscleDistributionData.map(d => d.muscle_group);
-    const data = muscleDistributionData.map(d => d.exercise_count);
+    const workoutNames = [...new Set(muscleDistributionData.map(d => d.workout_name))];
+
+    const currentWorkout = distributionWorkout || workoutNames[0];
+
+    const selectedData = muscleDistributionData.filter(d => d.workout_name === currentWorkout);
+
+    const labels = selectedData.map(d => t(d.muscle_group.charAt(0).toUpperCase() + d.muscle_group.slice(1)));
+    const data = selectedData.map(d => d.exercise_count);
     const chartWidth = getChartWidth(labels.length);
 
     const chartConfig = {
@@ -1959,6 +1978,29 @@ export default function GraphsWorkoutDetails() {
 
     return (
       <View style={styles.chartContainer}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.buttonRow} style={{marginBottom: 10}}>
+            {workoutNames.map(name => (
+                <TouchableOpacity
+                    key={name}
+                    onPress={() => setDistributionWorkout(name)}
+                    style={[
+                        styles.timeFrameButton,
+                        {
+                            backgroundColor: currentWorkout === name ? theme.buttonBackground : theme.card,
+                            minWidth: 'auto',
+                            paddingHorizontal: 20,
+                        }
+                    ]}
+                >
+                    <Text style={[
+                        styles.timeFrameButtonText,
+                        { color: currentWorkout === name ? theme.buttonText : theme.text }
+                    ]}>
+                        {name}
+                    </Text>
+                </TouchableOpacity>
+            ))}
+        </ScrollView>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <BarChart
             data={{
@@ -1966,7 +2008,7 @@ export default function GraphsWorkoutDetails() {
               datasets: [{ data }],
             }}
             width={chartWidth}
-            height={220}
+            height={300}
             chartConfig={chartConfig}
             verticalLabelRotation={30}
             fromZero
@@ -2604,7 +2646,7 @@ export default function GraphsWorkoutDetails() {
           {renderGraphModeToggle()}
 
           {/* Workout Dropdown */}
-          {renderWorkoutDropdown()}
+          {!(graphMode === 'Time' && calculationType === 'MuscleDistribution') && renderWorkoutDropdown()}
 
           {/* Exercise mode controls */}
           {selectedWorkout && graphMode === 'Exercise' && (
