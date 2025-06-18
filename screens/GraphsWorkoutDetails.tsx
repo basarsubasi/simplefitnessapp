@@ -42,7 +42,7 @@ type LogData = {
   dayName?: string; // For time data
 };
 type TimeFrame = 'week' | 'month' | 'year' | 'all';
-type CalculationType = 'CES' | '1RM' | 'Sets' | 'Reps' | 'Time' | 'MuscleDistribution';
+type CalculationType = 'CES' | '1RM' | 'Sets' | 'Reps' | 'Time' | 'MuscleDistribution' | 'OverallMuscleGroups';
 type GraphMode = 'Exercise' | 'Time' | 'Overall';
 type ProcessedDataPoint = {
   x: string; // Date string for display
@@ -103,6 +103,11 @@ type MuscleDistributionData = {
   exercise_count: number;
 };
 
+type OverallMuscleGroupsData = {
+  muscle_group: string;
+  set_count: number;
+};
+
 export default function GraphsWorkoutDetails() {
   const navigation = useNavigation<GraphsNavigationProp>();
   const db = useSQLiteContext();
@@ -152,6 +157,7 @@ export default function GraphsWorkoutDetails() {
   const [timeLogData, setTimeLogData] = useState<TimeLogData[]>([]);
   const [workoutCESData, setWorkoutCESData] = useState<WorkoutCESData[]>([]);
   const [muscleDistributionData, setMuscleDistributionData] = useState<MuscleDistributionData[]>([]);
+  const [overallMuscleGroupsData, setOverallMuscleGroupsData] = useState<OverallMuscleGroupsData[]>([]);
   const [chartData, setChartData] = useState<ProcessedDataPoint[]>([]);
   const [setsData, setSetsData] = useState<SetProgressData[]>([]);
   const [distributionWorkout, setDistributionWorkout] = useState<string | null>(null);
@@ -286,6 +292,8 @@ export default function GraphsWorkoutDetails() {
       }
     } else if (selectedExercise) {
       fetchData();
+    } else if (graphMode === 'Overall' && calculationType === 'OverallMuscleGroups') {
+      fetchOverallMuscleGroupsData();
     }
   }, [selectedExercise, timeFrame, calculationType, graphMode]);
 
@@ -295,7 +303,7 @@ export default function GraphsWorkoutDetails() {
     } else if (graphMode === 'Time') {
       setCalculationType('Time');
     } else if (graphMode === 'Overall') {
-      setCalculationType('Sets');
+      setCalculationType('OverallMuscleGroups');
     }
     // No action for 'Overall' yet as it has no metrics.
   }, [graphMode]);
@@ -570,6 +578,53 @@ export default function GraphsWorkoutDetails() {
       setMuscleDistributionData(result);
     } catch (error) {
       console.error('Error fetching muscle group distribution data:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchOverallMuscleGroupsData = async () => {
+    setIsLoading(true);
+    try {
+      const now = new Date();
+      let startDate = new Date();
+
+      switch (timeFrame) {
+        case 'week':
+          startDate.setDate(now.getDate() - 7);
+          break;
+        case 'month':
+          startDate.setMonth(now.getMonth() - 1);
+          break;
+        case 'year':
+          startDate.setFullYear(now.getFullYear() - 1);
+          break;
+        case 'all':
+          startDate = new Date(0);
+          break;
+      }
+
+      const startTimestamp = Math.floor(startDate.getTime() / 1000);
+
+      const result = await db.getAllAsync<OverallMuscleGroupsData>(
+        `SELECT
+          COALESCE(e.muscle_group, 'Unspecified') as muscle_group,
+          COUNT(*) as set_count
+        FROM Weight_Log wl
+        INNER JOIN Workout_Log wlog ON wl.workout_log_id = wlog.workout_log_id
+        LEFT JOIN (
+            SELECT exercise_name, muscle_group
+            FROM Exercises
+            GROUP BY exercise_name
+        ) e ON wl.exercise_name = e.exercise_name
+        WHERE wlog.workout_date >= ?
+        GROUP BY COALESCE(e.muscle_group, 'Unspecified')
+        ORDER BY set_count DESC;`,
+        [startTimestamp]
+      );
+      setOverallMuscleGroupsData(result);
+    } catch (error) {
+      console.error('Error fetching overall muscle groups data:', error);
     } finally {
       setIsLoading(false);
     }
@@ -991,6 +1046,12 @@ export default function GraphsWorkoutDetails() {
             default: return '';
         }
     }
+    if (graphMode === 'Overall') {
+        switch (calculationType) {
+            case 'OverallMuscleGroups': return t('Overall Muscle Groups');
+            default: return '';
+        }
+    }
     return '';
   };
 
@@ -1009,6 +1070,12 @@ export default function GraphsWorkoutDetails() {
             case 'Time': return { title: t('About Completion Time'), text: t('timeGraphExplanation') };
             case 'CES': return { title: t('About Workout Volume'), text: t('workoutVolumeExplanation') };
             case 'MuscleDistribution': return { title: t('About Muscle Distribution'), text: t('muscleDistributionExplanation') };
+            default: return { title: '', text: '' };
+        }
+    }
+    if (graphMode === 'Overall') {
+        switch (calculationType) {
+            case 'OverallMuscleGroups': return { title: t('About Overall Muscle Groups'), text: t('overallMuscleGroupsExplanation') };
             default: return { title: '', text: '' };
         }
     }
@@ -1222,7 +1289,7 @@ export default function GraphsWorkoutDetails() {
                 },
               ]}
             >
-              {t('Volume')}
+              {t('CES')}
             </Text>
           </TouchableOpacity>
 
@@ -1410,10 +1477,41 @@ export default function GraphsWorkoutDetails() {
 
     if (graphMode === 'Overall') {
       return (
-        <View style={[styles.noDataContainer, { height: 'auto' }]}>
-          <Text style={[styles.noDataText, { color: theme.text }]}>
-            {t('Metrics for Overall Stats are coming soon!')}
-          </Text>
+        <View style={styles.toggleContainer}>
+          <TouchableOpacity
+            style={[
+              styles.toggleButton,
+              calculationType === 'OverallMuscleGroups' && styles.toggleButtonActive,
+              {
+                backgroundColor:
+                  calculationType === 'OverallMuscleGroups'
+                    ? theme.buttonBackground
+                    : theme.card,
+              },
+            ]}
+            onPress={() => setCalculationType('OverallMuscleGroups')}
+          >
+            <Ionicons
+              name="analytics"
+              size={20}
+              color={
+                calculationType === 'OverallMuscleGroups' ? theme.buttonText : theme.text
+              }
+            />
+            <Text
+              style={[
+                styles.toggleText,
+                {
+                  color:
+                    calculationType === 'OverallMuscleGroups'
+                      ? theme.buttonText
+                      : theme.text,
+                },
+              ]}
+            >
+              {'Muscle Groups'}
+            </Text>
+          </TouchableOpacity>
         </View>
       );
     }
@@ -1961,18 +2059,17 @@ export default function GraphsWorkoutDetails() {
     const chartConfig = {
       backgroundGradientFrom: theme.card,
       backgroundGradientTo: theme.card,
-      color: (opacity = 1) => `rgba(255, 114, 38, ${opacity})`,
+      color: (opacity = 1) => `rgba(75, 192, 192, ${opacity})`,
       labelColor: (opacity = 1) => theme.text,
       barPercentage: 0.7,
       decimalPlaces: 0,
       style: {
         borderRadius: 16,
       },
-      fillShadowGradientFrom: 'rgba(255, 114, 38, 1)',
-      fillShadowGradientTo: 'rgba(255, 114, 38, 1)',
+      fillShadowGradientFrom: 'rgba(75, 192, 192, 1)',
+      fillShadowGradientTo: 'rgba(75, 192, 192, 1)',
       fillShadowGradientFromOpacity: 1,
       fillShadowGradientToOpacity: 1,
-      legend: [t('Muscle Distribution')],
     };
     
 
@@ -2027,6 +2124,66 @@ export default function GraphsWorkoutDetails() {
     );
   };
 
+  const renderOverallMuscleGroupsChart = () => {
+    if (overallMuscleGroupsData.length === 0) {
+      return (
+        <View style={styles.noDataContainer}>
+          <Ionicons name="pie-chart-outline" size={60} color={theme.text} style={{ opacity: 0.5 }} />
+          <Text style={[styles.noDataText, { color: theme.text }]}>
+            {t('No data available for the selected criteria')}
+          </Text>
+        </View>
+      );
+    }
+  
+    const labels = overallMuscleGroupsData.map(d => d.muscle_group.charAt(0).toUpperCase() + d.muscle_group.slice(1));
+    const data = overallMuscleGroupsData.map(d => d.set_count);
+    const chartWidth = getChartWidth(labels.length);
+  
+    const chartConfig = {
+      backgroundGradientFrom: theme.card,
+      backgroundGradientTo: theme.card,
+      color: (opacity = 1) => `rgba(75, 192, 192, ${opacity})`,
+      labelColor: (opacity = 1) => theme.text,
+      barPercentage: 0.7,
+      decimalPlaces: 0,
+      style: {
+        borderRadius: 16,
+      },
+      fillShadowGradientFrom: 'rgba(75, 192, 192, 1)',
+      fillShadowGradientTo: 'rgba(75, 192, 192, 1)',
+      fillShadowGradientFromOpacity: 1,
+      fillShadowGradientToOpacity: 1,
+    };
+  
+    return (
+      <View style={{ marginBottom: 10 }}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <BarChart
+            data={{
+              labels,
+              datasets: [{ data }],
+            }}
+            width={chartWidth}
+            height={300}
+            chartConfig={chartConfig}
+            verticalLabelRotation={30}
+            fromZero
+            showValuesOnTopOfBars={true}
+            style={styles.chart}
+            yAxisLabel=""
+            yAxisSuffix=""
+          />
+        </ScrollView>
+        {labels.length > 5 && (
+          <Text style={[styles.scrollHint, { color: theme.text }]}>
+            {t('horizontalScrollHint')} →
+          </Text>
+        )}
+      </View>
+    );
+  };
+
   // Define renderChart AFTER the individual chart rendering functions
   const renderChart = () => {
     if (graphMode === 'Time') {
@@ -2039,6 +2196,10 @@ export default function GraphsWorkoutDetails() {
       }
     } else if (calculationType === 'Sets' || calculationType === 'Reps') {
       return renderSetsChart();
+    } else if (graphMode === 'Overall') {
+      if (calculationType === 'OverallMuscleGroups') {
+        return renderOverallMuscleGroupsChart();
+      }
     } else {
       return renderRegularChart(); // This should now be correctly defined and in scope
     }
@@ -2510,7 +2671,7 @@ export default function GraphsWorkoutDetails() {
       ) : (
         <>
           {/* Metric Selection - Moved up to be available for all graph modes */}
-          {(selectedExercise || (selectedWorkout && (graphMode === 'Time' || graphMode === 'Overall'))) && (
+          {(selectedExercise || (graphMode === 'Time' && selectedWorkout) || graphMode === 'Overall') && (
             <>
               <Text
                 style={[
@@ -2615,17 +2776,39 @@ export default function GraphsWorkoutDetails() {
           )}
 
           {/* Overall Stats mode section */}
-          {graphMode === 'Overall' && selectedWorkout && (
+          {graphMode === 'Overall' && (
             <>
-              {/* Placeholder Section */}
+              {/* Graph Section */}
               <View style={styles.graphSection}>
                 <Text style={[styles.sectionTitle, { color: theme.text }]}>
-                  {t('Overall Stats')}
+                  {getChartTitle()}
                 </Text>
-                <View style={styles.noDataContainer}>
-                  <Ionicons name="podium-outline" size={60} color={theme.text} style={{ opacity: 0.5 }} />
-                  <Text style={[styles.noDataText, { color: theme.text }]}>
-                    {t('Overall Stats are coming soon!')}
+
+                {isLoading ? (
+                  <ActivityIndicator
+                    size="large"
+                    color={theme.buttonBackground}
+                    style={styles.loader}
+                  />
+                ) : (
+                  renderChart()
+                )}
+
+                {/* Info about calculation */}
+                <View
+                  style={[
+                    styles.infoBox,
+                    {
+                      backgroundColor: theme.card,
+                      borderColor: theme.border,
+                    },
+                  ]}
+                >
+                  <Text style={[styles.infoTitle, { color: theme.text }]}>
+                    {getChartExplanation().title}
+                  </Text>
+                  <Text style={[styles.infoText, { color: theme.text }]}>
+                    {getChartExplanation().text}
                   </Text>
                 </View>
               </View>
@@ -2646,7 +2829,7 @@ export default function GraphsWorkoutDetails() {
           {renderGraphModeToggle()}
 
           {/* Workout Dropdown */}
-          {!(graphMode === 'Time' && calculationType === 'MuscleDistribution') && renderWorkoutDropdown()}
+          {graphMode !== 'Overall' && !(graphMode === 'Time' && calculationType === 'MuscleDistribution') && renderWorkoutDropdown()}
 
           {/* Exercise mode controls */}
           {selectedWorkout && graphMode === 'Exercise' && (
