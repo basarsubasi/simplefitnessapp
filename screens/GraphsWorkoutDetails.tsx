@@ -633,16 +633,17 @@ export default function GraphsWorkoutDetails() {
       const startTimestamp = Math.floor(startDate.getTime() / 1000);
 
       const result = await db.getAllAsync<OverallMuscleGroupsData>(
-        `SELECT
+        `WITH ExerciseMuscleGroups AS (
+            SELECT exercise_name, muscle_group
+            FROM Exercises
+            GROUP BY exercise_name
+        )
+        SELECT
           COALESCE(e.muscle_group, 'Unspecified') as muscle_group,
           COUNT(*) as set_count
         FROM Weight_Log wl
         INNER JOIN Workout_Log wlog ON wl.workout_log_id = wlog.workout_log_id
-        LEFT JOIN (
-            SELECT exercise_name, muscle_group
-            FROM Exercises
-            GROUP BY exercise_name
-        ) e ON wl.exercise_name = e.exercise_name
+        LEFT JOIN ExerciseMuscleGroups e ON wl.exercise_name = e.exercise_name
         WHERE wlog.workout_date >= ?
         GROUP BY COALESCE(e.muscle_group, 'Unspecified')
         ORDER BY set_count DESC;`,
@@ -1579,7 +1580,7 @@ export default function GraphsWorkoutDetails() {
             onPress={() => setCalculationType('CES')}
           >
             <Ionicons
-              name="fitness"
+              name="cellular" 
               size={20}
               color={
                 calculationType === 'CES' ? theme.buttonText : theme.text
@@ -1596,7 +1597,7 @@ export default function GraphsWorkoutDetails() {
                 },
               ]}
             >
-              {t('Volume')}
+              {t('Workout Volume')}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -1630,7 +1631,7 @@ export default function GraphsWorkoutDetails() {
                 },
               ]}
             >
-              {t('Distribution')}
+              {t('Muscle Distribution')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -1654,7 +1655,7 @@ export default function GraphsWorkoutDetails() {
             onPress={() => setCalculationType('OverallMuscleGroups')}
           >
             <Ionicons
-              name="analytics"
+              name="stats-chart"
               size={20}
               color={
                 calculationType === 'OverallMuscleGroups' ? theme.buttonText : theme.text
@@ -1671,7 +1672,7 @@ export default function GraphsWorkoutDetails() {
                 },
               ]}
             >
-              {t('Muscle Groups')}
+              {t('Overall Muscle Groups')}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -1705,7 +1706,7 @@ export default function GraphsWorkoutDetails() {
                 },
               ]}
             >
-              {t('Volume')}
+              {t('Muscle Group Volume')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -2305,7 +2306,7 @@ export default function GraphsWorkoutDetails() {
             height={300}
             chartConfig={chartConfig}
             verticalLabelRotation={30}
-            fromZero
+            fromZero={false}
             showValuesOnTopOfBars={false}
             style={styles.chart}
             yAxisLabel=""
@@ -2340,15 +2341,15 @@ export default function GraphsWorkoutDetails() {
     const chartConfig = {
       backgroundGradientFrom: theme.card,
       backgroundGradientTo: theme.card,
-      color: (opacity = 1) => `rgba(75, 192, 192, ${opacity})`,
+      color: (opacity = 1) => `rgba(153, 102, 255, ${opacity})`,
       labelColor: (opacity = 1) => theme.text,
       barPercentage: 0.7,
       decimalPlaces: 0,
       style: {
         borderRadius: 16,
       },
-      fillShadowGradientFrom: 'rgba(75, 192, 192, 1)',
-      fillShadowGradientTo: 'rgba(75, 192, 192, 1)',
+      fillShadowGradientFrom: 'rgba(153, 102, 255, 1)',
+      fillShadowGradientTo: 'rgba(153, 102, 255, 1)',
       fillShadowGradientFromOpacity: 1,
       fillShadowGradientToOpacity: 1,
     };
@@ -2615,7 +2616,7 @@ export default function GraphsWorkoutDetails() {
                   .sort((a, b) => a.set_number - b.set_number)
                   .map((set) => (
                     <Text key={set.set_number} style={[styles.tooltipSetText, { color: theme.text, marginLeft: 10 }]}>
-                      {t('Set')} {set.set_number}: {formatWeight(set.weight_logged)} × {set.reps_logged} {t('reps')}
+                      {t('Set')} {set.set_number}: {formatWeight(set.weight_logged)} × {set.reps_logged} {t('Reps')}
                     </Text>
                   ))}
               </View>
@@ -2651,7 +2652,7 @@ export default function GraphsWorkoutDetails() {
               <View style={[styles.tooltipSetItem, { flexDirection: 'row', alignItems: 'center', marginVertical: 4 }]}>
                 <View style={{ width: 12, height: 12, borderRadius: 6, backgroundColor: item.color, marginRight: 8 }} />
                 <Text style={[styles.tooltipSetText, { color: theme.text }]}>
-                  {t('Set')} {item.setNumber}: {formatWeight(item.weight)} × {item.reps} {t('reps')}
+                  {t('Set')} {item.setNumber}: {formatWeight(item.weight)} × {item.reps} {t('Reps')}
                 </Text>
               </View>
             )}
@@ -2683,7 +2684,7 @@ export default function GraphsWorkoutDetails() {
             renderItem={({ item }) => (
               <View style={styles.tooltipSetItem}>
                 <Text style={[styles.tooltipSetText, { color: theme.text }]}>
-                  {t('Set')} {item.set_number}: {formatWeight(item.weight_logged)} × {item.reps_logged} {t('reps')}
+                  {t('Set')} {item.set_number}: {formatWeight(item.weight_logged)} × {item.reps_logged} {t('Reps')}
                 </Text>
               </View>
             )}
@@ -2988,7 +2989,7 @@ export default function GraphsWorkoutDetails() {
           onPress={() => setGraphMode('Overall')}
         >
           <Ionicons
-            name="podium"
+            name="pie-chart"
             size={18}
             style={{ marginRight: 6, marginTop: 1 }}
             color={graphMode === 'Overall' ? theme.buttonText : theme.text}

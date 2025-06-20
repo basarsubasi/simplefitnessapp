@@ -388,7 +388,25 @@
 "Hamstrings": "Ryggmuskler",
 "Calves": "Kälvar",
 "Quads": "Kvadriceps",
-"muscleGroup": "Muskelgrupp"
+"muscleGroup": "Muskelgrupp",
+
+
+
+
+"Workout Volume": "Träningsvolym",
+"Muscle Distribution": "Muskelfördelning",
+"Overall Muscle Groups": "Övergripande Muskelgrupper",
+"Muscle Group Volume": "Muskelgruppsvolym",
+"Workout Stats": "Träningsstatistik",
+"Overall Stats": "Övergripande\nStatistik",
+"About Muscle Distribution": "Om muskelfördelning",
+"About Muscle Group Volume": "Om muskelgruppsvolym",
+"About Overall Muscle Groups": "Om övergripande muskelgrupper",
+"muscleDistributionExplanation": "Denna graf visar fördelningen av muskelgrupper i dina träningspass, vilket gör att du kan anpassa den efter dina mål.",
+"muscleGroupVolumeExplanation": "Denna graf visar den volym som utförts av varje muskelgrupp i dina träningspass inom en tidsram, vilket gör att du kan följa dina framsteg i varje muskelgrupp.",
+"overallMuscleGroupsExplanation": "Denna graf visar antalet set utförda av varje muskelgrupp i dina träningspass inom en tidsram, vilket gör att du kan se hur mycket du tränar varje muskelgrupp.",
+"workoutVolumeExplanation": "Denna graf visar volymen av dina träningspass inom en tidsram, vilket gör att du kan se hur du presterade i varje träningspass.",
+"Volume": "Volym"
     
         
 

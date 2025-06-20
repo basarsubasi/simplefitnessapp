@@ -375,7 +375,22 @@
 "Hamstrings": "Hüftmuskeln",
 "Calves": "Kalven",
 "Quads": "Kotflügel",
-"muscleGroup": "Muskelgruppe"
+"muscleGroup": "Muskelgruppe",
+
+"Workout Volume": "Trainingsvolumen",
+"Muscle Distribution": "Muskelverteilung",
+"Overall Muscle Groups": "Gesamte Muskelgruppen",
+"Muscle Group Volume": "Muskelgruppenvolumen",
+"Workout Stats": "Trainingsstatistiken",
+"Overall Stats": "Gesamtstatistiken",
+"About Muscle Distribution": "Über Muskelverteilung",
+"About Muscle Group Volume": "Über Muskelgruppenvolumen",
+"About Overall Muscle Groups": "Über gesamte Muskelgruppen",
+"muscleDistributionExplanation": "Diese Grafik zeigt die Verteilung der Muskelgruppen in Ihren Trainingseinheiten, sodass Sie diese an Ihre Ziele anpassen können.",
+"muscleGroupVolumeExplanation": "Diese Grafik zeigt das Volumen, das jede Muskelgruppe in Ihren Trainingseinheiten innerhalb eines Zeitrahmens geleistet hat, sodass Sie Ihren Fortschritt in jeder Muskelgruppe verfolgen können.",
+"overallMuscleGroupsExplanation": "Diese Grafik zeigt die Satzanzahl der Sätze, die von jeder Muskelgruppe in Ihren Trainingseinheiten innerhalb eines Zeitrahmens ausgeführt wurden, sodass Sie sehen können, wie viel Sie jede Muskelgruppe trainieren.",
+"workoutVolumeExplanation": "Diese Grafik zeigt das Volumen Ihrer Trainingseinheiten innerhalb eines Zeitrahmens, sodass Sie sehen können, wie Sie in jedem Training abgeschnitten haben.",
+"Volume": "Volumen"
 
 }
   

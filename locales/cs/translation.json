@@ -376,8 +376,23 @@
 "Hamstrings": "Hýždě",
 "Calves": "Kalve",
 "Quads": "Kotníky",
-"muscleGroup": "Skupina svalů"
+"muscleGroup": "Skupina svalů",
 
+
+"Workout Volume": "Objem tréninku",
+"Muscle Distribution": "Rozložení svalů",
+"Overall Muscle Groups": "Celkové svalové skupiny",
+"Muscle Group Volume": "Objem svalové skupiny",
+"Workout Stats": "Statistiky\ntréninku",
+"Overall Stats": "Celkové\nstatistiky",
+"About Muscle Distribution": "O rozložení svalů",
+"About Muscle Group Volume": "O objemu svalové skupiny",
+"About Overall Muscle Groups": "O celkových svalových skupinách",
+"muscleDistributionExplanation": "Tento graf ukazuje rozložení svalových skupin ve vašich trénincích, což vám umožňuje přizpůsobit ho vašim cílům.",
+"muscleGroupVolumeExplanation": "Tento graf ukazuje objem provedený každou svalovou skupinou ve vašich trénincích v časovém rámci, což vám umožňuje sledovat váš pokrok v každé svalové skupině.",
+"overallMuscleGroupsExplanation": "Tento graf ukazuje počet sérií provedených každou svalovou skupinou ve vašich trénincích v časovém rámci, což vám umožňuje vidět, kolik pracujete na každé svalové skupině.",
+"workoutVolumeExplanation": "Tento graf ukazuje objem vašich tréninků v časovém rámci, což vám umožňuje vidět, jak jste si vedli v každém tréninku.",
+"Volume": "Objem"
 
 
     

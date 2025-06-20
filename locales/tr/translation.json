@@ -413,7 +413,24 @@
 "Hamstrings": "Arka Bacak",
 "Calves": "Kalf",
 "Quads": "Ön Bacak",
-"muscleGroup": "Kas Grubu"
+"muscleGroup": "Kas Grubu",
+
+
+
+"Workout Volume": "Antrenman Hacmi",
+"Muscle Distribution": "Kas Dağılımı",
+"Overall Muscle Groups": "Genel Kas Grupları",
+"Muscle Group Volume": "Kas Grubu Hacmi",
+"Workout Stats": "Antrenman\nİstatistikleri",
+"Overall Stats": "Genel\nİstatistikler",
+"About Muscle Distribution": "Kas Dağılımı Hakkında",
+"About Muscle Group Volume": "Kas Grubu Hacmi Hakkında",
+"About Overall Muscle Groups": "Genel Kas Grupları Hakkında",
+"muscleDistributionExplanation": "Bu grafik, antrenmanlarınızdaki kas gruplarının dağılımını gösterir ve hedeflerinize göre değişiklikler yapabilmenizi sağlar.",
+"muscleGroupVolumeExplanation": "Bu grafik, antrenmanlarınızda her kas grubunun belirli bir zaman diliminde kaldırdığı hacmi gösterir ve her kas grubundaki ilerlemenizi takip etmenizi sağlar.",
+"overallMuscleGroupsExplanation": "Bu grafik, antrenmanlarınızda her kas grubunun belirli bir zaman diliminde yaptığı set sayısını gösterir ve her kas grubunu ne kadar çalıştığınızı görmenizi sağlar.",
+"workoutVolumeExplanation": "Bu grafik, antrenmanlarınızın belirli bir zaman dilimindeki günlük hacmini gösterir ve her antrenmanda nasıl performans gösterdiğinizi görmenizi sağlar.",
+"Volume": "Hacim"
             
         
     
