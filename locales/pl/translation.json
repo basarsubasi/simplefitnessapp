@@ -386,7 +386,24 @@
 "Hamstrings": "Mięśnie goleni",
 "Calves": "Łydki",
 "Quads": "Mięśnie udowe",
-"muscleGroup": "Grupa mięśniowa"
+"muscleGroup": "Grupa mięśniowa",
+
+
+
+"Workout Volume": "Objętość treningowa",
+"Muscle Distribution": "Rozkład mięśni",
+"Overall Muscle Groups": "Ogólne grupy mięśniowe",
+"Muscle Group Volume": "Objętość grupy mięśniowej",
+"Workout Stats": "Statystyki\ntreningu",
+"Overall Stats": "Ogólne\nstatystyki",
+"About Muscle Distribution": "O rozkładzie mięśni",
+"About Muscle Group Volume": "O objętości grupy mięśniowej",
+"About Overall Muscle Groups": "O ogólnych grupach mięśniowych",
+"muscleDistributionExplanation": "Ten wykres pokazuje rozkład grup mięśniowych w Twoich treningach, pozwalając Ci dostosować go do swoich celów.",
+"muscleGroupVolumeExplanation": "Ten wykres pokazuje objętość wykonaną przez każdą grupę mięśniową w Twoich treningach w określonym czasie, pozwalając Ci śledzić postępy w każdej grupie mięśniowej.",
+"overallMuscleGroupsExplanation": "Ten wykres pokazuje liczbę serii wykonanych przez każdą grupę mięśniową w Twoich treningach w określonym czasie, pozwalając Ci zobaczyć, jak dużo pracujesz każdą grupę mięśniową.",
+"workoutVolumeExplanation": "Ten wykres pokazuje objętość Twoich treningów w określonym czasie, pozwalając Ci zobaczyć, jak sobie radziłeś w każdym treningu.",
+"Volume": "Objętość"
 
     
 }

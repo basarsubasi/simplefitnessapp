@@ -382,6 +382,25 @@
 "Hamstrings": "ハムストリングス",
 "Calves": "足首",
 "Quads": "大腿四頭筋",
-"muscleGroup": "筋肉グループ"
+"muscleGroup": "筋肉グループ",
+
+
+
+
+
+"Workout Volume": "ワークアウト量",
+"Muscle Distribution": "筋肉の分布",
+"Overall Muscle Groups": "全体の筋肉群",
+"Muscle Group Volume": "筋肉群の運動量",
+"Workout Stats": "ワークアウト統計",
+"Overall Stats": "全体統計",
+"About Muscle Distribution": "筋肉の分布について",
+"About Muscle Group Volume": "筋肉群の運動量について",
+"About Overall Muscle Groups": "全体の筋肉群について",
+"muscleDistributionExplanation": "このグラフは、ワークアウトにおける筋肉群の分布を示しており、目標に合わせて調整することができます。",
+"muscleGroupVolumeExplanation": "このグラフは、一定期間内のワークアウトにおいて各筋肉群が行った運動量を示しており、各筋肉群の進捗状況を追跡できます。",
+"overallMuscleGroupsExplanation": "このグラフは、一定期間内のワークアウトにおいて各筋肉群が行ったセット数を示しており、各筋肉群をどのくらい鍛えているかを確認できます。",
+"workoutVolumeExplanation": "このグラフは、一定期間内のワークアウトの運動量を示しており、各ワークアウトでどのようにパフォーマンスしたかを確認できます。",
+"Volume": "運動量"
     
 }

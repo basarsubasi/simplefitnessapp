@@ -383,7 +383,25 @@
 "Hamstrings": "Koleni",
 "Calves": "Calves",
 "Quads": "Quads",
-"muscleGroup": "Muskelgruppa"
+"muscleGroup": "Muskelgruppa",
+
+
+
+
+"Workout Volume": "Obseg vadbe",
+"Muscle Distribution": "Razporeditev mišic",
+"Overall Muscle Groups": "Celotne mišične skupine",
+"Muscle Group Volume": "Obseg mišične skupine",
+"Workout Stats": "Statistika vadbe",
+"Overall Stats": "Celotna\nstatistika",
+"About Muscle Distribution": "O razporeditvi mišic",
+"About Muscle Group Volume": "O obsegu mišične skupine",
+"About Overall Muscle Groups": "O celotnih mišičnih skupinah",
+"muscleDistributionExplanation": "Ta graf prikazuje razporeditev mišičnih skupin v vaših vadbah, kar vam omogoča, da jo prilagodite svojim ciljem.",
+"muscleGroupVolumeExplanation": "Ta graf prikazuje obseg, ki ga je opravila vsaka mišična skupina v vaših vadbah v določenem časovnem okviru, kar vam omogoča, da spremljate svoj napredek v vsaki mišični skupini.",
+"overallMuscleGroupsExplanation": "Ta graf prikazuje število serij, ki jih je opravila vsaka mišična skupina v vaših vadbah v določenem časovnem okviru, kar vam omogoča, da vidite, koliko delate posamezno mišično skupino.",
+"workoutVolumeExplanation": "Ta graf prikazuje obseg vaših vadb v določenem časovnem okviru, kar vam omogoča, da vidite, kako ste se odrezali pri vsaki vadbi.",
+"Volume": "Obseg"
         
 
     

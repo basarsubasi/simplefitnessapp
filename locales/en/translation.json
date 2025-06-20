@@ -425,10 +425,26 @@
     "Calves": "Calves",
     "Quads": "Quads",
 
-    "muscleGroup": "Muscle Group"
+    "muscleGroup": "Muscle Group",
 
 
+    "Workout Volume": "Workout Volume",
+    "Muscle Distribution": "Muscle Distribution",
+    "Overall Muscle Groups": "Overall Muscle Groups",
+    "Muscle Group Volume": "Muscle Group Volume",
 
+    "Workout Stats": "Workout Stats",
+    "Overall Stats": "Overall Stats",
+
+    "About Muscle Distribution": "About Muscle Distribution",
+    "About Muscle Group Volume": "About Muscle Group Volume",
+    "About Overall Muscle Groups": "About Overall Muscle Groups",
+    
+
+    "muscleDistributionExplanation": "This graph shows the distribution of muscle groups in your workouts, allowing you to adjust it for your goals.",
+    "muscleGroupVolumeExplanation": "This graph shows the volume done by each muscle group in your workouts within a time frame, allowing you to track your progress in each muscle group.",
+    "overallMuscleGroupsExplanation": "This graph shows the set count of sets done by each muscle group in your workouts within a time frame, allowing you to see how much you're working each muscle group.",
+    "workoutVolumeExplanation": "This graph shows the volume of your workouts within a time frame, allowing you to see how you performed in each workout."
 
 
 

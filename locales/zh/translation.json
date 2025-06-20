@@ -385,7 +385,25 @@
 "Hamstrings": "Hamstrings",
 "Calves": "腓肠肌",
 "Quads": "Quads",
-"muscleGroup": "肌肉群"
+"muscleGroup": "肌肉群",
+
+
+
+
+"Workout Volume": "训练量",
+"Muscle Distribution": "肌肉分布",
+"Overall Muscle Groups": "整体肌肉群",
+"Muscle Group Volume": "肌肉群训练量",
+"Workout Stats": "训练统计",
+"Overall Stats": "整体统计",
+"About Muscle Distribution": "关于肌肉分布",
+"About Muscle Group Volume": "关于肌肉群训练量",
+"About Overall Muscle Groups": "关于整体肌肉群",
+"muscleDistributionExplanation": "此图显示了您训练中肌肉群的分布，让您可以根据目标进行调整。",
+"muscleGroupVolumeExplanation": "此图显示了在一定时间范围内，您训练中每个肌肉群完成的训练量，让您可以跟踪每个肌肉群的进展。",
+"overallMuscleGroupsExplanation": "此图显示了在一定时间范围内，您训练中每个肌肉群完成的组数统计，让您可以查看每个肌肉群的训练程度。",
+"workoutVolumeExplanation": "此图显示了在一定时间范围内，您训练的总量，让您可以查看每次训练的表现。",
+"Volume": "训练量"
 
 
 
