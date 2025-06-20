@@ -2475,6 +2475,7 @@ export default function GraphsWorkoutDetails() {
                             backgroundColor: selectedMuscleGroup === group.value ? theme.buttonBackground : theme.card,
                             minWidth: 'auto',
                             paddingHorizontal: 20,
+                            marginHorizontal: 10,
                         }
                     ]}
                 >
