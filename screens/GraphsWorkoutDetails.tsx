@@ -2011,7 +2011,7 @@ export default function GraphsWorkoutDetails() {
       withShadow: true,
       withInnerLines: true,
       withOuterLines: true,
-      fromZero: yValues.every(v => v >= 0),
+      fromZero: false
     };
 
     const lineChartProps = {
@@ -2282,6 +2282,7 @@ export default function GraphsWorkoutDetails() {
                             backgroundColor: currentWorkout === name ? theme.buttonBackground : theme.card,
                             minWidth: 'auto',
                             paddingHorizontal: 20,
+                            marginHorizontal: 10,
                         }
                     ]}
                 >
@@ -2399,7 +2400,7 @@ export default function GraphsWorkoutDetails() {
               chartData.map(p => p.y),
               4,
               (val, text) => text || val,
-              true,
+              false,
               0
             )}
             labelColor={(opacity = 1) => theme.text}
@@ -2451,6 +2452,7 @@ export default function GraphsWorkoutDetails() {
               onDataPointClick={handleDataPointClick}
               withHorizontalLabels={false}
               segments={4}
+              fromZero={false}
             />
           </ScrollView>
         </View>
