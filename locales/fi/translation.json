@@ -384,8 +384,26 @@
 "Hamstrings": "Hamstrings",
 "Calves": "Calves",
 "Quads": "Quads",
-"muscleGroup": "Muskelryhmä"
-    
+
+
+
+
+
+"muscleGroup": "Lihasryhmä",
+"Workout Volume": "Harjoitusvolyymi",
+"Muscle Distribution": "Lihasryhmäjakauma",
+"Overall Muscle Groups": "Kokonaislihasryhmät",
+"Muscle Group Volume": "Lihasryhmävolyymi",
+"Workout Stats": "Harjoitustilastot",
+"Overall Stats": "Yleiset tilastot",
+"About Muscle Distribution": "Tietoja lihasryhmäjakaumasta",
+"About Muscle Group Volume": "Tietoja lihasryhmävolyymista",
+"About Overall Muscle Groups": "Tietoja kokonaislihasryhmistä",
+"muscleDistributionExplanation": "Tämä kaavio näyttää lihasryhmien jakautumisen harjoituksissasi, mikä antaa sinun säätää sitä tavoitteidesi mukaan.",
+"muscleGroupVolumeExplanation": "Tämä kaavio näyttää kunkin lihasryhmän tekemän volyymin harjoituksissasi aikavälillä, mikä antaa sinun seurata edistymistäsi kussakin lihasryhmässä.",
+"overallMuscleGroupsExplanation": "Tämä kaavio näyttää kunkin lihasryhmän tekemien sarjojen lukumäärän harjoituksissasi aikavälillä, mikä antaa sinun nähdä, kuinka paljon työstät kutakin lihasryhmää.",
+"workoutVolumeExplanation": "Tämä kaavio näyttää harjoitustesi volyymin aikavälillä, mikä antaa sinun nähdä, miten suoriuduit jokaisessa harjoituksessa.",
+"Volume": "Volyymi"
     
 
 

@@ -379,7 +379,24 @@
 "Hamstrings": "Hamstrings",
 "Calves": "Calves",
 "Quads": "Quads",
-"muscleGroup": "Muskelgruppe"
+
+
+
+"muscleGroup": "Muskelgruppe",
+"Workout Volume": "Træningsvolumen",
+"Muscle Distribution": "Muskelfordeling",
+"Overall Muscle Groups": "Samlede Muskelgrupper",
+"Muscle Group Volume": "Muskelgruppevolumen",
+"Workout Stats": "Træningsstatistikker",
+"Overall Stats": "Overordnet Statistik",
+"About Muscle Distribution": "Om Muskelfordeling",
+"About Muscle Group Volume": "Om Muskelgruppevolumen",
+"About Overall Muscle Groups": "Om Samlede Muskelgrupper",
+"muscleDistributionExplanation": "Denne graf viser fordelingen af muskelgrupper i dine træningspas, hvilket giver dig mulighed for at justere den efter dine mål.",
+"muscleGroupVolumeExplanation": "Denne graf viser den volumen, der er udført af hver muskelgruppe i dine træningspas inden for en tidsramme, hvilket giver dig mulighed for at spore din fremgang i hver muskelgruppe.",
+"overallMuscleGroupsExplanation": "Denne graf viser sættællingen af sæt udført af hver muskelgruppe i dine træningspas inden for en tidsramme, hvilket giver dig mulighed for at se, hvor meget du arbejder med hver muskelgruppe.",
+"workoutVolumeExplanation": "Denne graf viser volumen af dine træningspas inden for en tidsramme, hvilket giver dig mulighed for at se, hvordan du præsterede i hvert træningspas.",
+"Volume": "Volumen"
     
   }
   
