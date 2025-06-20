@@ -92,6 +92,7 @@ export default function CreateWorkout() {
     { label: t('Triceps'), value: 'triceps' },
     { label: t('Forearms'), value: 'forearms' },
     { label: t('Abs'), value: 'abs' },
+    { label: t('Legs'), value: 'legs' },
     { label: t('Glutes'), value: 'glutes' },
     { label: t('Hamstrings'), value: 'hamstrings' },
     { label: t('Calves'), value: 'calves' },

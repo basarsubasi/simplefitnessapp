@@ -42,7 +42,7 @@ type LogData = {
   dayName?: string; // For time data
 };
 type TimeFrame = 'week' | 'month' | 'year' | 'all';
-type CalculationType = 'CES' | '1RM' | 'Sets' | 'Reps' | 'Time' | 'MuscleDistribution' | 'OverallMuscleGroups';
+type CalculationType = 'CES' | '1RM' | 'Sets' | 'Reps' | 'Time' | 'MuscleDistribution' | 'OverallMuscleGroups' | 'MuscleGroupVolume';
 type GraphMode = 'Exercise' | 'Time' | 'Overall';
 type ProcessedDataPoint = {
   x: string; // Date string for display
@@ -108,6 +108,18 @@ type OverallMuscleGroupsData = {
   set_count: number;
 };
 
+type MuscleGroupVolumeData = {
+  date: number;
+  total_ces: number;
+};
+
+type MuscleGroupLogData = {
+  exercise_name: string;
+  weight_logged: number;
+  reps_logged: number;
+  set_number: number;
+};
+
 export default function GraphsWorkoutDetails() {
   const navigation = useNavigation<GraphsNavigationProp>();
   const db = useSQLiteContext();
@@ -158,14 +170,18 @@ export default function GraphsWorkoutDetails() {
   const [workoutCESData, setWorkoutCESData] = useState<WorkoutCESData[]>([]);
   const [muscleDistributionData, setMuscleDistributionData] = useState<MuscleDistributionData[]>([]);
   const [overallMuscleGroupsData, setOverallMuscleGroupsData] = useState<OverallMuscleGroupsData[]>([]);
+  const [muscleGroupVolumeData, setMuscleGroupVolumeData] = useState<MuscleGroupVolumeData[]>([]);
   const [chartData, setChartData] = useState<ProcessedDataPoint[]>([]);
   const [setsData, setSetsData] = useState<SetProgressData[]>([]);
   const [distributionWorkout, setDistributionWorkout] = useState<string | null>(null);
+  const [availableMuscleGroups, setAvailableMuscleGroups] = useState<{ label: string; value: string }[]>([]);
+  const [selectedMuscleGroup, setSelectedMuscleGroup] = useState<string>('');
 
   // Dropdown visibility state
   const [workoutDropdownVisible, setWorkoutDropdownVisible] = useState<boolean>(false);
   const [dayDropdownVisible, setDayDropdownVisible] = useState<boolean>(false);
   const [exerciseDropdownVisible, setExerciseDropdownVisible] = useState<boolean>(false);
+  const [muscleGroupDropdownVisible, setMuscleGroupDropdownVisible] = useState<boolean>(false);
   const [isInitialLoading, setIsInitialLoading] = useState<boolean>(true);
   const [graphMode, setGraphMode] = useState<GraphMode>('Exercise');
   
@@ -173,6 +189,7 @@ export default function GraphsWorkoutDetails() {
   const [tooltipVisible, setTooltipVisible] = useState<boolean>(false);
   const [selectedPoint, setSelectedPoint] = useState<ProcessedDataPoint | null>(null);
   const [workoutSessionExercises, setWorkoutSessionExercises] = useState<WorkoutSessionExercise[]>([]);
+  const [muscleGroupDayDetails, setMuscleGroupDayDetails] = useState<MuscleGroupLogData[]>([]);
 
   // Smart data sampling functions
   const getOptimalDataPoints = (data: ProcessedDataPoint[], timeFrame: TimeFrame): ProcessedDataPoint[] => {
@@ -292,8 +309,13 @@ export default function GraphsWorkoutDetails() {
       }
     } else if (selectedExercise) {
       fetchData();
-    } else if (graphMode === 'Overall' && calculationType === 'OverallMuscleGroups') {
-      fetchOverallMuscleGroupsData();
+    } else if (graphMode === 'Overall') {
+      if (calculationType === 'OverallMuscleGroups') {
+        fetchOverallMuscleGroupsData();
+      } else if (calculationType === 'MuscleGroupVolume') {
+        fetchAvailableMuscleGroups();
+        // Data fetch is triggered by selectedMuscleGroup change
+      }
     }
   }, [selectedExercise, timeFrame, calculationType, graphMode]);
 
@@ -319,6 +341,12 @@ export default function GraphsWorkoutDetails() {
         setDistributionWorkout(null);
     }
   }, [muscleDistributionData, calculationType, distributionWorkout]);
+
+  useEffect(() => {
+    if (graphMode === 'Overall' && calculationType === 'MuscleGroupVolume' && selectedMuscleGroup) {
+      fetchMuscleGroupVolumeData();
+    }
+  }, [selectedMuscleGroup, timeFrame]);
 
   // Process log data into chart data
   useEffect(() => {
@@ -346,6 +374,12 @@ export default function GraphsWorkoutDetails() {
           setSetsData([]);
         }
       }
+    } else if (graphMode === 'Overall' && calculationType === 'MuscleGroupVolume') {
+      if (muscleGroupVolumeData.length > 0) {
+        processMuscleGroupVolumeDataForChart();
+      } else {
+        setChartData([]);
+      }
     } else { // Exercise mode
       if (logData.length > 0) {
         processDataForChart();
@@ -354,7 +388,7 @@ export default function GraphsWorkoutDetails() {
         setSetsData([]);
       }
     }
-  }, [logData, timeLogData, workoutCESData, muscleDistributionData, calculationType, timeFrame, graphMode]);
+  }, [logData, timeLogData, workoutCESData, muscleDistributionData, muscleGroupVolumeData, calculationType, timeFrame, graphMode]);
 
   const fetchWorkoutsWithLogs = async () => {
     setIsInitialLoading(true);
@@ -630,6 +664,84 @@ export default function GraphsWorkoutDetails() {
     }
   };
 
+  const fetchAvailableMuscleGroups = async () => {
+    setIsLoading(true);
+    try {
+      const result = await db.getAllAsync<{ muscle_group: string }>(
+        `SELECT DISTINCT COALESCE(e.muscle_group, 'Unspecified') as muscle_group
+         FROM Weight_Log wl
+         INNER JOIN Workout_Log wlog ON wl.workout_log_id = wlog.workout_log_id
+         LEFT JOIN (
+            SELECT exercise_name, muscle_group
+            FROM Exercises
+            GROUP BY exercise_name
+         ) e ON wl.exercise_name = e.exercise_name
+         WHERE e.muscle_group IS NOT NULL AND e.muscle_group != 'Unspecified'
+         ORDER BY muscle_group ASC;`
+      );
+      const muscleGroupOptions = result.map(mg => ({
+        label: t(mg.muscle_group.charAt(0).toUpperCase() + mg.muscle_group.slice(1)),
+        value: mg.muscle_group
+      }));
+      setAvailableMuscleGroups(muscleGroupOptions);
+      if (muscleGroupOptions.length > 0 && !selectedMuscleGroup) {
+        setSelectedMuscleGroup(muscleGroupOptions[0].value);
+      }
+    } catch (error) {
+      console.error('Error fetching available muscle groups:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchMuscleGroupVolumeData = async () => {
+    if (!selectedMuscleGroup) return;
+    setIsLoading(true);
+    try {
+      const now = new Date();
+      let startDate = new Date();
+
+      switch (timeFrame) {
+        case 'week':
+          startDate.setDate(now.getDate() - 7);
+          break;
+        case 'month':
+          startDate.setMonth(now.getMonth() - 1);
+          break;
+        case 'year':
+          startDate.setFullYear(now.getFullYear() - 1);
+          break;
+        case 'all':
+          startDate = new Date(0);
+          break;
+      }
+      const startTimestamp = Math.floor(startDate.getTime() / 1000);
+
+      const result = await db.getAllAsync<MuscleGroupVolumeData>(
+        `SELECT
+            wlog.workout_date as date,
+            SUM(wl.weight_logged * wl.reps_logged * (1 + wl.reps_logged / 30.0)) / 100.0 AS total_ces
+        FROM Weight_Log wl
+        INNER JOIN Workout_Log wlog ON wl.workout_log_id = wlog.workout_log_id
+        LEFT JOIN (
+            SELECT exercise_name, muscle_group
+            FROM Exercises
+            GROUP BY exercise_name
+        ) e ON wl.exercise_name = e.exercise_name
+        WHERE wlog.workout_date >= ?
+        AND e.muscle_group = ?
+        GROUP BY wlog.workout_date
+        ORDER BY wlog.workout_date ASC;`,
+        [startTimestamp, selectedMuscleGroup]
+      );
+      setMuscleGroupVolumeData(result);
+    } catch (error) {
+      console.error('Error fetching muscle group volume data:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const processTimeDataForChart = () => {
     const processedData: ProcessedDataPoint[] = timeLogData.map(log => {
       const date = new Date(log.workout_date * 1000);
@@ -680,6 +792,28 @@ export default function GraphsWorkoutDetails() {
     setChartData(optimizedData);
   };
 
+  const processMuscleGroupVolumeDataForChart = () => {
+    const processedData: ProcessedDataPoint[] = muscleGroupVolumeData.map(log => {
+      const date = new Date(log.date * 1000);
+      
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const formattedDate = dateFormat === 'mm-dd-yyyy'
+        ? `${month}/${day}`
+        : `${day}/${month}`;
+      
+      return {
+        x: formattedDate,
+        y: log.total_ces,
+        timestamp: log.date,
+        originalData: [], // Fetched on click
+      };
+    });
+    
+    const optimizedData = getOptimalDataPoints(processedData, timeFrame);
+    setChartData(optimizedData);
+  };
+
   const fetchWorkoutSessionExercises = async (workoutLogId: number) => {
     try {
       const result = await db.getAllAsync<WorkoutSessionExercise>(
@@ -695,6 +829,32 @@ export default function GraphsWorkoutDetails() {
       setWorkoutSessionExercises(result);
     } catch (error) {
       console.error('Error fetching workout session exercises:', error);
+    }
+  };
+
+  const fetchMuscleGroupDayDetails = async (timestamp: number, muscleGroup: string) => {
+    try {
+      const result = await db.getAllAsync<MuscleGroupLogData>(
+        `SELECT
+            wl.exercise_name,
+            wl.weight_logged,
+            wl.reps_logged,
+            wl.set_number
+        FROM Weight_Log wl
+        INNER JOIN Workout_Log wlog ON wl.workout_log_id = wlog.workout_log_id
+        LEFT JOIN (
+            SELECT exercise_name, muscle_group
+            FROM Exercises
+            GROUP BY exercise_name
+        ) e ON wl.exercise_name = e.exercise_name
+        WHERE wlog.workout_date = ?
+        AND e.muscle_group = ?
+        ORDER BY wl.exercise_name, wl.set_number;`,
+        [timestamp, muscleGroup]
+      );
+      setMuscleGroupDayDetails(result);
+    } catch (error) {
+      console.error('Error fetching muscle group day details:', error);
     }
   };
 
@@ -1049,6 +1209,7 @@ export default function GraphsWorkoutDetails() {
     if (graphMode === 'Overall') {
         switch (calculationType) {
             case 'OverallMuscleGroups': return t('Overall Muscle Groups');
+            case 'MuscleGroupVolume': return t('Muscle Group Volume');
             default: return '';
         }
     }
@@ -1076,6 +1237,7 @@ export default function GraphsWorkoutDetails() {
     if (graphMode === 'Overall') {
         switch (calculationType) {
             case 'OverallMuscleGroups': return { title: t('About Overall Muscle Groups'), text: t('overallMuscleGroupsExplanation') };
+            case 'MuscleGroupVolume': return { title: t('About Muscle Group Volume'), text: t('muscleGroupVolumeExplanation') };
             default: return { title: '', text: '' };
         }
     }
@@ -1091,6 +1253,13 @@ export default function GraphsWorkoutDetails() {
         if (clickedPoint.workoutLogId) {
           await fetchWorkoutSessionExercises(clickedPoint.workoutLogId);
         }
+        setTooltipVisible(true);
+      }
+    } else if (graphMode === 'Overall' && calculationType === 'MuscleGroupVolume') {
+      if (data.index !== undefined && chartData[data.index]) {
+        const clickedPoint = chartData[data.index];
+        setSelectedPoint(clickedPoint);
+        await fetchMuscleGroupDayDetails(clickedPoint.timestamp, selectedMuscleGroup);
         setTooltipVisible(true);
       }
     } else if (calculationType === 'Sets' || calculationType === 'Reps') {
@@ -1131,6 +1300,7 @@ export default function GraphsWorkoutDetails() {
     setTooltipVisible(false);
     setSelectedPoint(null);
     setWorkoutSessionExercises([]);
+    setMuscleGroupDayDetails([]);
   };
 
   // Render workout dropdown
@@ -1509,7 +1679,41 @@ export default function GraphsWorkoutDetails() {
                 },
               ]}
             >
-              {'Muscle Groups'}
+              {t('Muscle Groups')}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.toggleButton,
+              calculationType === 'MuscleGroupVolume' && styles.toggleButtonActive,
+              {
+                backgroundColor:
+                  calculationType === 'MuscleGroupVolume'
+                    ? theme.buttonBackground
+                    : theme.card,
+              },
+            ]}
+            onPress={() => setCalculationType('MuscleGroupVolume')}
+          >
+            <Ionicons
+              name="cellular"
+              size={20}
+              color={
+                calculationType === 'MuscleGroupVolume' ? theme.buttonText : theme.text
+              }
+            />
+            <Text
+              style={[
+                styles.toggleText,
+                {
+                  color:
+                    calculationType === 'MuscleGroupVolume'
+                      ? theme.buttonText
+                      : theme.text,
+                },
+              ]}
+            >
+              {t('Volume')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -2136,7 +2340,7 @@ export default function GraphsWorkoutDetails() {
       );
     }
   
-    const labels = overallMuscleGroupsData.map(d => d.muscle_group.charAt(0).toUpperCase() + d.muscle_group.slice(1));
+    const labels = overallMuscleGroupsData.map(d => t(d.muscle_group.charAt(0).toUpperCase() + d.muscle_group.slice(1)));
     const data = overallMuscleGroupsData.map(d => d.set_count);
     const chartWidth = getChartWidth(labels.length);
   
@@ -2169,13 +2373,111 @@ export default function GraphsWorkoutDetails() {
             chartConfig={chartConfig}
             verticalLabelRotation={30}
             fromZero
-            showValuesOnTopOfBars={true}
+            showValuesOnTopOfBars={false}
             style={styles.chart}
             yAxisLabel=""
             yAxisSuffix=""
           />
         </ScrollView>
         {labels.length > 5 && (
+          <Text style={[styles.scrollHint, { color: theme.text }]}>
+            {t('horizontalScrollHint')} →
+          </Text>
+        )}
+      </View>
+    );
+  };
+
+  const renderMuscleGroupVolumeChart = () => {
+    if (chartData.length === 0) {
+      return (
+        <View style={styles.noDataContainer}>
+          <Ionicons name="cellular-outline" size={60} color={theme.text} style={{ opacity: 0.5 }} />
+          <Text style={[styles.noDataText, { color: theme.text }]}>
+            {t('No data available for the selected criteria')}
+          </Text>
+        </View>
+      );
+    }
+
+    const formattedChartData = chartData.map(point => {
+      const date = new Date(point.timestamp * 1000);
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const formattedDate = dateFormat === 'mm-dd-yyyy' ? `${month}/${day}` : `${day}/${month}`;
+      return { ...point, x: formattedDate };
+    });
+
+    const yValues = formattedChartData.map(point => point.y);
+    const chartHeight = 220;
+    const yAxisWidth = 65;
+    const lineChartContentWidth = getChartWidth(chartData.length);
+    const lineChartSegments = 4;
+
+    const chartConfig = {
+      backgroundColor: theme.card,
+      backgroundGradientFrom: theme.card,
+      backgroundGradientTo: theme.card,
+      decimalPlaces: 1,
+      color: (opacity = 1) => `rgba(153, 102, 255, ${opacity})`,
+      labelColor: (opacity = 1) => theme.text,
+      style: { borderRadius: 16 },
+      propsForDots: { r: '4', strokeWidth: '4', stroke: `rgba(153, 102, 255, 1)` },
+      fillShadowGradientFrom: `rgba(153, 102, 255, 0.15)`,
+      fillShadowGradientTo: `rgba(153, 102, 255, 0.02)`,
+      fillShadowGradientFromOpacity: 0.5,
+      fillShadowGradientToOpacity: 0.1,
+      useShadowColorFromDataset: true,
+      withShadow: true,
+      withInnerLines: true,
+      withOuterLines: true,
+      fromZero: true,
+    };
+
+    const defaultFormatYLabel = (yLabelValue: string, yLabelText?: string) => {
+      return yLabelText || yLabelValue;
+    };
+
+    const yTickLabels = generateYTickLabels(yValues, lineChartSegments, defaultFormatYLabel, chartConfig.fromZero, chartConfig.decimalPlaces);
+
+    const lineChartProps = {
+      data: {
+        labels: formattedChartData.map(point => point.x),
+        datasets: [{ data: yValues, color: chartConfig.color, strokeWidth: 2 }],
+        legend: [t('Muscle Group Volume')]
+      },
+      width: lineChartContentWidth,
+      height: chartHeight + 20,
+      chartConfig: chartConfig,
+      bezier: true,
+      style: styles.chart,
+      verticalLabelRotation: 30,
+      onDataPointClick: handleDataPointClick,
+      withHorizontalLabels: false,
+      paddingRight: 50,
+      segments: lineChartSegments,
+    };
+
+    return (
+      <View style={styles.chartContainer}>
+        <View style={{ flexDirection: 'row' }}>
+          <StickyYAxis
+            chartHeight={chartHeight + 20}
+            yTickLabels={yTickLabels}
+            labelColor={chartConfig.labelColor}
+            chartPaddingTop={16}
+            fontSize={10}
+            axisWidth={yAxisWidth}
+          />
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.chartScrollContainer}
+          >
+            <LineChart {...lineChartProps as any} />
+          </ScrollView>
+        </View>
+        {chartData.length > 5 && (
           <Text style={[styles.scrollHint, { color: theme.text }]}>
             {t('horizontalScrollHint')} →
           </Text>
@@ -2200,20 +2502,122 @@ export default function GraphsWorkoutDetails() {
       if (calculationType === 'OverallMuscleGroups') {
         return renderOverallMuscleGroupsChart();
       }
+      if (calculationType === 'MuscleGroupVolume') {
+        return renderMuscleGroupVolumeChart();
+      }
     } else {
       return renderRegularChart(); // This should now be correctly defined and in scope
     }
   };
 
-  // Update tooltip to handle time data
-  const renderTooltip = () => {
+  const renderTooltipContent = () => {
     if (!selectedPoint) return null;
 
     const formattedDate = formatDate(selectedPoint.timestamp);
-    
-    // Find all sets data for the selected date when in Sets mode
-    let dateData: SetDataPoint[] = [];
+
+    if (graphMode === 'Time') {
+      const exercisesByDay = workoutSessionExercises.reduce((acc, exercise) => {
+        if (!acc[exercise.day_name]) {
+          acc[exercise.day_name] = [];
+        }
+        acc[exercise.day_name].push(exercise);
+        return acc;
+      }, {} as Record<string, WorkoutSessionExercise[]>);
+
+      return (
+        <>
+          <Text style={[styles.tooltipSubtitle, { color: theme.text, marginBottom: 5 }]}>
+            {selectedPoint.dayName} - {formattedDate}
+          </Text>
+          <Text style={[styles.tooltipSubtitle, { color: theme.text }]}>
+            {calculationType === 'Time'
+              ? `${t('completionTime')}: ${formatTimeFromSeconds(selectedPoint.y)}`
+              : `${t('Workout Volume')}: ${selectedPoint.y.toFixed(2)}`}
+          </Text>
+          
+          <ScrollView style={styles.tooltipSetsList} nestedScrollEnabled>
+            {Object.entries(exercisesByDay).map(([dayName, exercises]) => (
+              <View key={dayName} style={styles.tooltipDaySection}>
+                {exercises.reduce((acc, exercise) => {
+                  const existingExercise = acc.find(ex => ex.exercise_name === exercise.exercise_name);
+                  if (existingExercise) {
+                    existingExercise.sets.push({
+                      set_number: exercise.set_number,
+                      weight_logged: exercise.weight_logged,
+                      reps_logged: exercise.reps_logged
+                    });
+                  } else {
+                    acc.push({
+                      exercise_name: exercise.exercise_name,
+                      sets: [{
+                        set_number: exercise.set_number,
+                        weight_logged: exercise.weight_logged,
+                        reps_logged: exercise.reps_logged
+                      }]
+                    });
+                  }
+                  return acc;
+                }, [] as Array<{exercise_name: string, sets: Array<{set_number: number, weight_logged: number, reps_logged: number}>}>)
+                .map((exercise) => (
+                  <View key={exercise.exercise_name} style={styles.tooltipExerciseItem}>
+                    <Text style={[styles.tooltipExerciseName, { color: theme.text }]}>
+                      {exercise.exercise_name}
+                    </Text>
+                    {exercise.sets
+                      .sort((a, b) => a.set_number - b.set_number)
+                      .map((set) => (
+                      <Text key={set.set_number} style={[styles.tooltipSetText, { color: theme.text, marginLeft: 10 }]}>
+                        {t('Set')} {set.set_number}: {formatWeight(set.weight_logged)} × {set.reps_logged} {t('reps')}
+                      </Text>
+                    ))}
+                  </View>
+                ))}
+              </View>
+            ))}
+          </ScrollView>
+        </>
+      );
+    }
+
+    if (graphMode === 'Overall' && calculationType === 'MuscleGroupVolume') {
+      return (
+        <>
+          <Text style={[styles.tooltipSubtitle, { color: theme.text, marginBottom: 5 }]}>
+            {availableMuscleGroups.find(mg => mg.value === selectedMuscleGroup)?.label} - {formattedDate}
+          </Text>
+          <Text style={[styles.tooltipSubtitle, { color: theme.text }]}>
+            {`${t('Volume')}: ${selectedPoint.y.toFixed(2)}`}
+          </Text>
+          <ScrollView style={styles.tooltipSetsList} nestedScrollEnabled>
+            {Object.entries(
+              muscleGroupDayDetails.reduce((acc, log) => {
+                if (!acc[log.exercise_name]) {
+                  acc[log.exercise_name] = [];
+                }
+                acc[log.exercise_name].push(log);
+                return acc;
+              }, {} as Record<string, MuscleGroupLogData[]>)
+            ).map(([exerciseName, sets]) => (
+              <View key={exerciseName} style={styles.tooltipExerciseItem}>
+                <Text style={[styles.tooltipExerciseName, { color: theme.text }]}>
+                  {exerciseName}
+                </Text>
+                {sets
+                  .sort((a, b) => a.set_number - b.set_number)
+                  .map((set) => (
+                    <Text key={set.set_number} style={[styles.tooltipSetText, { color: theme.text, marginLeft: 10 }]}>
+                      {t('Set')} {set.set_number}: {formatWeight(set.weight_logged)} × {set.reps_logged} {t('reps')}
+                    </Text>
+                  ))}
+              </View>
+            ))}
+          </ScrollView>
+        </>
+      );
+    }
+
     if (calculationType === 'Sets' || calculationType === 'Reps') {
+      const dateData: SetDataPoint[] = [];
       setsData.forEach(setData => {
         const dataPoint = setData.data.find(point => point.timestamp === selectedPoint.timestamp);
         if (dataPoint) {
@@ -2225,17 +2629,65 @@ export default function GraphsWorkoutDetails() {
           });
         }
       });
+
+      return (
+        <View style={styles.tooltipSetsList}>
+          <Text style={[styles.tooltipSetsHeader, { color: theme.text, marginBottom: 15 }]}>
+            {selectedExercise} - {formattedDate}
+          </Text>
+          <FlatList
+            data={dateData}
+            keyExtractor={(item) => `set_${item.setNumber}`}
+            renderItem={({ item }) => (
+              <View style={[styles.tooltipSetItem, { flexDirection: 'row', alignItems: 'center', marginVertical: 4 }]}>
+                <View style={{ width: 12, height: 12, borderRadius: 6, backgroundColor: item.color, marginRight: 8 }} />
+                <Text style={[styles.tooltipSetText, { color: theme.text }]}>
+                  {t('Set')} {item.setNumber}: {formatWeight(item.weight)} × {item.reps} {t('reps')}
+                </Text>
+              </View>
+            )}
+          />
+        </View>
+      );
     }
 
-    // Group exercises by day for time mode
-    const exercisesByDay = workoutSessionExercises.reduce((acc, exercise) => {
-      if (!acc[exercise.day_name]) {
-        acc[exercise.day_name] = [];
-      }
-      acc[exercise.day_name].push(exercise);
-      return acc;
-    }, {} as Record<string, WorkoutSessionExercise[]>);
+    // Default case for Exercise CES/1RM
+    return (
+      <>
+        <Text style={[styles.tooltipSubtitle, { color: theme.text, marginBottom: 5 }]}>
+          {selectedExercise} - {formattedDate}
+        </Text>
+        <Text style={[styles.tooltipSubtitle, { color: theme.text }]}>
+          {calculationType === 'CES' 
+            ? `${t('CES')}: ${selectedPoint.y.toFixed(1)}`
+            : `${t('1RM')}: ${formatWeight(selectedPoint.y)}`
+          }
+        </Text>
+        
+        <View style={styles.tooltipSetsList}>
+          <Text style={[styles.tooltipSetsHeader, { color: theme.text }]}>
+            {t('Sets Logged')}:
+          </Text>
+          <FlatList
+            data={selectedPoint.originalData}
+            keyExtractor={(item, index) => `${item.logged_exercise_id}_${index}`}
+            renderItem={({ item }) => (
+              <View style={styles.tooltipSetItem}>
+                <Text style={[styles.tooltipSetText, { color: theme.text }]}>
+                  {t('Set')} {item.set_number}: {formatWeight(item.weight_logged)} × {item.reps_logged} {t('reps')}
+                </Text>
+              </View>
+            )}
+          />
+        </View>
+      </>
+    );
+  };
 
+  // Update tooltip to handle time data
+  const renderTooltip = () => {
+    if (!selectedPoint) return null;
+    
     return (
       <Modal
         transparent={true}
@@ -2258,108 +2710,8 @@ export default function GraphsWorkoutDetails() {
               </TouchableOpacity>
             </View>
             
-            {graphMode === 'Time' ? (
-              <>
-                <Text style={[styles.tooltipSubtitle, { color: theme.text, marginBottom: 5 }]}>
-                  {selectedPoint.dayName} - {formattedDate}
-                </Text>
-                <Text style={[styles.tooltipSubtitle, { color: theme.text }]}>
-                  {calculationType === 'Time'
-                    ? `${t('completionTime')}: ${formatTimeFromSeconds(selectedPoint.y)}`
-                    : `${t('Workout Volume')}: ${selectedPoint.y.toFixed(2)}`}
-                </Text>
-                
-                <ScrollView style={styles.tooltipSetsList} nestedScrollEnabled>
+            {renderTooltipContent()}
 
-                  {Object.entries(exercisesByDay).map(([dayName, exercises]) => (
-                    <View key={dayName} style={styles.tooltipDaySection}>
-                      {exercises.reduce((acc, exercise) => {
-                        const existingExercise = acc.find(ex => ex.exercise_name === exercise.exercise_name);
-                        if (existingExercise) {
-                          existingExercise.sets.push({
-                            set_number: exercise.set_number,
-                            weight_logged: exercise.weight_logged,
-                            reps_logged: exercise.reps_logged
-                          });
-                        } else {
-                          acc.push({
-                            exercise_name: exercise.exercise_name,
-                            sets: [{
-                              set_number: exercise.set_number,
-                              weight_logged: exercise.weight_logged,
-                              reps_logged: exercise.reps_logged
-                            }]
-                          });
-                        }
-                        return acc;
-                      }, [] as Array<{exercise_name: string, sets: Array<{set_number: number, weight_logged: number, reps_logged: number}>}>)
-                      .map((exercise) => (
-                        <View key={exercise.exercise_name} style={styles.tooltipExerciseItem}>
-                          <Text style={[styles.tooltipExerciseName, { color: theme.text }]}>
-                            {exercise.exercise_name}
-                          </Text>
-                          {exercise.sets
-                            .sort((a, b) => a.set_number - b.set_number)
-                            .map((set) => (
-                            <Text key={set.set_number} style={[styles.tooltipSetText, { color: theme.text, marginLeft: 10 }]}>
-                              {t('Set')} {set.set_number}: {formatWeight(set.weight_logged)} × {set.reps_logged} {t('reps')}
-                            </Text>
-                          ))}
-                        </View>
-                      ))}
-                    </View>
-                  ))}
-                </ScrollView>
-              </>
-            ) : calculationType === 'Sets' || calculationType === 'Reps' ? (
-              <View style={styles.tooltipSetsList}>
-                <Text style={[styles.tooltipSetsHeader, { color: theme.text, marginBottom: 15 }]}>
-                      {selectedExercise} - {formattedDate}
-                 </Text>
-                <FlatList
-                  data={dateData}
-                  keyExtractor={(item) => `set_${item.setNumber}`}
-                  renderItem={({ item }) => (
-                    <View style={[styles.tooltipSetItem, { flexDirection: 'row', alignItems: 'center', marginVertical: 4 }]}>
-                      
-                      <View style={{ width: 12, height: 12, borderRadius: 6, backgroundColor: item.color, marginRight: 8 }} />
-                      <Text style={[styles.tooltipSetText, { color: theme.text }]}>
-                        {t('Set')} {item.setNumber}: {formatWeight(item.weight)} × {item.reps} {t('reps')}
-                      </Text>
-                    </View>
-                  )}
-                />
-              </View>
-            ) : (
-              <>
-                <Text style={[styles.tooltipSubtitle, { color: theme.text, marginBottom: 5 }]}>
-                  {selectedExercise} - {formattedDate}
-                </Text>
-                <Text style={[styles.tooltipSubtitle, { color: theme.text }]}>
-                  {calculationType === 'CES' 
-                    ? `${t('CES')}: ${selectedPoint.y.toFixed(1)}`
-                    : `${t('1RM')}: ${formatWeight(selectedPoint.y)}`
-                  }
-                </Text>
-                
-                <View style={styles.tooltipSetsList}>
-                  <Text style={[styles.tooltipSetsHeader, { color: theme.text }]}>
-                    {t('Sets Logged')}:
-                  </Text>
-                  <FlatList
-                    data={selectedPoint.originalData}
-                    keyExtractor={(item, index) => `${item.logged_exercise_id}_${index}`}
-                    renderItem={({ item }) => (
-                      <View style={styles.tooltipSetItem}>
-                        <Text style={[styles.tooltipSetText, { color: theme.text }]}>
-                          {t('Set')} {item.set_number}: {formatWeight(item.weight_logged)} × {item.reps_logged} {t('reps')}
-                        </Text>
-                      </View>
-                    )}
-                  />
-                </View>
-              </>
-            )}
           </View>
         </TouchableOpacity>
       </Modal>
@@ -2544,6 +2896,73 @@ export default function GraphsWorkoutDetails() {
                   {item.label}
                 </Text>
                 {selectedExercise === item.value && (
+                  <Ionicons
+                    name="checkmark"
+                    size={18}
+                    color={theme.buttonText}
+                    style={styles.dropdownItemIcon}
+                  />
+                )}
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
+      </View>
+    );
+  };
+
+  const renderMuscleGroupDropdown = () => {
+    if (graphMode !== 'Overall' || calculationType !== 'MuscleGroupVolume') return null;
+
+    return (
+      <View style={styles.pickerContainer}>
+        <Text style={[styles.pickerLabel, { color: theme.text }]}>
+          {t('Select Muscle Group')}
+        </Text>
+        <TouchableOpacity
+          style={[styles.dropdownButton, { backgroundColor: theme.card }]}
+          onPress={() => {
+            setMuscleGroupDropdownVisible(!muscleGroupDropdownVisible);
+          }}
+        >
+          <View style={styles.dropdownHeaderTextContainer}>
+            <Ionicons name="barbell-outline" size={24} color={theme.text} style={{ marginRight: 10 }} />
+            <Text style={[styles.dropdownHeaderText, { color: theme.text }]}>
+              {availableMuscleGroups.find(w => w.value === selectedMuscleGroup)?.label || t('Select Muscle Group')}
+            </Text>
+          </View>
+          <Ionicons
+            name={muscleGroupDropdownVisible ? 'chevron-up' : 'chevron-down'}
+            size={18}
+            color={theme.text}
+            style={styles.dropdownIcon}
+          />
+        </TouchableOpacity>
+
+        {muscleGroupDropdownVisible && availableMuscleGroups.length > 0 && (
+          <View style={[styles.dropdownListContainer, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            {availableMuscleGroups.map((item) => (
+              <TouchableOpacity
+                key={item.value}
+                style={[
+                  styles.dropdownItem,
+                  { backgroundColor: theme.card },
+                  selectedMuscleGroup === item.value && { backgroundColor: theme.buttonBackground },
+                ]}
+                onPress={() => {
+                  setSelectedMuscleGroup(item.value);
+                  setMuscleGroupDropdownVisible(false);
+                }}
+              >
+                <Text
+                  style={[
+                    styles.dropdownItemText,
+                    { color: selectedMuscleGroup === item.value ? theme.buttonText : theme.text }
+                  ]}
+                >
+                  {item.label}
+                </Text>
+                {selectedMuscleGroup === item.value && (
                   <Ionicons
                     name="checkmark"
                     size={18}
@@ -2830,6 +3249,8 @@ export default function GraphsWorkoutDetails() {
 
           {/* Workout Dropdown */}
           {graphMode !== 'Overall' && !(graphMode === 'Time' && calculationType === 'MuscleDistribution') && renderWorkoutDropdown()}
+
+          {renderMuscleGroupDropdown()}
 
           {/* Exercise mode controls */}
           {selectedWorkout && graphMode === 'Exercise' && (
