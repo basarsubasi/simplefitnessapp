@@ -382,7 +382,26 @@
 "Hamstrings": "Hamstrings",
 "Calves": "Calves",
 "Quads": "Quads",
-"muscleGroup": "Groupe musculaire"
+
+
+
+
+
+"muscleGroup": "Groupe musculaire",
+"Workout Volume": "Volume d'entraînement",
+"Muscle Distribution": "Distribution musculaire",
+"Overall Muscle Groups": "Groupes musculaires globaux",
+"Muscle Group Volume": "Volume par groupe musculaire",
+"Workout Stats": "Statistiques\nd'entraînement",
+"Overall Stats": "Statistiques\nglobales",
+"About Muscle Distribution": "À propos de la distribution musculaire",
+"About Muscle Group Volume": "À propos du volume par groupe musculaire",
+"About Overall Muscle Groups": "À propos des groupes musculaires globaux",
+"muscleDistributionExplanation": "Ce graphique montre la répartition des groupes musculaires dans vos entraînements, vous permettant de l'ajuster à vos objectifs.",
+"muscleGroupVolumeExplanation": "Ce graphique montre le volume effectué par chaque groupe musculaire dans vos entraînements sur une période donnée, vous permettant de suivre votre progression pour chaque groupe musculaire.",
+"overallMuscleGroupsExplanation": "Ce graphique montre le nombre de séries effectuées par chaque groupe musculaire dans vos entraînements sur une période donnée, vous permettant de voir à quel point vous travaillez chaque groupe musculaire.",
+"workoutVolumeExplanation": "Ce graphique montre le volume de vos entraînements sur une période donnée, vous permettant de voir comment vous avez performé à chaque entraînement.",
+"Volume": "Volume"
 
 
 

@@ -386,7 +386,24 @@
   "Hamstrings": "Isquiotibiais",
   "Calves": "Panturrilhas",
   "Quads": "Quadríceps",
-  "muscleGroup": "Grupo muscular"
+  "muscleGroup": "Grupo muscular",
+
+
+
+  "Workout Volume": "Volume de Treino",
+"Muscle Distribution": "Distribuição Muscular",
+"Overall Muscle Groups": "Grupos Musculares Gerais",
+"Muscle Group Volume": "Volume por Grupo Muscular",
+"Workout Stats": "Estatísticas\ndo Treino",
+"Overall Stats": "Estatísticas\nGerais",
+"About Muscle Distribution": "Sobre a Distribuição Muscular",
+"About Muscle Group Volume": "Sobre o Volume por Grupo Muscular",
+"About Overall Muscle Groups": "Sobre os Grupos Musculares Gerais",
+"muscleDistributionExplanation": "Este gráfico mostra a distribuição dos grupos musculares em seus treinos, permitindo que você a ajuste para seus objetivos.",
+"muscleGroupVolumeExplanation": "Este gráfico mostra o volume realizado por cada grupo muscular em seus treinos dentro de um período, permitindo que você acompanhe seu progresso em cada grupo muscular.",
+"overallMuscleGroupsExplanation": "Este gráfico mostra a contagem de séries realizadas por cada grupo muscular em seus treinos dentro de um período, permitindo que você veja o quanto você está trabalhando cada grupo muscular.",
+"workoutVolumeExplanation": "Este gráfico mostra o volume de seus treinos dentro de um período, permitindo que você veja como você se desempenhou em cada treino.",
+"Volume": "Volume"
     
 
         

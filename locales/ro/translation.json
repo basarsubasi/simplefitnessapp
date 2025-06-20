@@ -387,7 +387,28 @@
 "Hamstrings": "Hamstrings",
 "Calves": "Calves",
 "Quads": "Quads",
-"muscleGroup": "Grup muscular"
+"muscleGroup": "Grup muscular",
+
+
+
+
+"Workout Volume": "Volumul Antrenamentului",
+"Muscle Distribution": "Distribuție Musculară",
+"Overall Muscle Groups": "Grupe Musculare Generale",
+"Muscle Group Volume": "Volumul Grupei Musculare",
+"Workout Stats": "Statistici\nAntrenament",
+"Overall Stats": "Statistici\nGenerale",
+"About Muscle Distribution": "Despre Distribuția Musculară",
+"About Muscle Group Volume": "Despre Volumul Grupei Musculare",
+"About Overall Muscle Groups": "Despre Grupele Musculare Generale",
+"muscleDistributionExplanation": "Acest grafic arată distribuția grupelor musculare în antrenamentele tale, permițându-ți să o ajustezi pentru obiectivele tale.",
+"muscleGroupVolumeExplanation": "Acest grafic arată volumul efectuat de fiecare grupă musculară în antrenamentele tale într-un interval de timp, permițându-ți să urmărești progresul în fiecare grupă musculară.",
+"overallMuscleGroupsExplanation": "Acest grafic arată numărul de seturi efectuate de fiecare grupă musculară în antrenamentele tale într-un interval de timp, permițându-ți să vezi cât de mult lucrezi fiecare grupă musculară.",
+"workoutVolumeExplanation": "Acest grafic arată volumul antrenamentelor tale într-un interval de timp, permițându-ți să vezi cum ai performat în fiecare antrenament.",
+"Volume": "Volum"
+
+
+
   }
 
   

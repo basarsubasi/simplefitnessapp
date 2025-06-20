@@ -386,7 +386,24 @@
 "Hamstrings": "Hamstrings",
 "Calves": "Calves",
 "Quads": "Quads",
-"muscleGroup": "Muskelgroep"
+"muscleGroup": "Muskelgroep",
+
+
+
+"Workout Volume": "Trainingsvolume",
+"Muscle Distribution": "Spierverdeling",
+"Overall Muscle Groups": "Algemene Spiergroepen",
+"Muscle Group Volume": "Spiergroepvolume",
+"Workout Stats": "Trainingsstatistieken",
+"Overall Stats": "Algemene\nStatistieken",
+"About Muscle Distribution": "Over spierverdeling",
+"About Muscle Group Volume": "Over spiergroepvolume",
+"About Overall Muscle Groups": "Over algemene spiergroepen",
+"muscleDistributionExplanation": "Deze grafiek toont de verdeling van spiergroepen in uw trainingen, zodat u deze kunt aanpassen aan uw doelen.",
+"muscleGroupVolumeExplanation": "Deze grafiek toont het volume dat door elke spiergroep in uw trainingen binnen een tijdsbestek is gedaan, zodat u uw voortgang in elke spiergroep kunt volgen.",
+"overallMuscleGroupsExplanation": "Deze grafiek toont het aantal sets dat door elke spiergroep in uw trainingen binnen een tijdsbestek is gedaan, zodat u kunt zien hoeveel u elke spiergroep traint.",
+"workoutVolumeExplanation": "Deze grafiek toont het volume van uw trainingen binnen een tijdsbestek, zodat u kunt zien hoe u heeft gepresteerd in elke training.",
+"Volume": "Volume"
     
     
     

@@ -379,7 +379,24 @@
 "Hamstrings": "Flessori",
 "Calves": "Calvi",
 "Quads": "Quadricipiti",
-"muscleGroup": "Gruppo muscolare"
+
+
+
+"muscleGroup": "Gruppo muscolare",
+"Workout Volume": "Volume dell'allenamento",
+"Muscle Distribution": "Distribuzione muscolare",
+"Overall Muscle Groups": "Gruppi muscolari complessivi",
+"Muscle Group Volume": "Volume del gruppo muscolare",
+"Workout Stats": "Statistiche\nell'allenamento",
+"Overall Stats": "Statistiche\ncomplessive",
+"About Muscle Distribution": "Informazioni sulla distribuzione muscolare",
+"About Muscle Group Volume": "Informazioni sul volume del gruppo muscolare",
+"About Overall Muscle Groups": "Informazioni sui gruppi muscolari complessivi",
+"muscleDistributionExplanation": "Questo grafico mostra la distribuzione dei gruppi muscolari nei tuoi allenamenti, permettendoti di adattarla ai tuoi obiettivi.",
+"muscleGroupVolumeExplanation": "Questo grafico mostra il volume eseguito da ciascun gruppo muscolare nei tuoi allenamenti entro un lasso di tempo, permettendoti di monitorare i tuoi progressi in ciascun gruppo muscolare.",
+"overallMuscleGroupsExplanation": "Questo grafico mostra il conteggio delle serie eseguite da ciascun gruppo muscolare nei tuoi allenamenti entro un lasso di tempo, permettendoti di vedere quanto stai lavorando ogni gruppo muscolare.",
+"workoutVolumeExplanation": "Questo grafico mostra il volume dei tuoi allenamenti entro un lasso di tempo, permettendoti di vedere come hai performato in ogni allenamento.",
+"Volume": "Volume"
 
 
 
