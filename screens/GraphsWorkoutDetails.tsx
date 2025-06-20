@@ -2577,7 +2577,7 @@ export default function GraphsWorkoutDetails() {
                       .sort((a, b) => a.set_number - b.set_number)
                       .map((set) => (
                       <Text key={set.set_number} style={[styles.tooltipSetText, { color: theme.text, marginLeft: 10 }]}>
-                        {t('Set')} {set.set_number}: {formatWeight(set.weight_logged)} × {set.reps_logged} {t('reps')}
+                        {t('Set')} {set.set_number}: {formatWeight(set.weight_logged)} × {set.reps_logged} {t('Reps')}
                       </Text>
                     ))}
                   </View>
