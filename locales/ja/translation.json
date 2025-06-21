@@ -401,6 +401,19 @@
 "muscleGroupVolumeExplanation": "このグラフは、一定期間内のワークアウトにおいて各筋肉群が行った運動量を示しており、各筋肉群の進捗状況を追跡できます。",
 "overallMuscleGroupsExplanation": "このグラフは、一定期間内のワークアウトにおいて各筋肉群が行ったセット数を示しており、各筋肉群をどのくらい鍛えているかを確認できます。",
 "workoutVolumeExplanation": "このグラフは、一定期間内のワークアウトの運動量を示しており、各ワークアウトでどのようにパフォーマンスしたかを確認できます。",
-"Volume": "運動量"
+"Volume": "運動量",
+
+"duplicateRecurringWorkout": "定期ワークアウトを複製",
+"recurringWorkoutExists": "この名前の定期ワークアウトはすでに存在します。",
+"skipToNextExercise": "次のエクササイズに進む",
+"enableSetSwitchSound": "セット切り替え音を有効にする",
+"autoFillWeights": "重量を自動入力",
+"startedWorkoutTip": "ヒント: 画面の右上にある3本線のボタンを押すと、任意のエクササイズに切り替えることができます。"
+
+
+
+
+
+
     
 }

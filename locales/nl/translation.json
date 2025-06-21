@@ -403,7 +403,20 @@
 "muscleGroupVolumeExplanation": "Deze grafiek toont het volume dat door elke spiergroep in uw trainingen binnen een tijdsbestek is gedaan, zodat u uw voortgang in elke spiergroep kunt volgen.",
 "overallMuscleGroupsExplanation": "Deze grafiek toont het aantal sets dat door elke spiergroep in uw trainingen binnen een tijdsbestek is gedaan, zodat u kunt zien hoeveel u elke spiergroep traint.",
 "workoutVolumeExplanation": "Deze grafiek toont het volume van uw trainingen binnen een tijdsbestek, zodat u kunt zien hoe u heeft gepresteerd in elke training.",
-"Volume": "Volume"
+"Volume": "Volume",
+
+"duplicateRecurringWorkout": "Terugkerende training dupliceren",
+"recurringWorkoutExists": "Een terugkerende training met deze naam bestaat al.",
+"skipToNextExercise": "Naar de volgende oefening",
+"enableSetSwitchSound": "Geluid inschakelen",
+"autoFillWeights": "Gewichten automatisch invullen",
+"startedWorkoutTip": "Tip: Je kunt naar elke oefening schakelen door op de drie lijnen knop in de rechter bovenhoek van het scherm te drukken."
+
+
+
+
+
+
     
     
     

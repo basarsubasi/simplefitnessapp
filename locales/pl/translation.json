@@ -403,7 +403,16 @@
 "muscleGroupVolumeExplanation": "Ten wykres pokazuje objętość wykonaną przez każdą grupę mięśniową w Twoich treningach w określonym czasie, pozwalając Ci śledzić postępy w każdej grupie mięśniowej.",
 "overallMuscleGroupsExplanation": "Ten wykres pokazuje liczbę serii wykonanych przez każdą grupę mięśniową w Twoich treningach w określonym czasie, pozwalając Ci zobaczyć, jak dużo pracujesz każdą grupę mięśniową.",
 "workoutVolumeExplanation": "Ten wykres pokazuje objętość Twoich treningów w określonym czasie, pozwalając Ci zobaczyć, jak sobie radziłeś w każdym treningu.",
-"Volume": "Objętość"
+"Volume": "Objętość",
+
+
+
+"duplicateRecurringWorkout": "Duplikuj regularny trening",
+"recurringWorkoutExists": "Regularny trening o tej nazwie już istnieje.",
+"skipToNextExercise": "Przejdź do następnego ćwiczenia",
+"enableSetSwitchSound": "Włącz dźwięk",
+"autoFillWeights": "Automatycznie wypełnij ciężary",
+"startedWorkoutTip": "Wskazówka: Możesz przejść do dowolnego ćwiczenia, naciskając przycisk z trzema liniami w górnym prawym rogu ekranu."
 
     
 }
