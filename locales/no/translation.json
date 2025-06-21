@@ -407,7 +407,13 @@
 "muscleGroupVolumeExplanation": "Denne grafen viser volumet utført av hver muskelgruppe i treningsøktene dine innenfor et tidsrom, slik at du kan spore fremgangen din i hver muskelgruppe.",
 "overallMuscleGroupsExplanation": "Denne grafen viser antall sett utført av hver muskelgruppe i treningsøktene dine innenfor et tidsrom, slik at du kan se hvor mye du jobber hver muskelgruppe.",
 "workoutVolumeExplanation": "Denne grafen viser volumet av treningsøktene dine innenfor et tidsrom, slik at du kan se hvordan du presterte i hver treningsøkt.",
-"Volume": "Volum"
+"Volume": "Volum",
+"duplicateRecurringWorkout": "Gjentakende økt duplisering",
+"recurringWorkoutExists": "En gjentakende økt med dette navnet eksisterer allerede.",
+"skipToNextExercise": "Gå til neste øvelse",
+"enableSetSwitchSound": "Aktiver lyd",
+"autoFillWeights": "Autofyll vekter",
+"startedWorkoutTip": "Tips: Du kan bytte til en hvilken som helst øvelse ved å trykke på knappen med tre linjer i øverste høyre hjørne av skjermen."
 
         
 

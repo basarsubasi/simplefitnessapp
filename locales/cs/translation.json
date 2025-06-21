@@ -392,7 +392,18 @@
 "muscleGroupVolumeExplanation": "Tento graf ukazuje objem provedený každou svalovou skupinou ve vašich trénincích v časovém rámci, což vám umožňuje sledovat váš pokrok v každé svalové skupině.",
 "overallMuscleGroupsExplanation": "Tento graf ukazuje počet sérií provedených každou svalovou skupinou ve vašich trénincích v časovém rámci, což vám umožňuje vidět, kolik pracujete na každé svalové skupině.",
 "workoutVolumeExplanation": "Tento graf ukazuje objem vašich tréninků v časovém rámci, což vám umožňuje vidět, jak jste si vedli v každém tréninku.",
-"Volume": "Objem"
+"Volume": "Objem",
+
+
+
+
+"duplicateRecurringWorkout": "Duplikovat opakovaný trénink",
+"recurringWorkoutExists": "Opakovaný trénink s tímto názvem již existuje.",
+
+"skipToNextExercise": "Přeskočit na další cvik",
+"enableSetSwitchSound": "Povolit zvuk",
+"autoFillWeights": "Automaticky vyplnit váhy",
+"startedWorkoutTip": "Tip: Můžete přepnout na jakýkoli cvik klepnutím na tlačítko s třemi čárami v pravém horním rohu obrazovky."
 
 
     
