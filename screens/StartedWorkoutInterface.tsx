@@ -45,6 +45,7 @@ interface Exercise {
   sets: number;
   reps: number;
   logged_exercise_id: number;
+  exercise_fully_logged: boolean;
   web_link: string | null;
   muscle_group: string | null;
 }
@@ -57,7 +58,7 @@ interface ExerciseSet {
   reps_goal: number;
   reps_done: number;
   weight: string;
-  completed: boolean;
+  set_logged: boolean;
   web_link: string | null;
   muscle_group: string | null;
 }
@@ -98,6 +99,32 @@ export default function StartedWorkoutInterface() {
   // Timer refs for intervals
   const workoutTimerRef = useRef<NodeJS.Timeout | null>(null);
   const restTimerRef = useRef<NodeJS.Timeout | null>(null);
+  
+  const updateExerciseLoggedStatus = (exerciseId: number) => {
+    setAllSets(currentSets => {
+      const exerciseSets = currentSets.filter(s => s.exercise_id === exerciseId);
+      const allSetsLogged = exerciseSets.every(s => s.set_logged);
+  
+      if (allSetsLogged) {
+        setExercises(prevExercises =>
+          prevExercises.map(ex =>
+            ex.logged_exercise_id === exerciseId
+              ? { ...ex, exercise_fully_logged: true }
+              : ex
+          )
+        );
+      } else {
+        setExercises(prevExercises =>
+            prevExercises.map(ex =>
+              ex.logged_exercise_id === exerciseId
+                ? { ...ex, exercise_fully_logged: false }
+                : ex
+            )
+          );
+      }
+      return currentSets;
+    });
+  };
   
   // Handle timer restoration from background
   const handleTimerRestore = (savedState: TimerState, elapsedSeconds: number) => {
@@ -280,7 +307,7 @@ export default function StartedWorkoutInterface() {
           [workout_log_id]
         );
         
-        setExercises(exercisesResult);
+        setExercises(exercisesResult.map(e => ({ ...e, exercise_fully_logged: false })));
         
         // Prepare all sets data structure
         const setsData: ExerciseSet[] = [];
@@ -294,7 +321,7 @@ export default function StartedWorkoutInterface() {
               reps_goal: exercise.reps,
               reps_done: exercise.reps,
               weight: '',
-              completed: false,
+              set_logged: false,
               web_link: exercise.web_link || null,
               muscle_group: exercise.muscle_group || null
             });
@@ -371,7 +398,6 @@ export default function StartedWorkoutInterface() {
   const handleRestComplete = (wasExerciseRest: boolean) => {
     clearRestTimerState(); // Clear rest timer state before new set
     setTimerState(prev => updateTimerState(prev, {
-      currentSetIndex: prev.currentSetIndex + 1,
       workoutStage: 'exercise'
     }));
     
@@ -553,7 +579,10 @@ export default function StartedWorkoutInterface() {
     
     const muscleGroupInfo = muscleGroupData.find(mg => mg.value === currentSet.muscle_group);
     
-    const isLastSet = timerState.currentSetIndex === allSets.length - 1;
+    const isLastUnloggedSet = allSets.filter(s => !s.set_logged).length === 1;
+
+    const loggedSetsCount = allSets.filter(s => s.set_logged).length;
+    const progress = allSets.length > 0 ? (loggedSetsCount / allSets.length) * 100 : 0;
     
     return (
       <View style={styles.exerciseScreenContainer}>
@@ -670,22 +699,31 @@ export default function StartedWorkoutInterface() {
               }
               
               const updatedSets = [...allSets];
-              updatedSets[timerState.currentSetIndex] = {
-                ...updatedSets[timerState.currentSetIndex],
-                completed: true
-              };
-              setAllSets(updatedSets);
+              const currentSetIndex = timerState.currentSetIndex;
+              const currentSet = { ...updatedSets[currentSetIndex], set_logged: true };
+              updatedSets[currentSetIndex] = currentSet;
               
-              if (isLastSet) {
-                setTimerState(prev => updateTimerState(prev, { workoutStage: 'completed' }));
-                stopWorkoutTimer();
-              } else {
-                const nextSetIndex = timerState.currentSetIndex + 1;
-                const differentExercise = isDifferentExercise(timerState.currentSetIndex, nextSetIndex);
+              setAllSets(updatedSets);
+              updateExerciseLoggedStatus(currentSet.exercise_id);
+              
+              const findNextUnloggedSet = (startIndex: number) => {
+                for (let i = startIndex; i < updatedSets.length; i++) {
+                  if (!updatedSets[i].set_logged) {
+                    return i;
+                  }
+                }
+                return -1;
+              };
+
+              let nextSetIndex = findNextUnloggedSet(currentSetIndex + 1);
+
+              if (nextSetIndex !== -1) {
+                const differentExercise = isDifferentExercise(currentSetIndex, nextSetIndex);
                 
                 setTimerState(prev => updateTimerState(prev, {
                   workoutStage: 'rest',
-                  isExerciseRest: differentExercise
+                  isExerciseRest: differentExercise,
+                  currentSetIndex: nextSetIndex 
                 }));
                 
                 const restSeconds = differentExercise 
@@ -693,19 +731,55 @@ export default function StartedWorkoutInterface() {
                   : parseInt(restTime);
                 
                 startRestTimer(restSeconds);
+              } else {
+                // No more unlogged sets after current one
+                const anyUnlogged = updatedSets.some(s => !s.set_logged);
+                if (anyUnlogged) {
+                  Alert.alert(
+                    t('unsavedSetsTitle'),
+                    t('unsavedSetsMessage'),
+                    [
+                      {
+                        text: t('Yes'),
+                        style: 'destructive',
+                        onPress: () => {
+                          setTimerState(prev => updateTimerState(prev, { workoutStage: 'completed' }));
+                          stopWorkoutTimer();
+                        },
+                      },
+                      {
+                        text: t('No'),
+                        style: 'cancel',
+                        onPress: () => {
+                          const firstUnloggedIndex = findNextUnloggedSet(0);
+                          if (firstUnloggedIndex !== -1) {
+                            setTimerState(prev => updateTimerState(prev, {
+                              workoutStage: 'exercise',
+                              currentSetIndex: firstUnloggedIndex
+                            }));
+                          }
+                        },
+                      },
+                    ]
+                  );
+                } else {
+                  // All sets are logged
+                  setTimerState(prev => updateTimerState(prev, { workoutStage: 'completed' }));
+                  stopWorkoutTimer();
+                }
               }
             }}
             disabled={allSets[timerState.currentSetIndex].reps_done <= 0 || allSets[timerState.currentSetIndex].weight === ''}
           >
             <Text style={[styles.buttonText, { color: theme.buttonText }]}>
-              {isLastSet ? t('finishWorkout') : t('completeSet')}
+              {isLastUnloggedSet ? t('finishWorkout') : t('completeSet')}
             </Text>
           </TouchableOpacity>
         </View>
         
         <View style={styles.progressContainer}>
           <Text style={[styles.progressText, { color: theme.text }]}>
-          %{Math.round(((timerState.currentSetIndex + 1) / allSets.length) * 100)}
+          %{Math.round(progress)}
           </Text>
           <View style={[styles.progressBar, { backgroundColor: theme.border }]}>
             <View 
@@ -713,20 +787,19 @@ export default function StartedWorkoutInterface() {
                 styles.progressFill, 
                 { 
                   backgroundColor: theme.buttonBackground,
-                  width: `${((timerState.currentSetIndex + 1) / allSets.length) * 100}%`
+                  width: `${progress}%`
                 }
               ]} 
             />
           </View>
         </View>
+        <Text style={[styles.tipText, { color: theme.text }]}>{t('startedWorkoutTip')}</Text>
       </View>
     );
   };
   
   const renderRestScreen = () => {
-    const nextSet = timerState.currentSetIndex + 1 < allSets.length 
-      ? allSets[timerState.currentSetIndex + 1] 
-      : null;
+    const nextSet = allSets[timerState.currentSetIndex];
     
     const muscleGroupInfo = nextSet ? muscleGroupData.find(mg => mg.value === nextSet.muscle_group) : null;
     
@@ -789,7 +862,6 @@ export default function StartedWorkoutInterface() {
           onPress={() => {
             clearRestTimerState(); // Clear rest timer state when skipping
             setTimerState(prev => updateTimerState(prev, {
-              currentSetIndex: prev.currentSetIndex + 1,
               workoutStage: 'exercise'
             }));
           }}
@@ -801,7 +873,7 @@ export default function StartedWorkoutInterface() {
   };
   
   const renderCompletedScreen = () => {
-    const completedSets = allSets.filter(set => set.completed);
+    const loggedSets = allSets.filter(set => set.set_logged);
     
     const saveWorkout = async () => {
       try {
@@ -817,9 +889,9 @@ export default function StartedWorkoutInterface() {
           [timerState.workoutDuration, workout_log_id]
         );
         
-        console.log('Saving completed sets:', completedSets.length);
-        for (let i = 0; i < completedSets.length; i++) {
-          const set = completedSets[i];
+        console.log('Saving completed sets:', loggedSets.length);
+        for (let i = 0; i < loggedSets.length; i++) {
+          const set = loggedSets[i];
           await db.runAsync(
             `INSERT INTO Weight_Log (
               workout_log_id, 
@@ -881,7 +953,7 @@ export default function StartedWorkoutInterface() {
             
             <View style={styles.completedStatItem}>
               <Text style={[styles.completedStatValue, { color: theme.text }]}>
-                {completedSets.length}
+                {loggedSets.length}
               </Text>
               <Text style={[styles.completedStatLabel, { color: theme.text }]}>{t('setsCompleted')}</Text>
             </View>
@@ -955,38 +1027,64 @@ export default function StartedWorkoutInterface() {
                     : { color: theme.text }
                 ];
 
+                const handlePress = () => {
+                  if (item.exercise_fully_logged) {
+                    return; // Do nothing if exercise is fully logged
+                  }
+                  
+                  const firstUnloggedSetIndex = allSets.findIndex(
+                    s => s.exercise_id === item.logged_exercise_id && !s.set_logged
+                  );
+
+                  if (firstUnloggedSetIndex !== -1) {
+                    clearRestTimerState();
+                    setTimerState(prev =>
+                      updateTimerState(prev, {
+                        currentSetIndex: firstUnloggedSetIndex,
+                        workoutStage: 'exercise',
+                      })
+                    );
+                    setIsExerciseListModalVisible(false);
+                  }
+                };
+
                 return (
-                  <View style={itemStyle}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <View style={{ flexDirection: 'row', alignItems: 'center', flexShrink: 1 }}>
-                        <Text style={[nameStyle, { marginRight: 8 }]}>{item.exercise_name}</Text>
-                        {muscleGroupInfo && muscleGroupInfo.value && (
-                          <View style={[
-                            styles.muscleGroupBadgeModal,
-                            { 
-                              backgroundColor: isCurrent ? theme.text : theme.card,
-                              borderColor: isCurrent ? theme.buttonText : theme.border,
-                            }
-                          ]}>
-                            <Text style={[
-                              styles.muscleGroupBadgeText,
-                              { color: isCurrent ? (theme.type === 'dark' ? '#000' : '#fff') : theme.text }
+                  <TouchableOpacity onPress={handlePress} disabled={item.exercise_fully_logged}>
+                    <View style={itemStyle}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', flexShrink: 1 }}>
+                          {item.exercise_fully_logged && (
+                            <Ionicons name="checkmark-circle" size={20} color={isCurrent ? theme.buttonText : theme.buttonBackground} style={{ marginRight: 8 }} />
+                          )}
+                          <Text style={[nameStyle, { marginRight: 8 }]}>{item.exercise_name}</Text>
+                          {muscleGroupInfo && muscleGroupInfo.value && (
+                            <View style={[
+                              styles.muscleGroupBadgeModal,
+                              { 
+                                backgroundColor: isCurrent ? theme.text : theme.card,
+                                borderColor: isCurrent ? theme.buttonText : theme.border,
+                              }
                             ]}>
-                              {t(muscleGroupInfo.label)}
-                            </Text>
-                          </View>
+                              <Text style={[
+                                styles.muscleGroupBadgeText,
+                                { color: isCurrent ? (theme.type === 'dark' ? '#000' : '#fff') : theme.text }
+                              ]}>
+                                {t(muscleGroupInfo.label)}
+                              </Text>
+                            </View>
+                          )}
+                        </View>
+                        {item.web_link && (
+                          <TouchableOpacity onPress={() => handleLinkPress(item.web_link)} style={{ marginLeft: 10 }}>
+                            <Ionicons name="link-outline" size={22} color={isCurrent ? theme.buttonText : theme.text} />
+                          </TouchableOpacity>
                         )}
                       </View>
-                      {item.web_link && (
-                        <TouchableOpacity onPress={() => handleLinkPress(item.web_link)} style={{ marginLeft: 10 }}>
-                          <Ionicons name="link-outline" size={22} color={isCurrent ? theme.buttonText : theme.text} />
-                        </TouchableOpacity>
-                      )}
+                      <Text style={[detailStyle, { marginTop: 4 }]}>
+                        {item.sets} {t('Sets')} × {item.reps} {t('Reps')}
+                      </Text>
                     </View>
-                    <Text style={[detailStyle, { marginTop: 4 }]}>
-                      {item.sets} {t('Sets')} × {item.reps} {t('Reps')}
-                    </Text>
-                  </View>
+                  </TouchableOpacity>
                 );
               }}
             />
@@ -1301,6 +1399,12 @@ const styles = StyleSheet.create({
   progressFill: {
     height: '100%',
     borderRadius: 4,
+  },
+  tipText: {
+    marginTop: 15,
+    textAlign: 'center',
+    fontSize: 14,
+    fontStyle: 'italic',
   },
   
   // Rest screen styles
