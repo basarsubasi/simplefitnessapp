@@ -670,6 +670,10 @@ export default function StartedWorkoutInterface() {
     const loggedSetsCount = allSets.filter(s => s.set_logged).length;
     const progress = allSets.length > 0 ? (loggedSetsCount / allSets.length) * 100 : 0;
     
+    const currentExerciseId = currentSet.exercise_id;
+    const currentExerciseIndex = exercises.findIndex(ex => ex.logged_exercise_id === currentExerciseId);
+    const isLastExercise = currentExerciseIndex === exercises.length - 1;
+
     return (
       <View style={styles.exerciseScreenContainer}>
         <View style={[styles.timerDisplay, { backgroundColor: theme.card, borderColor: theme.border }]}>
@@ -862,6 +866,26 @@ export default function StartedWorkoutInterface() {
               {isLastUnloggedSet ? t('finishWorkout') : t('completeSet')}
             </Text>
           </TouchableOpacity>
+          <View style={styles.secondaryControlsContainer}>
+            {!isLastExercise &&
+              <TouchableOpacity
+              style={[styles.secondaryButton, { backgroundColor: theme.card, borderColor: theme.border }]}
+              onPress={handleSkipToNextExercise}
+              >
+              <Text style={[styles.secondaryButtonText, { color: theme.text }]}>{t('skipToNextExercise')}</Text>
+              </TouchableOpacity>
+            }
+            <TouchableOpacity
+              style={[
+                styles.secondaryButton, 
+                { backgroundColor: theme.card, borderColor: theme.border },
+                isLastExercise && { width: '100%' }
+              ]}
+              onPress={handleFinishWorkout}
+            >
+              <Text style={[styles.secondaryButtonText, { color: theme.text }]}>{t('finishWorkout')}</Text>
+            </TouchableOpacity>
+          </View>
         </View>
         
         <View style={styles.progressContainer}>
@@ -1211,13 +1235,62 @@ export default function StartedWorkoutInterface() {
   }, []);
 
   const playSound = async () => {
-    if ( soundObject.current) {
+    if (soundObject.current) {
         try {
             await soundObject.current.replayAsync();
         } catch (error) {
             console.log('Error playing sound', error);
         }
     }
+  };
+
+  const handleSkipToNextExercise = () => {
+    const currentExerciseId = allSets[timerState.currentSetIndex].exercise_id;
+    const currentExerciseInExercisesIndex = exercises.findIndex(e => e.logged_exercise_id === currentExerciseId);
+
+    let nextUnloggedExercise = null;
+    for (let i = currentExerciseInExercisesIndex + 1; i < exercises.length; i++) {
+        if (!exercises[i].exercise_fully_logged) {
+            nextUnloggedExercise = exercises[i];
+            break;
+        }
+    }
+
+    if (nextUnloggedExercise) {
+        const firstUnloggedSetIndex = allSets.findIndex(
+            s => s.exercise_id === nextUnloggedExercise.logged_exercise_id && !s.set_logged
+        );
+
+        if (firstUnloggedSetIndex !== -1) {
+            clearRestTimerState();
+            setTimerState(prev =>
+              updateTimerState(prev, {
+                currentSetIndex: firstUnloggedSetIndex,
+                workoutStage: 'exercise',
+              })
+            );
+        }
+    } else {
+        Alert.alert(t('noMoreExercises'), t('allFollowingExercisesLogged'));
+    }
+  };
+
+  const handleFinishWorkout = () => {
+    Alert.alert(
+        t('finishWorkout'),
+        t('finishWorkoutConfirmation'),
+        [
+            { text: t('Cancel'), style: 'cancel' },
+            {
+                text: t('Finish'),
+                style: 'destructive',
+                onPress: () => {
+                    stopWorkoutTimer();
+                    setTimerState(prev => updateTimerState(prev, { workoutStage: 'completed' }));
+                },
+            },
+        ]
+    );
   };
   
   if (loading) {
@@ -1515,6 +1588,24 @@ const styles = StyleSheet.create({
   progressFill: {
     height: '100%',
     borderRadius: 4,
+  },
+  secondaryControlsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 15,
+  },
+  secondaryButton: {
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    borderWidth: 1,
+    width: '48%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  secondaryButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
   },
   tipText: {
     marginTop: 15,
