@@ -34,6 +34,7 @@ import {
   timerCalculations,
   TimerState 
 } from '../utils/timerPersistenceUtils';
+import { AutoSizeText, ResizeTextMode } from 'react-native-auto-size-text';
 
 type StartedWorkoutRouteProps = RouteProp<
   StartWorkoutStackParamList,
@@ -190,24 +191,32 @@ export default function StartedWorkoutInterface() {
     debugMode: __DEV__
   });
   
-
-
-  // Load rest timer preferences when component mounts
+      
   useEffect(() => {
-    const loadPreferences = async () => {
-      try {
-        const preferences = await loadRestTimerPreferences();
-        setRestTime(preferences.restTimeBetweenSets);
-        setExerciseRestTime(preferences.restTimeBetweenExercises);
-        setEnableVibration(preferences.enableVibration);
-        setAutoFillWeight(preferences.autoFillWeight);
-        setEnableSetSwitchSound(preferences.enableSetSwitchSound);
-      } catch (error) {
-        console.error('Error loading rest timer preferences:', error);
-      }
+    const loadInitialData = async () => {
+        try {
+            const preferences = await loadRestTimerPreferences();
+            setRestTime(preferences.restTimeBetweenSets);
+            setExerciseRestTime(preferences.restTimeBetweenExercises);
+            setEnableVibration(preferences.enableVibration);
+            setAutoFillWeight(preferences.autoFillWeight);
+            setEnableSetSwitchSound(preferences.enableSetSwitchSound);
+          
+
+            await fetchWorkoutDetails(preferences.autoFillWeight);
+        } catch (error) {
+            console.error('Error loading initial data:', error);
+            setLoading(false);
+        }
     };
-    
-    loadPreferences();
+
+    loadInitialData();
+
+    return () => {
+        stopWorkoutTimer();
+        stopRestTimer();
+        deactivateKeepAwake();
+    };
   }, []);
 
   useEffect(() => {
@@ -246,31 +255,7 @@ export default function StartedWorkoutInterface() {
     return unsubscribe;
   }, [navigation, timerState.workoutStarted, timerState.workoutStage, t]);
   
-  useEffect(() => {
-    // Check if completion_time column exists, add it if not
-    checkAndAddCompletionTimeColumn();
-    fetchWorkoutDetails();
-    
-    return () => {
-      stopWorkoutTimer();
-      stopRestTimer();
-      deactivateKeepAwake();
-    };
-  }, []);
-  
-  // Function to check and add completion_time column if needed
-  const checkAndAddCompletionTimeColumn = async () => {
-    try {
-      await db.runAsync(`
-        ALTER TABLE Workout_Log ADD COLUMN completion_time INTEGER;
-      `).catch(error => {
-        console.log('Column might already exist, continuing execution');
-      });
-    } catch (error) {
-      console.error('Error checking or adding completion_time column:', error);
-    }
-  };
-  
+
   const handleLinkPress = async (url: string | null) => {
     if (!url) {
       Alert.alert(t('noLinkAvailable'));
@@ -289,7 +274,7 @@ export default function StartedWorkoutInterface() {
     }
   };
   
-  const fetchWorkoutDetails = async () => {
+  const fetchWorkoutDetails = async (shouldAutoFill: boolean) => {
     try {
       setLoading(true);
       
@@ -346,7 +331,7 @@ export default function StartedWorkoutInterface() {
         const setsData: ExerciseSet[] = [];
         exercisesResult.forEach(exercise => {
           for (let i = 1; i <= exercise.sets; i++) {
-            const weight = autoFillWeight ? (weightMapRef.current.get(`${exercise.exercise_name}-${i}`) || '') : '';
+            const weight = shouldAutoFill ? (weightMapRef.current.get(`${exercise.exercise_name}-${i}`) || '') : '';
             setsData.push({
               exercise_name: exercise.exercise_name,
               exercise_id: exercise.logged_exercise_id,
@@ -881,7 +866,14 @@ export default function StartedWorkoutInterface() {
                   style={[styles.secondaryButton, { backgroundColor: theme.card, borderColor: theme.border }]}
                   onPress={handleSkipToNextExercise}
                   >
-                  <Text style={[styles.secondaryButtonText, { color: theme.text }]}>{t('skipToNextExercise')}</Text>
+                    <AutoSizeText
+                      fontSize={16}
+                      numberOfLines={3}
+                      mode={ResizeTextMode.max_lines}
+                      style={[styles.secondaryButtonText, { color: theme.text }]}
+                    >
+                      {t('skipToNextExercise')}
+                    </AutoSizeText>
                   </TouchableOpacity>
                 }
                 <TouchableOpacity
@@ -893,7 +885,14 @@ export default function StartedWorkoutInterface() {
                   ]}
                   onPress={handleFinishWorkout}
                 >
-                  <Text style={[styles.secondaryButtonText, { color: theme.text }]}>{t('finishWorkout')}</Text>
+                  <AutoSizeText
+                    fontSize={16}
+                    numberOfLines={3}
+                    mode={ResizeTextMode.max_lines}
+                    style={[styles.secondaryButtonText, { color: theme.text }]}
+                  >
+                    {t('finishWorkout')}
+                  </AutoSizeText>
                 </TouchableOpacity>
             </View>
         </View>
