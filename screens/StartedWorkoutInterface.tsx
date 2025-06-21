@@ -817,6 +817,8 @@ export default function StartedWorkoutInterface() {
     const currentExerciseId = currentSet.exercise_id;
     const currentExerciseIndex = exercises.findIndex(ex => ex.logged_exercise_id === currentExerciseId);
     const isLastExercise = currentExerciseIndex === exercises.length - 1;
+    const isLastSetOfExercise = currentSet.set_number === currentSet.total_sets;
+    const isLastStructuralSet = isLastExercise && isLastSetOfExercise;
 
     return (
       <View style={styles.exerciseScreenContainer}>
@@ -915,121 +917,129 @@ export default function StartedWorkoutInterface() {
         </View>
         
         <View style={styles.controlsContainer}>
-          <TouchableOpacity
-            style={[styles.completeButton, { 
-              backgroundColor: 
-                allSets[timerState.currentSetIndex].reps_done <= 0 || 
-                allSets[timerState.currentSetIndex].weight === '' 
-                  ? theme.inactivetint 
-                  : theme.buttonBackground
-            }]}
-            onPress={() => {
-              if (
-                allSets[timerState.currentSetIndex].reps_done <= 0 || 
-                allSets[timerState.currentSetIndex].weight === ''
-              ) {
-                Alert.alert(t('missingInformation'), t('enterRepsAndWeight'));
-                return;
-              }
-              
-              const updatedSets = [...allSets];
-              const currentSetIndex = timerState.currentSetIndex;
-              const currentSet = { ...updatedSets[currentSetIndex], set_logged: true };
-              updatedSets[currentSetIndex] = currentSet;
-              
-              setAllSets(updatedSets);
-              updateExerciseLoggedStatus(currentSet.exercise_id);
-              
-              const findNextUnloggedSet = (startIndex: number) => {
-                for (let i = startIndex; i < updatedSets.length; i++) {
-                  if (!updatedSets[i].set_logged) {
-                    return i;
-                  }
-                }
-                return -1;
-              };
-
-              let nextSetIndex = findNextUnloggedSet(currentSetIndex + 1);
-
-              if (nextSetIndex !== -1) {
-                const differentExercise = isDifferentExercise(currentSetIndex, nextSetIndex);
-                
-                setTimerState(prev => updateTimerState(prev, {
-                  workoutStage: 'rest',
-                  isExerciseRest: differentExercise,
-                  currentSetIndex: nextSetIndex 
-                }));
-                
-                const restSeconds = differentExercise 
-                  ? parseInt(exerciseRestTime) 
-                  : parseInt(restTime);
-                
-                startRestTimer(restSeconds);
-              } else {
-                // No more unlogged sets after current one
-                const anyUnlogged = updatedSets.some(s => !s.set_logged);
-                if (anyUnlogged) {
-                  Alert.alert(
-                    t('unsavedSetsTitle'),
-                    t('unsavedSetsMessage'),
-                    [
-                      {
-                        text: t('Yes'),
-                        style: 'destructive',
-                        onPress: () => {
-                          setTimerState(prev => updateTimerState(prev, { workoutStage: 'completed' }));
-                          stopWorkoutTimer();
-                        },
-                      },
-                      {
-                        text: t('No'),
-                        style: 'cancel',
-                        onPress: () => {
-                          const firstUnloggedIndex = findNextUnloggedSet(0);
-                          if (firstUnloggedIndex !== -1) {
-                            clearRestTimerState();
-                            setTimerState(prev => updateTimerState(prev, {
-                              workoutStage: 'exercise',
-                              currentSetIndex: firstUnloggedIndex
-                            }));
-                          }
-                        },
-                      },
-                    ]
-                  );
-                } else {
-                  // All sets are logged
-                  setTimerState(prev => updateTimerState(prev, { workoutStage: 'completed' }));
-                  stopWorkoutTimer();
-                }
-              }
-            }}
-            disabled={allSets[timerState.currentSetIndex].reps_done <= 0 || allSets[timerState.currentSetIndex].weight === ''}
-          >
-            <Text style={[styles.buttonText, { color: theme.buttonText }]}>
-              {isLastUnloggedSet ? t('finishWorkout') : t('completeSet')}
-            </Text>
-          </TouchableOpacity>
-          <View style={styles.secondaryControlsContainer}>
-            {!isLastExercise &&
-              <TouchableOpacity
-              style={[styles.secondaryButton, { backgroundColor: theme.card, borderColor: theme.border }]}
-              onPress={handleSkipToNextExercise}
-              >
-              <Text style={[styles.secondaryButtonText, { color: theme.text }]}>{t('skipToNextExercise')}</Text>
-              </TouchableOpacity>
-            }
+            {!isLastStructuralSet &&
             <TouchableOpacity
-              style={[
-                styles.secondaryButton, 
-                { backgroundColor: theme.card, borderColor: theme.border },
-                isLastExercise && { width: '100%' }
-              ]}
-              onPress={handleFinishWorkout}
+                style={[styles.completeButton, { 
+                backgroundColor: 
+                    allSets[timerState.currentSetIndex].reps_done <= 0 || 
+                    allSets[timerState.currentSetIndex].weight === '' ||
+                    parseFloat(allSets[timerState.currentSetIndex].weight) <= 0
+                    ? theme.inactivetint 
+                    : theme.buttonBackground
+                }]}
+                onPress={() => {
+                if (
+                    allSets[timerState.currentSetIndex].reps_done <= 0 || 
+                    allSets[timerState.currentSetIndex].weight === '' ||
+                    parseFloat(allSets[timerState.currentSetIndex].weight) <= 0
+                ) {
+                    Alert.alert(t('missingInformation'), t('enterRepsAndWeight'));
+                    return;
+                }
+                
+                const updatedSets = [...allSets];
+                const currentSetIndex = timerState.currentSetIndex;
+                const currentSet = { ...updatedSets[currentSetIndex], set_logged: true };
+                updatedSets[currentSetIndex] = currentSet;
+                
+                setAllSets(updatedSets);
+                updateExerciseLoggedStatus(currentSet.exercise_id);
+                
+                const findNextUnloggedSet = (startIndex: number) => {
+                    for (let i = startIndex; i < updatedSets.length; i++) {
+                    if (!updatedSets[i].set_logged) {
+                        return i;
+                    }
+                    }
+                    return -1;
+                };
+
+                let nextSetIndex = findNextUnloggedSet(currentSetIndex + 1);
+
+                if (nextSetIndex !== -1) {
+                    const differentExercise = isDifferentExercise(currentSetIndex, nextSetIndex);
+                    
+                    setTimerState(prev => updateTimerState(prev, {
+                    workoutStage: 'rest',
+                    isExerciseRest: differentExercise,
+                    currentSetIndex: nextSetIndex 
+                    }));
+                    
+                    const restSeconds = differentExercise 
+                    ? parseInt(exerciseRestTime) 
+                    : parseInt(restTime);
+                    
+                    startRestTimer(restSeconds);
+                } else {
+                    // No more unlogged sets after current one
+                    const anyUnlogged = updatedSets.some(s => !s.set_logged);
+                    if (anyUnlogged) {
+                    Alert.alert(
+                        t('unsavedSetsTitle'),
+                        t('unsavedSetsMessage'),
+                        [
+                        {
+                            text: t('Yes'),
+                            style: 'destructive',
+                            onPress: () => {
+                            setTimerState(prev => updateTimerState(prev, { workoutStage: 'completed' }));
+                            stopWorkoutTimer();
+                            },
+                        },
+                        {
+                            text: t('No'),
+                            style: 'cancel',
+                            onPress: () => {
+                            const firstUnloggedIndex = findNextUnloggedSet(0);
+                            if (firstUnloggedIndex !== -1) {
+                                setTimerState(prev => updateTimerState(prev, {
+                                workoutStage: 'exercise',
+                                currentSetIndex: firstUnloggedIndex
+                                }));
+                            }
+                            },
+                        },
+                        ]
+                    );
+                    } else {
+                    // All sets are logged
+                    setTimerState(prev => updateTimerState(prev, { workoutStage: 'completed' }));
+                    stopWorkoutTimer();
+                    }
+                }
+                }}
+                disabled={
+                    allSets[timerState.currentSetIndex].reps_done <= 0 || 
+                    allSets[timerState.currentSetIndex].weight === '' ||
+                    parseFloat(allSets[timerState.currentSetIndex].weight) <= 0
+                }
             >
-              <Text style={[styles.secondaryButtonText, { color: theme.text }]}>{t('finishWorkout')}</Text>
+                <Text style={[styles.buttonText, { color: theme.buttonText }]}>
+                {isLastUnloggedSet ? t('finishWorkout') : t('completeSet')}
+                </Text>
             </TouchableOpacity>
-          </View>
+            }
+            <View style={styles.secondaryControlsContainer}>
+                {!isLastExercise &&
+                  <TouchableOpacity
+                  style={[styles.secondaryButton, { backgroundColor: theme.card, borderColor: theme.border }]}
+                  onPress={handleSkipToNextExercise}
+                  >
+                  <Text style={[styles.secondaryButtonText, { color: theme.text }]}>{t('skipToNextExercise')}</Text>
+                  </TouchableOpacity>
+                }
+                <TouchableOpacity
+                  style={[
+                    styles.secondaryButton, 
+                    { backgroundColor: theme.card, borderColor: theme.border },
+                    (isLastExercise && !isLastStructuralSet) && { width: '100%' },
+                    (isLastExercise && isLastStructuralSet) && { width: '100%' }
+                  ]}
+                  onPress={handleFinishWorkout}
+                >
+                  <Text style={[styles.secondaryButtonText, { color: theme.text }]}>{t('finishWorkout')}</Text>
+                </TouchableOpacity>
+            </View>
         </View>
         
         <View style={styles.progressContainer}>
@@ -1429,6 +1439,16 @@ export default function StartedWorkoutInterface() {
                 text: t('Finish'),
                 style: 'destructive',
                 onPress: () => {
+                    const currentSetIndex = timerState.currentSetIndex;
+                    const currentSet = allSets[currentSetIndex];
+
+                    if (currentSet && currentSet.reps_done > 0 && currentSet.weight !== '' && parseFloat(currentSet.weight) > 0) {
+                        const updatedSets = [...allSets];
+                        updatedSets[currentSetIndex] = { ...currentSet, set_logged: true };
+                        setAllSets(updatedSets);
+                        updateExerciseLoggedStatus(currentSet.exercise_id);
+                    }
+                    
                     stopWorkoutTimer();
                     setTimerState(prev => updateTimerState(prev, { workoutStage: 'completed' }));
                 },
