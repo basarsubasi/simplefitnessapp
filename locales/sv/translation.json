@@ -392,7 +392,6 @@
 
 
 
-
 "Workout Volume": "Träningsvolym",
 "Muscle Distribution": "Muskelfördelning",
 "Overall Muscle Groups": "Övergripande Muskelgrupper",
@@ -406,7 +405,22 @@
 "muscleGroupVolumeExplanation": "Denna graf visar den volym som utförts av varje muskelgrupp i dina träningspass inom en tidsram, vilket gör att du kan följa dina framsteg i varje muskelgrupp.",
 "overallMuscleGroupsExplanation": "Denna graf visar antalet set utförda av varje muskelgrupp i dina träningspass inom en tidsram, vilket gör att du kan se hur mycket du tränar varje muskelgrupp.",
 "workoutVolumeExplanation": "Denna graf visar volymen av dina träningspass inom en tidsram, vilket gör att du kan se hur du presterade i varje träningspass.",
-"Volume": "Volym"
+"Volume": "Volym",
+
+
+
+
+"duplicateRecurringWorkout": "Duplicera återkommande träningspass",
+"recurringWorkoutExists": "En återkommande träning med detta namn finns redan.",
+"skipToNextExercise": "Hoppa till nästa övning",
+"enableSetSwitchSound": "Aktivera ljud",
+"autoFillWeights": "Fyll i vikter automatiskt",
+"startedWorkoutTip": "Tips: Du kan hoppa till vilken övning du vill genom att trycka på knappen med tre linjer i det övre högra hörnet på skärmen."
+
+
+
+
+
     
         
 

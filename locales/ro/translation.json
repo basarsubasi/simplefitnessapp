@@ -405,7 +405,21 @@
 "muscleGroupVolumeExplanation": "Acest grafic arată volumul efectuat de fiecare grupă musculară în antrenamentele tale într-un interval de timp, permițându-ți să urmărești progresul în fiecare grupă musculară.",
 "overallMuscleGroupsExplanation": "Acest grafic arată numărul de seturi efectuate de fiecare grupă musculară în antrenamentele tale într-un interval de timp, permițându-ți să vezi cât de mult lucrezi fiecare grupă musculară.",
 "workoutVolumeExplanation": "Acest grafic arată volumul antrenamentelor tale într-un interval de timp, permițându-ți să vezi cum ai performat în fiecare antrenament.",
-"Volume": "Volum"
+"Volume": "Volum",
+
+
+
+"duplicateRecurringWorkout": "Duplică antrenamentul recurent",
+"recurringWorkoutExists": "Un antrenament recurent cu acest nume există deja.",
+"skipToNextExercise": "Săriți la următorul exercițiu",
+"enableSetSwitchSound": "Activează sunetul",
+"autoFillWeights": "Auto-completează greutățile",
+"startedWorkoutTip": "Sfat: Puteți sări la orice exercițiu apăsând butonul cu trei linii în partea de sus dreaptă a ecranului."
+
+
+
+
+
 
 
 

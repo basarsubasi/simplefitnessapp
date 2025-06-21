@@ -403,7 +403,22 @@
 "muscleGroupVolumeExplanation": "Tämä kaavio näyttää kunkin lihasryhmän tekemän volyymin harjoituksissasi aikavälillä, mikä antaa sinun seurata edistymistäsi kussakin lihasryhmässä.",
 "overallMuscleGroupsExplanation": "Tämä kaavio näyttää kunkin lihasryhmän tekemien sarjojen lukumäärän harjoituksissasi aikavälillä, mikä antaa sinun nähdä, kuinka paljon työstät kutakin lihasryhmää.",
 "workoutVolumeExplanation": "Tämä kaavio näyttää harjoitustesi volyymin aikavälillä, mikä antaa sinun nähdä, miten suoriuduit jokaisessa harjoituksessa.",
-"Volume": "Volyymi"
+"Volume": "Volyymi",  
+
+"duplicateRecurringWorkout": "Toistuva harjoitus kaksoiskopioi",
+"recurringWorkoutExists": "Toistuvaa harjoitusta tällä nimellä on jo olemassa.",
+"skipToNextExercise": "Siirry seuraavaan harjoitukseen",
+"enableSetSwitchSound": "Ota ääni käyttöön",
+"autoFillWeights": "Täytä painot automaattisesti",
+"startedWorkoutTip": "Vinkki: Voit siirtyä mihin tahansa harjoitukseen painamalla kolmea viivaa yläreunassa olevasta painikkeesta."
+
+
+
+
+
+
+
+
     
 
 

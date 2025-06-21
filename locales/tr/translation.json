@@ -431,7 +431,20 @@
 "muscleGroupVolumeExplanation": "Bu grafik, antrenmanlarınızda her kas grubunun belirli bir zaman diliminde kaldırdığı hacmi gösterir ve her kas grubundaki ilerlemenizi takip etmenizi sağlar.",
 "overallMuscleGroupsExplanation": "Bu grafik, antrenmanlarınızda her kas grubunun belirli bir zaman diliminde yaptığı set sayısını gösterir ve her kas grubunu ne kadar çalıştığınızı görmenizi sağlar.",
 "workoutVolumeExplanation": "Bu grafik, antrenmanlarınızın belirli bir zaman dilimindeki günlük hacmini gösterir ve her antrenmanda nasıl performans gösterdiğinizi görmenizi sağlar.",
-"Volume": "Hacim"
+"Volume": "Hacim",
+
+
+"duplicateRecurringWorkout": "Zaten mevcut",
+"recurringWorkoutExists": "Bu gün için tekrarlayan bir antrenman zaten mevcut.",
+"skipToNextExercise": "Bir sonraki egzersize atla",
+"enableSetSwitchSound": "Sesi etkinleştir",
+"autoFillWeights": "Ağırlıkları otomatik doldur",
+"startedWorkoutTip": "İpucu: Egzersizler arasında geçiş yapmak için ekranın sağ üst köşesindeki üç çizgiye basabilirsiniz."
+
+
+
+
+
             
         
     
