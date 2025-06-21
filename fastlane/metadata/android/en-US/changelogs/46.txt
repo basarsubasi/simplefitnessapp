@@ -3,3 +3,5 @@
 - Added support for tagging exercises with muscle groups
 - New Graphs
 - Now you can skip exercises on started workouts
+- Option for autofilling the weights from the previous logs
+- Option for enabling sound to notify that rest timer is finished
