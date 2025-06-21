@@ -383,8 +383,6 @@
 "Hamstrings": "Koleni",
 "Calves": "Calves",
 "Quads": "Quads",
-"muscleGroup": "Muskelgruppa",
-
 
 
 
@@ -401,7 +399,20 @@
 "muscleGroupVolumeExplanation": "Ta graf prikazuje obseg, ki ga je opravila vsaka mišična skupina v vaših vadbah v določenem časovnem okviru, kar vam omogoča, da spremljate svoj napredek v vsaki mišični skupini.",
 "overallMuscleGroupsExplanation": "Ta graf prikazuje število serij, ki jih je opravila vsaka mišična skupina v vaših vadbah v določenem časovnem okviru, kar vam omogoča, da vidite, koliko delate posamezno mišično skupino.",
 "workoutVolumeExplanation": "Ta graf prikazuje obseg vaših vadb v določenem časovnem okviru, kar vam omogoča, da vidite, kako ste se odrezali pri vsaki vadbi.",
-"Volume": "Obseg"
+"Volume": "Obseg",
+
+
+"muscleGroup": "Muskelgruppa",
+"duplicateRecurringWorkout": "Duplikiraj ponavljajoči se trening",
+"recurringWorkoutExists": "Ponavljajoči se trening z istim imenom že obstaja.",
+"skipToNextExercise": "Preskoči na naslednjo vajo",
+"enableSetSwitchSound": "Omogoči zvok",
+"autoFillWeights": "Samodejno izpolni uteži",
+"startedWorkoutTip": "Nasvet: Lahko preskočite na katerokoli vajo z pritiskom na gumb z tremi črtami v zgornjem desnem kotu zaslona."
+
+
+
+
         
 
     

@@ -442,8 +442,16 @@
     "muscleDistributionExplanation": "This graph shows the distribution of muscle groups in your workouts, allowing you to adjust it for your goals.",
     "muscleGroupVolumeExplanation": "This graph shows the volume done by each muscle group in your workouts within a time frame, allowing you to track your progress in each muscle group.",
     "overallMuscleGroupsExplanation": "This graph shows the set count of sets done by each muscle group in your workouts within a time frame, allowing you to see how much you're working each muscle group.",
-    "workoutVolumeExplanation": "This graph shows the volume of your workouts within a time frame, allowing you to see how you performed in each workout."
+    "workoutVolumeExplanation": "This graph shows the volume of your workouts within a time frame, allowing you to see how you performed in each workout.",
 
+
+    "duplicateRecurringWorkout": "Duplicate Recurring Workout",
+    "recurringWorkoutExists": "A recurring workout with this name already exists for this day.",
+
+    "skipToNextExercise": "Skip to Next Exercise",
+    "enableSetSwitchSound": "Enable Sound",
+    "autoFillWeights": "Auto Fill Weights",
+    "startedWorkoutTip": "Tip: You can switch to any exercise by pressing the three line button on the top right of the screen."
 
 
     }

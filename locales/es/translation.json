@@ -395,11 +395,16 @@
 "muscleGroupVolumeExplanation": "Este gráfico muestra el volumen realizado por cada grupo muscular en tus entrenamientos dentro de un marco de tiempo, permitiéndote seguir tu progreso en cada grupo muscular.",
 "overallMuscleGroupsExplanation": "Este gráfico muestra el recuento de series realizadas por cada grupo muscular en tus entrenamientos dentro de un marco de tiempo, permitiéndote ver cuánto estás trabajando cada grupo muscular.",
 "workoutVolumeExplanation": "Este gráfico muestra el volumen de tus entrenamientos dentro de un marco de tiempo, permitiéndote ver cómo te desempeñaste en cada entrenamiento.",
-"Volume": "Volumen"
+"Volume": "Volumen",
 
 
 
-      
+"duplicateRecurringWorkout": "Duplicar entrenamiento recurrente",
+"recurringWorkoutExists": "Ya existe un entrenamiento recurrente con este nombre.",
+"skipToNextExercise": "Saltar a siguiente ejercicio",
+"enableSetSwitchSound": "Activar sonido",
+"autoFillWeights": "Auto llenar pesos",
+"startedWorkoutTip": "Consejo: Puedes cambiar a cualquier ejercicio presionando el botón con tres líneas en la parte superior derecha de la pantalla."
 
       
 

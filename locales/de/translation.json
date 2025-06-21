@@ -389,7 +389,15 @@
 "muscleGroupVolumeExplanation": "Diese Grafik zeigt das Volumen, das jede Muskelgruppe in Ihren Trainingseinheiten innerhalb eines Zeitrahmens geleistet hat, sodass Sie Ihren Fortschritt in jeder Muskelgruppe verfolgen können.",
 "overallMuscleGroupsExplanation": "Diese Grafik zeigt die Satzanzahl der Sätze, die von jeder Muskelgruppe in Ihren Trainingseinheiten innerhalb eines Zeitrahmens ausgeführt wurden, sodass Sie sehen können, wie viel Sie jede Muskelgruppe trainieren.",
 "workoutVolumeExplanation": "Diese Grafik zeigt das Volumen Ihrer Trainingseinheiten innerhalb eines Zeitrahmens, sodass Sie sehen können, wie Sie in jedem Training abgeschnitten haben.",
-"Volume": "Volumen"
+"Volume": "Volumen",
+
+"duplicateRecurringWorkout": "Wiederkehrendes Workout duplizieren",
+"recurringWorkoutExists": "Ein wiederkehrendes Workout mit diesem Namen existiert bereits.",
+
+"skipToNextExercise": "Zum nächsten Übung wechseln",
+"enableSetSwitchSound": "Sound aktivieren",
+"autoFillWeights": "Gewichte automatisch ausfüllen",
+"startedWorkoutTip": "Tipp: Sie können zu jeder Übung wechseln, indem Sie auf die drei Linien-Schaltfläche in der oberen rechten Ecke der Bildschirm klicken."
 
 }
   

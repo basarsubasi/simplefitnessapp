@@ -622,7 +622,7 @@ export default function StartedWorkoutInterface() {
             backgroundColor: theme.type === 'dark' ? '#121212' : '#f0f0f0',
             borderColor: theme.type === 'dark' ? '#000000' : '#e0e0e0'
           }]}>
-            <Text style={[styles.toggleText, { color: theme.text }]}>{t('setSwitchSound')}</Text>
+            <Text style={[styles.toggleText, { color: theme.text }]}>{t('enableSetSwitchSound')}</Text>
             <Switch
               value={enableSetSwitchSound}
               onValueChange={setEnableSetSwitchSound}

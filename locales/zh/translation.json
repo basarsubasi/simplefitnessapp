@@ -403,7 +403,18 @@
 "muscleGroupVolumeExplanation": "此图显示了在一定时间范围内，您训练中每个肌肉群完成的训练量，让您可以跟踪每个肌肉群的进展。",
 "overallMuscleGroupsExplanation": "此图显示了在一定时间范围内，您训练中每个肌肉群完成的组数统计，让您可以查看每个肌肉群的训练程度。",
 "workoutVolumeExplanation": "此图显示了在一定时间范围内，您训练的总量，让您可以查看每次训练的表现。",
-"Volume": "训练量"
+"Volume": "训练量",
+
+
+"duplicateRecurringWorkout": "重复锻炼",
+"recurringWorkoutExists": "此锻炼已存在。",
+"skipToNextExercise": "跳过当前练习",
+"enableSetSwitchSound": "启用组切换声音",
+"autoFillWeights": "自动填充重量",
+"startedWorkoutTip": "提示：您可以通过点击屏幕右上角的三个点来跳过当前练习。"
+
+
+
 
 
 

@@ -397,7 +397,16 @@
 "muscleGroupVolumeExplanation": "이 그래프는 특정 기간 동안 운동 시 각 근육 그룹이 수행한 볼륨을 보여주어, 각 근육 그룹의 진행 상황을 추적할 수 있습니다.",
 "overallMuscleGroupsExplanation": "이 그래프는 특정 기간 동안 운동 시 각 근육 그룹이 수행한 세트 수를 보여주어, 각 근육 그룹을 얼마나 많이 운동하고 있는지 확인할 수 있습니다.",
 "workoutVolumeExplanation": "이 그래프는 특정 기간 동안의 운동 볼륨을 보여주어, 각 운동에서 어떻게 수행했는지 확인할 수 있습니다.",
-"Volume": "볼륨"
+"Volume": "볼륨",
+
+"duplicateRecurringWorkout": "정기 운동 복사",
+"recurringWorkoutExists": "이미 동일한 이름의 정기 운동이 존재합니다.",
+"skipToNextExercise": "다음 운동으로 이동",
+"enableSetSwitchSound": "세트 전환 사운드 활성화",
+"autoFillWeights": "무게 자동 입력",
+"startedWorkoutTip": "팁: 화면 상단 오른쪽에 있는 3개의 선 버튼을 눌러 다른 운동으로 전환할 수 있습니다."
+
+
     
 
 
