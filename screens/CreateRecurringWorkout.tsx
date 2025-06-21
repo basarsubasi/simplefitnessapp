@@ -195,6 +195,24 @@ export default function CreateRecurringWorkout() {
       return;
     }
 
+    try {
+      const existing = await db.getFirstAsync(
+        'SELECT 1 FROM Recurring_Workouts WHERE workout_id = ? AND day_name = ?',
+        [selectedWorkout, selectedDayName]
+      );
+      
+      if (existing) {
+        Alert.alert(
+          t('duplicateRecurringWorkout'),
+          t('recurringWorkoutExists'),
+          [{ text: t('OK') }]
+        );
+        return;
+      }
+    } catch (e) {
+        console.error("error checking for duplicates", e);
+    }
+
     setIsLoading(true);
     console.log('DEBUG: Starting recurring workout creation process');
     console.log(`DEBUG: Selected Workout ID: ${selectedWorkout}, Name: ${selectedWorkoutName}`);
