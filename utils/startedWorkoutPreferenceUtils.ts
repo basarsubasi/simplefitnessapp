@@ -4,6 +4,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const REST_TIME_BETWEEN_SETS_KEY = '@rest_time_between_sets';
 const REST_TIME_BETWEEN_EXERCISES_KEY = '@rest_time_between_exercises';
 const ENABLE_VIBRATION_KEY = '@enable_vibration';
+const AUTO_FILL_WEIGHT_KEY = '@auto_fill_weight';
+const ENABLE_SET_SWITCH_SOUND_KEY = '@enable_set_switch_sound';
 
 // Default values
 const DEFAULT_SET_REST_TIME = '30';
@@ -13,6 +15,8 @@ export interface RestTimerPreferences {
   restTimeBetweenSets: string;
   restTimeBetweenExercises: string;
   enableVibration: boolean;
+  autoFillWeight: boolean;
+  enableSetSwitchSound: boolean;
 }
 
 /**
@@ -25,10 +29,14 @@ export const loadRestTimerPreferences = async (): Promise<RestTimerPreferences> 
       savedSetRestTime,
       savedExerciseRestTime,
       savedVibration,
+      savedAutoFillWeight,
+      savedSetSwitchSound,
     ] = await Promise.all([
       AsyncStorage.getItem(REST_TIME_BETWEEN_SETS_KEY),
       AsyncStorage.getItem(REST_TIME_BETWEEN_EXERCISES_KEY),
       AsyncStorage.getItem(ENABLE_VIBRATION_KEY),
+      AsyncStorage.getItem(AUTO_FILL_WEIGHT_KEY),
+      AsyncStorage.getItem(ENABLE_SET_SWITCH_SOUND_KEY),
     ]);
 
     return {
@@ -37,6 +45,10 @@ export const loadRestTimerPreferences = async (): Promise<RestTimerPreferences> 
         savedExerciseRestTime || DEFAULT_EXERCISE_REST_TIME,
       enableVibration:
         savedVibration !== null ? JSON.parse(savedVibration) : true,
+      autoFillWeight:
+        savedAutoFillWeight !== null ? JSON.parse(savedAutoFillWeight) : true,
+      enableSetSwitchSound:
+        savedSetSwitchSound !== null ? JSON.parse(savedSetSwitchSound) : false,
     };
   } catch (error) {
     console.error('Error loading rest timer preferences:', error);
@@ -45,6 +57,8 @@ export const loadRestTimerPreferences = async (): Promise<RestTimerPreferences> 
       restTimeBetweenSets: DEFAULT_SET_REST_TIME,
       restTimeBetweenExercises: DEFAULT_EXERCISE_REST_TIME,
       enableVibration: true,
+      autoFillWeight: true,
+      enableSetSwitchSound: false,
     };
   }
 };
@@ -105,6 +119,41 @@ export const saveVibrationPreference = async (
   }
 };
 
+
+
+
+/**
+ * Save auto-fill preference to AsyncStorage
+ * @param isEnabled - Whether auto-fill is enabled
+ * @returns Promise<void>
+ */
+export const saveAutoFillPreference = async (
+  isEnabled: boolean
+): Promise<void> => {
+  try {
+    await AsyncStorage.setItem(AUTO_FILL_WEIGHT_KEY, JSON.stringify(isEnabled));
+  } catch (error) {
+    console.error('Error saving auto-fill preference:', error);
+    throw error;
+  }
+};
+
+/**
+ * Save set switch sound preference to AsyncStorage
+ * @param isEnabled - Whether set switch sound is enabled
+ * @returns Promise<void>
+ */
+export const saveSetSwitchSoundPreference = async (
+  isEnabled: boolean
+): Promise<void> => {
+  try {
+    await AsyncStorage.setItem(ENABLE_SET_SWITCH_SOUND_KEY, JSON.stringify(isEnabled));
+  } catch (error) {
+    console.error('Error saving set switch sound preference:', error);
+    throw error;
+  }
+};
+
 /**
  * Save both rest timer preferences at once
  * param preferences - Object containing both rest time values
@@ -118,6 +167,8 @@ export const saveRestTimerPreferences = async (
       saveRestTimeBetweenSets(preferences.restTimeBetweenSets),
       saveRestTimeBetweenExercises(preferences.restTimeBetweenExercises),
       saveVibrationPreference(preferences.enableVibration),
+      saveAutoFillPreference(preferences.autoFillWeight),
+      saveSetSwitchSoundPreference(preferences.enableSetSwitchSound),
     ]);
   } catch (error) {
     console.error('Error saving rest timer preferences:', error);
@@ -134,5 +185,7 @@ export const getDefaultRestTimerPreferences = (): RestTimerPreferences => {
     restTimeBetweenSets: DEFAULT_SET_REST_TIME,
     restTimeBetweenExercises: DEFAULT_EXERCISE_REST_TIME,
     enableVibration: true,
-  };  
+    autoFillWeight: true,
+    enableSetSwitchSound: false,
+  };
 };
