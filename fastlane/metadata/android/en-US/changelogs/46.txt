@@ -1,0 +1,5 @@
+
+- Now you can export and import your workouts individually 
+- Added support for tagging exercises with muscle groups
+- New Graphs
+- Now you can skip exercises on started workouts
