@@ -1284,33 +1284,19 @@ export default function StartedWorkoutInterface() {
         Alert.alert(t('noMoreExercises'), t('allFollowingExercisesLogged'));
     }
   };
-
   const handleFinishWorkout = () => {
-    Alert.alert(
-        t('finishWorkout'),
-        t('finishWorkoutConfirmation'),
-        [
-            { text: t('Cancel'), style: 'cancel' },
-            {
-                text: t('Finish'),
-                style: 'destructive',
-                onPress: () => {
-                    const currentSetIndex = timerState.currentSetIndex;
-                    const currentSet = allSets[currentSetIndex];
+    const currentSetIndex = timerState.currentSetIndex;
+    const currentSet = allSets[currentSetIndex];
 
-                    if (currentSet && currentSet.reps_done > 0 && currentSet.weight !== '' && parseFloat(currentSet.weight) > 0) {
-                        const updatedSets = [...allSets];
-                        updatedSets[currentSetIndex] = { ...currentSet, set_logged: true };
-                        setAllSets(updatedSets);
-                        updateExerciseLoggedStatus(currentSet.exercise_id);
-                    }
-                    
-                    stopWorkoutTimer();
-                    setTimerState(prev => updateTimerState(prev, { workoutStage: 'completed' }));
-                },
-            },
-        ]
-    );
+    if (currentSet && currentSet.reps_done > 0 && currentSet.weight !== '' && parseFloat(currentSet.weight) > 0) {
+      const updatedSets = [...allSets];
+      updatedSets[currentSetIndex] = { ...currentSet, set_logged: true };
+      setAllSets(updatedSets);
+      updateExerciseLoggedStatus(currentSet.exercise_id);
+    }
+    
+    stopWorkoutTimer();
+    setTimerState(prev => updateTimerState(prev, { workoutStage: 'completed' }));
   };
   
   if (loading) {
@@ -1612,7 +1598,7 @@ const styles = StyleSheet.create({
   secondaryControlsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 15,
+    marginTop: 50,
   },
   secondaryButton: {
     paddingVertical: 12,
