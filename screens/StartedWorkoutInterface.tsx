@@ -25,7 +25,8 @@ import { StartWorkoutStackParamList } from '../App';
 import * as Notifications from 'expo-notifications';
 import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
 import { useSettings } from '../context/SettingsContext';
-import { loadRestTimerPreferences, saveRestTimerPreferences } from '../utils/restTimerUtils';
+import { loadRestTimerPreferences, saveRestTimerPreferences } from '../utils/startedWorkoutPreferenceUtils';
+import { Audio } from 'expo-av';
 import { 
   useTimerPersistence, 
   createTimerState, 
@@ -86,6 +87,8 @@ export default function StartedWorkoutInterface() {
   const [restTime, setRestTime] = useState('30');
   const [exerciseRestTime, setExerciseRestTime] = useState('60');
   const [isExerciseListModalVisible, setIsExerciseListModalVisible] = useState(false);
+  const [autoFillWeight, setAutoFillWeight] = useState(true);
+  const [enableSetSwitchSound, setEnableSetSwitchSound] = useState(false);
   
   // User preference toggles
   const [enableVibration, setEnableVibration] = useState(true);
@@ -100,6 +103,8 @@ export default function StartedWorkoutInterface() {
   // Timer refs for intervals
   const workoutTimerRef = useRef<NodeJS.Timeout | null>(null);
   const restTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const weightMapRef = useRef(new Map<string, string>());
+  const soundObject = useRef<Audio.Sound | null>(null);
   
   const updateExerciseLoggedStatus = (exerciseId: number) => {
     setAllSets(currentSets => {
@@ -272,6 +277,8 @@ export default function StartedWorkoutInterface() {
         setRestTime(preferences.restTimeBetweenSets);
         setExerciseRestTime(preferences.restTimeBetweenExercises);
         setEnableVibration(preferences.enableVibration);
+        setAutoFillWeight(preferences.autoFillWeight);
+        setEnableSetSwitchSound(preferences.enableSetSwitchSound);
         if (notificationPermissionGranted) {
           setEnableNotifications(preferences.enableNotifications);
         } else {
@@ -411,10 +418,37 @@ export default function StartedWorkoutInterface() {
         
         setExercises(exercisesResult.map(e => ({ ...e, exercise_fully_logged: false })));
         
+        weightMapRef.current.clear();
+
+        if (exercisesResult.length > 0) {
+            const exerciseNames = exercisesResult.map(e => e.exercise_name);
+            const placeholders = exerciseNames.map(() => '?').join(',');
+        
+            const lastWeightsResult = await db.getAllAsync<{ exercise_name: string; set_number: number; weight_logged: number }>(
+                `SELECT wl.exercise_name, wl.set_number, wl.weight_logged
+                 FROM Weight_Log wl
+                 INNER JOIN (
+                   SELECT exercise_name, set_number, MAX(workout_log_id) as max_log_id
+                   FROM Weight_Log
+                   WHERE exercise_name IN (${placeholders})
+                   GROUP BY exercise_name, set_number
+                 ) as latest_logs
+                 ON wl.exercise_name = latest_logs.exercise_name 
+                 AND wl.set_number = latest_logs.set_number 
+                 AND wl.workout_log_id = latest_logs.max_log_id;`,
+                exerciseNames
+              );
+        
+              lastWeightsResult.forEach(row => {
+                weightMapRef.current.set(`${row.exercise_name}-${row.set_number}`, row.weight_logged.toString());
+              });
+        }
+        
         // Prepare all sets data structure
         const setsData: ExerciseSet[] = [];
         exercisesResult.forEach(exercise => {
           for (let i = 1; i <= exercise.sets; i++) {
+            const weight = autoFillWeight ? (weightMapRef.current.get(`${exercise.exercise_name}-${i}`) || '') : '';
             setsData.push({
               exercise_name: exercise.exercise_name,
               exercise_id: exercise.logged_exercise_id,
@@ -422,7 +456,7 @@ export default function StartedWorkoutInterface() {
               total_sets: exercise.sets,
               reps_goal: exercise.reps,
               reps_done: exercise.reps,
-              weight: '',
+              weight: weight,
               set_logged: false,
               web_link: exercise.web_link || null,
               muscle_group: exercise.muscle_group || null
@@ -498,6 +532,7 @@ export default function StartedWorkoutInterface() {
   };
   
   const handleRestComplete = (wasExerciseRest: boolean) => {
+  
     clearRestTimerState(); // Clear rest timer state before new set
     setTimerState(prev => updateTimerState(prev, {
       workoutStage: 'exercise'
@@ -506,8 +541,29 @@ export default function StartedWorkoutInterface() {
     if (enableVibration) {
       Vibration.vibrate([500, 300, 500]);
     }
+    if (enableSetSwitchSound) {
+      playSound();
+    }
   };
   
+  const handleAutoFillToggle = (newValue: boolean) => {
+    setAutoFillWeight(newValue);
+    setAllSets(currentSets => 
+      currentSets.map(set => {
+        if (set.set_logged) {
+          return set;
+        }
+
+        const newWeight = newValue ? (weightMapRef.current.get(`${set.exercise_name}-${set.set_number}`) || '') : '';
+
+        return {
+          ...set,
+          weight: newWeight,
+        };
+      })
+    );
+  };
+
   // Workout flow functions
   const startWorkout = async () => {
     const setRestSeconds = parseInt(restTime);
@@ -529,6 +585,8 @@ export default function StartedWorkoutInterface() {
         restTimeBetweenExercises: exerciseRestTime,
         enableVibration: enableVibration,
         enableNotifications: enableNotifications,
+        autoFillWeight: autoFillWeight,
+        enableSetSwitchSound: enableSetSwitchSound,
       });
     } catch (error) {
       console.error('Error saving rest timer preferences:', error);
@@ -683,12 +741,38 @@ export default function StartedWorkoutInterface() {
             backgroundColor: theme.type === 'dark' ? '#121212' : '#f0f0f0',
             borderColor: theme.type === 'dark' ? '#000000' : '#e0e0e0'
           }]}>
+            <Text style={[styles.toggleText, { color: theme.text }]}>{t('autoFillWeights')}</Text>
+            <Switch
+              value={autoFillWeight}
+              onValueChange={handleAutoFillToggle}
+              trackColor={{ false: theme.type === 'dark' ? '#444' : '#ccc', true: theme.buttonBackground }}
+              thumbColor={autoFillWeight ? (theme.type === 'dark' ? '#fff' : '#fff') : (theme.type === 'dark' ? '#888' : '#f4f3f4')}
+            />
+          </View>
+          
+          <View style={[styles.toggleRow, { 
+            backgroundColor: theme.type === 'dark' ? '#121212' : '#f0f0f0',
+            borderColor: theme.type === 'dark' ? '#000000' : '#e0e0e0'
+          }]}>
             <Text style={[styles.toggleText, { color: theme.text }]}>{t('vibration')}</Text>
             <Switch
               value={enableVibration}
               onValueChange={setEnableVibration}
               trackColor={{ false: theme.type === 'dark' ? '#444' : '#ccc', true: theme.buttonBackground }}
               thumbColor={enableVibration ? (theme.type === 'dark' ? '#fff' : '#fff') : (theme.type === 'dark' ? '#888' : '#f4f3f4')}
+            />
+          </View>
+          
+          <View style={[styles.toggleRow, { 
+            backgroundColor: theme.type === 'dark' ? '#121212' : '#f0f0f0',
+            borderColor: theme.type === 'dark' ? '#000000' : '#e0e0e0'
+          }]}>
+            <Text style={[styles.toggleText, { color: theme.text }]}>{t('setSwitchSound')}</Text>
+            <Switch
+              value={enableSetSwitchSound}
+              onValueChange={setEnableSetSwitchSound}
+              trackColor={{ false: theme.type === 'dark' ? '#444' : '#ccc', true: theme.buttonBackground }}
+              thumbColor={enableSetSwitchSound ? (theme.type === 'dark' ? '#fff' : '#fff') : (theme.type === 'dark' ? '#888' : '#f4f3f4')}
             />
           </View>
           
@@ -899,6 +983,7 @@ export default function StartedWorkoutInterface() {
                         onPress: () => {
                           const firstUnloggedIndex = findNextUnloggedSet(0);
                           if (firstUnloggedIndex !== -1) {
+                            clearRestTimerState();
                             setTimerState(prev => updateTimerState(prev, {
                               workoutStage: 'exercise',
                               currentSetIndex: firstUnloggedIndex
@@ -1248,6 +1333,35 @@ export default function StartedWorkoutInterface() {
       restRemaining: null,
       restStartTime: null
     }));
+  };
+  
+  useEffect(() => {
+    const loadSound = async () => {
+      try {
+        const { sound } = await Audio.Sound.createAsync(
+           require('../assets/sounds/switch.mp3')
+        );
+        soundObject.current = sound;
+      } catch (error) {
+        console.error("Couldn't load sound file. Please make sure it exists at assets/sounds/switch.mp3", error);
+      }
+    };
+
+    loadSound();
+
+    return () => {
+      soundObject.current?.unloadAsync();
+    };
+  }, []);
+
+  const playSound = async () => {
+    if ( soundObject.current) {
+        try {
+            await soundObject.current.replayAsync();
+        } catch (error) {
+            console.log('Error playing sound', error);
+        }
+    }
   };
   
   if (loading) {
