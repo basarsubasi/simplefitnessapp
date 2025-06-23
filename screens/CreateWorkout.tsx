@@ -84,7 +84,7 @@ export default function CreateWorkout() {
   const navigation = useNavigation<WorkoutListNavigationProp>();
 
   const muscleGroupData = [
-    { label: t('None'), value: null },
+    { label: t('Unspecified'), value: null },
     { label: t('Chest'), value: 'chest' },
     { label: t('Back'), value: 'back' },
     { label: t('Shoulders'), value: 'shoulders' },
