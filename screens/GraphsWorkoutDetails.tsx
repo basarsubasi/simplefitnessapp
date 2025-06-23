@@ -311,9 +311,17 @@ export default function GraphsWorkoutDetails() {
   useEffect(() => {
     if (graphMode === 'Time') {
       if (calculationType === 'Time') {
-        fetchTimeData();
+        if (selectedWorkout) {
+          fetchTimeData();
+        } else {
+          setTimeLogData([]);
+        }
       } else if (calculationType === 'CES') {
-        fetchWorkoutCESData();
+        if (selectedWorkout) {
+          fetchWorkoutCESData();
+        } else {
+          setWorkoutCESData([]);
+        }
       } else if (calculationType === 'MuscleDistribution') {
         fetchMuscleGroupDistributionData();
       }
@@ -326,7 +334,7 @@ export default function GraphsWorkoutDetails() {
       // Data for MuscleGroupVolume is fetched in other useEffects
       // to prevent re-fetching the button list on timeframe change.
     }
-  }, [selectedExercise, timeFrame, calculationType, graphMode]);
+  }, [selectedWorkout, selectedExercise, timeFrame, calculationType, graphMode]);
 
   useEffect(() => {
     if (graphMode === 'Overall' && calculationType === 'MuscleGroupVolume') {
