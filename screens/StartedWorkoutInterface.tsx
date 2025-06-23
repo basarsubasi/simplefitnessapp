@@ -26,7 +26,7 @@ import { StartWorkoutStackParamList } from '../App';
 import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
 import { useSettings } from '../context/SettingsContext';
 import { loadRestTimerPreferences, saveRestTimerPreferences } from '../utils/startedWorkoutPreferenceUtils';
-import { Audio } from 'expo-av';
+import { Audio, InterruptionModeIOS, InterruptionModeAndroid } from 'expo-av';
 import { 
   useTimerPersistence, 
   createTimerState, 
@@ -104,7 +104,6 @@ export default function StartedWorkoutInterface() {
   const workoutTimerRef = useRef<NodeJS.Timeout | null>(null);
   const restTimerRef = useRef<NodeJS.Timeout | null>(null);
   const weightMapRef = useRef(new Map<string, string>());
-  const soundObject = useRef<Audio.Sound | null>(null);
   
   const updateExerciseLoggedStatus = (exerciseId: number) => {
     setAllSets(currentSets => {
@@ -1225,31 +1224,36 @@ export default function StartedWorkoutInterface() {
   };
   
   useEffect(() => {
-    const loadSound = async () => {
+    const configureAudio = async () => {
       try {
-        const { sound } = await Audio.Sound.createAsync(
-           require('../assets/sounds/switch.mp3')
-        );
-        soundObject.current = sound;
+        await Audio.setAudioModeAsync({
+          playsInSilentModeIOS: true,
+          interruptionModeIOS: InterruptionModeIOS.MixWithOthers,
+          interruptionModeAndroid: InterruptionModeAndroid.DuckOthers,
+          playThroughEarpieceAndroid: false,
+        });
       } catch (error) {
-        console.error("Couldn't load sound file. Please make sure it exists at assets/sounds/switch.mp3", error);
+        console.error("Error configuring audio mode: ", error);
       }
     };
 
-    loadSound();
-
-    return () => {
-      soundObject.current?.unloadAsync();
-    };
+    configureAudio();
   }, []);
 
   const playSound = async () => {
-    if (soundObject.current) {
-        try {
-            await soundObject.current.replayAsync();
-        } catch (error) {
-            console.log('Error playing sound', error);
+    
+    try {
+      const { sound } = await Audio.Sound.createAsync(
+         require('../assets/sounds/switch.mp3')
+      );
+      sound.setOnPlaybackStatusUpdate(async (status) => {
+        if (status.isLoaded && status.didJustFinish) {
+          await sound.unloadAsync();
         }
+      });
+      await sound.playAsync();
+    } catch (error) {
+        console.log('Error playing sound', error);
     }
   };
 
