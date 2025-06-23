@@ -1,0 +1,5 @@
+
+- Fixed the edit workouts interaction with muscle groups and links
+- Fixed the audio ducking when sound enabled on started workouts
+- Improved graph SQL
+- Added the date to exported database filenames
