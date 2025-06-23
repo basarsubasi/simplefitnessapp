@@ -641,19 +641,13 @@ export default function GraphsWorkoutDetails() {
       const startTimestamp = Math.floor(startDate.getTime() / 1000);
 
       const result = await db.getAllAsync<OverallMuscleGroupsData>(
-        `WITH ExerciseMuscleGroups AS (
-            SELECT exercise_name, muscle_group
-            FROM Exercises
-            GROUP BY exercise_name
-        )
-        SELECT
-          COALESCE(e.muscle_group, 'Unspecified') as muscle_group,
+        `SELECT
+          COALESCE(wl.muscle_group, 'Unspecified') as muscle_group,
           COUNT(*) as set_count
         FROM Weight_Log wl
         INNER JOIN Workout_Log wlog ON wl.workout_log_id = wlog.workout_log_id
-        LEFT JOIN ExerciseMuscleGroups e ON wl.exercise_name = e.exercise_name
         WHERE wlog.workout_date >= ?
-        GROUP BY COALESCE(e.muscle_group, 'Unspecified')
+        GROUP BY COALESCE(wl.muscle_group, 'Unspecified')
         ORDER BY set_count DESC;`,
         [startTimestamp]
       );
@@ -669,15 +663,9 @@ export default function GraphsWorkoutDetails() {
     setIsLoading(true);
     try {
       const result = await db.getAllAsync<{ muscle_group: string }>(
-        `SELECT DISTINCT COALESCE(e.muscle_group, 'Unspecified') as muscle_group
-         FROM Weight_Log wl
-         INNER JOIN Workout_Log wlog ON wl.workout_log_id = wlog.workout_log_id
-         LEFT JOIN (
-            SELECT exercise_name, muscle_group
-            FROM Exercises
-            GROUP BY exercise_name
-         ) e ON wl.exercise_name = e.exercise_name
-         WHERE e.muscle_group IS NOT NULL AND e.muscle_group != 'Unspecified'
+        `SELECT DISTINCT COALESCE(muscle_group, 'Unspecified') as muscle_group
+         FROM Weight_Log
+         WHERE muscle_group IS NOT NULL AND muscle_group != 'Unspecified'
          ORDER BY muscle_group ASC;`
       );
       const muscleGroupOptions = result.map(mg => ({
@@ -724,13 +712,8 @@ export default function GraphsWorkoutDetails() {
             SUM(wl.weight_logged * wl.reps_logged * (1 + wl.reps_logged / 30.0)) / 10 AS total_ces
         FROM Weight_Log wl
         INNER JOIN Workout_Log wlog ON wl.workout_log_id = wlog.workout_log_id
-        LEFT JOIN (
-            SELECT exercise_name, muscle_group
-            FROM Exercises
-            GROUP BY exercise_name
-        ) e ON wl.exercise_name = e.exercise_name
         WHERE wlog.workout_date >= ?
-        AND e.muscle_group = ?
+        AND wl.muscle_group = ?
         GROUP BY wlog.workout_date
         ORDER BY wlog.workout_date ASC;`,
         [startTimestamp, selectedMuscleGroup]
@@ -843,13 +826,8 @@ export default function GraphsWorkoutDetails() {
             wl.set_number
         FROM Weight_Log wl
         INNER JOIN Workout_Log wlog ON wl.workout_log_id = wlog.workout_log_id
-        LEFT JOIN (
-            SELECT exercise_name, muscle_group
-            FROM Exercises
-            GROUP BY exercise_name
-        ) e ON wl.exercise_name = e.exercise_name
         WHERE wlog.workout_date = ?
-        AND e.muscle_group = ?
+        AND wl.muscle_group = ?
         ORDER BY wl.exercise_name, wl.set_number;`,
         [timestamp, muscleGroup]
       );
