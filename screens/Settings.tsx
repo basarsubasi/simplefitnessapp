@@ -200,7 +200,19 @@ export default function Settings() {
         return;
       }
 
-      const tempExportPath = `${FileSystem.cacheDirectory}${dbName}`;
+      const today = new Date();
+      const day = String(today.getDate()).padStart(2, '0');
+      const month = String(today.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
+      const year = today.getFullYear();
+
+      const formattedDate =
+        dateFormat === 'dd-mm-yyyy'
+          ? `${day}-${month}-${year}`
+          : `${month}-${day}-${year}`;
+
+      const exportDbName = `SimpleDB-${formattedDate}.db`;
+
+      const tempExportPath = `${FileSystem.cacheDirectory}${exportDbName}`;
       await FileSystem.copyAsync({
         from: dbFilePath,
         to: tempExportPath,
