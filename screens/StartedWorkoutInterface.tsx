@@ -105,30 +105,17 @@ export default function StartedWorkoutInterface() {
   const restTimerRef = useRef<NodeJS.Timeout | null>(null);
   const weightMapRef = useRef(new Map<string, string>());
   
-  const updateExerciseLoggedStatus = (exerciseId: number) => {
-    setAllSets(currentSets => {
-      const exerciseSets = currentSets.filter(s => s.exercise_id === exerciseId);
-      const allSetsLogged = exerciseSets.every(s => s.set_logged);
-  
-      if (allSetsLogged) {
-        setExercises(prevExercises =>
-          prevExercises.map(ex =>
-            ex.logged_exercise_id === exerciseId
-              ? { ...ex, exercise_fully_logged: true }
-              : ex
-          )
-        );
-      } else {
-        setExercises(prevExercises =>
-            prevExercises.map(ex =>
-              ex.logged_exercise_id === exerciseId
-                ? { ...ex, exercise_fully_logged: false }
-                : ex
-            )
-          );
-      }
-      return currentSets;
-    });
+  const updateExerciseLoggedStatus = (exerciseId: number, currentSets: ExerciseSet[]) => {
+    const exerciseSets = currentSets.filter(s => s.exercise_id === exerciseId);
+    const allSetsLogged = exerciseSets.every(s => s.set_logged);
+
+    setExercises(prevExercises =>
+      prevExercises.map(ex =>
+        ex.logged_exercise_id === exerciseId
+          ? { ...ex, exercise_fully_logged: allSetsLogged }
+          : ex
+      )
+    );
   };
   
   // Handle timer restoration from background
@@ -708,27 +695,28 @@ export default function StartedWorkoutInterface() {
             <View style={styles.inputGroup}>
               <Text style={[styles.inputLabel, { color: theme.text }]}>{t('repsDone')}</Text>
               <TextInput
-                style={[styles.input, { 
+                  style={[styles.input, { 
                   backgroundColor: theme.card,
-                  color: theme.text,
-                  borderColor: theme.border
-                }]}
-                value={currentSet.reps_done.toString() || ''}
-                onChangeText={(text) => {
-                  const reps = text === '' ? 0 : parseInt(text);
-                  if (isNaN(reps)) return;
-                  
-                  const updatedSets = [...allSets];
-                  updatedSets[timerState.currentSetIndex] = {
-                    ...updatedSets[timerState.currentSetIndex],
-                    reps_done: reps
-                  };
-                  setAllSets(updatedSets);
-                }}
-                keyboardType="number-pad"
-                maxLength={3}
-                placeholderTextColor={theme.type === 'dark' ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)'}
-              />
+              color: theme.text,
+              borderColor: theme.border
+            }]}
+            value={currentSet.reps_done ? currentSet.reps_done.toString() : ''}
+            onChangeText={(text) => {
+              const reps = text === '' ? 0 : parseInt(text, 10);
+              if (isNaN(reps)) return;
+              
+              const updatedSets = [...allSets];
+              updatedSets[timerState.currentSetIndex] = {
+                ...updatedSets[timerState.currentSetIndex],
+                reps_done: reps
+              };
+              setAllSets(updatedSets);
+            }}
+            keyboardType="number-pad"
+            maxLength={3}
+            placeholder="0"
+            placeholderTextColor={theme.type === 'dark' ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)'}
+          />
             </View>
             
             <View style={styles.inputGroup}>
@@ -783,7 +771,7 @@ export default function StartedWorkoutInterface() {
                 updatedSets[currentSetIndex] = currentSet;
                 
                 setAllSets(updatedSets);
-                updateExerciseLoggedStatus(currentSet.exercise_id);
+                updateExerciseLoggedStatus(currentSet.exercise_id, updatedSets);
                 
                 const findNextUnloggedSet = (startIndex: number) => {
                     for (let i = startIndex; i < updatedSets.length; i++) {
@@ -1295,7 +1283,7 @@ export default function StartedWorkoutInterface() {
       const updatedSets = [...allSets];
       updatedSets[currentSetIndex] = { ...currentSet, set_logged: true };
       setAllSets(updatedSets);
-      updateExerciseLoggedStatus(currentSet.exercise_id);
+      updateExerciseLoggedStatus(currentSet.exercise_id, updatedSets);
     }
     
     stopWorkoutTimer();
