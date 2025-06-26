@@ -99,6 +99,7 @@ export default function StartedWorkoutInterface() {
   
   // Timer state using the new utility
   const [timerState, setTimerState] = useState<TimerState>(createTimerState());
+  const [isCompletingSet, setIsCompletingSet] = useState(false);
   
   // Timer refs for intervals
   const workoutTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -558,7 +559,7 @@ export default function StartedWorkoutInterface() {
             value={restTime}
             onChangeText={setRestTime}
             keyboardType="number-pad"
-            maxLength={3}
+            maxLength={4}
             placeholderTextColor={theme.type === 'dark' ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)'}
           />
           
@@ -572,7 +573,7 @@ export default function StartedWorkoutInterface() {
             value={exerciseRestTime}
             onChangeText={setExerciseRestTime}
             keyboardType="number-pad"
-            maxLength={3}
+            maxLength={4}
             placeholderTextColor={theme.type === 'dark' ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)'}
           />
           
@@ -729,6 +730,9 @@ export default function StartedWorkoutInterface() {
                 }]}
                 value={currentSet.weight}
                 onChangeText={(text) => {
+
+
+
                   const updatedSets = [...allSets];
                   updatedSets[timerState.currentSetIndex] = {
                     ...updatedSets[timerState.currentSetIndex],
@@ -765,6 +769,8 @@ export default function StartedWorkoutInterface() {
                     return;
                 }
                 
+                setIsCompletingSet(true);
+
                 const updatedSets = [...allSets];
                 const currentSetIndex = timerState.currentSetIndex;
                 const currentSet = { ...updatedSets[currentSetIndex], set_logged: true };
@@ -797,7 +803,9 @@ export default function StartedWorkoutInterface() {
                     ? parseInt(exerciseRestTime) 
                     : parseInt(restTime);
                     
+                    setIsCompletingSet(false);
                     startRestTimer(restSeconds);
+                    
                 } else {
                     // No more unlogged sets after current one
                     const anyUnlogged = updatedSets.some(s => !s.set_logged);
@@ -825,9 +833,11 @@ export default function StartedWorkoutInterface() {
                                 currentSetIndex: firstUnloggedIndex
                                 }));
                             }
+                            setIsCompletingSet(false);
                             },
                         },
-                        ]
+                        ],
+                        { onDismiss: () => setIsCompletingSet(false) }
                     );
                     } else {
                     // All sets are logged
@@ -837,13 +847,14 @@ export default function StartedWorkoutInterface() {
                 }
                 }}
                 disabled={
+                    isCompletingSet ||
                     allSets[timerState.currentSetIndex].reps_done <= 0 || 
                     allSets[timerState.currentSetIndex].weight === '' ||
                     parseFloat(allSets[timerState.currentSetIndex].weight) <= 0
                 }
             >
                 <Text style={[styles.buttonText, { color: theme.buttonText }]}>
-                {isLastUnloggedSet ? t('finishWorkout') : t('completeSet')}
+                {isCompletingSet ? `${t('completing')}...` : (isLastUnloggedSet ? t('finishWorkout') : t('completeSet'))}
                 </Text>
             </TouchableOpacity>
             }
@@ -1107,6 +1118,7 @@ export default function StartedWorkoutInterface() {
               </TouchableOpacity>
             </View>
             <FlatList
+              showsVerticalScrollIndicator={false}
               data={exercises}
               keyExtractor={(item) => item.logged_exercise_id.toString()}
               renderItem={({ item }) => {
@@ -1326,6 +1338,7 @@ export default function StartedWorkoutInterface() {
       </View>
       
       <ScrollView 
+        showsVerticalScrollIndicator={false}
         style={styles.content} 
         contentContainerStyle={[
           styles.scrollContent,
