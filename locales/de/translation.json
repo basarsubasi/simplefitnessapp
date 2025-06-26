@@ -398,7 +398,12 @@
 "skipToNextExercise": "Zum nächsten Übung wechseln",
 "enableSetSwitchSound": "Sound aktivieren",
 "autoFillWeights": "Gewichte automatisch ausfüllen",
-"startedWorkoutTip": "Tipp: Sie können zu jeder Übung wechseln, indem Sie auf die drei Linien-Schaltfläche in der oberen rechten Ecke der Bildschirm klicken."
+"startedWorkoutTip": "Tipp: Sie können zu jeder Übung wechseln, indem Sie auf die drei Linien-Schaltfläche in der oberen rechten Ecke der Bildschirm klicken.",
+
+"completing": "Dokonchiere",
+"Day Volume": "Tagesvolumen",
+"About Day Volume": "Über Tagesvolumen",
+"dayVolumeExplanation": "Dieses Diagramm zeigt das Volumen eines bestimmten Trainingsdays innerhalb eines Zeitrahmens, sodass Sie Ihren Fortschritt für diesen Tag isoliert sehen können."
 
 }
   

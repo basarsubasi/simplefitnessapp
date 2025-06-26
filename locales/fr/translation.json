@@ -408,7 +408,13 @@
 "skipToNextExercise": "Passer à l'exercice suivant",
 "enableSetSwitchSound": "Activer le son",
 "autoFillWeights": "Remplir automatiquement les poids",
-"startedWorkoutTip": "Astuce : Vous pouvez passer à n'importe quel exercice en appuyant sur le bouton avec trois lignes en haut à droite de l'écran."
+"startedWorkoutTip": "Astuce : Vous pouvez passer à n'importe quel exercice en appuyant sur le bouton avec trois lignes en haut à droite de l'écran.",
+
+
+"completing": "En cours",
+"Day Volume": "Volume du jour",
+"About Day Volume": "À propos du volume du jour",
+"dayVolumeExplanation": "Ce graphique montre le volume d'un jour d'entraînement spécifique dans une période donnée, vous permettant de voir votre progression pour ce jour de manière isolée."
 
 
 

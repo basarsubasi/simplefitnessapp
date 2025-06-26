@@ -403,7 +403,13 @@
 "skipToNextExercise": "Přeskočit na další cvik",
 "enableSetSwitchSound": "Povolit zvuk",
 "autoFillWeights": "Automaticky vyplnit váhy",
-"startedWorkoutTip": "Tip: Můžete přepnout na jakýkoli cvik klepnutím na tlačítko s třemi čárami v pravém horním rohu obrazovky."
+"startedWorkoutTip": "Tip: Můžete přepnout na jakýkoli cvik klepnutím na tlačítko s třemi čárami v pravém horním rohu obrazovky.",
+
+"completing": "Dokončuji",
+
+"Day Volume": "Objem dne",
+"About Day Volume": "O objemu dne",
+"dayVolumeExplanation": "Tento graf ukazuje objem konkrétního dne tréninku v časovém rámci, což vám umožňuje vidět svůj pokrok pro tento den izolovaně."
 
 
     
