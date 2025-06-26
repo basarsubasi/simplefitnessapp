@@ -419,7 +419,10 @@
 "completing": "Fullfører",
 "Day Volume": "Dagvolum",
 "About Day Volume": "Om Dagvolum",
-"dayVolumeExplanation": "Denne grafen viser volumet av en spesifikk treningsdag innenfor et tidsrom, slik at du kan se din fremgang for denne dagen isolert."
+"dayVolumeExplanation": "Denne grafen viser volumet av en spesifikk treningsdag innenfor et tidsrom, slik at du kan se din fremgang for denne dagen isolert.",
+"workoutDeleteTip": "Tips: Trykk og hold for å slette en økt",
+"DeleteWorkoutTitle": "Slett økt",
+"DeleteWorkoutMessage": "Er du sikker på at du vil slette denne økten? Hvis det er en logget økt, vil denne handlingen også slette loggene forbundet med den."
 
 
 

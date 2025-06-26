@@ -420,7 +420,14 @@
 "skipToNextExercise": "跳过当前练习",
 "enableSetSwitchSound": "启用组切换声音",
 "autoFillWeights": "自动填充重量",
-"startedWorkoutTip": "提示：您可以通过点击屏幕右上角的三个点来跳过当前练习。"
+"startedWorkoutTip": "提示：您可以通过点击屏幕右上角的三个点来跳过当前练习。",
+
+
+"workoutDeleteTip": "提示：长按锻炼以删除",
+"DeleteWorkoutTitle": "删除锻炼",
+"DeleteWorkoutMessage": "您确定要删除此锻炼吗？如果这是已记录的锻炼，此操作也将删除与之相关的记录。"
+
+
 
 
 

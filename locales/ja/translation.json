@@ -414,7 +414,10 @@
 "completing": "完了中",
 "Day Volume": "日の運動量",
 "About Day Volume": "日の運動量について",
-"dayVolumeExplanation": "このグラフは、特定の日のワークアウトの運動量を示しており、その日の進捗状況を孤立的に確認できます。"
+"dayVolumeExplanation": "このグラフは、特定の日のワークアウトの運動量を示しており、その日の進捗状況を孤立的に確認できます。",
+"workoutDeleteTip": "ヒント: ワークアウトを長押しして削除",
+"DeleteWorkoutTitle": "ワークアウトを削除",
+"DeleteWorkoutMessage": "このワークアウトを削除してもよろしいですか？記録済みのワークアウトを削除すると、関連するログも削除されます。"
 
 
 

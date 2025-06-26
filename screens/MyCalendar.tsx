@@ -396,8 +396,8 @@ export default function MyCalendar() {
 
   const handleLongPress = (workoutEntry: WorkoutEntry) => {
     Alert.alert(
-      t('deleteDayTitle'),
-      t('deleteDayMessage'),
+      t('DeleteWorkoutTitle'),
+      t('DeleteWorkoutMessage'),
       [
         { text: t('alertCancel'), style: 'cancel' },
         {
@@ -1032,12 +1032,17 @@ export default function MyCalendar() {
                     </>
                   );
                 })()}
+                {selectedDateWorkouts.length > 0 && (
+                  <Text style={[styles.modalTipText, { color: theme.text, marginTop: 20 }]}>
+                    {t('workoutDeleteTip')}
+                  </Text>
+                )}
                 <TouchableOpacity
                   style={[
                     styles.actionButton,
                     {
                       backgroundColor: theme.buttonBackground,
-                      marginTop: 20,
+                      marginTop: 10,
                       width: '100%',
                     },
                   ]}
@@ -1239,6 +1244,15 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(14),
     fontStyle: 'italic',
     opacity: 0.8,
+  },
+
+  modalTipText: {
+    marginTop: verticalScale(10),
+    textAlign: 'center',
+    fontSize: moderateScale(14),
+    fontStyle: 'italic',
+    opacity: 0.8,
+    marginBottom: verticalScale(10),
   },
   emptyText: {
     fontSize: moderateScale(16),

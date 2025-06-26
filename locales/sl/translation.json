@@ -413,9 +413,12 @@
 "completing": "Dokončujem",
 "Day Volume": "Dnevni obseg",
 "About Day Volume": "O dnevni obseg",
-"dayVolumeExplanation": "Ta graf prikazuje obseg vadbe za določen dan v določenem časovnem obdobju, kar vam omogoča, da spremljate svoj napredek za ta dan."
+"dayVolumeExplanation": "Ta graf prikazuje obseg vadbe za določen dan v določenem časovnem obdobju, kar vam omogoča, da spremljate svoj napredek za ta dan.",
+"workoutDeleteTip": "Nasvet: Pritisnite in držite, da bi izbrisali vadbo",
+"DeleteWorkoutTitle": "Izbriši vadbo",
+"DeleteWorkoutMessage": "Ste prepričani, da želite izbrisati to vadbo? Če je to registrirana vadba, bo ta dejanje izbrisalo tudi povezane zapise."
 
-        
+
 
     
 }

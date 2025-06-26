@@ -408,7 +408,10 @@
 "completing": "Completando",
 "Day Volume": "Volume del giorno",
 "About Day Volume": "Informazioni sul volume del giorno",
-"dayVolumeExplanation": "Questo grafico mostra il volume di un giorno di allenamento specifico entro un periodo di tempo, permettendoti di vedere il tuo progresso per quel giorno in isolamento."
+"dayVolumeExplanation": "Questo grafico mostra il volume di un giorno di allenamento specifico entro un periodo di tempo, permettendoti di vedere il tuo progresso per quel giorno in isolamento.",
+"workoutDeleteTip": "Suggerimento: Premi e tieni premuto per eliminare un allenamento",
+"DeleteWorkoutTitle": "Elimina allenamento",
+"DeleteWorkoutMessage": "Sei sicuro di voler eliminare questo allenamento? Se è un allenamento registrato, questa azione eliminerà anche i registri associati."
 
 
 
