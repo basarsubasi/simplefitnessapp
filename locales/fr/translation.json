@@ -414,7 +414,10 @@
 "completing": "En cours",
 "Day Volume": "Volume du jour",
 "About Day Volume": "À propos du volume du jour",
-"dayVolumeExplanation": "Ce graphique montre le volume d'un jour d'entraînement spécifique dans une période donnée, vous permettant de voir votre progression pour ce jour de manière isolée."
+"dayVolumeExplanation": "Ce graphique montre le volume d'un jour d'entraînement spécifique dans une période donnée, vous permettant de voir votre progression pour ce jour de manière isolée.",
+"workoutDeleteTip": "Astuce : Appuyez et maintenez pour supprimer un entraînement",
+"DeleteWorkoutTitle": "Supprimer un entraînement",
+"DeleteWorkoutMessage": "Êtes-vous sûr de vouloir supprimer cet entraînement ? Si c'est un entraînement enregistré, cette action supprimera également les journaux associés."
 
 
 

@@ -409,9 +409,11 @@
 
 "Day Volume": "Objem dne",
 "About Day Volume": "O objemu dne",
-"dayVolumeExplanation": "Tento graf ukazuje objem konkrétního dne tréninku v časovém rámci, což vám umožňuje vidět svůj pokrok pro tento den izolovaně."
+"dayVolumeExplanation": "Tento graf ukazuje objem konkrétního dne tréninku v časovém rámci, což vám umožňuje vidět svůj pokrok pro tento den izolovaně.",
 
-
+"workoutDeleteTip": "Tip: Stiskněte a podržte pro smazání tréninku",
+"DeleteWorkoutTitle": "Smazat trénink",
+"DeleteWorkoutMessage": "Opravdu chcete smazat tento trénink? Pokud je to zaznamenaný trénink, tato akce také smaže záznamy spojené s ním."
     
     
     
