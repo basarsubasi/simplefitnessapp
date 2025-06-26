@@ -438,7 +438,12 @@
 "skipToNextExercise": "Bir sonraki egzersize atla",
 "enableSetSwitchSound": "Sesi etkinleştir",
 "autoFillWeights": "Ağırlıkları otomatik doldur",
-"startedWorkoutTip": "İpucu: Egzersizler arasında geçiş yapmak için ekranın sağ üst köşesindeki üç çizgiye basabilirsiniz."
+"startedWorkoutTip": "İpucu: Egzersizler arasında geçiş yapmak için ekranın sağ üst köşesindeki üç çizgiye basabilirsiniz.",
+
+"completing": "Tamamlanıyor",
+"Day Volume": "Gün Hacimi",
+"About Day Volume": " Gün Hacmi Hakkında",
+"dayVolumeExplanation": "Bu grafik, belirli bir zaman diliminde spesifik bir antrenman gününü baz alarak o günün antrenman hacmini gösterir ve o antrenman gününü izole olarak takip etmenizi sağlar."
 
 
 

@@ -408,7 +408,13 @@
 "skipToNextExercise": "次のエクササイズに進む",
 "enableSetSwitchSound": "セット切り替え音を有効にする",
 "autoFillWeights": "重量を自動入力",
-"startedWorkoutTip": "ヒント: 画面の右上にある3本線のボタンを押すと、任意のエクササイズに切り替えることができます。"
+"startedWorkoutTip": "ヒント: 画面の右上にある3本線のボタンを押すと、任意のエクササイズに切り替えることができます。",
+
+
+"completing": "完了中",
+"Day Volume": "日の運動量",
+"About Day Volume": "日の運動量について",
+"dayVolumeExplanation": "このグラフは、特定の日のワークアウトの運動量を示しており、その日の進捗状況を孤立的に確認できます。"
 
 
 
