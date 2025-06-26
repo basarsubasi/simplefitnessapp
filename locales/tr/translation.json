@@ -441,9 +441,12 @@
 "startedWorkoutTip": "İpucu: Egzersizler arasında geçiş yapmak için ekranın sağ üst köşesindeki üç çizgiye basabilirsiniz.",
 
 "completing": "Tamamlanıyor",
-"Day Volume": "Gün Hacimi",
+"Day Volume": "Gün Hacmi",
 "About Day Volume": " Gün Hacmi Hakkında",
-"dayVolumeExplanation": "Bu grafik, belirli bir zaman diliminde spesifik bir antrenman gününü baz alarak o günün antrenman hacmini gösterir ve o antrenman gününü izole olarak takip etmenizi sağlar."
+"dayVolumeExplanation": "Bu grafik, belirli bir zaman diliminde spesifik bir antrenman gününü baz alarak o günün antrenman hacmini gösterir ve o antrenman gününü izole olarak takip etmenizi sağlar.",
+"workoutDeleteTip": "İpucu: Bir antrenmanı silmek için ona basılı tutun.",
+"DeleteWorkoutTitle": "Antrenmanı Sil",
+"DeleteWorkoutMessage": "Bu antrenmanı silmek istediğinizden emin misiniz? Bu antrenman kayıtlıysa, bu işlem aynı zamanda ilişkili kayıtları da siler."
 
 
 
