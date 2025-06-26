@@ -451,7 +451,15 @@
     "skipToNextExercise": "Skip to Next Exercise",
     "enableSetSwitchSound": "Enable Sound",
     "autoFillWeights": "Auto Fill Weights",
-    "startedWorkoutTip": "Tip: You can switch to any exercise by pressing the three line button on the top right of the screen."
+    "startedWorkoutTip": "Tip: You can switch to any exercise by pressing the three line button on the top right of the screen.",
+
+
+   "completing": "Completing",
+
+
+    "Day Volume": "Day Volume",
+    "About Day Volume": "About Day Volume",
+    "dayVolumeExplanation": "This graph shows the volume of a specific workout day within a time frame, allowing you to see your progress for that day in isolation."
 
 
     }

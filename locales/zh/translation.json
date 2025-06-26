@@ -404,6 +404,15 @@
 "overallMuscleGroupsExplanation": "此图显示了在一定时间范围内，您训练中每个肌肉群完成的组数统计，让您可以查看每个肌肉群的训练程度。",
 "workoutVolumeExplanation": "此图显示了在一定时间范围内，您训练的总量，让您可以查看每次训练的表现。",
 "Volume": "训练量",
+"About Volume": "关于训练量",
+"volumeExplanation": "此图显示了在一定时间范围内，您训练的总量，让您可以查看每次训练的表现。",
+"Volume Graph": "训练量图",
+
+"Day Volume": "日训练量",
+"About Day Volume": "关于日训练量",
+"dayVolumeExplanation": "此图显示了在一定时间范围内，您训练的总量，让您可以查看每次训练的表现。",
+"completing": "完成",
+
 
 
 "duplicateRecurringWorkout": "重复锻炼",

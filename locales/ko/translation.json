@@ -404,7 +404,13 @@
 "skipToNextExercise": "다음 운동으로 이동",
 "enableSetSwitchSound": "세트 전환 사운드 활성화",
 "autoFillWeights": "무게 자동 입력",
-"startedWorkoutTip": "팁: 화면 상단 오른쪽에 있는 3개의 선 버튼을 눌러 다른 운동으로 전환할 수 있습니다."
+"startedWorkoutTip": "팁: 화면 상단 오른쪽에 있는 3개의 선 버튼을 눌러 다른 운동으로 전환할 수 있습니다.",
+
+"completing": "완료 중",
+"Day Volume": "일 볼륨",
+"About Day Volume": "일 볼륨 정보",
+"dayVolumeExplanation": "이 그래프는 특정 일의 운동 볼륨을 보여주어, 해당 일의 진행 상황을 격리하여 확인할 수 있습니다."
+
 
 
     

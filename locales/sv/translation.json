@@ -415,7 +415,13 @@
 "skipToNextExercise": "Hoppa till nästa övning",
 "enableSetSwitchSound": "Aktivera ljud",
 "autoFillWeights": "Fyll i vikter automatiskt",
-"startedWorkoutTip": "Tips: Du kan hoppa till vilken övning du vill genom att trycka på knappen med tre linjer i det övre högra hörnet på skärmen."
+"startedWorkoutTip": "Tips: Du kan hoppa till vilken övning du vill genom att trycka på knappen med tre linjer i det övre högra hörnet på skärmen.",
+
+
+"completing": "Slutför",
+"Day Volume": "Dagvolym",
+"About Day Volume": "Om dagvolym",
+"dayVolumeExplanation": "Denna graf visar volymen av dina träningspass inom en tidsram, vilket gör att du kan se hur du presterade i varje träningspass."
 
 
 

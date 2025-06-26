@@ -413,8 +413,16 @@
 "skipToNextExercise": "Gå til neste øvelse",
 "enableSetSwitchSound": "Aktiver lyd",
 "autoFillWeights": "Autofyll vekter",
-"startedWorkoutTip": "Tips: Du kan bytte til en hvilken som helst øvelse ved å trykke på knappen med tre linjer i øverste høyre hjørne av skjermen."
+"startedWorkoutTip": "Tips: Du kan bytte til en hvilken som helst øvelse ved å trykke på knappen med tre linjer i øverste høyre hjørne av skjermen.",
 
-        
+
+"completing": "Fullfører",
+"Day Volume": "Dagvolum",
+"About Day Volume": "Om Dagvolum",
+"dayVolumeExplanation": "Denne grafen viser volumet av en spesifikk treningsdag innenfor et tidsrom, slik at du kan se din fremgang for denne dagen isolert."
+
+
+
+
 
 }

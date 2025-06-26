@@ -410,7 +410,13 @@
 "skipToNextExercise": "Pular para o próximo exercício",
 "enableSetSwitchSound": "Ativar som",
 "autoFillWeights": "Preencher pesos automaticamente",
-"startedWorkoutTip": "Dica: Você pode pular para qualquer exercício pressionando o botão com três linhas no canto superior direito da tela."
+"startedWorkoutTip": "Dica: Você pode pular para qualquer exercício pressionando o botão com três linhas no canto superior direito da tela.",
+
+"completing": "Completando",
+"Day Volume": "Volume do Dia",
+"About Day Volume": "Sobre o Volume do Dia",
+"dayVolumeExplanation": "Este gráfico mostra o volume de um treino específico dentro de um período, permitindo que você veja seu progresso para esse dia isoladamente."
+
 
 
 

@@ -652,6 +652,7 @@ export default function MyCalendar() {
   return (
     <ScrollView
       style={{ flex: 1, backgroundColor: theme.background }}
+      showsVerticalScrollIndicator={false}
       contentContainerStyle={[styles.contentContainer, { paddingTop: 70 }]}
     >
       <View style={styles.titleContainer}>
@@ -860,7 +861,7 @@ export default function MyCalendar() {
                     </Text>
                   </View>
                 )}
-                <ScrollView style={{ width: '100%', maxHeight: 400 }}>
+                <ScrollView style={{ width: '100%', maxHeight: 400 }} showsVerticalScrollIndicator={false}>
                   {exercises.length > 0 ? (
                     exercises.map((exercise, index) => (
                       <View key={index} style={styles.modalExercise}>
