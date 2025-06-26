@@ -412,7 +412,11 @@
 "skipToNextExercise": "Przejdź do następnego ćwiczenia",
 "enableSetSwitchSound": "Włącz dźwięk",
 "autoFillWeights": "Automatycznie wypełnij ciężary",
-"startedWorkoutTip": "Wskazówka: Możesz przejść do dowolnego ćwiczenia, naciskając przycisk z trzema liniami w górnym prawym rogu ekranu."
+"startedWorkoutTip": "Wskazówka: Możesz przejść do dowolnego ćwiczenia, naciskając przycisk z trzema liniami w górnym prawym rogu ekranu.",
 
+"completing": "Ukończanie",
+"Day Volume": "Dzień objętości",
+"About Day Volume": "O dzień objętości",
+"dayVolumeExplanation": "Ten wykres pokazuje objętość treningu dla określonego dnia w określonym czasie, pozwalając Ci śledzić postępy dla tego dnia."
     
 }

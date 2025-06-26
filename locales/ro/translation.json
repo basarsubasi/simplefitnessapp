@@ -414,7 +414,12 @@
 "skipToNextExercise": "Săriți la următorul exercițiu",
 "enableSetSwitchSound": "Activează sunetul",
 "autoFillWeights": "Auto-completează greutățile",
-"startedWorkoutTip": "Sfat: Puteți sări la orice exercițiu apăsând butonul cu trei linii în partea de sus dreaptă a ecranului."
+"startedWorkoutTip": "Sfat: Puteți sări la orice exercițiu apăsând butonul cu trei linii în partea de sus dreaptă a ecranului.",
+
+"completing": "În desfășurare",
+"Day Volume": "Volumul Zilei",
+"About Day Volume": "Despre Volumul Zilei",
+"dayVolumeExplanation": "Acest grafic arată volumul antrenamentelor tale într-un interval de timp, permițându-ți să vezi cum ai performat în fiecare antrenament."
 
 
 

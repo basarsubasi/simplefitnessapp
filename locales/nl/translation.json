@@ -410,7 +410,13 @@
 "skipToNextExercise": "Naar de volgende oefening",
 "enableSetSwitchSound": "Geluid inschakelen",
 "autoFillWeights": "Gewichten automatisch invullen",
-"startedWorkoutTip": "Tip: Je kunt naar elke oefening schakelen door op de drie lijnen knop in de rechter bovenhoek van het scherm te drukken."
+"startedWorkoutTip": "Tip: Je kunt naar elke oefening schakelen door op de drie lijnen knop in de rechter bovenhoek van het scherm te drukken.",
+
+
+"completing": "Bezig met voltooien",
+"Day Volume": "Dagvolume",
+"About Day Volume": "Over Dagvolume",
+"dayVolumeExplanation": "Deze grafiek toont het volume van een specifieke trainingdag binnen een tijdsbestek, zodat u uw voortgang voor die dag kunt volgen."
 
 
 

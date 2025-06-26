@@ -2716,7 +2716,7 @@ export default function GraphsWorkoutDetails() {
                 }),
                 datasets: [{ 
                   data: chartData.map(p => p.y), 
-                  color: (opacity = 1) => `rgba(255, 114, 38, ${opacity})`, 
+                  color: (opacity = 1) => `rgba(225, 51, 129, ${opacity})`, 
                   strokeWidth: 2 
                 }],
                 legend: [t('Day Volume')]
@@ -2728,12 +2728,12 @@ export default function GraphsWorkoutDetails() {
                 backgroundGradientFrom: theme.card,
                 backgroundGradientTo: theme.card,
                 decimalPlaces: 0,
-                color: (opacity = 1) => `rgba(255, 114, 38, ${opacity})`,
+                color: (opacity = 1) => `rgba(225, 51, 129, ${opacity})`,
                 labelColor: (opacity = 1) => theme.text,
                 style: { borderRadius: 16 },
-                propsForDots: { r: '4', strokeWidth: '4', stroke: `rgba(255, 114, 38, 1)` },
-                fillShadowGradientFrom: `rgba(255, 114, 38, 0.15)`,
-                fillShadowGradientTo: `rgba(255, 114, 38, 0.02)`,
+                propsForDots: { r: '4', strokeWidth: '4', stroke: `rgb(225, 51, 129)` },
+                fillShadowGradientFrom: `rgba(225, 51, 129, 0.15)`,
+                fillShadowGradientTo: `rgba(225, 51, 129, 0.02)`,
                 fillShadowGradientFromOpacity: 0.5,
                 fillShadowGradientToOpacity: 0.1,
                 useShadowColorFromDataset: true,
@@ -3305,6 +3305,7 @@ export default function GraphsWorkoutDetails() {
     <ScrollView 
       style={[styles.container, { backgroundColor: theme.background }]}
       nestedScrollEnabled={true}
+      showsVerticalScrollIndicator={false}
       contentContainerStyle={styles.scrollContent}
     >
       <View style={styles.titleContainer}>
