@@ -42,7 +42,7 @@ type LogData = {
   dayName?: string; // For time data
 };
 type TimeFrame = 'week' | 'month' | 'year' | 'all';
-type CalculationType = 'CES' | '1RM' | 'Sets' | 'Reps' | 'Time' | 'MuscleDistribution' | 'OverallMuscleGroups' | 'MuscleGroupVolume';
+type CalculationType = 'CES' | '1RM' | 'Sets' | 'Reps' | 'Time' | 'MuscleDistribution' | 'OverallMuscleGroups' | 'MuscleGroupVolume' | 'DayVolume';
 type GraphMode = 'Exercise' | 'Time' | 'Overall';
 type ProcessedDataPoint = {
   x: string; // Date string for display
@@ -120,6 +120,14 @@ type MuscleGroupLogData = {
   set_number: number;
 };
 
+// Add new type for Day Volume data
+type DayVolumeData = {
+  workout_log_id: number;
+  date: number;
+  total_ces: number;
+  day_name: string;
+};
+
 export default function GraphsWorkoutDetails() {
   const navigation = useNavigation<GraphsNavigationProp>();
   const db = useSQLiteContext();
@@ -171,11 +179,13 @@ export default function GraphsWorkoutDetails() {
   const [muscleDistributionData, setMuscleDistributionData] = useState<MuscleDistributionData[]>([]);
   const [overallMuscleGroupsData, setOverallMuscleGroupsData] = useState<OverallMuscleGroupsData[]>([]);
   const [muscleGroupVolumeData, setMuscleGroupVolumeData] = useState<MuscleGroupVolumeData[]>([]);
+  const [dayVolumeData, setDayVolumeData] = useState<DayVolumeData[]>([]);
   const [chartData, setChartData] = useState<ProcessedDataPoint[]>([]);
   const [setsData, setSetsData] = useState<SetProgressData[]>([]);
   const [distributionWorkout, setDistributionWorkout] = useState<string | null>(null);
   const [availableMuscleGroups, setAvailableMuscleGroups] = useState<{ label: string; value: string }[]>([]);
   const [selectedMuscleGroup, setSelectedMuscleGroup] = useState<string>('');
+  const [dayVolumeSelectedDay, setDayVolumeSelectedDay] = useState<string | null>(null);
 
   // Dropdown visibility state
   const [workoutDropdownVisible, setWorkoutDropdownVisible] = useState<boolean>(false);
@@ -291,11 +301,18 @@ export default function GraphsWorkoutDetails() {
       setDays([]);
       setExercises([]);
       setLogData([]);
+      setDayVolumeSelectedDay(null); // Reset when workout changes
       return;
     }
     setLogData([]);
     fetchDays();
   }, [selectedWorkout]);
+
+  useEffect(() => {
+    if (days.length > 0 && graphMode === 'Time' && calculationType === 'DayVolume' && !dayVolumeSelectedDay) {
+      setDayVolumeSelectedDay(days[0].value);
+    }
+  }, [days, graphMode, calculationType]);
 
   // Fetch exercises when day changes
   useEffect(() => {
@@ -325,6 +342,12 @@ export default function GraphsWorkoutDetails() {
         }
       } else if (calculationType === 'MuscleDistribution') {
         fetchMuscleGroupDistributionData();
+      } else if (calculationType === 'DayVolume') {
+        if (selectedWorkout && dayVolumeSelectedDay) {
+          fetchDayVolumeData();
+        } else {
+          setDayVolumeData([]);
+        }
       }
     } else if (selectedExercise) {
       fetchData();
@@ -348,6 +371,14 @@ export default function GraphsWorkoutDetails() {
       fetchMuscleGroupVolumeData();
     }
   }, [selectedMuscleGroup, timeFrame]);
+
+  useEffect(() => {
+    if (graphMode === 'Time' && calculationType === 'DayVolume' && selectedWorkout) {
+      if (dayVolumeSelectedDay) {
+        fetchDayVolumeData();
+      }
+    }
+  }, [dayVolumeSelectedDay, timeFrame, selectedWorkout]);
 
   // Process log data into chart data
   useEffect(() => {
@@ -374,12 +405,19 @@ export default function GraphsWorkoutDetails() {
           setChartData([]);
           setSetsData([]);
         }
+      } else if (calculationType === 'DayVolume') {
+        if (dayVolumeData.length > 0) {
+          processDayVolumeDataForChart();
+        } else {
+          setChartData([]);
+        }
       }
     } else if (graphMode === 'Overall' && calculationType === 'MuscleGroupVolume') {
       if (muscleGroupVolumeData.length > 0) {
         processMuscleGroupVolumeDataForChart();
       } else {
         setChartData([]);
+        setSetsData([]);
       }
     } else { // Exercise mode
       if (logData.length > 0) {
@@ -389,14 +427,14 @@ export default function GraphsWorkoutDetails() {
         setSetsData([]);
       }
     }
-  }, [logData, timeLogData, workoutCESData, muscleDistributionData, muscleGroupVolumeData, calculationType, timeFrame, graphMode]);
+  }, [logData, timeLogData, workoutCESData, muscleDistributionData, muscleGroupVolumeData, dayVolumeData, calculationType, timeFrame, graphMode]);
 
   useEffect(() => {
     setPercentageChange(null);
 
     const isApplicableGraph =
       (graphMode === 'Exercise' && (calculationType === 'CES' || calculationType === '1RM')) ||
-      (graphMode === 'Time' && calculationType === 'CES') ||
+      (graphMode === 'Time' && (calculationType === 'CES' || calculationType === 'DayVolume')) ||
       (graphMode === 'Overall' && calculationType === 'MuscleGroupVolume');
 
     if (isApplicableGraph && chartData && chartData.length >= 2) {
@@ -750,6 +788,53 @@ export default function GraphsWorkoutDetails() {
     }
   };
 
+  const fetchDayVolumeData = async () => {
+    if (!selectedWorkout || !dayVolumeSelectedDay) return;
+    setIsLoading(true);
+    try {
+      const now = new Date();
+      let startDate = new Date();
+
+      switch (timeFrame) {
+        case 'week':
+          startDate.setDate(now.getDate() - 7);
+          break;
+        case 'month':
+          startDate.setMonth(now.getMonth() - 1);
+          break;
+        case 'year':
+          startDate.setFullYear(now.getFullYear() - 1);
+          break;
+        case 'all':
+          startDate = new Date(0);
+          break;
+      }
+      const startTimestamp = Math.floor(startDate.getTime() / 1000);
+
+      const result = await db.getAllAsync<DayVolumeData>(
+        `SELECT
+            wlog.workout_log_id,
+            wlog.workout_date as date,
+            wlog.day_name,
+            SUM(wl.weight_logged * wl.reps_logged * (1 + wl.reps_logged / 30.0)) / 10 AS total_ces
+        FROM Weight_Log wl
+        INNER JOIN Workout_Log wlog ON wl.workout_log_id = wlog.workout_log_id
+        WHERE wlog.workout_date >= ?
+        AND wlog.workout_name = ?
+        AND wlog.day_name = ?
+        AND wl.weight_logged > 0
+        GROUP BY wlog.workout_log_id, wlog.workout_date, wlog.day_name
+        ORDER BY wlog.workout_date ASC;`,
+        [startTimestamp, selectedWorkout, dayVolumeSelectedDay]
+      );
+      setDayVolumeData(result);
+    } catch (error) {
+      console.error('Error fetching day volume data:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const processTimeDataForChart = () => {
     const processedData: ProcessedDataPoint[] = timeLogData.map(log => {
       const date = new Date(log.workout_date * 1000);
@@ -793,6 +878,30 @@ export default function GraphsWorkoutDetails() {
         originalData: [],
         workoutLogId: log.workout_log_id,
         dayName: log.day_name
+      };
+    });
+    
+    const optimizedData = getOptimalDataPoints(processedData, timeFrame);
+    setChartData(optimizedData);
+  };
+
+  const processDayVolumeDataForChart = () => {
+    const processedData: ProcessedDataPoint[] = dayVolumeData.map(log => {
+      const date = new Date(log.date * 1000);
+      
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const formattedDate = dateFormat === 'mm-dd-yyyy'
+        ? `${month}/${day}`
+        : `${day}/${month}`;
+      
+      return {
+        x: formattedDate,
+        y: log.total_ces,
+        timestamp: log.date,
+        originalData: [], // Fetched on click
+        workoutLogId: log.workout_log_id,
+        dayName: log.day_name,
       };
     });
     
@@ -1206,6 +1315,7 @@ export default function GraphsWorkoutDetails() {
             case 'Time': return t('TimeGraph');
             case 'CES': return t('Workout Volume');
             case 'MuscleDistribution': return t('Muscle Distribution');
+            case 'DayVolume': return t('Day Volume');
             default: return '';
         }
     }
@@ -1234,6 +1344,7 @@ export default function GraphsWorkoutDetails() {
             case 'Time': return { title: t('About Completion Time'), text: t('timeGraphExplanation') };
             case 'CES': return { title: t('About Workout Volume'), text: t('workoutVolumeExplanation') };
             case 'MuscleDistribution': return { title: t('About Muscle Distribution'), text: t('muscleDistributionExplanation') };
+            case 'DayVolume': return { title: t('About Day Volume'), text: t('dayVolumeExplanation') };
             default: return { title: '', text: '' };
         }
     }
@@ -1665,6 +1776,40 @@ export default function GraphsWorkoutDetails() {
               ]}
             >
               {t('Muscle Distribution')}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.toggleButton,
+              calculationType === 'DayVolume' && styles.toggleButtonActive,
+              {
+                backgroundColor:
+                  calculationType === 'DayVolume'
+                    ? theme.buttonBackground
+                    : theme.card,
+              },
+            ]}
+            onPress={() => setCalculationType('DayVolume')}
+          >
+            <Ionicons
+              name="calendar"
+              size={20}
+              color={
+                calculationType === 'DayVolume' ? theme.buttonText : theme.text
+              }
+            />
+            <Text
+              style={[
+                styles.toggleText,
+                {
+                  color:
+                    calculationType === 'DayVolume'
+                      ? theme.buttonText
+                      : theme.text,
+                },
+              ]}
+            >
+              {t('Day Volume')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -2529,6 +2674,120 @@ export default function GraphsWorkoutDetails() {
     );
   };
 
+  const renderDayVolumeChart = () => {
+    const chartContent = isLoading ? (
+      <ActivityIndicator size="large" color={theme.buttonBackground} style={styles.loader} />
+    ) : chartData.length === 0 ? (
+      <View style={styles.noDataContainer}>
+        <Ionicons name="cellular-outline" size={60} color={theme.text} style={{ opacity: 0.5 }} />
+        <Text style={[styles.noDataText, { color: theme.text }]}>
+          {t('No data available for the selected criteria')}
+        </Text>
+      </View>
+    ) : (
+      <>
+        <View style={{ flexDirection: 'row' }}>
+          <StickyYAxis
+            chartHeight={220 + 20}
+            yTickLabels={generateYTickLabels(
+              chartData.map(p => p.y),
+              4,
+              (val, text) => text || val,
+              false,
+              0
+            )}
+            labelColor={(opacity = 1) => theme.text}
+            chartPaddingTop={16}
+            fontSize={10}
+            axisWidth={65}
+          />
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.chartScrollContainer}
+          >
+            <LineChart
+              data={{
+                labels: chartData.map(point => {
+                  const date = new Date(point.timestamp * 1000);
+                  const day = date.getDate().toString().padStart(2, '0');
+                  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                  return dateFormat === 'mm-dd-yyyy' ? `${month}/${day}` : `${day}/${month}`;
+                }),
+                datasets: [{ 
+                  data: chartData.map(p => p.y), 
+                  color: (opacity = 1) => `rgba(255, 114, 38, ${opacity})`, 
+                  strokeWidth: 2 
+                }],
+                legend: [t('Day Volume')]
+              }}
+              width={getChartWidth(chartData.length)}
+              height={220 + 20}
+              chartConfig={{
+                backgroundColor: theme.card,
+                backgroundGradientFrom: theme.card,
+                backgroundGradientTo: theme.card,
+                decimalPlaces: 0,
+                color: (opacity = 1) => `rgba(255, 114, 38, ${opacity})`,
+                labelColor: (opacity = 1) => theme.text,
+                style: { borderRadius: 16 },
+                propsForDots: { r: '4', strokeWidth: '4', stroke: `rgba(255, 114, 38, 1)` },
+                fillShadowGradientFrom: `rgba(255, 114, 38, 0.15)`,
+                fillShadowGradientTo: `rgba(255, 114, 38, 0.02)`,
+                fillShadowGradientFromOpacity: 0.5,
+                fillShadowGradientToOpacity: 0.1,
+                useShadowColorFromDataset: true,
+              }}
+              bezier={true}
+              withShadow={true}
+              style={styles.chart}
+              verticalLabelRotation={30}
+              onDataPointClick={handleDataPointClick}
+              withHorizontalLabels={false}
+              segments={4}
+              fromZero={false}
+            />
+          </ScrollView>
+        </View>
+        {chartData.length > 5 && (
+          <Text style={[styles.scrollHint, { color: theme.text }]}>
+            {t('horizontalScrollHint')} →
+          </Text>
+        )}
+      </>
+    );
+
+    return (
+      <View style={styles.chartContainer}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.buttonRow} style={{marginBottom: 10}}>
+            {days.map(day => (
+                <TouchableOpacity
+                    key={day.value}
+                    onPress={() => setDayVolumeSelectedDay(day.value)}
+                    style={[
+                        styles.timeFrameButton,
+                        {
+                            backgroundColor: dayVolumeSelectedDay === day.value ? theme.buttonBackground : theme.card,
+                            minWidth: 'auto',
+                            paddingHorizontal: 20,
+                            marginHorizontal: 10,
+                        }
+                    ]}
+                >
+                    <Text style={[
+                        styles.timeFrameButtonText,
+                        { color: dayVolumeSelectedDay === day.value ? theme.buttonText : theme.text }
+                    ]}>
+                        {day.label}
+                    </Text>
+                </TouchableOpacity>
+            ))}
+        </ScrollView>
+        {chartContent}
+      </View>
+    );
+  };
+
   // Define renderChart AFTER the individual chart rendering functions
   const renderChart = () => {
     if (graphMode === 'Time') {
@@ -2538,6 +2797,8 @@ export default function GraphsWorkoutDetails() {
         return renderVolumeChart();
       } else if (calculationType === 'MuscleDistribution') {
         return renderMuscleDistributionChart();
+      } else if (calculationType === 'DayVolume') {
+        return renderDayVolumeChart();
       }
     } else if (calculationType === 'Sets' || calculationType === 'Reps') {
       return renderSetsChart();
