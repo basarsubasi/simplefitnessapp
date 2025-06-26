@@ -190,6 +190,7 @@ export default function GraphsWorkoutDetails() {
   const [selectedPoint, setSelectedPoint] = useState<ProcessedDataPoint | null>(null);
   const [workoutSessionExercises, setWorkoutSessionExercises] = useState<WorkoutSessionExercise[]>([]);
   const [muscleGroupDayDetails, setMuscleGroupDayDetails] = useState<MuscleGroupLogData[]>([]);
+  const [percentageChange, setPercentageChange] = useState<number | null>(null);
 
   // Smart data sampling functions
   const getOptimalDataPoints = (data: ProcessedDataPoint[], timeFrame: TimeFrame): ProcessedDataPoint[] => {
@@ -389,6 +390,29 @@ export default function GraphsWorkoutDetails() {
       }
     }
   }, [logData, timeLogData, workoutCESData, muscleDistributionData, muscleGroupVolumeData, calculationType, timeFrame, graphMode]);
+
+  useEffect(() => {
+    setPercentageChange(null);
+
+    const isApplicableGraph =
+      (graphMode === 'Exercise' && (calculationType === 'CES' || calculationType === '1RM')) ||
+      (graphMode === 'Time' && calculationType === 'CES') ||
+      (graphMode === 'Overall' && calculationType === 'MuscleGroupVolume');
+
+    if (isApplicableGraph && chartData && chartData.length >= 2) {
+      const firstValue = chartData[0].y;
+      const lastValue = chartData[chartData.length - 1].y;
+
+      if (firstValue > 0) {
+        const change = ((lastValue - firstValue) / firstValue) * 100;
+        setPercentageChange(change);
+      } else if (firstValue === 0 && lastValue > 0) {
+        setPercentageChange(999);
+      } else {
+        setPercentageChange(0);
+      }
+    }
+  }, [chartData, calculationType, graphMode]);
 
   const fetchWorkoutsWithLogs = async () => {
     setIsInitialLoading(true);
@@ -1221,6 +1245,29 @@ export default function GraphsWorkoutDetails() {
         }
     }
     return { title: '', text: '' };
+  };
+
+  const renderPercentageChange = () => {
+    if (percentageChange === null) {
+      return null;
+    }
+
+    const isPositive = percentageChange >= 0;
+    const color = isPositive ? '#28a745' : '#dc3545';
+    const iconName = isPositive ? 'trending-up' : 'trending-down';
+    const displayValue =
+      percentageChange === 999
+        ? '∞'
+        : `${Math.abs(percentageChange).toFixed(0)}%`;
+
+    return (
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 10 }}>
+        <Ionicons name={iconName} size={22} color={color} />
+        <Text style={{ color, fontSize: 16, fontWeight: 'bold', marginLeft: 5 }}>
+          {displayValue}
+        </Text>
+      </View>
+    );
   };
 
   const handleDataPointClick = async (data: any) => {
@@ -3040,9 +3087,12 @@ export default function GraphsWorkoutDetails() {
             <>
               {/* Graph Section */}
               <View style={styles.graphSection}>
-                <Text style={[styles.sectionTitle, { color: theme.text }]}>
-                  {getChartTitle()}
-                </Text>
+                <View style={styles.chartTitleContainer}>
+                  <Text style={[styles.sectionTitle, { color: theme.text, marginBottom: 0 }]}>
+                    {getChartTitle()}
+                  </Text>
+                  {renderPercentageChange()}
+                </View>
 
                 {isLoading ? (
                   <ActivityIndicator
@@ -3085,9 +3135,12 @@ export default function GraphsWorkoutDetails() {
             <>
               {/* Graph Section */}
               <View style={styles.graphSection}>
-                <Text style={[styles.sectionTitle, { color: theme.text }]}>
-                  {getChartTitle()}
-                </Text>
+                <View style={styles.chartTitleContainer}>
+                  <Text style={[styles.sectionTitle, { color: theme.text, marginBottom: 0 }]}>
+                    {getChartTitle()}
+                  </Text>
+                  {renderPercentageChange()}
+                </View>
 
                 {isLoading ? (
                   <ActivityIndicator
@@ -3130,9 +3183,12 @@ export default function GraphsWorkoutDetails() {
             <>
               {/* Graph Section */}
               <View style={styles.graphSection}>
-                <Text style={[styles.sectionTitle, { color: theme.text }]}>
-                  {getChartTitle()}
-                </Text>
+                <View style={styles.chartTitleContainer}>
+                  <Text style={[styles.sectionTitle, { color: theme.text, marginBottom: 0 }]}>
+                    {getChartTitle()}
+                  </Text>
+                  {renderPercentageChange()}
+                </View>
 
                 {isLoading ? (
                   <ActivityIndicator
@@ -3384,6 +3440,12 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  chartTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: 10,
   },
   chartContainer: {
