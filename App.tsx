@@ -28,7 +28,7 @@
   import i18n from './utils/i18n'; // Import the i18n instance
   import { I18nextProvider } from 'react-i18next';
   import Settings from './screens/Settings';
-  import { SettingsProvider } from './context/SettingsContext';
+  import { SettingsProvider, useSettings } from './context/SettingsContext';
   import { ThemeProvider, useTheme } from './context/ThemeContext';
   import EditWorkout from './screens/EditWorkout';
   import AllLogs from './screens/AllLogs';
@@ -37,6 +37,7 @@
   import TemplateDetails from './screens/TemplateDetails';
   import * as Notifications from 'expo-notifications';
   import { useRecurringWorkouts } from './utils/recurringWorkoutUtils';
+  import { checkAndSyncPermissions } from './utils/notificationUtils';
   import { AppState } from 'react-native';
   import GraphsWorkoutDetails from './screens/GraphsWorkoutDetails';
 
@@ -360,6 +361,14 @@ function RecurringWorkoutManager() {
 // Define AppContent here
 const AppContent = () => {
   const { theme } = useTheme();
+  const { notificationPermissionGranted, setNotificationPermissionGranted } =
+    useSettings();
+
+  useEffect(() => {
+    if (notificationPermissionGranted) {
+      checkAndSyncPermissions(setNotificationPermissionGranted);
+    }
+  }, [notificationPermissionGranted, setNotificationPermissionGranted]);
 
   return (
     <>
