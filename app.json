@@ -31,9 +31,22 @@
         "projectId": "1b72cc6b-8e1a-47b1-a7d3-8fcf199a3015"
       }
     },
+
     "plugins": [
       "expo-sqlite",
-      "expo-build-properties",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "compileSdkVersion": 35,
+            "targetSdkVersion": 35,
+            "buildToolsVersion": "35.0.0"
+          }
+        }
+
+      ],
+
+      
       [
         "expo-notifications",
         {
