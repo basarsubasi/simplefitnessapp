@@ -61,6 +61,9 @@ export default function Home({ navigation }: any) {
         
       </View>
 
+      <Text style={[styles.tipText, { color: theme.text }]}>
+        {t('homeDiscordTip')}
+      </Text>
     </View>
   );
 }
@@ -70,8 +73,7 @@ export default function Home({ navigation }: any) {
 const styles = ScaledSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 20,
-    paddingTop: 20,
+    paddingTop: '25@vs',
   },
   headerContainer: {
     position: 'relative',
@@ -108,6 +110,12 @@ const styles = ScaledSheet.create({
   buttonText: {
     fontSize: '14@s', // Smaller font size for button text
     fontWeight: '800',
+  },
+  tipText: {
+    fontSize: '12@s',
+    textAlign: 'center',
+    marginTop: '25@vs',
+    fontStyle: 'italic',
   },
   lightGrayText: {
     color: 'white',
