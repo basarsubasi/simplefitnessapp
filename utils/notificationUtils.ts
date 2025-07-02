@@ -120,3 +120,15 @@ export const cancelWorkoutNotification = async (notificationId: string): Promise
 export const getAllScheduledNotifications = async (): Promise<Notifications.NotificationRequest[]> => {
   return await Notifications.getAllScheduledNotificationsAsync();
 };
+
+
+export const checkAndSyncPermissions = async (
+  setNotificationPermissionGranted: (granted: boolean) => void,
+) => {
+  const { status } = await Notifications.getPermissionsAsync();
+  console.log('status', status);
+  const hasPermission = status === 'granted';
+  if (!hasPermission) {
+    setNotificationPermissionGranted(false);
+  }
+};
