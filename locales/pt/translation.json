@@ -13,7 +13,9 @@
   "Tomorrow": "Amanhã",
   "Yesterday": "Ontem",
 
-  "workoutNameErrorMessage": "Insira o nome do treino.",
+  
+  
+  "workoutNameErrorMessage": "Insira um nome para o treino.",
   "provideDayNamesErrorMessage": "Forneça nomes para todos os dias.",
   "fillExercisesErrorMessage": "Preencha todos os exercícios com dados válidos.",
   "failedToCreateWorkoutErrorMessage": "Falha ao criar o treino. Tente novamente.",
@@ -29,20 +31,21 @@
 
   "settingsTitle": "Configurações",
   "settingsLanguage": "Idioma",
-  "settingsDateFormat": "Formato de data",
+  "settingsDateFormat": "Formato da data",
   "settingsWeightFormat": "Formato de peso",
   "settingsTheme": "Tema",
   "settingsSwitchDark": "Alternar para o modo escuro",
   "settingsSwitchLight": "Alternar para o modo claro",
-  "settingsTimeFormat": "Formato de hora",
+  "settingsTimeFormat": "Formato da hora",
+
   "_comment_homepage": "Estes são strings relacionados à tela inicial.",
 
   "homeCreateWorkout": "Crie um\ntreino.",
-  "homeGotoWorkouts": "Ir para Meus Treinos",
+  "homeGotoWorkouts": "Meus Treinos",
   "homeScheduleWorkouts": "Agende\nseu\ntreino.",
-  "homeGotoCalendar": "Ir para Meu Calendário",
+  "homeGotoCalendar": "Meu Calendário",
   "homeTrackProgress": "Acompanhe\nseu\nprogresso.",
-  "homeGotoProgress": "Ir para Meu Progresso",
+  "homeGotoProgress": "Meu Progresso",
 
   "_comment_workoutlist": "Estes são strings relacionados à lista de treinos.",
 
@@ -97,14 +100,16 @@
 "scheduleTip": "Dica: Você pode monitorar, agendar, acompanhar e cancelar seus treinos no calendário. Tudo organizado em um só lugar!",
  "noUpcomingWorkouts": "Nenhum treino futuro agendado.",
   "upcomingWorkouts": "Próximos Treinos",
-  "noUntrackedWorkouts": "Nenhum treino não registrado encontrado.",
-  "untrackedWorkouts": "Treinos não registrados",
+  "noUntrackedWorkouts": "Nenhum treino sem registrado encontrado.",
+  "untrackedWorkouts": "Treinos sem registros",
   "noWorkoutToday": "Nenhum treino agendado para hoje.",
   "todaysWorkout": "Treino de Hoje",
   "scheduleWorkout": "Agendar um Treino",
   "myCalendar": "Meu Calendário",
   "noExerciseLogged": " Nenhum exercício registrado.",
   "noWorkoutsScheduledForDate": "Nenhum treino agendado para esta data.",
+
+
   "_comment_LogWorkouts": "Estes são strings relacionados ao registro de treinos.",
 
   "noDatePicked": "Selecione uma data.",
@@ -133,11 +138,11 @@
 
   "_comment_LogWeights": "Estes são strings relacionados ao registro de pesos.",
 
-  "failedToLogWeights": "Falha ao registrar os pesos.",
+  "failedToLogWeights": "Falha ao registrar as cargas.",
   "Set": "Série",
-  "Weight": "Peso",
+  "Weight": "Carga",
   "noWorkoutScheduled": "Você precisa agendar um treino para acompanhá-lo!",
-  "trackWeights": "Acompanhar Pesos",
+  "trackWeights": "Acompanhar Carga",
 
   "_comment_WeightLogDetails": "Estes são strings relacionados aos detalhes do registro de pesos.",
 
@@ -218,12 +223,14 @@
     "confirmDeleteRecurringWorkout": "Tem certeza que deseja excluir este treino recorrente?",
     "edit": "Editar",
     "errorLoadingWorkout": "Erro ao carregar treino.",
+
     "_comment_startWorkout": "Estas strings estão relacionadas ao início do treino.",
+
     "startWorkout": "Iniciar treino",
     "invalidRestTime": "Tempo de descanso inválido",
-    "pleaseEnterValidSeconds": "Por favor, insira um número válido de segundos.",
+    "pleaseEnterValidSeconds": "Por favor, insira um número válido em segundos.",
     "missingInformation": "Informação ausente",
-    "enterRepsAndWeight": "Por favor, insira repetições e peso antes de continuar.",
+    "enterRepsAndWeight": "Por favor, insira repetições e carga antes de continuar.",
     "exitWorkout": "Sair do treino?",
     "exitWorkoutMessage": "Tem certeza que deseja sair? Seu progresso será perdido.",
     "exit": "Sair",
@@ -240,9 +247,9 @@
     "skipRest": "Pular descanso",
     "goal": "Objetivo",
     "repsDone": "Repetições feitas",
-    "weightKgLbs": "Peso (kg/lbs)",
+    "weightKgLbs": "Carga (kg/lbs)",
     "finishWorkout": "Finalizar treino",
-    "completeSetRest": "Completar série & descanso",
+    "completeSetRest": "Completar série e descanso",
     "workoutSaved": "Treino salvo",
     "workoutSavedMessage": "Seu treino foi registrado com sucesso!",
     "loadingWorkout": "Carregando treino…",
@@ -252,7 +259,9 @@
     "restTimeBetweenExercises": "Tempo de descanso entre exercícios (segundos)",
     "workoutSettings": "Configurações de treino",
     "vibration": "Vibração",
+
     "_comment_settings1": "Estas strings estão relacionadas às configurações.",
+
     "dataManagement": "Gerenciamento de dados",
     "exportData": "Exportar dados",
     "importData": "Importar dados",
@@ -280,15 +289,15 @@
     
       "_comment_Graphs": "Estas strings estão relacionadas a gráficos.",
       "Graphs": "Gráficos",
-      "SelectWorkoutforGraph": "Selecione um treino para gráficos",
+      "SelectWorkoutforGraph": "Selecione um treino para exibir os gráficos",
       "No data available for the selected criteria": "Nenhum dado disponível para os critérios selecionados",
-      "Combined Effort Score": "CES (Combined Effort Score)",
-      "About CES": "Sobre CES",
-      "About 1RM": "Sobre 1RM",
-      "CESExplanation": "CES (Combined Effort Score) mede seu volume total de treino considerando peso, repetições e intensidade.",
-      "1RMExplanation": "1RM (One Rep Max) estima o peso máximo que você poderia levantar em uma repetição com base no seu desempenho.\n(Não é o 1RM real; o desenvolvedor não se responsabiliza por lesões ao usar essa estimativa como seu 1RM.)",
+      "Combined Effort Score": "IEC (Índice de Esforço Combinado)",
+      "About CES": "Sobre o IEC",
+      "About 1RM": "Sobre URM",
+      "CESExplanation": "IEC (Índice de Esforço Combinado) mede seu volume total de treino considerando peso, repetições e intensidade.",
+      "1RMExplanation": "URM (Uma Repetição Máxima) estima o peso máximo que você poderia levantar em uma repetição com base no seu desempenho.\n(Não é o URM real; o desenvolvedor não se responsabiliza por lesões ao usar essa estimativa como seu URM.)",
       "Time Frame": "Período",
-      "Estimated 1RM": "1RM estimado",
+      "Estimated 1RM": "URM estimado",
       "Select Exercise": "Selecione um exercício",
       "Week": "Semana",
       "Month": "Mês",
@@ -311,20 +320,20 @@
     "completionTime": "Tempo de Conclusão",
     "Workout Days": "Dias de Treino",
     "horizontalScrollHint": "Role horizontalmente para ver mais dados",
-    "weightProgressionBySets": "Progressão de Peso por Séries",
+    "weightProgressionBySets": "Progressão de Carga por Séries",
     "About Sets Progression": "Sobre o Gráfico de Séries",
     "About Completion Time": "Sobre o Gráfico de Tempo",
     "SetsGraph": "Gráfico de Séries",
     "TimeGraph": "Gráfico de Tempo",
     "timeGraphExplanation": "Este gráfico mostra quanto tempo você leva para concluir suas sessões de treino ao longo do tempo.",
-    "setsGraphExplanation": "Este gráfico mostra a progressão de peso para cada série ao longo do tempo. Cada linha e cor representa um número de série diferente, permitindo que você acompanhe seu desempenho ao longo de suas sessões de treino.",
+    "setsGraphExplanation": "Este gráfico mostra a progressão de carga para cada série ao longo do tempo. Cada linha e cor representa um número de série diferente, permitindo que você acompanhe seu desempenho ao longo de suas sessões de treino.",
     "graphTipText": "Dica: Você pode pressionar os pontos no gráfico para ver informações adicionais sobre essa sessão de treino.",
 
 
 
 
     
-      "_comment_calendar": "These are calendar-related strings.",
+      "_comment_calendar": "Estas são linhas relacionadas ao calendário.",
       "locale": "pt",
       "Mon": "Seg",
       "Tue": "Ter",
@@ -345,15 +354,16 @@
       "October": "Outubro",
       "November": "Novembro",
       "December": "Dezembro",
-      "Untracked": "Não\nrastreado",
+
+      "Untracked": "Não registrado",
       "Upcoming": "Próximo",
       "Logged": "Registrado",
-      "logWeightsManually": "Registrar pesos manualmente",
+      "logWeightsManually": "Registrar carga manualmente",
       "View Logs": "Ver registros",
       "Logs": "Registros",
       "Graph Type": "Tipo de gráfico",
       "Metric": "Métrica",
-      "Exercise Stats": "Estatísticas\nexercícios",
+      "Exercise Stats": "Estatísticas de exercícios",
       "settingsFirstWeekday": "Primeiro dia da semana",
 
 
@@ -371,8 +381,10 @@
 "invalidLinkTitle": "Link inválido",
   "invalidLinkMessage": "O link deve começar com \"http://\" ou \"https://\".",
   "exerciseDetails": "Detalhes do exercício",
+
   "fileNotSelectedError": "Nenhum arquivo selecionado ou arquivo inválido.",
   "workoutAlreadyExistsError": "Um treino com este nome já existe.",
+
   "Unspecified": "Não especificado",
   "Chest": "Peito",
   "Back": "Costas",
@@ -409,7 +421,7 @@
 "recurringWorkoutExists": "Um treino recorrente com este nome já existe.",
 "skipToNextExercise": "Pular para o próximo exercício",
 "enableSetSwitchSound": "Ativar som",
-"autoFillWeights": "Preencher pesos automaticamente",
+"autoFillWeights": "Preencher carga automaticamente",
 "startedWorkoutTip": "Dica: Você pode pular para qualquer exercício pressionando o botão com três linhas no canto superior direito da tela.",
 
 "completing": "Completando",
@@ -419,14 +431,6 @@
 "workoutDeleteTip": "Dica: Pressione e segure para excluir um treino",
 "DeleteWorkoutTitle": "Excluir treino",
 "DeleteWorkoutMessage": "Tem certeza de que deseja excluir este treino? Se for um treino registrado, esta ação também excluirá os registros associados."
-
-
-
-
-
-
-
-    
 
         
 
