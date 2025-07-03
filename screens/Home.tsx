@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity, Dimensions, Linking } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
-import { ScaledSheet } from 'react-native-size-matters'; // Import ScaledSheet for scaling
+import { ScaledSheet, scale } from 'react-native-size-matters'; // Import ScaledSheet for scaling
 import { useTranslation } from 'react-i18next';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 
 
@@ -61,9 +62,61 @@ export default function Home({ navigation }: any) {
         
       </View>
 
-      <Text style={[styles.tipText, { color: theme.text }]}>
-        {t('homeDiscordTip')}
-      </Text>
+      <View style={styles.communityButtonGroup}>
+            <TouchableOpacity
+              style={[
+                styles.communityButton,
+                { backgroundColor: '#121212' },
+              ]}
+              onPress={() => Linking.openURL('https://discord.gg/A38Ny7UggP')}
+            >
+              <View style={styles.communityButtonContent}>
+                <Ionicons
+                  name='logo-discord'
+                  size={scale(20)}
+                  color={'#FFFFFF'}
+                  style={styles.communityButtonIcon}
+                />
+                <Text
+                  style={[
+                    styles.communityButtonText,
+                    { color: '#FFFFFF' },
+                  ]}
+                >
+                  {t('Discord')}
+                </Text>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.communityButton,
+                { backgroundColor: '#FFFFFF' },
+              ]}
+              onPress={() =>
+                Linking.openURL(
+                  'https://github.com/basarsubasi/simplefitnessapp',
+                )
+              }
+            >
+              <View style={styles.communityButtonContent}>
+                <Ionicons
+                  name='logo-github'
+                  size={scale(20)}
+                  color={'#000000'}
+                  style={styles.communityButtonIcon}
+                />
+                <Text
+                  style={[
+                    styles.communityButtonText,
+                    { color: '#000000' },
+                  ]}
+                >
+                  {t('GitHub')}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
     </View>
   );
 }
@@ -111,16 +164,39 @@ const styles = ScaledSheet.create({
     fontSize: '14@s', // Smaller font size for button text
     fontWeight: '800',
   },
-  tipText: {
-    fontSize: '12@s',
-    textAlign: 'center',
-    marginTop: '25@vs',
-    fontStyle: 'italic',
-  },
+
   lightGrayText: {
     color: 'white',
   },
   adContainer: {
     alignItems: 'center',
+  },
+  communityButtonGroup: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingHorizontal: '30@s',
+    marginTop: '10@vs',
+    gap: '10@s',
+    width: '100%',
+    alignSelf: 'center',
+  },
+  communityButton: {
+    borderWidth: 1,
+    borderColor: '#000000',
+    borderRadius: 8,
+    paddingVertical: '8@vs',
+    flex: 1,
+  },
+  communityButtonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  communityButtonIcon: {
+    marginRight: '8@s',
+  },
+  communityButtonText: {
+    fontSize: '16@s',
+    fontWeight: '700',
   },
 });
