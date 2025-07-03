@@ -126,7 +126,7 @@ export default function Home({ navigation }: any) {
 const styles = ScaledSheet.create({
   container: {
     flex: 1,
-    paddingTop: '25@vs',
+    paddingTop: '50@vs',
   },
   headerContainer: {
     position: 'relative',
@@ -175,7 +175,7 @@ const styles = ScaledSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     paddingHorizontal: '30@s',
-    marginTop: '10@vs',
+    marginTop: '1@vs',
     gap: '10@s',
     width: '100%',
     alignSelf: 'center',
