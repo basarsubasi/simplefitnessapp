@@ -413,8 +413,9 @@
 
 "workoutDeleteTip": "Tip: Stiskněte a podržte pro smazání tréninku",
 "DeleteWorkoutTitle": "Smazat trénink",
-"DeleteWorkoutMessage": "Opravdu chcete smazat tento trénink? Pokud je to zaznamenaný trénink, tato akce také smaže záznamy spojené s ním."
-    
+"DeleteWorkoutMessage": "Opravdu chcete smazat tento trénink? Pokud je to zaznamenaný trénink, tato akce také smaže záznamy spojené s ním.",
+
+"Community": "Komunita"
     
     
     

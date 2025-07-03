@@ -424,7 +424,8 @@
 "dayVolumeExplanation": "Denna graf visar volymen av dina träningspass inom en tidsram, vilket gör att du kan se hur du presterade i varje träningspass.",
 "workoutDeleteTip": "Tips: Tryck och håll för att ta bort ett träningspass",
 "DeleteWorkoutTitle": "Ta bort träningspass",
-"DeleteWorkoutMessage": "Är du säker på att du vill ta bort detta träningspass? Om detta är ett loggat träningspass kommer detta även ta bort associerade loggar."
+"DeleteWorkoutMessage": "Är du säker på att du vill ta bort detta träningspass? Om detta är ett loggat träningspass kommer detta även ta bort associerade loggar.",
+"Community": "Gemenskap"
 
 
 
