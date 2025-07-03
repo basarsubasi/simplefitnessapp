@@ -7,6 +7,7 @@ import {
   Switch,
   ScrollView,
   Alert,
+  Linking,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useSettings } from '../context/SettingsContext';
@@ -633,6 +634,70 @@ export default function Settings() {
                   numberOfLines={2}
                 >
                   {t('importData') || 'Import Data'}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* --- NEW COMMUNITY SECTION --- */}
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: theme.text }]}>
+            {t('Community')}
+          </Text>
+          <View style={styles.dataManagementButtonGroup}>
+            <TouchableOpacity
+              style={[
+                styles.dataManagementButton,
+                { backgroundColor: '#121212' },
+              ]}
+              onPress={() => Linking.openURL('https://discord.gg/A38Ny7UggP')}
+            >
+              <View style={styles.dataManagementButtonContent}>
+                <Ionicons
+                  name='logo-discord'
+                  size={25}
+                  color={'#FFFFFF'}
+                  style={styles.dataButtonIcon}
+                />
+                <Text
+                  style={[
+                    styles.dataManagementButtonText,
+                    { color: '#FFFFFF' },
+                  ]}
+                  numberOfLines={3}
+                >
+                  {t('Discord')}
+                </Text>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.dataManagementButton,
+                { backgroundColor: '#FFFFFF' },
+              ]}
+              onPress={() =>
+                Linking.openURL(
+                  'https://github.com/basarsubasi/simplefitnessapp',
+                )
+              }
+            >
+              <View style={styles.dataManagementButtonContent}>
+                <Ionicons
+                  name='logo-github'
+                  size={25}
+                  color={'#000000'}
+                  style={styles.dataButtonIcon}
+                />
+                <Text
+                  style={[
+                    styles.dataManagementButtonText,
+                    { color: '#000000' },
+                  ]}
+                  numberOfLines={3}
+                >
+                  {t('GitHub')}
                 </Text>
               </View>
             </TouchableOpacity>
