@@ -669,7 +669,14 @@ export default function WorkoutDetails() {
       >
         {/* Day Header */}
         <View style={styles.dayHeader}>
-          <Text style={[styles.dayTitle, { color: theme.text }]}>{day.day_name}</Text>
+          <AutoSizeText
+                      fontSize={24}
+                      numberOfLines={5}
+                      mode={ResizeTextMode.max_lines}
+                      style={[styles.dayTitle, { color: theme.text, flexShrink: 1, marginRight: 8, fontWeight: 'bold' }]}
+                    >
+                      {day.day_name}
+                    </AutoSizeText>
             
             <View style={styles.dayHeaderRightControls}>
               {/* Day reordering arrows */}
@@ -736,7 +743,7 @@ export default function WorkoutDetails() {
                   <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}>
                     <AutoSizeText
                       fontSize={18}
-                      numberOfLines={3}
+                      numberOfLines={4}
                       mode={ResizeTextMode.max_lines}
                       style={[styles.exerciseName, { color: theme.text, marginRight: 8 }]}
                     >
