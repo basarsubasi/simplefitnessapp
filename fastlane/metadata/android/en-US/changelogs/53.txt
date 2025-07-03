@@ -1,0 +1,6 @@
+
+- Portuguese translation improvements by João Henrique Riboli  
+- Fixed an edge case bug related to notification toggle
+- Fixed the Day Name overflow on large texts
+- Fixed the graph info modal not scrolling
+- Added Discord server and GitHub repo buttons
