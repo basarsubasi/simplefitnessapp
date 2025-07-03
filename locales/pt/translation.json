@@ -430,7 +430,8 @@
 "dayVolumeExplanation": "Este gráfico mostra o volume de um treino específico dentro de um período, permitindo que você veja seu progresso para esse dia isoladamente.",
 "workoutDeleteTip": "Dica: Pressione e segure para excluir um treino",
 "DeleteWorkoutTitle": "Excluir treino",
-"DeleteWorkoutMessage": "Tem certeza de que deseja excluir este treino? Se for um treino registrado, esta ação também excluirá os registros associados."
+"DeleteWorkoutMessage": "Tem certeza de que deseja excluir este treino? Se for um treino registrado, esta ação também excluirá os registros associados.",
+"Community": "Comunidade"
 
         
 

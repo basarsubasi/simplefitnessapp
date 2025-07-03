@@ -406,8 +406,10 @@
 "dayVolumeExplanation": "Dieses Diagramm zeigt das Volumen eines bestimmten Trainingsdays innerhalb eines Zeitrahmens, sodass Sie Ihren Fortschritt für diesen Tag isoliert sehen können.",
 "workoutDeleteTip": "Tipp: Drücken und halten Sie, um ein Workout zu löschen",
 "DeleteWorkoutTitle": "Workout löschen",
-"DeleteWorkoutMessage": "Sind Sie sicher, dass Sie dieses Workout löschen möchten? Wenn es ein protokolliertes Workout ist, wird diese Aktion auch die Protokolle löschen, die mit ihm verbunden sind."
+"DeleteWorkoutMessage": "Sind Sie sicher, dass Sie dieses Workout löschen möchten? Wenn es ein protokolliertes Workout ist, wird diese Aktion auch die Protokolle löschen, die mit ihm verbunden sind.",
 
+
+"Community": "Gemeinschaft"
 
 
 

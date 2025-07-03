@@ -98,7 +98,7 @@
     "MyWorkouts": "My Workouts",
     "CreateAWorkout" : "New\nWorkout",
     "CreateAWorkoutButton" : "Create a new workout",
-    "WorkoutListTip" : "Tip: You can delete most things by pressing long to it, try it when you get the chance!",
+    "WorkoutListTip" : "Tip: You can delete most things by long pressing on it, try it when you get the chance!",
 
 
     "_comment_myworkoutspage": "These are myworkoutspage-related strings.",
@@ -465,7 +465,9 @@
     
     "workoutDeleteTip": "Tip: Press and hold to delete a workout",
     "DeleteWorkoutTitle": "Delete Workout",
-    "DeleteWorkoutMessage": "Are you sure you want to delete this workout? If it is a logged workout, this action will also delete the logs associated with it."
+    "DeleteWorkoutMessage": "Are you sure you want to delete this workout? If it is a logged workout, this action will also delete the logs associated with it.",
+
+    "Community": "Community"
 
 
     }
