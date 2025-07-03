@@ -9,6 +9,7 @@ import {
   Dimensions,
   FlatList,
   Modal,
+  TouchableWithoutFeedback,
   
 } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
@@ -86,6 +87,7 @@ type WorkoutSessionExercise = {
   weight_logged: number;
   reps_logged: number;
   set_number: number;
+  logged_exercise_id: number;
 };
 
 // Add new type for Workout CES data
@@ -556,7 +558,7 @@ export default function GraphsWorkoutDetails() {
          AND Workout_Log.day_name = ?
          AND Weight_Log.exercise_name = ?
          AND Workout_Log.workout_date >= ?
-         ORDER BY Workout_Log.workout_date ASC`,
+         ORDER BY Workout_Log.workout_date ASC, Weight_Log.logged_exercise_id ASC`,
         [selectedWorkout, selectedDay, selectedExercise, startTimestamp]
       );
       
@@ -935,11 +937,12 @@ export default function GraphsWorkoutDetails() {
     try {
       const result = await db.getAllAsync<WorkoutSessionExercise>(
         `SELECT Weight_Log.exercise_name, Weight_Log.weight_logged, 
-                Weight_Log.reps_logged, Weight_Log.set_number, Workout_Log.day_name
+                Weight_Log.reps_logged, Weight_Log.set_number, Workout_Log.day_name,
+                Weight_Log.logged_exercise_id
          FROM Weight_Log
          INNER JOIN Workout_Log ON Weight_Log.workout_log_id = Workout_Log.workout_log_id
          WHERE Workout_Log.workout_log_id = ?
-         ORDER BY Workout_Log.day_name ASC, Weight_Log.exercise_name ASC, Weight_Log.set_number ASC`,
+         ORDER BY Weight_Log.logged_exercise_id ASC`,
         [workoutLogId]
       );
       
@@ -3004,19 +3007,21 @@ export default function GraphsWorkoutDetails() {
           activeOpacity={1} 
           onPress={closeTooltip}
         >
-          <View style={[styles.tooltipContainer, { backgroundColor: theme.card, borderColor: theme.border }]}>
-            <View style={styles.tooltipHeader}>
-              <Text style={[styles.tooltipTitle, { color: theme.text }]}>
-                {getChartTitle()}
-              </Text>
-              <TouchableOpacity onPress={closeTooltip}>
-                <Ionicons name="close" size={24} color={theme.text} />
-              </TouchableOpacity>
-            </View>
-            
-            {renderTooltipContent()}
+          <TouchableWithoutFeedback>
+            <View style={[styles.tooltipContainer, { backgroundColor: theme.card, borderColor: theme.border }]}>
+              <View style={styles.tooltipHeader}>
+                <Text style={[styles.tooltipTitle, { color: theme.text }]}>
+                  {getChartTitle()}
+                </Text>
+                <TouchableOpacity onPress={closeTooltip}>
+                  <Ionicons name="close" size={24} color={theme.text} />
+                </TouchableOpacity>
+              </View>
+              
+              {renderTooltipContent()}
 
-          </View>
+            </View>
+          </TouchableWithoutFeedback>
         </TouchableOpacity>
       </Modal>
     );
