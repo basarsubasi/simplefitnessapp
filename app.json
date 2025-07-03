@@ -2,7 +2,7 @@
   "expo": {
     "name": "Simple",
     "slug": "simplefitnessappbeta",
-    "version": "1.7.9",
+    "version": "1.7.10",
     "orientation": "portrait",
     "icon": "./assets/simpleicon.png",
     "newArchEnabled": true,
@@ -15,7 +15,7 @@
       "bundleIdentifier": "tr.com.basarsubasi.simplefitnessapp"
     },
     "android": {
-      "versionCode": 51,
+      "versionCode": 53,
       "blockedPermissions": ["android.permission.INTERNET", "android.permission.RECEIVE_BOOT_COMPLETED", "android.permission.RECORD_AUDIO" ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/simpleicon.png",
