@@ -425,7 +425,8 @@
 
 "workoutDeleteTip": "提示：长按锻炼以删除",
 "DeleteWorkoutTitle": "删除锻炼",
-"DeleteWorkoutMessage": "您确定要删除此锻炼吗？如果这是已记录的锻炼，此操作也将删除与之相关的记录。"
+"DeleteWorkoutMessage": "您确定要删除此锻炼吗？如果这是已记录的锻炼，此操作也将删除与之相关的记录。",
+"Community": "社区"
 
 
 
