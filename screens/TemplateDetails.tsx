@@ -205,10 +205,17 @@ const handleSaveWorkout = async () => {
       <View
         style={[styles.dayContainer, { backgroundColor: theme.card, borderColor: theme.border }]} // Entire day card is now pressable
       >
+        
         {/* Day Header */}
         <View style={styles.dayHeader}>
-          <Text style={[styles.dayTitle, { color: theme.text }]}>{day.day_name}</Text>
-          {/* Add Exercise Button */}
+          <AutoSizeText
+                      fontSize={24}
+                      numberOfLines={5}
+                      mode={ResizeTextMode.max_lines}
+                      style={[styles.dayTitle, { color: theme.text, flexShrink: 1, marginRight: 8, fontWeight: 'bold' }]}
+                    >
+                      {day.day_name}
+                    </AutoSizeText>
         </View>
 
         {/* Exercises */}
