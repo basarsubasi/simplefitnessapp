@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Dimensions, Linking } from 'react-native';
+import { View, Text, TouchableOpacity, Dimensions, Linking, ScrollView } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
 import { ScaledSheet, scale } from 'react-native-size-matters'; // Import ScaledSheet for scaling
 import { useTranslation } from 'react-i18next';
@@ -16,7 +16,10 @@ export default function Home({ navigation }: any) {
   const { t } = useTranslation(); // Initialize translations
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.background }]}>
+    <ScrollView
+      style={{ flex: 1, backgroundColor: theme.background }}
+      contentContainerStyle={styles.container}
+    >
       <View style={styles.headerContainer}>
         {/* App Title */}
         <Text style={[styles.title, { color: theme.text }]}>Simple.</Text>
@@ -117,7 +120,7 @@ export default function Home({ navigation }: any) {
               </View>
             </TouchableOpacity>
           </View>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -125,7 +128,6 @@ export default function Home({ navigation }: any) {
 
 const styles = ScaledSheet.create({
   container: {
-    flex: 1,
     paddingTop: '25@vs',
   },
   headerContainer: {
@@ -176,6 +178,7 @@ const styles = ScaledSheet.create({
     justifyContent: 'space-around',
     paddingHorizontal: '30@s',
     marginTop: '10@vs',
+    marginBottom: '30@vs',
     gap: '10@s',
     width: '100%',
     alignSelf: 'center',
