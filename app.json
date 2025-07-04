@@ -15,7 +15,7 @@
       "bundleIdentifier": "tr.com.basarsubasi.simplefitnessapp"
     },
     "android": {
-      "versionCode": 53,
+      "versionCode": 60,
       "blockedPermissions": ["android.permission.RECORD_AUDIO"],      
       "adaptiveIcon": {
         "foregroundImage": "./assets/simpleicon.png",

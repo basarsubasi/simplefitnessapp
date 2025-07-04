@@ -13,6 +13,7 @@
   import { GestureHandlerRootView } from 'react-native-gesture-handler';
   import { createNativeStackNavigator } from '@react-navigation/native-stack';
   import WorkoutDetails from './screens/WorkoutDetails';
+  import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
   import MyCalendar from './screens/MyCalendar';
   import LogWorkout from './screens/LogWorkout';
   import MyProgress from './screens/MyProgress';
@@ -36,6 +37,7 @@
   import Template from './screens/Template';
   import TemplateDetails from './screens/TemplateDetails';
   import * as Notifications from 'expo-notifications';
+  import * as NavigationBar from 'expo-navigation-bar';
   import { useRecurringWorkouts } from './utils/recurringWorkoutUtils';
   import { checkAndSyncPermissions } from './utils/notificationUtils';
   import { AppState } from 'react-native';
@@ -361,8 +363,16 @@ function RecurringWorkoutManager() {
 // Define AppContent here
 const AppContent = () => {
   const { theme } = useTheme();
+  const insets = useSafeAreaInsets();
   const { notificationPermissionGranted, setNotificationPermissionGranted } =
     useSettings();
+
+  useEffect(() => {
+    if (Platform.OS === 'android') {
+      NavigationBar.setBackgroundColorAsync(theme.background);
+      NavigationBar.setButtonStyleAsync(theme.type === 'light' ? 'dark' : 'light');
+    }
+  }, [theme]);
 
   useEffect(() => {
     if (notificationPermissionGranted) {
@@ -371,7 +381,7 @@ const AppContent = () => {
   }, [notificationPermissionGranted, setNotificationPermissionGranted]);
 
   return (
-    <>
+    <View style={{ flex: 1, paddingTop: insets.top, backgroundColor: theme.background }}>
       <StatusBar barStyle={theme.type === 'light' ? "dark-content" : "light-content"} backgroundColor={theme.background} />
       <React.Suspense
         fallback={
@@ -391,8 +401,9 @@ const AppContent = () => {
               borderTopWidth: 0, // Removes the top border of the tab bar
               elevation: 0, // Removes shadow on Android
               shadowOpacity: 0, // Removes shadow on iOS
-              height: 60,
-              paddingVertical: 10,
+              height: 60 + insets.bottom,
+              paddingBottom: 10 + insets.bottom,
+              paddingTop: 10,
             },
           }}
         >
@@ -462,7 +473,7 @@ const AppContent = () => {
 
                  </Bottom.Navigator>
                  </SQLiteProvider>
-         </>
+         </View>
   );
 };
 
@@ -518,7 +529,8 @@ const AppContent = () => {
 
     return (
       <ThemeProvider>
-      <GestureHandlerRootView>
+      <GestureHandlerRootView style={{flex: 1}}>
+        <SafeAreaProvider>
         <NavigationContainer ref={navigationRef}>
           <SettingsProvider>
           <I18nextProvider i18n={i18n}>
@@ -527,7 +539,7 @@ const AppContent = () => {
           </SettingsProvider>
          
         </NavigationContainer>
-        
+        </SafeAreaProvider>
       </GestureHandlerRootView>
     </ThemeProvider>
     );
