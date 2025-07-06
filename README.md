@@ -1,6 +1,6 @@
 <div align="center">
   
-[![Join our Discord](https://img.shields.io/badge/Discord-Join_Our_Community-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/A38Ny7UggP) [![Donate BTC](https://img.shields.io/badge/Donate-BTC-orange?logo=bitcoin&style=for-the-badge)](https://github.com/user-attachments/assets/cc2c2281-73c1-4df6-b574-54678806ae03) [![Contact Me](https://img.shields.io/badge/Email-Contact_Me-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:basar@basarsubasi.com.tr)
+[![Join our Discord](https://img.shields.io/badge/Discord-Join_Our_Community-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/A38Ny7UggP) [![Donate BTC](https://img.shields.io/badge/Donate-BTC-orange?logo=bitcoin&style=for-the-badge)](https://github.com/user-attachments/assets/cc2c2281-73c1-4df6-b574-54678806ae03) [![Contact Me](https://img.shields.io/badge/Email-Contact_Me-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:basarsubasi@protonmail.com)
 
 </div>
 
@@ -63,7 +63,7 @@ An easy to use fitness app that lets you create, schedule and track your workout
 🇨🇿 🇩🇪 🇩🇰 🇬🇧 🇪🇸 🇫🇮 🇫🇷 🇮🇹 🇯🇵 🇰🇷 🇳🇱 🇳🇴 🇵🇱 🇵🇹 🇷🇺 🇸🇮 🇸🇪 🇹🇷 🇺🇦 🇨🇳
 
 _(If you want to translate the app to your language or improve the existing translations but don't know how, 
-please join our discord server or contact me at basar@basarsubasi.com.tr)_
+please join our discord server or contact me at basarsubasi@protonmail.com)_
 
 ## 🛠️ **How It Works**
 
@@ -75,18 +75,18 @@ please join our discord server or contact me at basar@basarsubasi.com.tr)_
 ## ⬇️ **Installation Methods**
 
 <div align="left">
-  <a href="https://github.com/basarsubasi/simplefitnessapp/releases">
+  <a href="https://github.com/si/simplefitnessapp/releases">
         <img src="https://github.com/user-attachments/assets/a78be8fb-51a2-4328-b6c0-56d00648fea5" alt="Get it on GitHub" width="180">
   </a>
 </br>
 
-<a href="https://f-droid.org/packages/tr.com.basarsubasi.simplefitnessapp" style="padding: 10px;">
+<a href="https://f-droid.org/packages/tr.com.si.simplefitnessapp" style="padding: 10px;">
     <img src="https://f-droid.org/badge/get-it-on.png" alt="Get it on F-Droid" width="180">
 </a>
 
 </br>
 
-<a href="https://play.google.com/store/apps/details?id=tr.com.basarsubasi.simplefitnessapp" style="padding: 10px;">
+<a href="https://play.google.com/store/apps/details?id=tr.com.si.simplefitnessapp" style="padding: 10px;">
     <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Get it on Google Play" width="180">
 </a>
 </br>
