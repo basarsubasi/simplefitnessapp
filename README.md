@@ -98,4 +98,3 @@ please join our discord server or contact me at basarsubasi@protonmail.com)_
 
 *(Notification functionality is not available on the F-Droid builds due to package incompatibility with F-Droid policies.)*
 
-###  Thank you for using **Simple.** ❤️
