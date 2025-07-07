@@ -75,7 +75,7 @@ please join our discord server or contact me at basarsubasi@protonmail.com)_
 ## ⬇️ **Installation Methods**
 
 <div align="left">
-  <a href="https://github.com/si/simplefitnessapp/releases">
+  <a href="https://github.com/basarsubasi/simplefitnessapp/releases">
         <img src="https://github.com/user-attachments/assets/a78be8fb-51a2-4328-b6c0-56d00648fea5" alt="Get it on GitHub" width="180">
   </a>
 </br>
