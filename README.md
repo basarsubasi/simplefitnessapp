@@ -80,13 +80,13 @@ please join our discord server or contact me at basarsubasi@protonmail.com)_
   </a>
 </br>
 
-<a href="https://f-droid.org/packages/tr.com.si.simplefitnessapp" style="padding: 10px;">
+<a href="https://f-droid.org/packages/tr.com.basarsubasi.simplefitnessapp" style="padding: 10px;">
     <img src="https://f-droid.org/badge/get-it-on.png" alt="Get it on F-Droid" width="180">
 </a>
 
 </br>
 
-<a href="https://play.google.com/store/apps/details?id=tr.com.si.simplefitnessapp" style="padding: 10px;">
+<a href="https://play.google.com/store/apps/details?id=tr.com.basarsubasi.simplefitnessapp" style="padding: 10px;">
     <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Get it on Google Play" width="180">
 </a>
 </br>
