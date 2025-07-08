@@ -128,6 +128,7 @@ type DayVolumeData = {
   date: number;
   total_ces: number;
   day_name: string;
+  dayKey?: string; // Add this if you want to use it for the x-axis label
 };
 
 export default function GraphsWorkoutDetails() {
@@ -617,7 +618,7 @@ export default function GraphsWorkoutDetails() {
     try {
       const now = new Date();
       let startDate = new Date();
-      
+
       switch (timeFrame) {
         case 'week':
           startDate.setDate(now.getDate() - 7);
@@ -632,26 +633,45 @@ export default function GraphsWorkoutDetails() {
           startDate = new Date(0);
           break;
       }
-      
+
       const startTimestamp = Math.floor(startDate.getTime() / 1000);
-      
-      const result = await db.getAllAsync<WorkoutCESData>(
+
+      // Fetch all sets for the workout (not aggregated)
+      const result = await db.getAllAsync<LogData>(
         `SELECT
             wl.workout_log_id,
-            wl.workout_date,
-            wl.day_name,
-            SUM(wgl.weight_logged * wgl.reps_logged * (1 + wgl.reps_logged / 30.0)) / 10 AS total_ces
-        FROM Workout_Log wl
-        INNER JOIN Weight_Log wgl ON wl.workout_log_id = wgl.workout_log_id
-        WHERE wl.workout_name = ? 
-        AND wl.workout_date >= ?
-        AND wgl.weight_logged > 0
-        GROUP BY wl.workout_log_id, wl.workout_date, wl.day_name
-        ORDER BY wl.workout_date ASC;`,
+            wl.workout_date as date,
+            wl.day_name AS dayName,
+            wgl.weight_logged,
+            wgl.reps_logged,
+            wgl.set_number,
+            wgl.exercise_name,
+            wgl.logged_exercise_id
+         FROM Workout_Log wl
+         INNER JOIN Weight_Log wgl ON wl.workout_log_id = wgl.workout_log_id
+         WHERE wl.workout_name = ? 
+         AND wl.workout_date >= ?
+         AND wgl.weight_logged > 0
+         ORDER BY wl.workout_date ASC, wgl.logged_exercise_id ASC;`,
         [selectedWorkout, startTimestamp]
       );
-      
-      setWorkoutCESData(result);
+
+      // Group by workout_log_id (each workout session)
+      const logsByWorkout = result.reduce((acc, log) => {
+        if (!acc[log.workout_log_id]) acc[log.workout_log_id] = [];
+        acc[log.workout_log_id].push(log);
+        return acc;
+      }, {} as Record<number, LogData[]>);
+
+      // Use calculateCES for each session
+      const processedData: WorkoutCESData[] = Object.values(logsByWorkout).map(logs => ({
+        workout_log_id: logs[0].workout_log_id,
+        workout_date: logs[0].date,
+        day_name: logs[0].dayName ?? '',
+        total_ces: calculateCES(logs),
+      }));
+
+      setWorkoutCESData(processedData);
     } catch (error) {
       console.error('Error fetching workout CES data:', error);
     } finally {
@@ -770,19 +790,43 @@ export default function GraphsWorkoutDetails() {
       }
       const startTimestamp = Math.floor(startDate.getTime() / 1000);
 
-      const result = await db.getAllAsync<MuscleGroupVolumeData>(
+      // 1. Fetch all sets for the muscle group
+      const result = await db.getAllAsync<LogData>(
         `SELECT
             wlog.workout_date as date,
-            SUM(wl.weight_logged * wl.reps_logged * (1 + wl.reps_logged / 30.0)) / 10 AS total_ces
-        FROM Weight_Log wl
-        INNER JOIN Workout_Log wlog ON wl.workout_log_id = wlog.workout_log_id
-        WHERE wlog.workout_date >= ?
-        AND wl.muscle_group = ?
-        GROUP BY wlog.workout_date
-        ORDER BY wlog.workout_date ASC;`,
+            wl.weight_logged,
+            wl.reps_logged,
+            wl.set_number,
+            wl.exercise_name,
+            wl.workout_log_id,
+            wl.logged_exercise_id
+         FROM Weight_Log wl
+         INNER JOIN Workout_Log wlog ON wl.workout_log_id = wlog.workout_log_id
+         WHERE wlog.workout_date >= ?
+         AND wl.muscle_group = ?
+         ORDER BY wlog.workout_date ASC;`,
         [startTimestamp, selectedMuscleGroup]
       );
-      setMuscleGroupVolumeData(result);
+
+      // 2. Group by date and calculate CES
+      const logsByDate = result.reduce((acc, log) => {
+        // Group by day (YYYY-MM-DD)
+        const dateObj = new Date(log.date * 1000);
+        const dayKey = `${dateObj.getFullYear()}-${dateObj.getMonth() + 1}-${dateObj.getDate()}`;
+        if (!acc[dayKey]) acc[dayKey] = [];
+        acc[dayKey].push(log);
+        return acc;
+      }, {} as Record<string, LogData[]>);
+
+      const processedData: MuscleGroupVolumeData[] = Object.entries(logsByDate).map(([dayKey, logs]) => {
+        // Use the timestamp of the first log for the chart
+        return {
+          date: logs[0].date,
+          total_ces: calculateCES(logs),
+        };
+      });
+
+      setMuscleGroupVolumeData(processedData);
     } catch (error) {
       console.error('Error fetching muscle group volume data:', error);
     } finally {
@@ -813,23 +857,45 @@ export default function GraphsWorkoutDetails() {
       }
       const startTimestamp = Math.floor(startDate.getTime() / 1000);
 
-      const result = await db.getAllAsync<DayVolumeData>(
+      // Fetch all sets for the day
+      const result = await db.getAllAsync<LogData>(
         `SELECT
             wlog.workout_log_id,
             wlog.workout_date as date,
-            wlog.day_name,
-            SUM(wl.weight_logged * wl.reps_logged * (1 + wl.reps_logged / 30.0)) / 10 AS total_ces
-        FROM Weight_Log wl
-        INNER JOIN Workout_Log wlog ON wl.workout_log_id = wlog.workout_log_id
-        WHERE wlog.workout_date >= ?
-        AND wlog.workout_name = ?
-        AND wlog.day_name = ?
-        AND wl.weight_logged > 0
-        GROUP BY wlog.workout_log_id, wlog.workout_date, wlog.day_name
-        ORDER BY wlog.workout_date ASC;`,
+            wlog.day_name AS dayName,
+            wl.weight_logged,
+            wl.reps_logged,
+            wl.set_number,
+            wl.exercise_name,
+            wl.logged_exercise_id
+         FROM Weight_Log wl
+         INNER JOIN Workout_Log wlog ON wl.workout_log_id = wlog.workout_log_id
+         WHERE wlog.workout_date >= ?
+         AND wlog.workout_name = ?
+         AND wlog.day_name = ?
+         AND wl.weight_logged > 0
+         ORDER BY wlog.workout_date ASC, wl.logged_exercise_id ASC;`,
         [startTimestamp, selectedWorkout, dayVolumeSelectedDay]
       );
-      setDayVolumeData(result);
+
+      // Group by date
+      const logsByDay = result.reduce((acc, log) => {
+        const dateObj = new Date(log.date * 1000);
+        const dayKey = `${dateObj.getFullYear()}-${(dateObj.getMonth() + 1).toString().padStart(2, '0')}-${dateObj.getDate().toString().padStart(2, '0')}`;
+        if (!acc[dayKey]) acc[dayKey] = [];
+        acc[dayKey].push(log);
+        return acc;
+      }, {} as Record<string, LogData[]>);
+
+      const processedData: DayVolumeData[] = Object.entries(logsByDay).map(([dayKey, logs]) => ({
+        workout_log_id: logs[0].workout_log_id,
+        date: logs[0].date, // still use the first log's timestamp for sorting
+        total_ces: calculateCES(logs),
+        day_name: logs[0].dayName ?? '',
+        dayKey, // add this if you want to use it for the x-axis label
+      }));
+
+      setDayVolumeData(processedData);
     } catch (error) {
       console.error('Error fetching day volume data:', error);
     } finally {
@@ -889,19 +955,23 @@ export default function GraphsWorkoutDetails() {
 
   const processDayVolumeDataForChart = () => {
     const processedData: ProcessedDataPoint[] = dayVolumeData.map(log => {
-      const date = new Date(log.date * 1000);
-      
-      const day = date.getDate().toString().padStart(2, '0');
-      const month = (date.getMonth() + 1).toString().padStart(2, '0');
-      const formattedDate = dateFormat === 'mm-dd-yyyy'
-        ? `${month}/${day}`
-        : `${day}/${month}`;
-      
+      // If you added dayKey, use it for the label
+      const formattedDate = log.dayKey
+        ? log.dayKey.split('-').reverse().join('/') // e.g. '2024-06-09' -> '09/06/2024'
+        : (() => {
+            const date = new Date(log.date * 1000);
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            return dateFormat === 'mm-dd-yyyy'
+              ? `${month}/${day}`
+              : `${day}/${month}`;
+          })();
+
       return {
         x: formattedDate,
         y: log.total_ces,
         timestamp: log.date,
-        originalData: [], // Fetched on click
+        originalData: [],
         workoutLogId: log.workout_log_id,
         dayName: log.day_name,
       };
@@ -912,23 +982,24 @@ export default function GraphsWorkoutDetails() {
   };
 
   const processMuscleGroupVolumeDataForChart = () => {
-    const processedData: ProcessedDataPoint[] = muscleGroupVolumeData.map(log => {
+    let processedData: ProcessedDataPoint[] = muscleGroupVolumeData.map(log => {
       const date = new Date(log.date * 1000);
-      
       const day = date.getDate().toString().padStart(2, '0');
       const month = (date.getMonth() + 1).toString().padStart(2, '0');
       const formattedDate = dateFormat === 'mm-dd-yyyy'
         ? `${month}/${day}`
         : `${day}/${month}`;
-      
       return {
         x: formattedDate,
         y: log.total_ces,
         timestamp: log.date,
-        originalData: [], // Fetched on click
+        originalData: [],
       };
     });
-    
+
+    // Sort by timestamp ascending
+    processedData = processedData.sort((a, b) => a.timestamp - b.timestamp);
+
     const optimizedData = getOptimalDataPoints(processedData, timeFrame);
     setChartData(optimizedData);
   };
@@ -973,13 +1044,22 @@ export default function GraphsWorkoutDetails() {
     }
   };
 
-  // Calculate CES (Combined Effort Score)
-  const calculateCES = (sets: LogData[]): number => {
-    return sets.reduce((total, set) => {
-      const setScore = set.weight_logged * set.reps_logged * (1 + set.reps_logged / 30);
-      return ((total + setScore)/10);
-    }, 0);
-  };
+// Calculate CES (Combined Effort Score)
+const calculateCES = (sets: LogData[]): number => {
+  return (
+    sets.reduce((total, set) => {
+      // Weight contribution: higher exponent for strong emphasis
+      const weightContribution = Math.pow(set.weight_logged, 2.5); // Tune this (e.g., 2, 2.5, 3)
+
+      // Reps contribution: also exponential, scaled by a constant to make them impactful
+      const repContribution = 100 * Math.pow(set.reps_logged, 1.5); // Tune '100' for overall rep influence
+                                                                    // Tune '1.5' for how fast rep influence grows
+
+      const setScore = weightContribution + repContribution; // Summing the contributions
+      return total + setScore;
+    }, 0) / 1000
+  );
+};
 
   // Calculate estimated 1RM (one-rep max)
   const calculate1RM = (sets: LogData[]): number => {
