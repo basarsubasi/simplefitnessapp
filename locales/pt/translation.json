@@ -422,6 +422,7 @@
 "skipToNextExercise": "Pular para o próximo exercício",
 "enableSetSwitchSound": "Ativar som",
 "autoFillWeights": "Preencher carga automaticamente",
+"autoFillReps": "Preencher repetições automaticamente",
 "startedWorkoutTip": "Dica: Você pode pular para qualquer exercício pressionando o botão com três linhas no canto superior direito da tela.",
 
 "completing": "Completando",

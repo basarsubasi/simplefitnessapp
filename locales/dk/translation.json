@@ -403,7 +403,9 @@
 
 "skipToNextExercise": "Spring til næste øvelse",
 "enableSetSwitchSound": "Aktivér lyd",
-"autoFillWeights": "Auto Fill Weights",
+"autoFillWeights": "Autoudfyld vægte",
+"autoFillReps": "Autoudfyld gentagelser",
+
 "startedWorkoutTip": "Tip: Du kan skifte til en hvilken som helst øvelse ved at trykke på knappen med tre linjer i øverste højre hjørne af skærmen.",
 
 
