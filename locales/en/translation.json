@@ -451,7 +451,8 @@
 
     "skipToNextExercise": "Skip to Next Exercise",
     "enableSetSwitchSound": "Enable Sound",
-    "autoFillWeights": "Auto Fill Weights",
+    "autoFillWeights": "Auto-fill Weights",
+    "autoFillReps": "Auto-fill Reps",
     "startedWorkoutTip": "Tip: You can switch to any exercise by pressing the three line button on the top right of the screen.",
 
 
