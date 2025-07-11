@@ -1,0 +1,6 @@
+
+Main Changes:
+
+- Improved the volume calculation algorithm
+- Now you can choose if you want to auto-fill your reps during your workouts as well
+- Minor translation fixes
