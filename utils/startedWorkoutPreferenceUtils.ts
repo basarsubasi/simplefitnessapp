@@ -7,6 +7,7 @@ const ENABLE_VIBRATION_KEY = '@enable_vibration';
 const ENABLE_NOTIFICATIONS_KEY = '@enable_notifications';
 const AUTO_FILL_WEIGHT_KEY = '@auto_fill_weight';
 const ENABLE_SET_SWITCH_SOUND_KEY = '@enable_set_switch_sound';
+const AUTO_FILL_REPS_KEY = '@auto_fill_reps';
 
 // Default values
 const DEFAULT_SET_REST_TIME = '30';
@@ -19,6 +20,7 @@ export interface RestTimerPreferences {
   enableNotifications: boolean;
   autoFillWeight: boolean;
   enableSetSwitchSound: boolean;
+  autoFillReps: boolean;
 }
 
 /**
@@ -34,6 +36,7 @@ export const loadRestTimerPreferences = async (): Promise<RestTimerPreferences> 
       savedNotifications,
       savedAutoFillWeight,
       savedSetSwitchSound,
+      savedAutoFillReps,
     ] = await Promise.all([
       AsyncStorage.getItem(REST_TIME_BETWEEN_SETS_KEY),
       AsyncStorage.getItem(REST_TIME_BETWEEN_EXERCISES_KEY),
@@ -41,6 +44,7 @@ export const loadRestTimerPreferences = async (): Promise<RestTimerPreferences> 
       AsyncStorage.getItem(ENABLE_NOTIFICATIONS_KEY),
       AsyncStorage.getItem(AUTO_FILL_WEIGHT_KEY),
       AsyncStorage.getItem(ENABLE_SET_SWITCH_SOUND_KEY),
+      AsyncStorage.getItem(AUTO_FILL_REPS_KEY),
     ]);
 
     return {
@@ -55,6 +59,8 @@ export const loadRestTimerPreferences = async (): Promise<RestTimerPreferences> 
         savedAutoFillWeight !== null ? JSON.parse(savedAutoFillWeight) : true,
       enableSetSwitchSound:
         savedSetSwitchSound !== null ? JSON.parse(savedSetSwitchSound) : false,
+      autoFillReps:
+        savedAutoFillReps !== null ? JSON.parse(savedAutoFillReps) : true,
     };
   } catch (error) {
     console.error('Error loading rest timer preferences:', error);
@@ -66,6 +72,7 @@ export const loadRestTimerPreferences = async (): Promise<RestTimerPreferences> 
       enableNotifications: false,
       autoFillWeight: true,
       enableSetSwitchSound: false,
+      autoFillReps: true,
     };
   }
 };
@@ -162,6 +169,22 @@ export const saveAutoFillPreference = async (
 };
 
 /**
+ * Save auto-fill reps preference to AsyncStorage
+ * @param isEnabled - Whether auto-fill reps is enabled
+ * @returns Promise<void>
+ */
+export const saveAutoFillRepsPreference = async (
+  isEnabled: boolean
+): Promise<void> => {
+  try {
+    await AsyncStorage.setItem(AUTO_FILL_REPS_KEY, JSON.stringify(isEnabled));
+  } catch (error) {
+    console.error('Error saving auto-fill reps preference:', error);
+    throw error;
+  }
+};
+
+/**
  * Save set switch sound preference to AsyncStorage
  * @param isEnabled - Whether set switch sound is enabled
  * @returns Promise<void>
@@ -193,6 +216,7 @@ export const saveRestTimerPreferences = async (
       saveNotificationPreference(preferences.enableNotifications),
       saveAutoFillPreference(preferences.autoFillWeight),
       saveSetSwitchSoundPreference(preferences.enableSetSwitchSound),
+      saveAutoFillRepsPreference(preferences.autoFillReps),
     ]);
   } catch (error) {
     console.error('Error saving rest timer preferences:', error);
@@ -212,5 +236,6 @@ export const getDefaultRestTimerPreferences = (): RestTimerPreferences => {
     enableNotifications: false,
     autoFillWeight: true,
     enableSetSwitchSound: false,
+    autoFillReps: true,
   };
 };
