@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Dimensions, Linking, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, Dimensions, Linking } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
 import { ScaledSheet, scale } from 'react-native-size-matters'; // Import ScaledSheet for scaling
 import { useTranslation } from 'react-i18next';
@@ -16,54 +16,54 @@ export default function Home({ navigation }: any) {
   const { t } = useTranslation(); // Initialize translations
 
   return (
-    <ScrollView
-      style={{ flex: 1, backgroundColor: theme.background }}
-      contentContainerStyle={styles.container}
-    >
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       <View style={styles.headerContainer}>
         {/* App Title */}
         <Text style={[styles.title, { color: theme.text }]}>Simple.</Text>
       </View>
 
-      {/* Create a Workout Section */}
-      <View style={[styles.card, { backgroundColor: theme.homeCardColor1 }]}>
-        <Text style={[styles.cardTitle, { color: theme.homeCardText1 }]}>
-        {t('homeCreateWorkout')}
-        </Text>
-        <TouchableOpacity
-          style={[styles.button, { backgroundColor: theme.homeButtonColor1 }]}
-          onPress={() => navigation.navigate('My Workouts')}
-        >
-          <Text style={[styles.buttonText, { color: theme.homeButtonText1 }]}>{t('homeGotoWorkouts')}</Text>
-        </TouchableOpacity>
+      <View style={styles.cardContainer}>
+              {/* Create a Workout Section */}
+        <View style={[styles.card, { backgroundColor: theme.homeCardColor1 }]}>
+          <Text style={[styles.cardTitle, { color: theme.homeCardText1 }]}>
+          {t('homeCreateWorkout')}
+          </Text>
+          <TouchableOpacity
+            style={[styles.button, { backgroundColor: theme.homeButtonColor1 }]}
+            onPress={() => navigation.navigate('My Workouts')}
+          >
+            <Text style={[styles.buttonText, { color: theme.homeButtonText1 }]}>{t('homeGotoWorkouts')}</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Schedule Your Workout Section */}
+        <View style={[styles.card, { backgroundColor: theme.homeCardColor3 }]}>
+          <Text style={[styles.cardTitle, { color: theme.homeCardText2 }]}>
+          {t('homeScheduleWorkouts')}
+          </Text>
+          <TouchableOpacity
+            style={[styles.button, { backgroundColor: theme.homeButtonColor2 }]}
+            onPress={() => navigation.navigate('My Calendar')}
+          >
+            <Text style={[styles.buttonText, { color: theme.homeButtonText2 }]}> {t('homeGotoCalendar')}</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Track Your Progress Section */}
+        <View style={[styles.card, { backgroundColor: theme.homeCardColor2 }]}>
+          <Text style={[styles.cardTitle, { color: theme.text }]}>
+          {t('homeTrackProgress')}
+          </Text>
+          <TouchableOpacity
+            style={[styles.button, { backgroundColor: theme.homeButtonColor3 }]}
+            onPress={() => navigation.navigate('My Progress')}
+          >
+            <Text style={[styles.buttonText, { color: theme.homeButtonText3 }]}>{t('homeGotoProgress')}</Text>
+          </TouchableOpacity>
+          
+        </View>
       </View>
 
-      {/* Schedule Your Workout Section */}
-      <View style={[styles.card, { backgroundColor: theme.homeCardColor3 }]}>
-        <Text style={[styles.cardTitle, { color: theme.homeCardText2 }]}>
-        {t('homeScheduleWorkouts')}
-        </Text>
-        <TouchableOpacity
-          style={[styles.button, { backgroundColor: theme.homeButtonColor2 }]}
-          onPress={() => navigation.navigate('My Calendar')}
-        >
-          <Text style={[styles.buttonText, { color: theme.homeButtonText2 }]}> {t('homeGotoCalendar')}</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Track Your Progress Section */}
-      <View style={[styles.card, { backgroundColor: theme.homeCardColor2 }]}>
-        <Text style={[styles.cardTitle, { color: theme.text }]}>
-        {t('homeTrackProgress')}
-        </Text>
-        <TouchableOpacity
-          style={[styles.button, { backgroundColor: theme.homeButtonColor3 }]}
-          onPress={() => navigation.navigate('My Progress')}
-        >
-          <Text style={[styles.buttonText, { color: theme.homeButtonText3 }]}>{t('homeGotoProgress')}</Text>
-        </TouchableOpacity>
-        
-      </View>
 
       <View style={styles.communityButtonGroup}>
             <TouchableOpacity
@@ -120,7 +120,7 @@ export default function Home({ navigation }: any) {
               </View>
             </TouchableOpacity>
           </View>
-    </ScrollView>
+    </View>
   );
 }
 
@@ -128,7 +128,13 @@ export default function Home({ navigation }: any) {
 
 const styles = ScaledSheet.create({
   container: {
+    flex: 1,
     paddingTop: '25@vs',
+    paddingBottom: '10@vs',
+  },
+  cardContainer: {
+    flex: 1,
+    gap: '12@vs',
   },
   headerContainer: {
     position: 'relative',
@@ -142,12 +148,11 @@ const styles = ScaledSheet.create({
   card: {
     borderRadius: 15, // Keep fixed border radius for better uniformity
     padding: '13@s', // Slightly reduced padding
-    marginBottom: '12@vs', // Reduced vertical margin
     justifyContent: 'center',
     alignItems: 'center',
-    height: '140@vs', // Adjusted height to be smaller
     width: '90%', // Add a width constraint
     alignSelf: 'center',
+    flex: 1,
   },
   cardTitle: {
     fontSize: '20@s', // Smaller scaled font size
@@ -178,7 +183,6 @@ const styles = ScaledSheet.create({
     justifyContent: 'space-around',
     paddingHorizontal: '30@s',
     marginTop: '10@vs',
-    marginBottom: '30@vs',
     gap: '10@s',
     width: '100%',
     alignSelf: 'center',
