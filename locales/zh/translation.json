@@ -420,6 +420,7 @@
 "skipToNextExercise": "跳过当前练习",
 "enableSetSwitchSound": "启用组切换声音",
 "autoFillWeights": "自动填充重量",
+"autoFillReps": "自动填充次数",
 "startedWorkoutTip": "提示：您可以通过点击屏幕右上角的三个点来跳过当前练习。",
 
 
