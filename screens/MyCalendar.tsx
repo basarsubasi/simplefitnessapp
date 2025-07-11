@@ -1224,7 +1224,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: '100%',
     maxWidth: 400,
-    marginBottom: verticalScale(30),
+    marginBottom: verticalScale(20),
   },
   actionButton: {
     borderRadius: 20,
