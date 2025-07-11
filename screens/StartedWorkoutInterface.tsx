@@ -58,7 +58,7 @@ interface ExerciseSet {
   set_number: number;
   total_sets: number;
   reps_goal: number;
-  reps_done: number;
+  reps_done: string;
   weight: string;
   set_logged: boolean;
   web_link: string | null;
@@ -89,6 +89,7 @@ export default function StartedWorkoutInterface() {
   const [exerciseRestTime, setExerciseRestTime] = useState('60');
   const [isExerciseListModalVisible, setIsExerciseListModalVisible] = useState(false);
   const [autoFillWeight, setAutoFillWeight] = useState(true);
+  const [autoFillReps, setAutoFillReps] = useState(true);
   const [enableSetSwitchSound, setEnableSetSwitchSound] = useState(false);
   
   // User preference toggles
@@ -187,10 +188,11 @@ export default function StartedWorkoutInterface() {
             setExerciseRestTime(preferences.restTimeBetweenExercises);
             setEnableVibration(preferences.enableVibration);
             setAutoFillWeight(preferences.autoFillWeight);
+            setAutoFillReps(preferences.autoFillReps);
             setEnableSetSwitchSound(preferences.enableSetSwitchSound);
           
 
-            await fetchWorkoutDetails(preferences.autoFillWeight);
+            await fetchWorkoutDetails(preferences.autoFillWeight, preferences.autoFillReps);
         } catch (error) {
             console.error('Error loading initial data:', error);
             setLoading(false);
@@ -261,7 +263,7 @@ export default function StartedWorkoutInterface() {
     }
   };
   
-  const fetchWorkoutDetails = async (shouldAutoFill: boolean) => {
+  const fetchWorkoutDetails = async (shouldAutoFill: boolean, shouldAutoFillReps: boolean) => {
     try {
       setLoading(true);
       
@@ -325,7 +327,7 @@ export default function StartedWorkoutInterface() {
               set_number: i,
               total_sets: exercise.sets,
               reps_goal: exercise.reps,
-              reps_done: exercise.reps,
+              reps_done: shouldAutoFillReps ? exercise.reps.toString() : '',
               weight: weight,
               set_logged: false,
               web_link: exercise.web_link || null,
@@ -434,6 +436,22 @@ export default function StartedWorkoutInterface() {
     );
   };
 
+  const handleAutoFillRepsToggle = (newValue: boolean) => {
+    setAutoFillReps(newValue);
+    setAllSets(currentSets =>
+      currentSets.map(set => {
+        if (set.set_logged) {
+          return set;
+        }
+
+        return {
+          ...set,
+          reps_done: newValue ? set.reps_goal.toString() : '',
+        };
+      })
+    );
+  };
+
   // Workout flow functions
   const startWorkout = async () => {
     const setRestSeconds = parseInt(restTime);
@@ -456,6 +474,7 @@ export default function StartedWorkoutInterface() {
         enableVibration: enableVibration,
         autoFillWeight: autoFillWeight,
         enableSetSwitchSound: enableSetSwitchSound,
+        autoFillReps: autoFillReps,
       });
     } catch (error) {
       console.error('Error saving rest timer preferences:', error);
@@ -591,6 +610,19 @@ export default function StartedWorkoutInterface() {
               thumbColor={autoFillWeight ? (theme.type === 'dark' ? '#fff' : '#fff') : (theme.type === 'dark' ? '#888' : '#f4f3f4')}
             />
           </View>
+
+          <View style={[styles.toggleRow, {
+            backgroundColor: theme.type === 'dark' ? '#121212' : '#f0f0f0',
+            borderColor: theme.type === 'dark' ? '#000000' : '#e0e0e0'
+          }]}>
+            <Text style={[styles.toggleText, { color: theme.text }]}>{t('autoFillReps')}</Text>
+            <Switch
+              value={autoFillReps}
+              onValueChange={handleAutoFillRepsToggle}
+              trackColor={{ false: theme.type === 'dark' ? '#444' : '#ccc', true: theme.buttonBackground }}
+              thumbColor={autoFillReps ? (theme.type === 'dark' ? '#fff' : '#fff') : (theme.type === 'dark' ? '#888' : '#f4f3f4')}
+            />
+          </View>
           
           <View style={[styles.toggleRow, { 
             backgroundColor: theme.type === 'dark' ? '#121212' : '#f0f0f0',
@@ -701,15 +733,12 @@ export default function StartedWorkoutInterface() {
               color: theme.text,
               borderColor: theme.border
             }]}
-            value={currentSet.reps_done ? currentSet.reps_done.toString() : ''}
+            value={currentSet.reps_done}
             onChangeText={(text) => {
-              const reps = text === '' ? 0 : parseInt(text, 10);
-              if (isNaN(reps)) return;
-              
               const updatedSets = [...allSets];
               updatedSets[timerState.currentSetIndex] = {
                 ...updatedSets[timerState.currentSetIndex],
-                reps_done: reps
+                reps_done: text
               };
               setAllSets(updatedSets);
             }}
@@ -753,18 +782,13 @@ export default function StartedWorkoutInterface() {
             <TouchableOpacity
                 style={[styles.completeButton, { 
                 backgroundColor: 
-                    allSets[timerState.currentSetIndex].reps_done <= 0 || 
-                    allSets[timerState.currentSetIndex].weight === '' ||
-                    parseFloat(allSets[timerState.currentSetIndex].weight) <= 0
+                    !allSets[timerState.currentSetIndex] || allSets[timerState.currentSetIndex].reps_done === '' || parseInt(allSets[timerState.currentSetIndex].reps_done) <= 0 || allSets[timerState.currentSetIndex].weight === '' || parseFloat(allSets[timerState.currentSetIndex].weight) <= 0
                     ? theme.inactivetint 
                     : theme.buttonBackground
                 }]}
                 onPress={() => {
-                if (
-                    allSets[timerState.currentSetIndex].reps_done <= 0 || 
-                    allSets[timerState.currentSetIndex].weight === '' ||
-                    parseFloat(allSets[timerState.currentSetIndex].weight) <= 0
-                ) {
+                const pressCurrentSet = allSets[timerState.currentSetIndex];
+                if (!pressCurrentSet || pressCurrentSet.reps_done === '' || parseInt(pressCurrentSet.reps_done) <= 0 || pressCurrentSet.weight === '' || parseFloat(pressCurrentSet.weight) <= 0) {
                     Alert.alert(t('missingInformation'), t('enterRepsAndWeight'));
                     return;
                 }
@@ -848,9 +872,7 @@ export default function StartedWorkoutInterface() {
                 }}
                 disabled={
                     isCompletingSet ||
-                    allSets[timerState.currentSetIndex].reps_done <= 0 || 
-                    allSets[timerState.currentSetIndex].weight === '' ||
-                    parseFloat(allSets[timerState.currentSetIndex].weight) <= 0
+                    !allSets[timerState.currentSetIndex] || allSets[timerState.currentSetIndex].reps_done === '' || parseInt(allSets[timerState.currentSetIndex].reps_done) <= 0 || allSets[timerState.currentSetIndex].weight === '' || parseFloat(allSets[timerState.currentSetIndex].weight) <= 0
                 }
             >
                 <Text style={[styles.buttonText, { color: theme.buttonText }]}>
@@ -1026,7 +1048,7 @@ export default function StartedWorkoutInterface() {
               set.exercise_name,
               set.set_number,
               parseFloat(set.weight),
-              set.reps_done,
+              parseInt(set.reps_done),
               set.muscle_group
             ]
           );
@@ -1291,7 +1313,7 @@ export default function StartedWorkoutInterface() {
     const currentSetIndex = timerState.currentSetIndex;
     const currentSet = allSets[currentSetIndex];
 
-    if (currentSet && currentSet.reps_done > 0 && currentSet.weight !== '' && parseFloat(currentSet.weight) > 0) {
+    if (currentSet && currentSet.reps_done !== '' && parseInt(currentSet.reps_done) > 0 && currentSet.weight !== '' && parseFloat(currentSet.weight) > 0) {
       const updatedSets = [...allSets];
       updatedSets[currentSetIndex] = { ...currentSet, set_logged: true };
       setAllSets(updatedSets);
