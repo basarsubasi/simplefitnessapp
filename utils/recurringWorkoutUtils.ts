@@ -26,6 +26,7 @@ interface Exercise {
   reps: number;
   web_link: string | null;
   muscle_group: string | null;
+  exercise_notes: string | null;
 }
 
 /**
@@ -304,7 +305,7 @@ const scheduleWorkout = async (
     
     // Fetch all exercises associated with the selected day
     const exercises = await db.getAllAsync(
-      'SELECT exercise_name, sets, reps, web_link, muscle_group FROM Exercises WHERE day_id = ?;',
+      'SELECT exercise_name, sets, reps, web_link, muscle_group, exercise_notes FROM Exercises WHERE day_id = ?;',
       [dayId]
     ) as Exercise[];
     
@@ -313,8 +314,8 @@ const scheduleWorkout = async (
     // Insert exercises into the Logged_Exercises table
     const insertExercisePromises = exercises.map((exercise: Exercise) =>
       db.runAsync(
-        'INSERT INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps, web_link, muscle_group) VALUES (?, ?, ?, ?, ?, ?);',
-        [workoutLogId, exercise.exercise_name, exercise.sets, exercise.reps, exercise.web_link, exercise.muscle_group]
+        'INSERT INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps, web_link, muscle_group, exercise_notes) VALUES (?, ?, ?, ?, ?, ?, ?);',
+        [workoutLogId, exercise.exercise_name, exercise.sets, exercise.reps, exercise.web_link, exercise.muscle_group, exercise.exercise_notes]
       )
     );
     
