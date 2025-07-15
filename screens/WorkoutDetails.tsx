@@ -23,7 +23,7 @@ type WorkoutListNavigationProp = StackNavigationProp<WorkoutStackParamList, 'Wor
 type Day = {
   day_id: number;
   day_name: string;
-  exercises: { exercise_id: number; exercise_name: string; sets: number; reps: number; web_link: string | null; muscle_group: string | null }[];
+  exercises: { exercise_id: number; exercise_name: string; sets: number; reps: number; web_link: string | null; muscle_group: string | null, exercise_notes: string | null }[];
 };
 export default function WorkoutDetails() {
   const db = useSQLiteContext();
@@ -47,9 +47,10 @@ export default function WorkoutDetails() {
   const [exerciseSets, setExerciseSets] = useState('');
   const [exerciseReps, setExerciseReps] = useState('');
   const [exerciseWebLink, setExerciseWebLink] = useState('');
+  const [exerciseNotesInput, setExerciseNotesInput] = useState('');
   const [newExerciseMuscleGroup, setNewExerciseMuscleGroup] = useState<string | null>(null);
   const [showWebLinkModal, setShowWebLinkModal] = useState(false);
-  const [editingExercise, setEditingExercise] = useState<{ exercise_id: number; web_link: string | null; muscle_group: string | null } | null>(null);
+  const [editingExercise, setEditingExercise] = useState<{ exercise_id: number; web_link: string | null; muscle_group: string | null; exercise_notes: string | null } | null>(null);
   const [webLinkInput, setWebLinkInput] = useState('');
   const [editingMuscleGroup, setEditingMuscleGroup] = useState<string | null>(null);
   const navigation = useNavigation<WorkoutListNavigationProp>();
@@ -80,8 +81,8 @@ export default function WorkoutDetails() {
 
     const daysWithExercises = await Promise.all(
       daysResult.map(async (day) => {
-        const exercises = await db.getAllAsync<{ exercise_id: number; exercise_name: string; sets: number; reps: number; web_link: string; muscle_group: string | null }>(
-          'SELECT exercise_id, exercise_name, sets, reps, web_link, muscle_group FROM Exercises WHERE day_id = ?',
+        const exercises = await db.getAllAsync<{ exercise_id: number; exercise_name: string; sets: number; reps: number; web_link: string; muscle_group: string | null; exercise_notes: string | null }>(
+          'SELECT exercise_id, exercise_name, sets, reps, web_link, muscle_group, exercise_notes FROM Exercises WHERE day_id = ?',
           [day.day_id]
         );
         return { ...day, exercises };
@@ -229,8 +230,8 @@ export default function WorkoutDetails() {
           console.log(`Updating log ${log.workout_log_id} for day: ${day.day_name}`);
   
           // Fetch updated exercises for the day
-          const exercises = await db.getAllAsync<{ exercise_name: string; sets: number; reps: number; web_link: string | null; muscle_group: string | null }>(
-            'SELECT exercise_name, sets, reps, web_link, muscle_group FROM Exercises WHERE day_id = ?;',
+          const exercises = await db.getAllAsync<{ exercise_name: string; sets: number; reps: number; web_link: string | null; muscle_group: string | null; exercise_notes: string | null }>(
+            'SELECT exercise_name, sets, reps, web_link, muscle_group, exercise_notes FROM Exercises WHERE day_id = ?;',
             [day.day_id]
           );
   
@@ -240,8 +241,8 @@ export default function WorkoutDetails() {
           // Insert updated exercises into the log
           const insertExercisePromises = exercises.map((exercise) =>
             db.runAsync(
-              'INSERT INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps, web_link, muscle_group) VALUES (?, ?, ?, ?, ?, ?);',
-              [log.workout_log_id, exercise.exercise_name, exercise.sets, exercise.reps, exercise.web_link, exercise.muscle_group]
+              'INSERT INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps, web_link, muscle_group, exercise_notes) VALUES (?, ?, ?, ?, ?, ?, ?);',
+              [log.workout_log_id, exercise.exercise_name, exercise.sets, exercise.reps, exercise.web_link, exercise.muscle_group, exercise.exercise_notes]
             )
           );
   
@@ -285,6 +286,7 @@ export default function WorkoutDetails() {
     setExerciseSets('');
     setExerciseReps('');
     setExerciseWebLink('');
+    setExerciseNotesInput('');
     setNewExerciseMuscleGroup(null);
     setShowExerciseModal(true);
   };
@@ -324,8 +326,8 @@ export default function WorkoutDetails() {
 
     if (currentDayId) {
       await db.runAsync(
-        'INSERT INTO Exercises (day_id, exercise_name, sets, reps, web_link, muscle_group) VALUES (?, ?, ?, ?, ?, ?);',
-        [currentDayId, exerciseName.trim(), parseInt(sets, 10), parseInt(reps, 10), webLink || null, newExerciseMuscleGroup || null]
+        'INSERT INTO Exercises (day_id, exercise_name, sets, reps, web_link, muscle_group, exercise_notes) VALUES (?, ?, ?, ?, ?, ?, ?);',
+        [currentDayId, exerciseName.trim(), parseInt(sets, 10), parseInt(reps, 10), webLink || null, newExerciseMuscleGroup || null, exerciseNotesInput.trim()]
       );
       await updateWorkoutLogsForAdditions(workout_id);
       fetchWorkoutDetails();
@@ -497,8 +499,8 @@ export default function WorkoutDetails() {
           console.log(`Updating log ${log.workout_log_id} for day: ${day.day_name}`);
   
           // Fetch updated exercises for the day
-          const exercises = await db.getAllAsync<{ exercise_name: string; sets: number; reps: number; web_link: string | null; muscle_group: string | null }>(
-            'SELECT exercise_name, sets, reps, web_link, muscle_group FROM Exercises WHERE day_id = ?;',
+          const exercises = await db.getAllAsync<{ exercise_name: string; sets: number; reps: number; web_link: string | null; muscle_group: string | null; exercise_notes: string | null }>(
+            'SELECT exercise_name, sets, reps, web_link, muscle_group, exercise_notes FROM Exercises WHERE day_id = ?;',
             [day.day_id]
           );
   
@@ -508,8 +510,8 @@ export default function WorkoutDetails() {
           // Insert updated exercises into the log
           const insertExercisePromises = exercises.map((exercise) =>
             db.runAsync(
-              'INSERT INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps, web_link, muscle_group) VALUES (?, ?, ?, ?, ?, ?);',
-              [log.workout_log_id, exercise.exercise_name, exercise.sets, exercise.reps, exercise.web_link, exercise.muscle_group]
+              'INSERT INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps, web_link, muscle_group, exercise_notes) VALUES (?, ?, ?, ?, ?, ?, ?);',
+              [log.workout_log_id, exercise.exercise_name, exercise.sets, exercise.reps, exercise.web_link, exercise.muscle_group, exercise.exercise_notes]
             )
           );
   
@@ -523,9 +525,10 @@ export default function WorkoutDetails() {
     }
   };
 
-  const openWebLinkModal = (exercise: { exercise_id: number; web_link: string | null; muscle_group: string | null }) => {
+  const openWebLinkModal = (exercise: { exercise_id: number; web_link: string | null; muscle_group: string | null; exercise_notes: string | null; }) => {
     setEditingExercise(exercise);
     setWebLinkInput(exercise.web_link || '');
+    setExerciseNotesInput(exercise.exercise_notes || '');
     setEditingMuscleGroup(exercise.muscle_group);
     setShowWebLinkModal(true);
   };
@@ -534,6 +537,7 @@ export default function WorkoutDetails() {
     setShowWebLinkModal(false);
     setEditingExercise(null);
     setWebLinkInput('');
+    setExerciseNotesInput('');
     setEditingMuscleGroup(null);
   };
 
@@ -553,8 +557,8 @@ export default function WorkoutDetails() {
 
     try {
       await db.runAsync(
-        'UPDATE Exercises SET web_link = ?, muscle_group = ? WHERE exercise_id = ?',
-        [trimmedLink || null, editingMuscleGroup, editingExercise.exercise_id]
+        'UPDATE Exercises SET web_link = ?, muscle_group = ?, exercise_notes = ? WHERE exercise_id = ?',
+        [trimmedLink || null, editingMuscleGroup, exerciseNotesInput.trim(), editingExercise.exercise_id]
       );
       
       // Update logs as well
@@ -869,6 +873,16 @@ export default function WorkoutDetails() {
           autoCapitalize="none"
           keyboardType="url"
         />
+        <Text style={[styles.inputLabel, { color: theme.text, marginTop: 10 }]}>{t('exerciseNotes')}</Text>
+        <TextInput
+            style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border, height: 100, textAlignVertical: 'top' }]}
+            placeholder={t('exerciseNotesPlaceholder')}
+            placeholderTextColor={theme.text}
+            value={exerciseNotesInput}
+            onChangeText={setExerciseNotesInput}
+            multiline={true}
+            numberOfLines={4}
+        />
         <Text style={[styles.inputLabel, { color: theme.text, marginTop: 10 }]}>{t('muscleGroup')}</Text>
         <FlatList
           data={muscleGroupData}
@@ -919,6 +933,16 @@ export default function WorkoutDetails() {
                 autoCapitalize="none"
                 keyboardType="url"
             />
+            <Text style={[styles.inputLabel, { color: theme.text, marginTop: 15 }]}>{t('exerciseNotes')}</Text>
+           <TextInput
+               style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border, height: 100, textAlignVertical: 'top' }]}
+               placeholder={t('exerciseNotesPlaceholder')}
+               placeholderTextColor={theme.text}
+               value={exerciseNotesInput}
+               onChangeText={setExerciseNotesInput}
+               multiline={true}
+               numberOfLines={4}
+           />
             <Text style={[styles.inputLabel, { color: theme.text, marginTop: 15 }]}>{t('muscleGroup')}</Text>
             <FlatList
               data={muscleGroupData}
