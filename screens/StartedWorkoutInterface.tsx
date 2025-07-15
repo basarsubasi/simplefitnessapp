@@ -50,6 +50,7 @@ interface Exercise {
   exercise_fully_logged: boolean;
   web_link: string | null;
   muscle_group: string | null;
+  exercise_notes: string | null;
 }
 
 interface ExerciseSet {
@@ -63,6 +64,7 @@ interface ExerciseSet {
   set_logged: boolean;
   web_link: string | null;
   muscle_group: string | null;
+  exercise_notes: string | null;
 }
 
 export default function StartedWorkoutInterface() {
@@ -98,6 +100,11 @@ export default function StartedWorkoutInterface() {
   // Sets data for tracking workout
   const [allSets, setAllSets] = useState<ExerciseSet[]>([]);
   
+  // State for notes modal
+  const [isNotesModalVisible, setIsNotesModalVisible] = useState(false);
+  const [notesModalContent, setNotesModalContent] = useState('');
+  const [notesModalTitle, setNotesModalTitle] = useState('');
+
   // Timer state using the new utility
   const [timerState, setTimerState] = useState<TimerState>(createTimerState());
   const [isCompletingSet, setIsCompletingSet] = useState(false);
@@ -244,6 +251,11 @@ export default function StartedWorkoutInterface() {
     return unsubscribe;
   }, [navigation, timerState.workoutStarted, timerState.workoutStage, t]);
   
+  const showNotes = (notes: string, exerciseName: string) => {
+    setNotesModalContent(notes);
+    setNotesModalTitle(exerciseName);
+    setIsNotesModalVisible(true);
+  };
 
   const handleLinkPress = async (url: string | null) => {
     if (!url) {
@@ -282,7 +294,7 @@ export default function StartedWorkoutInterface() {
         setWorkout(workoutResult[0]);
         
         const exercisesResult = await db.getAllAsync<Exercise>(
-          `SELECT exercise_name, sets, reps, logged_exercise_id, web_link, muscle_group
+          `SELECT exercise_name, sets, reps, logged_exercise_id, web_link, muscle_group, exercise_notes
            FROM Logged_Exercises 
            WHERE workout_log_id = ?;`,
           [workout_log_id]
@@ -331,7 +343,8 @@ export default function StartedWorkoutInterface() {
               weight: weight,
               set_logged: false,
               web_link: exercise.web_link || null,
-              muscle_group: exercise.muscle_group || null
+              muscle_group: exercise.muscle_group || null,
+              exercise_notes: exercise.exercise_notes || null
             });
           }
         });
@@ -551,11 +564,18 @@ export default function StartedWorkoutInterface() {
                       </View>
                     )}
                   </View>
-                  {item.web_link && (
-                    <TouchableOpacity onPress={() => handleLinkPress(item.web_link)} style={{ marginLeft: 10 }}>
-                      <Ionicons name="link-outline" size={22} color={theme.text} />
-                    </TouchableOpacity>
-                  )}
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    {item.exercise_notes && (
+                      <TouchableOpacity onPress={() => showNotes(item.exercise_notes!, item.exercise_name)} style={{ marginLeft: 10 }}>
+                        <Ionicons name="bookmark-outline" size={22} color={theme.text} />
+                      </TouchableOpacity>
+                    )}
+                    {item.web_link && (
+                      <TouchableOpacity onPress={() => handleLinkPress(item.web_link)} style={{ marginLeft: 10 }}>
+                        <Ionicons name="link-outline" size={22} color={theme.text} />
+                      </TouchableOpacity>
+                    )}
+                  </View>
                 </View>
                 <Text style={[styles.exerciseDetails, { color: theme.text, marginTop: 4 }]}>
                   {item.sets} {t('Sets')} × {item.reps} {t('Reps')}
@@ -690,33 +710,30 @@ export default function StartedWorkoutInterface() {
         </View>
         
         <View style={[styles.currentExerciseCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          {muscleGroupInfo && muscleGroupInfo.value && (
-            <View style={{alignItems: 'center', marginBottom: 10}}>
-              <View style={[styles.muscleGroupBadgeMain, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <Text style={[styles.currentExerciseName, { color: theme.text }]}>
+            {currentSet.exercise_name}
+          </Text>
+
+          <View style={styles.badgeAndIconsContainer}>
+            {muscleGroupInfo && muscleGroupInfo.value && (
+              <View style={[styles.muscleGroupBadgeMain, { backgroundColor: theme.card, borderColor: theme.border, marginRight: 8 }]}>
                 <Text style={[styles.muscleGroupBadgeText, { color: theme.text }]}>
                   {t(muscleGroupInfo.label)}
                 </Text>
               </View>
-            </View>
-          )}
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
-            {/* Left spacer to balance the icon on the right */}
-            <View style={{ width: 60 }} />
-
-            {/* Exercise name, now perfectly centered */}
-            <Text style={[styles.currentExerciseName, { color: theme.text, flex: 1 }]}>
-              {currentSet.exercise_name}
-            </Text>
-
-            {/* Icon container, same width as the spacer */}
-            <View style={{ width: 60, alignItems: 'flex-start' }}>
-              {currentSet.web_link && (
-                <TouchableOpacity onPress={() => handleLinkPress(currentSet.web_link)}>
-                  <Ionicons name="link-outline" size={24} color={theme.text} />
-                </TouchableOpacity>
-              )}
-            </View>
+            )}
+            {currentSet.exercise_notes && (
+              <TouchableOpacity onPress={() => showNotes(currentSet.exercise_notes!, currentSet.exercise_name)} style={{ marginRight: 8 }}>
+                <Ionicons name="bookmark-outline" size={22} color={theme.text} />
+              </TouchableOpacity>
+            )}
+            {currentSet.web_link && (
+              <TouchableOpacity onPress={() => handleLinkPress(currentSet.web_link)}>
+                <Ionicons name="link-outline" size={22} color={theme.text} />
+              </TouchableOpacity>
+            )}
           </View>
+          
           <Text style={[styles.setInfo, { color: theme.text }]}>
            {currentSet.set_number}/{currentSet.total_sets}
           </Text>
@@ -985,11 +1002,18 @@ export default function StartedWorkoutInterface() {
                   </View>
                 )}
               </View>
-              {nextSet.web_link && (
-                <TouchableOpacity onPress={() => handleLinkPress(nextSet.web_link)} style={{ marginLeft: 10 }}>
-                  <Ionicons name="link-outline" size={22} color={theme.text} />
-                </TouchableOpacity>
-              )}
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                {nextSet.exercise_notes && (
+                  <TouchableOpacity onPress={() => showNotes(nextSet.exercise_notes!, nextSet.exercise_name)} style={{ marginLeft: 10 }}>
+                    <Ionicons name="bookmark-outline" size={22} color={theme.text} />
+                  </TouchableOpacity>
+                )}
+                {nextSet.web_link && (
+                  <TouchableOpacity onPress={() => handleLinkPress(nextSet.web_link)} style={{ marginLeft: 10 }}>
+                    <Ionicons name="link-outline" size={22} color={theme.text} />
+                  </TouchableOpacity>
+                )}
+              </View>
             </View>
             <Text style={[styles.upNextSetInfo, { color: theme.text }]}>
               {t('upcomingSet')}: {nextSet.set_number}
@@ -1215,11 +1239,18 @@ export default function StartedWorkoutInterface() {
                             </View>
                           )}
                         </View>
-                        {item.web_link && (
-                          <TouchableOpacity onPress={() => handleLinkPress(item.web_link)} style={{ marginLeft: 10 }}>
-                            <Ionicons name="link-outline" size={22} color={isCurrent ? theme.buttonText : theme.text} />
-                          </TouchableOpacity>
-                        )}
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                          {item.exercise_notes && (
+                            <TouchableOpacity onPress={() => showNotes(item.exercise_notes!, item.exercise_name)} style={{ marginLeft: 10 }}>
+                              <Ionicons name="bookmark-outline" size={22} color={isCurrent ? theme.buttonText : theme.text} />
+                            </TouchableOpacity>
+                          )}
+                          {item.web_link && (
+                            <TouchableOpacity onPress={() => handleLinkPress(item.web_link)} style={{ marginLeft: 10 }}>
+                              <Ionicons name="link-outline" size={22} color={isCurrent ? theme.buttonText : theme.text} />
+                            </TouchableOpacity>
+                          )}
+                        </View>
                       </View>
                       <Text style={[detailStyle, { marginTop: 4 }]}>
                         {item.sets} {t('Sets')} × {item.reps} {t('Reps')}
@@ -1235,6 +1266,41 @@ export default function StartedWorkoutInterface() {
     );
   };
   
+  const renderNotesModal = () => {
+    return (
+      <Modal
+        visible={isNotesModalVisible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => {
+          setIsNotesModalVisible(false);
+        }}
+      >
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPressOut={() => setIsNotesModalVisible(false)}
+        >
+          <View 
+            style={[styles.modalContainer, { backgroundColor: theme.card, borderColor: theme.border }]}
+            onStartShouldSetResponder={() => true} // Prevents modal from closing on inner press
+          >
+            <View style={[styles.modalHeader, { borderBottomColor: theme.border }]}>
+              <Text style={[styles.modalTitle, { color: theme.text }]}>{notesModalTitle}</Text>
+              <TouchableOpacity onPress={() => setIsNotesModalVisible(false)} style={styles.modalCloseButton}>
+                <Ionicons name="close-outline" size={28} color={theme.text} />
+              </TouchableOpacity>
+            </View>
+            <Text style={[styles.notesSubHeader, { color: theme.text }]}>{t('exerciseNotes')}</Text>
+            <ScrollView showsVerticalScrollIndicator={false}>
+                <Text style={[styles.notesModalText, { color: theme.text }]}>{notesModalContent}</Text>
+            </ScrollView>
+          </View>
+        </TouchableOpacity>
+      </Modal>
+    );
+  };
+
   const clearRestTimerState = () => {
     stopRestTimer(); // Clear the interval
     setTimerState(prev => updateTimerState(prev, {
@@ -1373,6 +1439,7 @@ export default function StartedWorkoutInterface() {
         {timerState.workoutStage === 'completed' && renderCompletedScreen()}
       </ScrollView>
       {renderExerciseListModal()}
+      {renderNotesModal()}
     </View>
   );
 }
@@ -1552,6 +1619,14 @@ const styles = StyleSheet.create({
   workoutTimerText: {
     fontSize: 36,
     fontWeight: 'bold',
+  },
+  badgeAndIconsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 8,
+    marginBottom: 10,
+    minHeight: 24, // To prevent layout shifts
   },
   currentExerciseCard: {
     borderRadius: 15,
@@ -1805,7 +1880,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingBottom: 15,
-    marginBottom: 15,
   },
   modalTitle: {
     fontSize: 20,
@@ -1852,5 +1926,14 @@ const styles = StyleSheet.create({
   muscleGroupBadgeText: {
     fontSize: 12,
     fontWeight: '600',
+  },
+  notesModalText: {
+    fontSize: 16,
+    lineHeight: 24,
+  },
+  notesSubHeader: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
   },
 });
