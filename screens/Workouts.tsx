@@ -11,6 +11,7 @@ import { useTheme } from '../context/ThemeContext';
 import { useTranslation } from 'react-i18next';
 import { addWebLinkColumn } from '../utils/exerciseDetailUtils';
 import { addMuscleGroupColumn } from '../utils/exerciseDetailUtils';
+import { addExerciseNotesColumn } from '../utils/exerciseDetailUtils';
 
 
 
@@ -29,6 +30,7 @@ export default function Workouts() {
       const addWebLinkColumntoworkouts = async () => {
         await addWebLinkColumn(db);
         await addMuscleGroupColumn(db);
+        await addExerciseNotesColumn(db);
         db.withTransactionAsync(getWorkouts);
       };
       addWebLinkColumntoworkouts();

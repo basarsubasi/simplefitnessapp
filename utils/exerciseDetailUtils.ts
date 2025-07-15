@@ -49,3 +49,20 @@ export const addMuscleGroupToWeightLog = async (db: SQLiteDatabase) => {
         console.error('Error adding muscle_group column to Weight_Log:', error);
     }
 };
+
+export const addExerciseNotesColumn = async (db: SQLiteDatabase) => {
+    const tables = ['Exercises', 'Logged_Exercises'];
+    try {
+        for (const table of tables) {
+            const columns = await db.getAllAsync<any>(`PRAGMA table_info(${table});`);
+            const columnExists = columns.some((col: any) => col.name === 'exercise_notes');
+
+            if (!columnExists) {
+                await db.runAsync(`ALTER TABLE ${table} ADD COLUMN exercise_notes TEXT;`);
+                console.log(`'exercise_notes' column added to '${table}' table.`);
+            }
+        }
+    } catch (error) {
+        console.error('Error adding exercise_notes column:', error);
+    }
+};
