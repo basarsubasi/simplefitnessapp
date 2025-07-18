@@ -15,11 +15,14 @@ import { useSettings } from '../context/SettingsContext';
 import { useTheme } from '../context/ThemeContext';
 import { useTranslation } from 'react-i18next';
 import { WorkoutLogStackParamList } from '../App';
+import { StackNavigationProp } from '@react-navigation/stack';
+
+type LogWorkoutNavigationProp = StackNavigationProp<WorkoutLogStackParamList, 'LogWorkout'>;
 
 export default function LogWorkout() {
   const route = useRoute<RouteProp<WorkoutLogStackParamList, 'LogWorkout'>>();
   const db = useSQLiteContext();
-  const navigation = useNavigation();
+  const navigation = useNavigation<LogWorkoutNavigationProp>();
   const { theme } = useTheme(); 
   const { t } = useTranslation(); // Initialize translations
   const { dateFormat } = useSettings();
@@ -203,7 +206,24 @@ export default function LogWorkout() {
       );
 
       await Promise.all(insertExercisePromises);
-      navigation.goBack(); // Navigate back to the previous screen
+
+      // New navigation logic based on the selected date
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const workoutDateOnly = new Date(selectedDate);
+      workoutDateOnly.setHours(0, 0, 0, 0);
+
+      if (workoutDateOnly.getTime() < today.getTime()) {
+        // Past: Navigate to LogWeights to log the workout
+        navigation.navigate('LogWeights', { workout_log_id: workoutLogId });
+      } else if (workoutDateOnly.getTime() === today.getTime()) {
+        // Today: Navigate to StartedWorkoutInterface to start the workout
+        navigation.navigate('StartedWorkoutInterface', { workout_log_id: workoutLogId });
+      } else {
+        // Future: Navigate back to the calendar to see the scheduled workout
+        navigation.navigate('MyCalendar', { refresh: true });
+      }
     } catch (error) {
       console.error('Error logging workout:', error);
       Alert.alert(t('errorTitle'), 'Failed to log workout.');
