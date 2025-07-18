@@ -202,6 +202,24 @@ export default function LogWeights() {
       return;
     }
 
+    for (const exercise of exercises) {
+      for (const setNumber of exerciseSets[exercise.logged_exercise_id]) {
+        const weightKey = `${exercise.logged_exercise_id}_${setNumber}`;
+        const repsKey = `${exercise.logged_exercise_id}_${setNumber}`;
+
+        const weight = parseFloat(weights[weightKey]?.replace(',', '.') || '0');
+        const repsCount = parseInt(reps[repsKey] || '0', 10);
+
+        if (weight <= 0 || repsCount <= 0) {
+          Alert.alert(
+            t('errorTitle'),
+            t('Please make sure all fields are filled and not zero.')
+          );
+          return;
+        }
+      }
+    }
+
     try {
       await db.withTransactionAsync(async () => {
         for (const exercise of exercises) {
@@ -211,10 +229,6 @@ export default function LogWeights() {
 
             const weight = parseFloat(weights[weightKey]?.replace(',', '.') || '0');
             const repsCount = parseInt(reps[repsKey] || '0', 10);
-
-            if (weight <= 0 || repsCount <= 0) {
-              throw new Error('Weight and reps must be greater than 0.');
-            }
 
             await db.runAsync(
               `INSERT INTO Weight_Log 
@@ -242,6 +256,13 @@ export default function LogWeights() {
   };
   const [adHeight, setAdHeight] = useState(50);
 
+  const handleWeightChange = React.useCallback((key: string, value: string) => {
+    setWeights(prev => ({ ...prev, [key]: value }));
+  }, []);
+
+  const handleRepsChange = React.useCallback((key: string, value: string) => {
+    setReps(prev => ({ ...prev, [key]: value }));
+  }, []);
 
   const renderExercise = (exercise: LoggedExercise) => {
     const muscleGroupInfo = muscleGroupData.find(mg => mg.value === exercise.muscle_group);
@@ -266,40 +287,15 @@ export default function LogWeights() {
           const repsKey = `${exercise.logged_exercise_id}_${setNumber}`;
     
           return (
-            <TouchableOpacity
-              key={setNumber.toString()}
-              onLongPress={() => deleteSet(exercise.logged_exercise_id.toString(), setNumber)}
-              style={[styles.setContainer, { backgroundColor: 'transparent' }]}
-            >
-              <Text style={[styles.setText, { color: theme.text }]}>{t('Set')} {setNumber}:</Text>
-              <TextInput
-                style={[styles.input, { color: theme.text, backgroundColor: 'transparent' }]}
-                placeholder={t('repsPlaceholder')}
-                placeholderTextColor={theme.logborder}
-                keyboardType="numeric"
-                value={reps[repsKey]}
-                onChangeText={(text) => {
-                  setReps((prev) => ({
-                    ...prev,
-                    [repsKey]: text,
-                  }));
-                }}
-              />
-    
-              <TextInput
-                style={[styles.input, { color: theme.text, backgroundColor: 'transparent' }]}
-                placeholder={weightFormat}
-                placeholderTextColor={theme.logborder}
-                keyboardType="decimal-pad"
-                value={weights[weightKey]}
-                onChangeText={(text) => {
-                  setWeights((prev) => ({
-                    ...prev,
-                    [weightKey]: text,
-                  }));
-                }}
-              />
-            </TouchableOpacity>
+            <SetInputRow
+              key={`${exercise.logged_exercise_id}_${setNumber}`}
+              setNumber={setNumber}
+              reps={reps[repsKey]}
+              weight={weights[weightKey]}
+              onRepsChange={(text: string) => handleRepsChange(repsKey, text)}
+              onWeightChange={(text: string) => handleWeightChange(weightKey, text)}
+              onDelete={() => deleteSet(exercise.logged_exercise_id.toString(), setNumber)}
+            />
           );
         })}
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -361,6 +357,7 @@ export default function LogWeights() {
           <Text style={[styles.emptyText, { color: theme.text }]}>{t('noExercises')}</Text>
         }
       />
+      <Text style={[styles.tipText, { color: theme.text, marginBottom: 10 }]}>{t('logWeightsTipText')}</Text>
       <TouchableOpacity style={[styles.saveButton, { backgroundColor: theme.buttonBackground }]} onPress={logWeights}>
         <Text style={[styles.saveButtonText, { color: theme.buttonText }]}>{t('trackWeights')}</Text>
       </TouchableOpacity>
@@ -370,6 +367,47 @@ export default function LogWeights() {
 
   );
 }
+
+type SetInputRowProps = {
+  setNumber: number;
+  reps: string;
+  weight: string;
+  onRepsChange: (text: string) => void;
+  onWeightChange: (text: string) => void;
+  onDelete: () => void;
+};
+
+const SetInputRow = React.memo(({ setNumber, reps, weight, onRepsChange, onWeightChange, onDelete }: SetInputRowProps) => {
+  const { t } = useTranslation();
+  const { theme } = useTheme();
+  const { weightFormat } = useSettings();
+
+  return (
+    <TouchableOpacity
+      onLongPress={onDelete}
+      style={[styles.setContainer, { backgroundColor: 'transparent' }]}
+    >
+      <Text style={[styles.setText, { color: theme.text }]}>{t('Set')} {setNumber}:</Text>
+      <TextInput
+        style={[styles.input, { color: theme.text, backgroundColor: 'transparent' }]}
+        placeholder={t('repsPlaceholder')}
+        placeholderTextColor={theme.logborder}
+        keyboardType="numeric"
+        value={reps}
+        onChangeText={onRepsChange}
+      />
+
+      <TextInput
+        style={[styles.input, { color: theme.text, backgroundColor: 'transparent' }]}
+        placeholder={weightFormat}
+        placeholderTextColor={theme.logborder}
+        keyboardType="decimal-pad"
+        value={weight}
+        onChangeText={onWeightChange}
+      />
+    </TouchableOpacity>
+  );
+});
 
 // LogWeights.tsx
 
@@ -501,6 +539,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#666666',
     fontSize: 16,
+  },
+  tipText: {
+    textAlign: 'center',
+    fontSize: 12,
+    fontStyle: 'italic',
   },
   muscleGroupBadge: {
     paddingVertical: 4,
