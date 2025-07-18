@@ -669,6 +669,27 @@ export default function MyCalendar() {
 
       <View style={styles.buttonRow}>
         <TouchableOpacity
+            style={[
+              styles.actionButton,
+              { backgroundColor: theme.buttonBackground },
+            ]}
+            onPress={() =>
+              navigation.navigate('LogWorkout', {
+                selectedDate: new Date().toISOString(),
+              })
+            }
+          >
+            <Ionicons
+              name='flash'
+              size={scale(22)}
+              color={theme.buttonText}
+              style={styles.icon}
+            />
+            <Text style={[styles.actionButtonText, { color: theme.buttonText }]}>
+              {t('quickWorkout')}
+            </Text>
+          </TouchableOpacity>
+        <TouchableOpacity
           style={[
             styles.actionButton,
             { backgroundColor: theme.buttonBackground },
@@ -1216,7 +1237,7 @@ const styles = StyleSheet.create({
   },
   buttonRow: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     width: '100%',
     maxWidth: 400,
     marginBottom: verticalScale(30),
