@@ -424,7 +424,12 @@
 "workoutDeleteTip": "Sfat: Apasă și ține pentru a șterge un antrenament",
 "DeleteWorkoutTitle": "Șterge antrenamentul",
 "DeleteWorkoutMessage": "Ești sigur că vrei să ștergi acest antrenament? Dacă este un antrenament înregistrat, această acțiune va șterge și jurnalele asociate.",
-"Community": "Comunitate"
+"Community": "Comunitate",
+"logWeightsError": "Asigurați-vă că toate câmpurile sunt completate și nu sunt zero.",
+"logWeightsTipText": "Puteți șterge serii de exerciții prin ținerea apăsată a numărului de serie.",
+"exerciseNotes": "Note",
+"exerciseNotesPlaceholder": "Note pentru exercițiu (opțional)",
+"quickWorkout": "Antrenament rapid"
 
 
 

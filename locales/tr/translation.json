@@ -449,7 +449,12 @@
 "workoutDeleteTip": "İpucu: Bir antrenmanı silmek için ona basılı tutun.",
 "DeleteWorkoutTitle": "Antrenmanı Sil",
 "DeleteWorkoutMessage": "Bu antrenmanı silmek istediğinizden emin misiniz? Bu antrenman kayıtlıysa, bu işlem aynı zamanda ilişkili kayıtları da siler.",
-"Community": "Topluluk"
+"Community": "Topluluk",
+"logWeightsError": "Lütfen tüm alanları doldurun ve değerlerin sıfırdan farklı olduğundan emin olun.",
+"logWeightsTipText": "Set numarasına basılı tutarak egzersizlerden setleri silebilirsiniz.",
+"exerciseNotes": "Notlar",
+"exerciseNotesPlaceholder": "Egzersiz notları (isteğe bağlı)",
+"quickWorkout": "Hızlı Antrenman"
 
 
 

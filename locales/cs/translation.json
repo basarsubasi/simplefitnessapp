@@ -416,7 +416,14 @@
 "DeleteWorkoutTitle": "Smazat trénink",
 "DeleteWorkoutMessage": "Opravdu chcete smazat tento trénink? Pokud je to zaznamenaný trénink, tato akce také smaže záznamy spojené s ním.",
 
-"Community": "Komunita"
+"Community": "Komunita",
+
+
+"logWeightsError": "Ujistěte se, že jsou všechna pole vyplněna a nejsou nulová.",
+"logWeightsTipText": "Sady u cvičení můžete smazat dlouhým stisknutím čísla sady.",
+"exerciseNotes": "Poznámky",
+"exerciseNotesPlaceholder": "Poznámky ke cvičení (volitelné)",
+"quickWorkout": "Rychlé cvičení"
     
     
     

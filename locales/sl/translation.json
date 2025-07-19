@@ -419,7 +419,12 @@
 "DeleteWorkoutTitle": "Izbriši vadbo",
 "DeleteWorkoutMessage": "Ste prepričani, da želite izbrisati to vadbo? Če je to registrirana vadba, bo ta dejanje izbrisalo tudi povezane zapise.",
 
-"Community": "Skupnost"
+"Community": "Skupnost",
+"logWeightsError": "Preverite, ali so vsa polja izpolnjena in niso enaka nič.",
+"logWeightsTipText": "Izbrišite serije iz vaj z dolgim pritiskom na številko serije.",
+"exerciseNotes": "Opombe",
+"exerciseNotesPlaceholder": "Opombe za vajo (neobvezno)",
+"quickWorkout": "Hitra vadba"
 
 
 
