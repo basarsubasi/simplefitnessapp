@@ -432,7 +432,12 @@
 "workoutDeleteTip": "Dica: Pressione e segure para excluir um treino",
 "DeleteWorkoutTitle": "Excluir treino",
 "DeleteWorkoutMessage": "Tem certeza de que deseja excluir este treino? Se for um treino registrado, esta ação também excluirá os registros associados.",
-"Community": "Comunidade"
+"Community": "Comunidade",
+"logWeightsError": "Certifique-se de que todos os campos estão preenchidos e não são zero.",
+"logWeightsTipText": "Você pode excluir séries de exercícios pressionando o número da série.",
+"exerciseNotes": "Notas",
+"exerciseNotesPlaceholder": "Notas para o exercício (opcional)",
+"quickWorkout": "Treino rápido"
 
         
 

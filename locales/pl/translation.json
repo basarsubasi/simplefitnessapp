@@ -423,7 +423,12 @@
 "DeleteWorkoutTitle": "Usuń trening",
 "DeleteWorkoutMessage": "Czy na pewno chcesz usunąć ten trening? Jeśli jest to zarejestrowany trening, ta akcja usunie również powiązane dzienniki.",
 
-"Community": "Społeczność"
+"Community": "Społeczność",
+"logWeightsError": "Upewnij się, że wszystkie pola są wypełnione i nie są zerowe.",
+"logWeightsTipText": "Możesz usunąć serie z ćwiczeń, przytrzymując numer serii.",
+"exerciseNotes": "Notatki",
+"exerciseNotesPlaceholder": "Notatki do ćwiczenia (opcjonalne)",
+"quickWorkout": "Szybki trening"
 
 
 

@@ -427,7 +427,12 @@
 "workoutDeleteTip": "提示：长按锻炼以删除",
 "DeleteWorkoutTitle": "删除锻炼",
 "DeleteWorkoutMessage": "您确定要删除此锻炼吗？如果这是已记录的锻炼，此操作也将删除与之相关的记录。",
-"Community": "社区"
+"Community": "社区",
+"logWeightsError": "请确保所有字段都已填写且不为零。",
+"logWeightsTipText": "您可以通过长按组号来删除组。",
+"exerciseNotes": "备注",
+"exerciseNotesPlaceholder": "练习备注（可选）",
+"quickWorkout": "快速训练"
 
 
 
