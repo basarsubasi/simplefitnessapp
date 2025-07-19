@@ -979,7 +979,7 @@ export default function StartedWorkoutInterface() {
             }}
             keyboardType="number-pad"
             maxLength={4}
-            placeholder="1"
+            placeholder={"> 0"}
             placeholderTextColor={theme.type === 'dark' ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)'}
           />
             </View>
@@ -1005,7 +1005,7 @@ export default function StartedWorkoutInterface() {
                   setAllSets(updatedSets);
                 }}
                 keyboardType="decimal-pad"
-                placeholder="1.0"
+                placeholder="> 0.0"
                 placeholderTextColor={theme.type === 'dark' ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)'}
               />
             </View>

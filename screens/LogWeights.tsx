@@ -213,7 +213,7 @@ export default function LogWeights() {
         if (weight <= 0 || repsCount <= 0) {
           Alert.alert(
             t('errorTitle'),
-            t('Please make sure all fields are filled and not zero.')
+            t('logWeightsError')
           );
           return;
         }
@@ -390,7 +390,7 @@ const SetInputRow = React.memo(({ setNumber, reps, weight, onRepsChange, onWeigh
       <Text style={[styles.setText, { color: theme.text }]}>{t('Set')} {setNumber}:</Text>
       <TextInput
         style={[styles.input, { color: theme.text, backgroundColor: 'transparent' }]}
-        placeholder={t('repsPlaceholder')}
+        placeholder={t('repsPlaceholder') + " (> 0)"}
         placeholderTextColor={theme.logborder}
         keyboardType="numeric"
         value={reps}
@@ -399,7 +399,7 @@ const SetInputRow = React.memo(({ setNumber, reps, weight, onRepsChange, onWeigh
 
       <TextInput
         style={[styles.input, { color: theme.text, backgroundColor: 'transparent' }]}
-        placeholder={weightFormat}
+        placeholder={weightFormat + " (> 0)"}
         placeholderTextColor={theme.logborder}
         keyboardType="decimal-pad"
         value={weight}
