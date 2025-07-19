@@ -4,6 +4,7 @@ import { initReactI18next } from 'react-i18next';
 import cs from '../locales/cs/translation.json';
 import de from '../locales/de/translation.json';
 import dk from '../locales/dk/translation.json';
+import el from '../locales/el/translation.json';
 import en from '../locales/en/translation.json';
 import es from '../locales/es/translation.json';
 import fi from '../locales/fi/translation.json';
@@ -37,6 +38,7 @@ i18n
       cs: { translation: cs },
       de: { translation: de },
       dk: { translation: dk },
+      el: {translation:  el },
       en: { translation: en },
       es: { translation: es },
       fi: { translation: fi },
