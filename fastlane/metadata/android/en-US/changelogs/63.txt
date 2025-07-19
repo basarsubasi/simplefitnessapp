@@ -1,0 +1,8 @@
+
+- New icon
+- Now you can add notes to your exercises and see them in your workouts
+- Fixed the performance issues related to the manual tracking screen
+- Now you can quickly start your workouts by the new "Quick Workout" button
+- Improved the scheduling logic, the app routes you to the next screen based on the date you pick
+- Now you have the option to auto-fill your reps based on the last workout
+
