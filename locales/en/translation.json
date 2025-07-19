@@ -466,7 +466,12 @@
     "DeleteWorkoutTitle": "Delete Workout",
     "DeleteWorkoutMessage": "Are you sure you want to delete this workout? If it is a logged workout, this action will also delete the logs associated with it.",
 
-    "Community": "Community"
+    "Community": "Community",
+    "logWeightsError": "Please make sure all fields are filled and not zero.",
+    "logWeightsTipText": "You can delete sets from exercises by long pressing on the set number.",
+    "exerciseNotes": "Notes",
+    "exerciseNotesPlaceholder": "Notes for exercise (optional)",
+    "quickWorkout": "Quick Workout"
 
 
     }

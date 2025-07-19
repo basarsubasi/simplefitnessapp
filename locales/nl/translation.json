@@ -421,7 +421,12 @@
 "workoutDeleteTip": "Tip: Druk en houd voor het verwijderen van een training",
 "DeleteWorkoutTitle": "Training verwijderen",
 "DeleteWorkoutMessage": "Weet je zeker dat je deze training wilt verwijderen? Als het een geregistreerde training is, worden ook de logboeken die aan deze training zijn gekoppeld, verwijderd.",
-"Community": "Gemeenschap"
+"Community": "Gemeenschap",
+"logWeightsError": "Zorg ervoor dat alle velden zijn ingevuld en niet nul zijn.",
+"logWeightsTipText": "Je kunt sets van oefeningen verwijderen door op de setnummer te drukken.",
+"exerciseNotes": "Notities",
+"exerciseNotesPlaceholder": "Notities voor oefening (optioneel)",
+"quickWorkout": "Snel training"
 
 
 

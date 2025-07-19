@@ -426,7 +426,12 @@
 "workoutDeleteTip": "Tips: Tryck och håll för att ta bort ett träningspass",
 "DeleteWorkoutTitle": "Ta bort träningspass",
 "DeleteWorkoutMessage": "Är du säker på att du vill ta bort detta träningspass? Om detta är ett loggat träningspass kommer detta även ta bort associerade loggar.",
-"Community": "Gemenskap"
+"Community": "Gemenskap",
+"logWeightsError": "Kontrollera att alla fält är ifyllda och inte är noll.",
+"logWeightsTipText": "Du kan ta bort set från övningar genom att hålla nere setnumret.",
+"exerciseNotes": "Notiser",
+"exerciseNotesPlaceholder": "Notiser för övning (valfritt)",
+"quickWorkout": "Snabb träning"
 
 
 

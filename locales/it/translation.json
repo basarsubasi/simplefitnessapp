@@ -413,7 +413,12 @@
 "workoutDeleteTip": "Suggerimento: Premi e tieni premuto per eliminare un allenamento",
 "DeleteWorkoutTitle": "Elimina allenamento",
 "DeleteWorkoutMessage": "Sei sicuro di voler eliminare questo allenamento? Se è un allenamento registrato, questa azione eliminerà anche i registri associati.",
-"Community": "Comunità"
+"Community": "Comunità",
+"logWeightsError": "Assicurati che tutti i campi siano compilati e non siano zero.",
+"logWeightsTipText": "Puoi eliminare serie da esercizi tenendo premuto il numero di serie.",
+"exerciseNotes": "Note",
+"exerciseNotesPlaceholder": "Note per l'esercizio (facoltativo)",
+"quickWorkout": "Allenamento rapido"
 
 
 

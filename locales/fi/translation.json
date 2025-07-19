@@ -421,7 +421,12 @@
 "workoutDeleteTip": "Vinkki: Paina ja pidä painiketta poistaaksesi harjoituksen",
 "DeleteWorkoutTitle": "Poista harjoitus",
 "DeleteWorkoutMessage": "Haluatko varmasti poistaa tämän harjoituksen? Jos se on kirjattu harjoitus, tämä toiminto poistaa myös liittyvät lokit.",
-"Community": "Yhteisö"
+"Community": "Yhteisö",
+"logWeightsError": "Varmista, että kaikki kentät on täytetty ja että ne eivät ole nollia.",
+"logWeightsTipText": "Voit poistaa sarjoja harjoituksista pitämällä painiketta sarjanumeroa pitkin.",
+"exerciseNotes": "Huomautukset",
+"exerciseNotesPlaceholder": "Huomautukset harjoitukselle (valinnainen)",
+"quickWorkout": "Pikaharjoitus"
 
 
 

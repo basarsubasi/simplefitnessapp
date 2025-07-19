@@ -417,7 +417,12 @@
 "DeleteWorkoutMessage": "¿Estás seguro de que quieres eliminar este entrenamiento? Si es un entrenamiento registrado, esta acción también eliminará los registros asociados con él.",
 
       
-"Community": "Comunidad"
+"Community": "Comunidad",
+"logWeightsError": "Por favor, asegúrate de que todos los campos estén llenos y no sean cero.",
+"logWeightsTipText": "Puedes eliminar series de ejercicios presionando largo en el número de serie.",
+"exerciseNotes": "Notas",
+"exerciseNotesPlaceholder": "Notas para el ejercicio (opcional)",
+"quickWorkout": "Entrenamiento rápido"
 
 
 

@@ -409,7 +409,13 @@
 "DeleteWorkoutMessage": "Sind Sie sicher, dass Sie dieses Workout löschen möchten? Wenn es ein protokolliertes Workout ist, wird diese Aktion auch die Protokolle löschen, die mit ihm verbunden sind.",
 
 
-"Community": "Gemeinschaft"
+"Community": "Gemeinschaft",
+
+"logWeightsError": "Bitte stellen Sie sicher, dass alle Felder ausgefüllt sind und nicht Null sind.",
+"logWeightsTipText": "Sie können Sätze aus Übungen löschen, indem Sie lange auf die Satznummer drücken.",
+"exerciseNotes": "Notizen",
+"exerciseNotesPlaceholder": "Notizen zur Übung (optional)",
+"quickWorkout": "Schnelles Training"
 
 
 
