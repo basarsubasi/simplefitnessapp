@@ -423,7 +423,8 @@
 "logWeightsTipText": "Du kan slette sæt fra øvelser ved at holde nede sætnummeret.",
 "exerciseNotes": "Notater",
 "exerciseNotesPlaceholder": "Notater til øvelse (valgfrit)",
-"quickWorkout": "Hurtig træning"
+"quickWorkout": "Hurtig træning",
+"useLogsForRepsTitle": "Brug tidligere gentagelser"
 
 
 

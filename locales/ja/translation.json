@@ -424,7 +424,8 @@
 "logWeightsTipText": "セット番号を長押しすると、セットを削除できます。",
 "exerciseNotes": "ノート",
 "exerciseNotesPlaceholder": "エクササイズのノート（任意）",
-"quickWorkout": "クイックワークアウト"
+"quickWorkout": "クイックワークアウト",
+"useLogsForRepsTitle": "前回の練習を使用"
 
 
 
