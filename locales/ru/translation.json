@@ -430,7 +430,8 @@
 "logWeightsTipText": "Вы можете удалить подходы из упражнений, удерживая нажатой цифру подхода.",
 "exerciseNotes": "Заметки",
 "exerciseNotesPlaceholder": "Заметки к упражнению (необязательно)",
-"quickWorkout": "Быстрая тренировка"
+"quickWorkout": "Быстрая тренировка",
+"useLogsForRepsTitle": "Использовать предыдущие повторения"
 
 
 
