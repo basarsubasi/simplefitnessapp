@@ -40,6 +40,7 @@ export default function Settings() {
     { code: 'cs', label: 'Čeština' },
     { code: 'de', label: 'Deutsch' },
     { code: 'dk', label: 'Dansk' },
+    { code: 'el', label: 'Ελληνική' },
     { code: 'en', label: 'English' },
     { code: 'es', label: 'Español' },
     { code: 'fi', label: 'Suomi' },
@@ -58,6 +59,8 @@ export default function Settings() {
     { code: 'tr', label: 'Türkçe' },
     { code: 'uk', label: 'Українська' },
     { code: 'zh', label: '中文' },
+
+
     // add more languages here #2
   ];
 
