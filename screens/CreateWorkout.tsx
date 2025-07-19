@@ -302,7 +302,7 @@ export default function CreateWorkout() {
                           color: theme.text,
                         },
                       ]}
-                      placeholder={t('setsPlaceholder')}
+                      placeholder={t('setsPlaceholder') + " (> 0)"}
                       placeholderTextColor={theme.text}
                       keyboardType="numeric"
                       value={exercise.sets}
@@ -323,7 +323,7 @@ export default function CreateWorkout() {
                           color: theme.text,
                         },
                       ]}
-                      placeholder={t('repsPlaceholder')}
+                      placeholder={t('repsPlaceholder') + " (> 0)"}
                       placeholderTextColor={theme.text}
                       keyboardType="numeric"
                       value={exercise.reps}
