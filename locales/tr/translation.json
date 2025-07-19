@@ -455,7 +455,8 @@
 "logWeightsTipText": "Set numarasına basılı tutarak egzersizlerden istediğiniz seti silebilirsiniz.",
 "exerciseNotes": "Notlar",
 "exerciseNotesPlaceholder": "Egzersiz notları (isteğe bağlı)",
-"quickWorkout": "Hızlı Antrenman"
+"quickWorkout": "Hızlı Antrenman",
+"useLogsForRepsTitle": "Önceki tekrarları kullan"
 
 
 

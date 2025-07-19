@@ -432,7 +432,8 @@
 "logWeightsTipText": "您可以通过长按组号来删除组。",
 "exerciseNotes": "备注",
 "exerciseNotesPlaceholder": "练习备注（可选）",
-"quickWorkout": "快速训练"
+"quickWorkout": "快速训练",
+"useLogsForRepsTitle": "使用之前的重复"
 
 
 

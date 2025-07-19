@@ -424,7 +424,8 @@
 "logWeightsTipText": "Vous pouvez supprimer des séries d'exercices en maintenant appuyé le numéro de la série.",
 "exerciseNotes": "Notes",
 "exerciseNotesPlaceholder": "Notes pour l'exercice (facultatif)",
-"quickWorkout": "Entraînement rapide"
+"quickWorkout": "Entraînement rapide",
+"useLogsForRepsTitle": "Utiliser les répétitions précédentes"
 
 
 

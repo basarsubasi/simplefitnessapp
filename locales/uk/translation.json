@@ -428,7 +428,8 @@
   "logWeightsTipText": "Ви можете видалити підходи з вправ, утримуючи натиснутим номер підходу.",
   "exerciseNotes": "Записи",
   "exerciseNotesPlaceholder": "Записи для вправи (необов'язково)",
-  "quickWorkout": "Швидке тренування"
+  "quickWorkout": "Швидке тренування",
+  "useLogsForRepsTitle": "Використовувати попередні повторення"
 
 
 

@@ -426,7 +426,8 @@
 "logWeightsTipText": "Voit poistaa sarjoja harjoituksista pitämällä painiketta sarjanumeroa pitkin.",
 "exerciseNotes": "Huomautukset",
 "exerciseNotesPlaceholder": "Huomautukset harjoitukselle (valinnainen)",
-"quickWorkout": "Pikaharjoitus"
+"quickWorkout": "Pikaharjoitus",
+"useLogsForRepsTitle": "Käytä edellisiä toistoja"
 
 
 
