@@ -431,7 +431,8 @@
 "logWeightsTipText": "Du kan ta bort set från övningar genom att hålla nere setnumret.",
 "exerciseNotes": "Notiser",
 "exerciseNotesPlaceholder": "Notiser för övning (valfritt)",
-"quickWorkout": "Snabb träning"
+"quickWorkout": "Snabb träning",
+"useLogsForRepsTitle": "Använd tidigare repetitioner"
 
 
 

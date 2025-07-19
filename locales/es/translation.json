@@ -422,7 +422,8 @@
 "logWeightsTipText": "Puedes eliminar series de ejercicios presionando largo en el número de serie.",
 "exerciseNotes": "Notas",
 "exerciseNotesPlaceholder": "Notas para el ejercicio (opcional)",
-"quickWorkout": "Entrenamiento rápido"
+"quickWorkout": "Entrenamiento rápido",
+"useLogsForRepsTitle": "Usar repeticiones anteriores"
 
 
 

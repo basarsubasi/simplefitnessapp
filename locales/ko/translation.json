@@ -419,7 +419,8 @@
 "logWeightsTipText": "세트 번호를 길게 눌러 세트를 삭제할 수 있습니다.",
 "exerciseNotes": "메모",
 "exerciseNotesPlaceholder": "운동 메모 (선택 사항)",
-"quickWorkout": "빠른 운동"
+"quickWorkout": "빠른 운동",
+"useLogsForRepsTitle": "이전 반복 사용"
 
 
 

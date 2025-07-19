@@ -471,7 +471,8 @@
     "logWeightsTipText": "You can delete sets from exercises by long pressing on the set number.",
     "exerciseNotes": "Notes",
     "exerciseNotesPlaceholder": "Notes for exercise (optional)",
-    "quickWorkout": "Quick Workout"
+    "quickWorkout": "Quick Workout",
+    "useLogsForRepsTitle": "Use previous reps"
 
 
     }
