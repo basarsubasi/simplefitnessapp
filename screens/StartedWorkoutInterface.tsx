@@ -92,6 +92,7 @@ export default function StartedWorkoutInterface() {
   const [isExerciseListModalVisible, setIsExerciseListModalVisible] = useState(false);
   const [autoFillWeight, setAutoFillWeight] = useState(true);
   const [autoFillReps, setAutoFillReps] = useState(true);
+  const [useLogsForRepInput, setUseLogsForRepInput] = useState(false);
   const [enableSetSwitchSound, setEnableSetSwitchSound] = useState(false);
   
   // User preference toggles
@@ -113,6 +114,7 @@ export default function StartedWorkoutInterface() {
   const workoutTimerRef = useRef<NodeJS.Timeout | null>(null);
   const restTimerRef = useRef<NodeJS.Timeout | null>(null);
   const weightMapRef = useRef(new Map<string, string>());
+  const repsMapRef = useRef(new Map<string, string>());
   
   const updateExerciseLoggedStatus = (exerciseId: number, currentSets: ExerciseSet[]) => {
     const exerciseSets = currentSets.filter(s => s.exercise_id === exerciseId);
@@ -196,10 +198,15 @@ export default function StartedWorkoutInterface() {
             setEnableVibration(preferences.enableVibration);
             setAutoFillWeight(preferences.autoFillWeight);
             setAutoFillReps(preferences.autoFillReps);
+            setUseLogsForRepInput(preferences.useLogsForRepInput);
             setEnableSetSwitchSound(preferences.enableSetSwitchSound);
           
 
-            await fetchWorkoutDetails(preferences.autoFillWeight, preferences.autoFillReps);
+            await fetchWorkoutDetails(
+              preferences.autoFillWeight, 
+              preferences.autoFillReps, 
+              preferences.useLogsForRepInput
+            );
         } catch (error) {
             console.error('Error loading initial data:', error);
             setLoading(false);
@@ -275,7 +282,11 @@ export default function StartedWorkoutInterface() {
     }
   };
   
-  const fetchWorkoutDetails = async (shouldAutoFill: boolean, shouldAutoFillReps: boolean) => {
+  const fetchWorkoutDetails = async (
+    shouldAutoFill: boolean, 
+    shouldAutoFillReps: boolean, 
+    shouldUseLogsForReps: boolean
+  ) => {
     try {
       setLoading(true);
       
@@ -303,13 +314,14 @@ export default function StartedWorkoutInterface() {
         setExercises(exercisesResult.map(e => ({ ...e, exercise_fully_logged: false })));
         
         weightMapRef.current.clear();
+        repsMapRef.current.clear();
 
         if (exercisesResult.length > 0) {
             const exerciseNames = exercisesResult.map(e => e.exercise_name);
             const placeholders = exerciseNames.map(() => '?').join(',');
         
-            const lastWeightsResult = await db.getAllAsync<{ exercise_name: string; set_number: number; weight_logged: number }>(
-                `SELECT wl.exercise_name, wl.set_number, wl.weight_logged
+            const lastLogResult = await db.getAllAsync<{ exercise_name: string; set_number: number; weight_logged: number; reps_logged: number }>(
+                `SELECT wl.exercise_name, wl.set_number, wl.weight_logged, wl.reps_logged
                  FROM Weight_Log wl
                  INNER JOIN (
                    SELECT exercise_name, set_number, MAX(workout_log_id) as max_log_id
@@ -323,8 +335,9 @@ export default function StartedWorkoutInterface() {
                 exerciseNames
               );
         
-              lastWeightsResult.forEach(row => {
+              lastLogResult.forEach(row => {
                 weightMapRef.current.set(`${row.exercise_name}-${row.set_number}`, row.weight_logged.toString());
+                repsMapRef.current.set(`${row.exercise_name}-${row.set_number}`, row.reps_logged.toString());
               });
         }
         
@@ -333,13 +346,23 @@ export default function StartedWorkoutInterface() {
         exercisesResult.forEach(exercise => {
           for (let i = 1; i <= exercise.sets; i++) {
             const weight = shouldAutoFill ? (weightMapRef.current.get(`${exercise.exercise_name}-${i}`) || '') : '';
+            
+            let reps_done = '';
+            if (shouldAutoFillReps) {
+                if (shouldUseLogsForReps) {
+                    reps_done = repsMapRef.current.get(`${exercise.exercise_name}-${i}`) || '';
+                } else {
+                    reps_done = exercise.reps.toString();
+                }
+            }
+
             setsData.push({
               exercise_name: exercise.exercise_name,
               exercise_id: exercise.logged_exercise_id,
               set_number: i,
               total_sets: exercise.sets,
               reps_goal: exercise.reps,
-              reps_done: shouldAutoFillReps ? exercise.reps.toString() : '',
+              reps_done: reps_done,
               weight: weight,
               set_logged: false,
               web_link: exercise.web_link || null,
@@ -457,12 +480,46 @@ export default function StartedWorkoutInterface() {
           return set;
         }
 
+        let newReps = '';
+        if (newValue) {
+          if (useLogsForRepInput) {
+            newReps = repsMapRef.current.get(`${set.exercise_name}-${set.set_number}`) || '';
+          } else {
+            newReps = set.reps_goal.toString();
+          }
+        }
+
         return {
           ...set,
-          reps_done: newValue ? set.reps_goal.toString() : '',
+          reps_done: newReps,
         };
       })
     );
+  };
+
+  const handleUseLogsForRepsToggle = (newValue: boolean) => {
+    setUseLogsForRepInput(newValue);
+    if (autoFillReps) {
+      setAllSets(currentSets =>
+        currentSets.map(set => {
+          if (set.set_logged) {
+            return set;
+          }
+
+          let newReps = '';
+          if (newValue) {
+            newReps = repsMapRef.current.get(`${set.exercise_name}-${set.set_number}`) || '';
+          } else {
+            newReps = set.reps_goal.toString();
+          }
+
+          return {
+            ...set,
+            reps_done: newReps,
+          };
+        })
+      );
+    }
   };
 
   // Workout flow functions
@@ -488,6 +545,7 @@ export default function StartedWorkoutInterface() {
         autoFillWeight: autoFillWeight,
         enableSetSwitchSound: enableSetSwitchSound,
         autoFillReps: autoFillReps,
+        useLogsForRepInput: useLogsForRepInput,
       });
     } catch (error) {
       console.error('Error saving rest timer preferences:', error);
@@ -644,6 +702,21 @@ export default function StartedWorkoutInterface() {
             />
           </View>
           
+          {autoFillReps && (
+            <View style={[styles.toggleRow, {
+              backgroundColor: theme.type === 'dark' ? '#121212' : '#f0f0f0',
+              borderColor: theme.type === 'dark' ? '#000000' : '#e0e0e0'
+            }]}>
+              <Text style={[styles.toggleText, { color: theme.text }]}>{t('useLogsForRepsTitle')}</Text>
+              <Switch
+                value={useLogsForRepInput}
+                onValueChange={handleUseLogsForRepsToggle}
+                trackColor={{ false: theme.type === 'dark' ? '#444' : '#ccc', true: theme.buttonBackground }}
+                thumbColor={useLogsForRepInput ? (theme.type === 'dark' ? '#fff' : '#fff') : (theme.type === 'dark' ? '#888' : '#f4f3f4')}
+              />
+            </View>
+          )}
+
           <View style={[styles.toggleRow, { 
             backgroundColor: theme.type === 'dark' ? '#121212' : '#f0f0f0',
             borderColor: theme.type === 'dark' ? '#000000' : '#e0e0e0'
@@ -760,8 +833,8 @@ export default function StartedWorkoutInterface() {
               setAllSets(updatedSets);
             }}
             keyboardType="number-pad"
-            maxLength={3}
-            placeholder="0"
+            maxLength={4}
+            placeholder="1"
             placeholderTextColor={theme.type === 'dark' ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)'}
           />
             </View>
@@ -787,7 +860,7 @@ export default function StartedWorkoutInterface() {
                   setAllSets(updatedSets);
                 }}
                 keyboardType="decimal-pad"
-                placeholder="0.0"
+                placeholder="1.0"
                 placeholderTextColor={theme.type === 'dark' ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)'}
               />
             </View>
