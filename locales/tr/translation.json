@@ -394,7 +394,7 @@
 
     "workoutDetailsTip": "İpucu: Bir egzersiz hakkında ek bilgi görmek için egzersizin adına dokunabilirsiniz.",
 "webLink": "Web Bağlantısı",
-"webLinkPlaceholder": "https://example.com (opsiyonel)",
+"webLinkPlaceholder": "https://example.com (isteğe bağlı)",
 "invalidLinkTitle": "Geçersiz Bağlantı",
 "invalidLinkMessage": "Bağlantı \"http://\" veya \"https://\" ile başlamalıdır.",
 "exerciseDetails": "Egzersiz Detayları",
@@ -449,8 +449,9 @@
 "DeleteWorkoutTitle": "Antrenmanı Sil",
 "DeleteWorkoutMessage": "Bu antrenmanı silmek istediğinizden emin misiniz? Bu antrenman kayıtlıysa, bu işlem aynı zamanda ilişkili kayıtları da siler.",
 "Community": "Topluluk",
+
 "logWeightsError": "Lütfen tüm alanları doldurun ve değerlerin sıfırdan farklı olduğundan emin olun.",
-"logWeightsTipText": "Set numarasına basılı tutarak egzersizlerden setleri silebilirsiniz.",
+"logWeightsTipText": "Set numarasına basılı tutarak egzersizlerden istediğiniz seti silebilirsiniz.",
 "exerciseNotes": "Notlar",
 "exerciseNotesPlaceholder": "Egzersiz notları (isteğe bağlı)",
 "quickWorkout": "Hızlı Antrenman"
