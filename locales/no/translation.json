@@ -424,7 +424,12 @@
 "workoutDeleteTip": "Tips: Trykk og hold for å slette en økt",
 "DeleteWorkoutTitle": "Slett økt",
 "DeleteWorkoutMessage": "Er du sikker på at du vil slette denne økten? Hvis det er en logget økt, vil denne handlingen også slette loggene forbundet med den.",
-"Community": "Fellesskap"
+"Community": "Fellesskap",
+"logWeightsError": "Sørg for at alle felt er fylt ut og ikke er null.",
+"logWeightsTipText": "Du kan slette sett fra øvelser ved å holde nede settnummeret.",
+"exerciseNotes": "Notater",
+"exerciseNotesPlaceholder": "Notater for øvelse (valgfritt)",
+"quickWorkout": "Rask økt"
 
 
 

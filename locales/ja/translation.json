@@ -419,7 +419,12 @@
 "workoutDeleteTip": "ヒント: ワークアウトを長押しして削除",
 "DeleteWorkoutTitle": "ワークアウトを削除",
 "DeleteWorkoutMessage": "このワークアウトを削除してもよろしいですか？記録済みのワークアウトを削除すると、関連するログも削除されます。",
-"Community": "コミュニティ"
+"Community": "コミュニティ",
+"logWeightsError": "すべてのフィールドが入力されていることを確認してください。",
+"logWeightsTipText": "セット番号を長押しすると、セットを削除できます。",
+"exerciseNotes": "ノート",
+"exerciseNotesPlaceholder": "エクササイズのノート（任意）",
+"quickWorkout": "クイックワークアウト"
 
 
 

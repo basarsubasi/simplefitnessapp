@@ -419,7 +419,12 @@
 "workoutDeleteTip": "Astuce : Appuyez et maintenez pour supprimer un entraînement",
 "DeleteWorkoutTitle": "Supprimer un entraînement",
 "DeleteWorkoutMessage": "Êtes-vous sûr de vouloir supprimer cet entraînement ? Si c'est un entraînement enregistré, cette action supprimera également les journaux associés.",
-"Community": "Communauté"
+"Community": "Communauté",
+"logWeightsError": "Veuillez vérifier que tous les champs sont remplis et non nuls.",
+"logWeightsTipText": "Vous pouvez supprimer des séries d'exercices en maintenant appuyé le numéro de la série.",
+"exerciseNotes": "Notes",
+"exerciseNotesPlaceholder": "Notes pour l'exercice (facultatif)",
+"quickWorkout": "Entraînement rapide"
 
 
 

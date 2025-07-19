@@ -417,8 +417,13 @@
 "DeleteWorkoutTitle": "Slet træning",
 "DeleteWorkoutMessage": "Er du sikker på, at du vil slette denne træning? Hvis det er en logget træning, vil denne handling også slette loggene forbundet med den.",
 
-"Community": "Fællesskab"
+"Community": "Fællesskab",
 
+"logWeightsError": "Sørg for at alle felter er udfyldt og ikke er nul.",
+"logWeightsTipText": "Du kan slette sæt fra øvelser ved at holde nede sætnummeret.",
+"exerciseNotes": "Notater",
+"exerciseNotesPlaceholder": "Notater til øvelse (valgfrit)",
+"quickWorkout": "Hurtig træning"
 
 
 
