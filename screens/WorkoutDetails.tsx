@@ -927,7 +927,7 @@ export default function WorkoutDetails() {
             <Text style={[styles.modalTitle, { color: theme.text }]}>{t('exerciseDetails')}</Text>
             <Text style={[styles.inputLabel, { color: theme.text }]}>{t('webLink')}</Text>
             <TextInput
-                style={[styles.inputLabel, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
+                style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
                 placeholder={t('webLinkPlaceholder')}
                 placeholderTextColor={theme.text}
                 value={webLinkInput}
