@@ -10,12 +10,6 @@ import { WorkoutStackParamList } from '../App';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useTranslation } from 'react-i18next';
 import { exportWorkout } from '../utils/workoutSharingUtils';
-import { addMuscleGroupColumn } from '../utils/exerciseDetailUtils';
-
-
-
-
-
 
 type WorkoutListNavigationProp = StackNavigationProp<WorkoutStackParamList, 'WorkoutDetails'>;
 
@@ -50,11 +44,15 @@ export default function WorkoutDetails() {
   const [exerciseNotesInput, setExerciseNotesInput] = useState('');
   const [newExerciseMuscleGroup, setNewExerciseMuscleGroup] = useState<string | null>(null);
   const [showWebLinkModal, setShowWebLinkModal] = useState(false);
-  const [editingExercise, setEditingExercise] = useState<{ exercise_id: number; web_link: string | null; muscle_group: string | null; exercise_notes: string | null } | null>(null);
+  const [editingExercise, setEditingExercise] = useState<{ exercise_id: number; web_link: string | null; muscle_group: string | null; exercise_notes: string | null, sets: number, reps: number} | null>(null);
   const [webLinkInput, setWebLinkInput] = useState('');
   const [editingMuscleGroup, setEditingMuscleGroup] = useState<string | null>(null);
   const navigation = useNavigation<WorkoutListNavigationProp>();
   const [isReordering, setIsReordering] = useState(false);
+
+  const [editingReps, setEditingReps] = useState<string | null>(null)
+  const [editingSets, setEditingSets] = useState<string | null>(null)
+
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
@@ -525,9 +523,11 @@ export default function WorkoutDetails() {
     }
   };
 
-  const openWebLinkModal = (exercise: { exercise_id: number; web_link: string | null; muscle_group: string | null; exercise_notes: string | null; }) => {
+  const openWebLinkModal = (exercise: { exercise_id: number; web_link: string | null; muscle_group: string | null; exercise_notes: string | null; sets: number, reps: number}) => {
     setEditingExercise(exercise);
     setWebLinkInput(exercise.web_link || '');
+    setEditingReps(exercise.reps.toString());
+    setEditingSets(exercise.sets.toString());
     setExerciseNotesInput(exercise.exercise_notes || '');
     setEditingMuscleGroup(exercise.muscle_group);
     setShowWebLinkModal(true);
@@ -536,6 +536,8 @@ export default function WorkoutDetails() {
   const closeWebLinkModal = () => {
     setShowWebLinkModal(false);
     setEditingExercise(null);
+    setEditingReps('');
+    setEditingSets('');
     setWebLinkInput('');
     setExerciseNotesInput('');
     setEditingMuscleGroup(null);
@@ -557,8 +559,8 @@ export default function WorkoutDetails() {
 
     try {
       await db.runAsync(
-        'UPDATE Exercises SET web_link = ?, muscle_group = ?, exercise_notes = ? WHERE exercise_id = ?',
-        [trimmedLink || null, editingMuscleGroup, exerciseNotesInput.trim(), editingExercise.exercise_id]
+        'UPDATE Exercises SET web_link = ?, muscle_group = ?, exercise_notes = ?, sets = ?, reps = ? WHERE exercise_id = ?',
+        [trimmedLink || null, editingMuscleGroup, exerciseNotesInput.trim(), editingSets ?? "0", editingReps ?? "0", editingExercise.exercise_id]
       );
       
       // Update logs as well
@@ -925,13 +927,47 @@ export default function WorkoutDetails() {
             <Text style={[styles.modalTitle, { color: theme.text }]}>{t('exerciseDetails')}</Text>
             <Text style={[styles.inputLabel, { color: theme.text }]}>{t('webLink')}</Text>
             <TextInput
-                style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
+                style={[styles.inputLabel, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
                 placeholder={t('webLinkPlaceholder')}
                 placeholderTextColor={theme.text}
                 value={webLinkInput}
                 onChangeText={setWebLinkInput}
                 autoCapitalize="none"
                 keyboardType="url"
+            />
+            <Text style={[styles.inputLabel, {color: theme.text, marginTop: 15}]}>{t('setsPlaceholder')}</Text>
+            <TextInput
+              style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
+              placeholder={t('setsPlaceholder')}
+              placeholderTextColor={theme.text}
+              keyboardType="numeric"
+              value={editingSets?.toString() ?? "0"}
+              onChangeText={(text) => {
+                const sanitizedText = text.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+                let value = parseInt(sanitizedText || '0'); // Convert to integer
+                if (value > 0 && value <= 100) {
+                  setEditingSets(value.toString()); // Update state if valid
+                } else if (value === 0) {
+                  setEditingSets(''); // Prevent 0 from being displayed
+                }
+              }}
+            />
+            <Text style={[styles.inputLabel, {color: theme.text, marginTop: 15}]}>{t('repsPlaceholder')}</Text>
+            <TextInput
+              style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
+              placeholder={t('repsPlaceholder')}
+              placeholderTextColor={theme.text}
+              keyboardType="numeric"
+              value={editingReps?.toString() ?? "0"}
+              onChangeText={(text) => {
+                const sanitizedText = text.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+                let value = parseInt(sanitizedText || '0'); // Convert to integer
+                if (value > 0 && value <= 10000) {
+                  setEditingReps(value.toString()); // Update state if valid
+                } else if (value === 0) {
+                  setEditingReps(''); // Prevent 0 from being displayed
+                }
+              }}
             />
             <Text style={[styles.inputLabel, { color: theme.text, marginTop: 15 }]}>{t('exerciseNotes')}</Text>
            <TextInput
