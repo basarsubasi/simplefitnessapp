@@ -1054,12 +1054,12 @@ export default function StartedWorkoutInterface() {
           </View>
           
           <TouchableOpacity
-            style={[styles.addTimeButton, { backgroundColor: theme.type === 'dark' ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.2)' }]}
+              style={[styles.addTimeButton, { backgroundColor: theme.type === 'dark' ? 'rgba(255,255,255,0.15)' : theme.border }]}
             onPress={() => setTimerState(prev => updateTimerState(prev, { 
               restRemaining: (prev.restRemaining ?? 0) + 15 
             }))}
           >
-            <Text style={[styles.addTimeButtonText, { color: theme.text }]}>{t('addTime')}</Text>
+            <Text style={[styles.addTimeButtonText, { color: theme.type === 'dark' ? 'white' : 'rgba(255, 255, 255, 0.8)' }]}>{t('addTime')}</Text>
           </TouchableOpacity>
           
           <Text style={[styles.restMessage, { color: theme.text }]}>
