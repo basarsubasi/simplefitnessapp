@@ -1177,6 +1177,14 @@ export default function StartedWorkoutInterface() {
     const nextSet = allSets[timerState.currentSetIndex];
     
     const muscleGroupInfo = nextSet ? muscleGroupData.find(mg => mg.value === nextSet.muscle_group) : null;
+
+    let previousSetReps = null;
+    let previousSetWeight = null;
+    if (nextSet && nextSet.set_number > 1) {
+      const previousSetKey = `${nextSet.exercise_name}-${nextSet.set_number - 1}`;
+      previousSetReps = repsMapRef.current.get(previousSetKey) || null;
+      previousSetWeight = weightMapRef.current.get(previousSetKey) || null;
+    }
     
     return (
       <View style={styles.restScreenContainer}>
@@ -1236,6 +1244,14 @@ export default function StartedWorkoutInterface() {
             <Text style={[styles.upNextSetInfo, { color: theme.text }]}>
               {t('upcomingSet')}: {nextSet.set_number}
             </Text>
+            {(previousSetReps || previousSetWeight) && (
+              <Text style={[styles.upNextSetInfo, { color: theme.text }]}>
+                {t('lastWorkoutInfo')}:{' '}
+                {previousSetReps ? `${previousSetReps} ${t('Reps')}` : ''}
+                {previousSetReps && previousSetWeight ? ' / ' : ''}
+                {previousSetWeight ? `${previousSetWeight} ${weightFormat}` : ''}
+              </Text>
+            )}
           </View>
         )}
         
@@ -1679,7 +1695,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingTop: 60,
+    paddingTop: 40,
     paddingBottom: 20,
     paddingHorizontal: 20,
   },
@@ -1897,7 +1913,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
   },
   progressContainer: {
-    marginTop: 20,
+    marginBottom: 20,
   },
   progressText: {
     fontSize: 14,
