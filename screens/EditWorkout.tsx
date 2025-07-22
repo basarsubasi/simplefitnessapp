@@ -17,7 +17,7 @@ import { useTheme } from '../context/ThemeContext';
 import { useTranslation } from 'react-i18next';
 import DraggableFlatList, { RenderItemParams } from 'react-native-draggable-flatlist';
 
-type Exercise = { exercise_id: number; exercise_name: string; sets: number; reps: number; web_link: string | null; muscle_group: string | null; };
+type Exercise = { exercise_id: number; exercise_name: string; sets: number; reps: number; web_link: string | null; muscle_group: string | null; exercise_notes: string | null };
 type Day = { day_id: number; day_name: string; exercises: Exercise[] };
 
 export default function EditWorkout() {
@@ -53,7 +53,7 @@ export default function EditWorkout() {
       const daysWithExercises = await Promise.all(
         daysResult.map(async (day) => {
           const exercises = await db.getAllAsync<Exercise>(
-            'SELECT exercise_id, exercise_name, sets, reps, web_link, muscle_group FROM Exercises WHERE day_id = ? ORDER BY exercise_id',
+            'SELECT exercise_id, exercise_name, sets, reps, web_link, muscle_group, exercise_notes FROM Exercises WHERE day_id = ? ORDER BY exercise_id',
             [day.day_id]
           );
           return { ...day, exercises };
@@ -151,16 +151,16 @@ export default function EditWorkout() {
         await db.runAsync('DELETE FROM Logged_Exercises WHERE workout_log_id = ?;', [log_id]);
   
         // 2. Fetch updated exercises for the day
-        const updatedExercises = await db.getAllAsync<{ exercise_name: string; sets: number; reps: number }>(
-          'SELECT exercise_name, sets, reps FROM Exercises WHERE day_id = ?;',
+        const updatedExercises = await db.getAllAsync<{ exercise_name: string; sets: number; reps: number; web_link: string | null; muscle_group: string | null; exercise_notes: string | null }>(
+          'SELECT exercise_name, sets, reps, web_link, muscle_group, exercise_notes FROM Exercises WHERE day_id = ?;',
           [day_id]
         );
   
         // 3. Insert updated exercises
         const insertExercisePromises = updatedExercises.map((exercise) =>
           db.runAsync(
-            'INSERT INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps) VALUES (?, ?, ?, ?);',
-            [log_id, exercise.exercise_name, exercise.sets, exercise.reps]
+            'INSERT INTO Logged_Exercises (workout_log_id, exercise_name, sets, reps, web_link, muscle_group, exercise_notes) VALUES (?, ?, ?, ?, ?, ?, ?);',
+            [log_id, exercise.exercise_name, exercise.sets, exercise.reps, exercise.web_link, exercise.muscle_group, exercise.exercise_notes]
           )
         );
   
@@ -242,8 +242,8 @@ export default function EditWorkout() {
         // Re-insert exercises in the new order
         for (const exercise of day.exercises) {
           await db.runAsync(
-            'INSERT INTO Exercises (day_id, exercise_name, sets, reps, web_link, muscle_group) VALUES (?, ?, ?, ?, ?, ?);',
-            [day.day_id, exercise.exercise_name.trim(), exercise.sets, exercise.reps, exercise.web_link, exercise.muscle_group]
+            'INSERT INTO Exercises (day_id, exercise_name, sets, reps, web_link, muscle_group, exercise_notes) VALUES (?, ?, ?, ?, ?, ?, ?);',
+            [day.day_id, exercise.exercise_name.trim(), exercise.sets, exercise.reps, exercise.web_link, exercise.muscle_group, exercise.exercise_notes]
           );
         }
       }
