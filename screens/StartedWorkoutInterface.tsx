@@ -1035,10 +1035,10 @@ export default function StartedWorkoutInterface() {
 
     let previousSetReps = null;
     let previousSetWeight = null;
-    if (nextSet && nextSet.set_number > 1) {
-      const previousSetKey = `${nextSet.exercise_name}-${nextSet.set_number - 1}`;
-      previousSetReps = repsMapRef.current.get(previousSetKey) || null;
-      previousSetWeight = weightMapRef.current.get(previousSetKey) || null;
+    if (nextSet) {
+      const setKey = `${nextSet.exercise_name}-${nextSet.set_number}`;
+      previousSetReps = repsMapRef.current.get(setKey) || null;
+      previousSetWeight = weightMapRef.current.get(setKey) || null;
     }
     
     return (
