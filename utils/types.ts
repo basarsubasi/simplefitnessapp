@@ -1,5 +1,7 @@
 // types.ts
 
+// Reference for the types, create your types in the file you are using them in and add them here for reference.
+
 export interface TemplateWorkouts {
   workout_id: number;
   workout_difficulty: string;
@@ -28,6 +30,7 @@ export interface Workout {
     reps: number;
     muscle_group: string | null;
     web_link: string | null;
+    exercise_notes: string | null;
   }
   
 // Interface for the Workout_Log table
@@ -47,6 +50,7 @@ export interface LoggedExercise {
   reps: number; // Reps count (copied at the time of logging)
   muscle_group: string | null; // Muscle group (copied at the time of logging)
   web_link: string | null; // Web link (copied at the time of logging)
+  exercise_notes: string | null; // Exercise notes (copied at the time of logging)
 }
 
 // Interface for the Weight_Log table
