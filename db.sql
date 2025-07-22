@@ -1,5 +1,7 @@
 -- db.sql
 
+-- This is the schema for the database, for reference only.
+
 
 -- Updated Schema
 CREATE TABLE IF NOT EXISTS  Template_Workouts (
@@ -52,6 +54,7 @@ CREATE TABLE IF NOT EXISTS Exercises (
     reps INTEGER NOT NULL,
     web_link TEXT,
     muscle_group TEXT,
+    exercise_notes TEXT,
     FOREIGN KEY (day_id) REFERENCES Days(day_id) ON DELETE CASCADE
 );
 
@@ -87,6 +90,7 @@ CREATE TABLE IF NOT EXISTS Logged_Exercises (
     reps INTEGER NOT NULL, -- Store reps at the time of logging
     web_link TEXT,
     muscle_group TEXT,
+    exercise_notes TEXT,
     FOREIGN KEY (workout_log_id) REFERENCES Workout_Log(workout_log_id) ON DELETE CASCADE
 );  
 
@@ -97,7 +101,9 @@ ALTER TABLE Weight_Log ADD COLUMN completion_time INTEGER;
 ALTER TABLE Exercises ADD COLUMN web_link  TEXT;
 ALTER TABLE Logged_Exercises ADD COLUMN web_link TEXT;
 ALTER TABLE Exercises ADD COLUMN muscle_group TEXT;
+ALTER TABLE Exercises ADD COLUMN exercise_notes TEXT;
 ALTER TABLE Logged_Exercises ADD COLUMN muscle_group INTEGER;
+ALTER TABLE Logged_Exercises ADD COLUMN exercise_notes TEXT;
 
 
 
