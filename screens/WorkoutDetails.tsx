@@ -554,6 +554,34 @@ export default function WorkoutDetails() {
       return;
     }
 
+    // Validation reps
+    if (parseInt(exerciseReps) <= 0 || exerciseReps === '') {
+      Alert.alert(
+        t('anErrorOccurred'),
+        t('repsValidationError')
+      )
+      return;
+    }
+
+    // Validation sets
+    if (parseInt(exerciseSets) <= 0 || exerciseSets === '') {
+      Alert.alert(
+        t('anErrorOccurred'),
+        t('setsValidationError')
+      )
+      return;
+    }
+
+
+    // Validation for exercise name
+    if (exerciseName === '') {
+      Alert.alert(
+        t('anErrorOccurred'),
+        t('exerciseNameValidationError')
+      )
+      return;
+    }
+
     try {
       await db.runAsync(
         'UPDATE Exercises SET web_link = ?, muscle_group = ?, exercise_notes = ?, sets = ?, reps = ?, exercise_name = ? WHERE exercise_id = ?',
