@@ -1,6 +1,6 @@
 import { useFocusEffect } from '@react-navigation/native'; // Import useFocusEffect
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, Modal, TextInput, Animated, Linking } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, Modal, TextInput, Animated, Linking, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useSQLiteContext } from 'expo-sqlite';
@@ -827,27 +827,30 @@ export default function WorkoutDetails() {
   />
 
   <Modal visible={showDayModal} animationType="fade" transparent>
-    <View style={[styles.modalContainer, { backgroundColor: 'rgba(0, 0, 0, 0.5)' }]}>
-      <View style={[styles.modalContent, { backgroundColor: theme.card }]}>
-        <Text style={[styles.modalTitle, { color: theme.text }]}>{t('addDayFromDetails')}</Text>
-        <TextInput
-          style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
-          placeholder={t('dayNamePlaceholder')}
-          placeholderTextColor={theme.text}
-          value={dayName}
-          onChangeText={setDayName}
-        />
-        <TouchableOpacity style={[styles.saveButton, { backgroundColor: theme.buttonBackground }]} onPress={addDay}>
-          <Text style={[styles.saveButtonText, { color: theme.buttonText }]}>{t('Save')}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.cancelButton, { backgroundColor: theme.card }]} onPress={closeAddDayModal}>
-          <Text style={[styles.cancelButtonText, { color: theme.text }]}>{t('Cancel')}</Text>
-        </TouchableOpacity>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={[styles.modalContainer, { backgroundColor: 'rgba(0, 0, 0, 0.5)' }]}>
+        <View style={[styles.modalContent, { backgroundColor: theme.card }]}>
+          <Text style={[styles.modalTitle, { color: theme.text }]}>{t('addDayFromDetails')}</Text>
+          <TextInput
+            style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
+            placeholder={t('dayNamePlaceholder')}
+            placeholderTextColor={theme.text}
+            value={dayName}
+            onChangeText={setDayName}
+          />
+          <TouchableOpacity style={[styles.saveButton, { backgroundColor: theme.buttonBackground }]} onPress={addDay}>
+            <Text style={[styles.saveButtonText, { color: theme.buttonText }]}>{t('Save')}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.cancelButton, { backgroundColor: theme.card }]} onPress={closeAddDayModal}>
+            <Text style={[styles.cancelButtonText, { color: theme.text }]}>{t('Cancel')}</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </TouchableWithoutFeedback>
   </Modal>
 
   <Modal visible={showExerciseModal} animationType="fade" transparent>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <View style={[styles.modalContainer, { backgroundColor: 'rgba(0, 0, 0, 0.5)' }]}>
       <View style={[styles.modalContent, { backgroundColor: theme.card }]}>
         <Text style={[styles.modalTitle, { color: theme.text }]}>{t('addExerciseFromDetails')}</Text>
@@ -944,9 +947,11 @@ export default function WorkoutDetails() {
         </TouchableOpacity>
       </View>
     </View>
+    </TouchableWithoutFeedback>
   </Modal>
 
   <Modal visible={showWebLinkModal} animationType="fade" transparent>
+  <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <View style={[styles.modalContainer, { backgroundColor: 'rgba(0, 0, 0, 0.5)' }]}>
         <View style={[styles.modalContent, { backgroundColor: theme.card }]}>
             <Text style={[styles.modalTitle, { color: theme.text }]}>{t('exerciseDetails')}</Text>
@@ -1050,6 +1055,7 @@ export default function WorkoutDetails() {
             </TouchableOpacity>
         </View>
     </View>
+    </TouchableWithoutFeedback>
   </Modal>
     </View>
   );
