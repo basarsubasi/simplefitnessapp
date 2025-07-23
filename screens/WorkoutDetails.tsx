@@ -1,6 +1,6 @@
 import { useFocusEffect } from '@react-navigation/native'; // Import useFocusEffect
 import React, { useState, useRef, useEffect } from 'react';
-import { View, ScrollView, Text, StyleSheet, FlatList, TouchableOpacity, Alert, Modal, TextInput, Animated, Linking, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { View, ScrollView, Text, StyleSheet, FlatList, TouchableOpacity, Alert, Modal, TextInput, Animated, Linking, Keyboard, TouchableWithoutFeedback, StatusBar } from 'react-native'; // Import StatusBar
 import { useRoute, useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useSQLiteContext } from 'expo-sqlite';
@@ -13,20 +13,18 @@ import { exportWorkout } from '../utils/workoutSharingUtils';
 
 type WorkoutListNavigationProp = StackNavigationProp<WorkoutStackParamList, 'WorkoutDetails'>;
 
-
 type Day = {
   day_id: number;
   day_name: string;
   exercises: { exercise_id: number; exercise_name: string; sets: number; reps: number; web_link: string | null; muscle_group: string | null, exercise_notes: string | null }[];
 };
+
 export default function WorkoutDetails() {
   const db = useSQLiteContext();
   const route = useRoute();
  
-
   const { theme } = useTheme();
   const { t } = useTranslation(); // Initialize translations
-  
   
   const { workout_id } = route.params as { workout_id: number };
 
@@ -52,7 +50,6 @@ export default function WorkoutDetails() {
 
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
-
 
   useFocusEffect(
     React.useCallback(() => {
@@ -86,8 +83,6 @@ export default function WorkoutDetails() {
      const sortedDays = daysWithExercises.sort((a, b) => a.day_id - b.day_id);
 
      setDays(sortedDays);
-
-    setDays(sortedDays);
   };
 
   const handleDeleteDay = async (day_id: number, day_name: string, workout_id: number) => {
@@ -572,7 +567,6 @@ export default function WorkoutDetails() {
       return;
     }
 
-
     // Validation for exercise name
     if (exerciseName === '') {
       Alert.alert(
@@ -639,428 +633,442 @@ export default function WorkoutDetails() {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
-  <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-    <Ionicons name="arrow-back" size={24} color={theme.text} />
-  </TouchableOpacity>
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+        <Ionicons name="arrow-back" size={24} color={theme.text} />
+      </TouchableOpacity>
 
-
-    {/* Icon on the right */}
-    <TouchableOpacity
-    style={styles.editIcon}
-    onPress={() => navigation.navigate('EditWorkout', { workout_id: workout_id })}
-  >
-    <Ionicons name="pencil-outline" size={24} color={theme.text} />
-  </TouchableOpacity>
-
-  <View style={styles.titleContainer}>
-  {/* This View will stretch and center the text */}
-  <View style={{ flex: 1, alignItems: 'center' }}>
-    <Text style={[styles.title, { color: theme.text }]}>{workoutName}</Text>
-  </View>
-  
-
-</View>
-
-<TouchableOpacity
-  style={styles.exportButton}
-  onPress={() => handleExportWorkout(workout_id)}
->
-  <Ionicons name="share-outline" size={28} color={theme.text} />
-</TouchableOpacity>
-
-
-  <FlatList
-    data={days}
-    showsVerticalScrollIndicator={false}
-    showsHorizontalScrollIndicator={false}
-    keyExtractor={(item) => item.day_id.toString()}
-    renderItem={({ item: day, index }) => (
-      <Animated.View
-        style={[
-          styles.animatedDayContainer,
-          {
-            opacity: fadeAnim,
-            transform: [{ scale: scaleAnim }],
-            backgroundColor: theme.card,
-            borderWidth: 1,
-            borderColor: theme.border,
-            borderRadius: 20,
-          }
-        ]}
-      >
+      {/* Icon on the right */}
       <TouchableOpacity
-          onLongPress={() => handleDeleteDay(day.day_id, day.day_name, workout_id)}
-        activeOpacity={0.8}
-          style={[
-            styles.dayContainer, 
-            { 
-              padding: 20, 
-            }
-          ]}
+        style={styles.editIcon}
+        onPress={() => navigation.navigate('EditWorkout', { workout_id: workout_id })}
       >
-        {/* Day Header */}
-        <View style={styles.dayHeader}>
-          <AutoSizeText
-                      fontSize={24}
-                      numberOfLines={5}
-                      mode={ResizeTextMode.max_lines}
-                      style={[styles.dayTitle, { color: theme.text, flexShrink: 1, marginRight: 8, fontWeight: 'bold' }]}
-                    >
-                      {day.day_name}
-                    </AutoSizeText>
-            
-            <View style={styles.dayHeaderRightControls}>
-              {/* Day reordering arrows */}
-              <View style={styles.reorderButtonsContainer}>
-                {index > 0 && (
-                  <TouchableOpacity
-                    onPress={() => !isReordering && moveDayUp(index)}
-                    disabled={isReordering}
-                    style={styles.reorderButton}
-                  >
-                    <Ionicons name="arrow-up" size={24} color={isReordering ? theme.border : theme.text} />
-                  </TouchableOpacity>
-                )}
-                {index < days.length - 1 && (
-                  <TouchableOpacity
-                    onPress={() => !isReordering && moveDayDown(index)}
-                    disabled={isReordering}
-                    style={styles.reorderButton}
-                  >
-                    <Ionicons name="arrow-down" size={24} color={isReordering ? theme.border : theme.text} />
-                  </TouchableOpacity>
-                )}
-              </View>
-              
-          {/* Add Exercise Button */}
-            <TouchableOpacity 
-              onPress={() => openAddExerciseModal(day.day_id)}
-              disabled={isReordering}
-            >
-              <Ionicons 
-                name="add" 
-                size={28} 
-                color={isReordering ? theme.border : theme.text} 
-              />
-          </TouchableOpacity>
-            </View>
-        </View>
+        <Ionicons name="pencil-outline" size={24} color={theme.text} />
+      </TouchableOpacity>
 
-        {/* Exercises */}
-        {day.exercises.length > 0 ? (
-          day.exercises.map((exercise, index) => {
-            const muscleGroupInfo = muscleGroupData.find(mg => mg.value === exercise.muscle_group);
-            return (
-              <TouchableOpacity
-                key={index}
-                onPress={() => openWebLinkModal(exercise)}
-                onLongPress={() => handleDeleteExercise(day.day_id, exercise.exercise_name, workout_id)}
-                  activeOpacity={0.6}
-                  delayLongPress={500}
-                  style={[
-                    styles.exerciseContainer, 
-                    { 
-                      backgroundColor: theme.card, 
-                      borderColor: theme.border 
-                    }
-                  ]}
-              >
-                <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, marginRight: 8 }}>
-                  {exercise.web_link && (
-                    <TouchableOpacity onPress={() => handleLinkPress(exercise.web_link)} style={{ alignSelf: 'flex-start', marginRight: 10, marginTop: 2 }}>
-                      <Ionicons name="link-outline" size={22} color={theme.text} />
-                    </TouchableOpacity>
-                  )}
-                  <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}>
-                    <AutoSizeText
-                      fontSize={18}
-                      numberOfLines={4}
-                      mode={ResizeTextMode.max_lines}
-                      style={[styles.exerciseName, { color: theme.text, marginRight: 8 }]}
-                    >
-                      {exercise.exercise_name}
-                    </AutoSizeText>
-                    {muscleGroupInfo && muscleGroupInfo.value && (
-                      <View style={[styles.muscleGroupBadge, { backgroundColor: theme.card, borderColor: theme.border }]}>
-                        <Text style={[styles.muscleGroupBadgeText, { color: theme.text }]}>
-                          {muscleGroupInfo.label}
-                        </Text>
-                      </View>
+      <View style={styles.titleContainer}>
+        {/* This View will stretch and center the text */}
+        <View style={{ flex: 1, alignItems: 'center' }}>
+          <Text style={[styles.title, { color: theme.text }]}>{workoutName}</Text>
+        </View>
+      </View>
+
+      <TouchableOpacity
+        style={styles.exportButton}
+        onPress={() => handleExportWorkout(workout_id)}
+      >
+        <Ionicons name="share-outline" size={28} color={theme.text} />
+      </TouchableOpacity>
+
+      <FlatList
+        data={days}
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
+        keyExtractor={(item) => item.day_id.toString()}
+        renderItem={({ item: day, index }) => (
+          <Animated.View
+            style={[
+              styles.animatedDayContainer,
+              {
+                opacity: fadeAnim,
+                transform: [{ scale: scaleAnim }],
+                backgroundColor: theme.card,
+                borderWidth: 1,
+                borderColor: theme.border,
+                borderRadius: 20,
+              }
+            ]}
+          >
+            <TouchableOpacity
+              onLongPress={() => handleDeleteDay(day.day_id, day.day_name, workout_id)}
+              activeOpacity={0.8}
+              style={[
+                styles.dayContainer, 
+                { 
+                  padding: 20, 
+                }
+              ]}
+            >
+              {/* Day Header */}
+              <View style={styles.dayHeader}>
+                <AutoSizeText
+                  fontSize={24}
+                  numberOfLines={5}
+                  mode={ResizeTextMode.max_lines}
+                  style={[styles.dayTitle, { color: theme.text, flexShrink: 1, marginRight: 8, fontWeight: 'bold' }]}
+                >
+                  {day.day_name}
+                </AutoSizeText>
+                
+                <View style={styles.dayHeaderRightControls}>
+                  {/* Day reordering arrows */}
+                  <View style={styles.reorderButtonsContainer}>
+                    {index > 0 && (
+                      <TouchableOpacity
+                        onPress={() => !isReordering && moveDayUp(index)}
+                        disabled={isReordering}
+                        style={styles.reorderButton}
+                      >
+                        <Ionicons name="arrow-up" size={24} color={isReordering ? theme.border : theme.text} />
+                      </TouchableOpacity>
+                    )}
+                    {index < days.length - 1 && (
+                      <TouchableOpacity
+                        onPress={() => !isReordering && moveDayDown(index)}
+                        disabled={isReordering}
+                        style={styles.reorderButton}
+                      >
+                        <Ionicons name="arrow-down" size={24} color={isReordering ? theme.border : theme.text} />
+                      </TouchableOpacity>
                     )}
                   </View>
-                </View>
-                <View style={styles.exerciseDetails}>
-                  <Text style={{ color: theme.text, fontSize: 16, textAlign: 'right' }}>
-                    {exercise.sets} <Text style={{ color: theme.text }}>{t('Sets')}</Text>
-                    {'  '}
-                    {exercise.reps} <Text style={{ color: theme.text }}>{t('Reps')}</Text>
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            )
-          })
-        ) : (
-          <Text style={[styles.noExercisesText, { color: theme.text }]}>{t('noExercises')} </Text>
-        )}
-      </TouchableOpacity>
-      </Animated.View>
-    )}
-    ListFooterComponent={
-      <>
-        <TouchableOpacity
-          style={[styles.addDayButton, { backgroundColor: theme.buttonBackground }]}
-          onPress={openAddDayModal}
-        >
-          <Ionicons name="add" size={28} color={theme.buttonText} />
-          <Text style={[styles.addDayButtonText, { color: theme.buttonText }]}>{t('addDayFromDetails')}</Text>
-        </TouchableOpacity>
-        <Text style={[styles.tipText, { color: theme.text }]}>
-          {t('workoutDetailsTip')}
-        </Text>
-      </>
-    }
-    ListEmptyComponent={
-      <Text style={[styles.emptyText, { color: theme.text }]}>
-        {t('emptyWorkoutDetails')}
-      </Text>
-    }
-  />
-
-  <Modal visible={showDayModal} animationType="fade" transparent>
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={[styles.modalContainer, { backgroundColor: 'rgba(0, 0, 0, 0.5)' }]}>
-        <View style={[styles.modalContent, { backgroundColor: theme.card }]}>
-          <Text style={[styles.modalTitle, { color: theme.text }]}>{t('addDayFromDetails')}</Text>
-          <TextInput
-            style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
-            placeholder={t('dayNamePlaceholder')}
-            placeholderTextColor={theme.text}
-            value={dayName}
-            onChangeText={setDayName}
-          />
-          <TouchableOpacity style={[styles.saveButton, { backgroundColor: theme.buttonBackground }]} onPress={addDay}>
-            <Text style={[styles.saveButtonText, { color: theme.buttonText }]}>{t('Save')}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.cancelButton, { backgroundColor: theme.card }]} onPress={closeAddDayModal}>
-            <Text style={[styles.cancelButtonText, { color: theme.text }]}>{t('Cancel')}</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </TouchableWithoutFeedback>
-  </Modal>
-
-  <Modal visible={showExerciseModal} animationType="fade" transparent>
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-    <View style={[styles.modalContainer, { backgroundColor: 'rgba(0, 0, 0, 0.5)' }]}>
-      <View style={[styles.modalContent, { backgroundColor: theme.card, maxHeight: '50%' }]}>
-      <ScrollView style={{width: '100%'}} contentContainerStyle={{padding: 20, alignItems: 'center'}} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
-        <Text style={[styles.modalTitle, { color: theme.text }]}>{t('addExerciseFromDetails')}</Text>
-        <TextInput
-          style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
-          placeholder={t('exerciseNamePlaceholder')}
-          placeholderTextColor={theme.text}
-          value={exerciseName}
-          onChangeText={setExerciseName}
-        />
-        <TextInput
-          style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
-          placeholder={t('setsPlaceholder')}
-          placeholderTextColor={theme.text}
-          keyboardType="numeric"
-          value={exerciseSets}
-          onChangeText={(text) => {
-            const sanitizedText = text.replace(/[^0-9]/g, ''); // Remove non-numeric characters
-            let value = parseInt(sanitizedText || '0'); // Convert to integer
-            if (value > 0 && value <= 100) {
-              setExerciseSets(value.toString()); // Update state if valid
-            } else if (value === 0) {
-              setExerciseSets(''); // Prevent 0 from being displayed
-            }
-          }}
-        />
-        <TextInput
-          style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
-          placeholder={t('repsPlaceholder')}
-          placeholderTextColor={theme.text}
-          keyboardType="numeric"
-          value={exerciseReps}
-          onChangeText={(text) => {
-            const sanitizedText = text.replace(/[^0-9]/g, ''); // Remove non-numeric characters
-            let value = parseInt(sanitizedText || '0'); // Convert to integer
-            if (value > 0 && value <= 10000) {
-              setExerciseReps(value.toString()); // Update state if valid
-            } else if (value === 0) {
-              setExerciseReps(''); // Prevent 0 from being displayed
-            }
-          }}
-        />
-        <Text style={[styles.inputLabel, { color: theme.text, marginTop: 10 }]}>{t('webLink')}</Text>
-        <TextInput
-          style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
-          placeholder={t('webLinkPlaceholder')}
-          placeholderTextColor={theme.text}
-          value={exerciseWebLink}
-          onChangeText={setExerciseWebLink}
-          autoCapitalize="none"
-          keyboardType="url"
-        />
-        <Text style={[styles.inputLabel, { color: theme.text, marginTop: 10 }]}>{t('muscleGroup')}</Text>
-        <FlatList
-          data={muscleGroupData}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          keyExtractor={(item) => item.label}
-          renderItem={({ item }) => {
-            const isSelected = newExerciseMuscleGroup === item.value;
-            
-            return (
-              <TouchableOpacity
-                style={[
-                  styles.muscleGroupButton,
-                  { 
-                    backgroundColor: isSelected ? theme.buttonBackground : theme.card,
-                    borderColor: theme.border,
-                  }
-                ]}
-                onPress={() => setNewExerciseMuscleGroup(item.value)}
-              >
-                <Text style={{ color: isSelected ? theme.buttonText : theme.text }}>{t(item.label)}</Text>
-              </TouchableOpacity>
-            );
-          }}
-          style={{ marginBottom: 15 }}
-        />
-        <Text style={[styles.inputLabel, { color: theme.text, marginTop: 10 }]}>{t('exerciseNotes')}</Text>
-        <TextInput
-            style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border, height: 100, textAlignVertical: 'top' }]}
-            placeholder={t('exerciseNotesPlaceholder')}
-            placeholderTextColor={theme.text}
-            value={exerciseNotesInput}
-            onChangeText={setExerciseNotesInput}
-            multiline={true}
-            numberOfLines={4}
-        />
-        <TouchableOpacity style={[styles.saveButton, { backgroundColor: theme.buttonBackground }]} onPress={addExercise}>
-          <Text style={[styles.saveButtonText, { color: theme.buttonText }]}>{t('Save')}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.cancelButton, { backgroundColor: theme.card }]} onPress={closeAddExerciseModal}>
-          <Text style={[styles.cancelButtonText, { color: theme.text }]}>{t('Cancel')}</Text>
-        </TouchableOpacity>
-        </ScrollView>
-      </View>
-    </View>
-    </TouchableWithoutFeedback>
-  </Modal>
-
-  <Modal visible={showWebLinkModal} animationType="fade" transparent>
-  <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-    <View style={[styles.modalContainer, { backgroundColor: 'rgba(0, 0, 0, 0.5)' }]}>
-        <View style={[styles.modalContent, { backgroundColor: theme.card, maxHeight: '50%' }]}>
-        <ScrollView style={{width: '100%'}} contentContainerStyle={{padding: 20, alignItems: 'center'}} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
-            <Text style={[styles.modalTitle, { color: theme.text }]}>{t('exerciseDetails')}</Text>
-            
-            <Text style={[styles.inputLabel, { color: theme.text }]}>{t('exerciseNamePlaceholder')}</Text>
-            <TextInput
-                style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
-                placeholder={t('exerciseNamePlaceholder')}
-                placeholderTextColor={theme.text}
-                value={exerciseName}
-                onChangeText={setExerciseName}
-                autoCapitalize="words"
-                keyboardType="url"
-            />
-
-            <Text style={[styles.inputLabel, {color: theme.text, marginTop: 15}]}>{t('setsPlaceholder')}</Text>
-            <TextInput
-              style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
-              placeholder={t('setsPlaceholder')}
-              placeholderTextColor={theme.text}
-              keyboardType="numeric"
-              value={exerciseSets}
-              onChangeText={(text) => {
-                const sanitizedText = text.replace(/[^0-9]/g, ''); // Remove non-numeric characters
-                let value = parseInt(sanitizedText || '0'); // Convert to integer
-                if (value > 0 && value <= 100) {
-                  setExerciseSets(value.toString()); // Update state if valid
-                } else if (value === 0) {
-                  setExerciseSets(''); // Prevent 0 from being displayed
-                }
-              }}
-            />
-            <Text style={[styles.inputLabel, {color: theme.text, marginTop: 15}]}>{t('repsPlaceholder')}</Text>
-            <TextInput
-              style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
-              placeholder={t('repsPlaceholder')}
-              placeholderTextColor={theme.text}
-              keyboardType="numeric"
-              value={exerciseReps}
-              onChangeText={(text) => {
-                const sanitizedText = text.replace(/[^0-9]/g, ''); // Remove non-numeric characters
-                let value = parseInt(sanitizedText || '0'); // Convert to integer
-                if (value > 0 && value <= 10000) {
-                  setExerciseReps(value.toString()); // Update state if valid
-                } else if (value === 0) {
-                  setExerciseReps(''); // Prevent 0 from being displayed
-                }
-              }}
-            />
-            <Text style={[styles.inputLabel, { color: theme.text }]}>{t('webLink')}</Text>
-            <TextInput
-                style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
-                placeholder={t('webLinkPlaceholder')}
-                placeholderTextColor={theme.text}
-                value={webLinkInput}
-                onChangeText={setWebLinkInput}
-                autoCapitalize="none"
-                keyboardType="url"
-            />
-            <Text style={[styles.inputLabel, { color: theme.text, marginTop: 15 }]}>{t('muscleGroup')}</Text>
-            <FlatList
-              data={muscleGroupData}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              keyExtractor={(item) => item.label}
-              renderItem={({ item }) => {
-                const isSelected = editingMuscleGroup === item.value;
-                
-                return (
-                  <TouchableOpacity
-                    style={[
-                      styles.muscleGroupButton,
-                      { 
-                        backgroundColor: isSelected ? theme.buttonBackground : theme.card,
-                        borderColor: theme.border,
-                      }
-                    ]}
-                    onPress={() => setEditingMuscleGroup(item.value)}
+                  
+                  {/* Add Exercise Button */}
+                  <TouchableOpacity 
+                    onPress={() => openAddExerciseModal(day.day_id)}
+                    disabled={isReordering}
                   >
-                    <Text style={{ color: isSelected ? theme.buttonText : theme.text }}>{t(item.label)}</Text>
+                    <Ionicons 
+                      name="add" 
+                      size={28} 
+                      color={isReordering ? theme.border : theme.text} 
+                    />
                   </TouchableOpacity>
-                );
-              }}
-              style={{ marginBottom: 15 }}
-            />
-            <Text style={[styles.inputLabel, { color: theme.text, marginTop: 15 }]}>{t('exerciseNotes')}</Text>
-           <TextInput
-               style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border, height: 100, textAlignVertical: 'top' }]}
-               placeholder={t('exerciseNotesPlaceholder')}
-               placeholderTextColor={theme.text}
-               value={exerciseNotesInput}
-               onChangeText={setExerciseNotesInput}
-               multiline={true}
-               numberOfLines={4}
-           />
-            <TouchableOpacity style={[styles.saveButton, { backgroundColor: theme.buttonBackground }]} onPress={handleSaveWebLink}>
+                </View>
+              </View>
+
+              {/* Exercises */}
+              {day.exercises.length > 0 ? (
+                day.exercises.map((exercise, index) => {
+                  const muscleGroupInfo = muscleGroupData.find(mg => mg.value === exercise.muscle_group);
+                  return (
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() => openWebLinkModal(exercise)}
+                      onLongPress={() => handleDeleteExercise(day.day_id, exercise.exercise_name, workout_id)}
+                      activeOpacity={0.6}
+                      delayLongPress={500}
+                      style={[
+                        styles.exerciseContainer, 
+                        { 
+                          backgroundColor: theme.card, 
+                          borderColor: theme.border 
+                        }
+                      ]}
+                    >
+                      <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, marginRight: 8 }}>
+                        {exercise.web_link && (
+                          <TouchableOpacity onPress={() => handleLinkPress(exercise.web_link)} style={{ alignSelf: 'flex-start', marginRight: 10, marginTop: 2 }}>
+                            <Ionicons name="link-outline" size={22} color={theme.text} />
+                          </TouchableOpacity>
+                        )}
+                        <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}>
+                          <AutoSizeText
+                            fontSize={18}
+                            numberOfLines={4}
+                            mode={ResizeTextMode.max_lines}
+                            style={[styles.exerciseName, { color: theme.text, marginRight: 8 }]}
+                          >
+                            {exercise.exercise_name}
+                          </AutoSizeText>
+                          {muscleGroupInfo && muscleGroupInfo.value && (
+                            <View style={[styles.muscleGroupBadge, { backgroundColor: theme.card, borderColor: theme.border }]}>
+                              <Text style={[styles.muscleGroupBadgeText, { color: theme.text }]}>
+                                {muscleGroupInfo.label}
+                              </Text>
+                            </View>
+                          )}
+                        </View>
+                      </View>
+                      <View style={styles.exerciseDetails}>
+                        <Text style={{ color: theme.text, fontSize: 16, textAlign: 'right' }}>
+                          {exercise.sets} <Text style={{ color: theme.text }}>{t('Sets')}</Text>
+                          {'  '}
+                          {exercise.reps} <Text style={{ color: theme.text }}>{t('Reps')}</Text>
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  )
+                })
+              ) : (
+                <Text style={[styles.noExercisesText, { color: theme.text }]}>{t('noExercises')} </Text>
+              )}
+            </TouchableOpacity>
+          </Animated.View>
+        )}
+        ListFooterComponent={
+          <>
+            <TouchableOpacity
+              style={[styles.addDayButton, { backgroundColor: theme.buttonBackground }]}
+              onPress={openAddDayModal}
+            >
+              <Ionicons name="add" size={28} color={theme.buttonText} />
+              <Text style={[styles.addDayButtonText, { color: theme.buttonText }]}>{t('addDayFromDetails')}</Text>
+            </TouchableOpacity>
+            <Text style={[styles.tipText, { color: theme.text }]}>
+              {t('workoutDetailsTip')}
+            </Text>
+          </>
+        }
+        ListEmptyComponent={
+          <Text style={[styles.emptyText, { color: theme.text }]}>
+            {t('emptyWorkoutDetails')}
+          </Text>
+        }
+      />
+
+      <Modal visible={showDayModal} animationType="fade" transparent>
+        {showDayModal && (
+          <StatusBar
+            backgroundColor={theme.type === 'light' ? "rgba(0, 0, 0, 0.5)" : "black"}
+            barStyle={theme.type === 'light' ? 'light-content' : 'dark-content'}
+          />
+        )}
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={[styles.modalContainer, { backgroundColor: 'rgba(0, 0, 0, 0.5)' }]}>
+            <View style={[styles.dayModalContent, { backgroundColor: theme.card }]}>
+              <Text style={[styles.dayModalTitle, { color: theme.text }]}>{t('addDayFromDetails')}</Text>
+              <TextInput
+                style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
+                placeholder={t('dayNamePlaceholder')}
+                placeholderTextColor={theme.text}
+                value={dayName}
+                onChangeText={setDayName}
+              />
+              <TouchableOpacity style={[styles.saveButton, { backgroundColor: theme.buttonBackground }]} onPress={addDay}>
                 <Text style={[styles.saveButtonText, { color: theme.buttonText }]}>{t('Save')}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.cancelButton, { backgroundColor: theme.card }]} onPress={closeWebLinkModal}>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.cancelButton, { backgroundColor: theme.card }]} onPress={closeAddDayModal}>
                 <Text style={[styles.cancelButtonText, { color: theme.text }]}>{t('Cancel')}</Text>
-            </TouchableOpacity>
-            </ScrollView>
-        </View>
-    </View>
-    </TouchableWithoutFeedback>
-  </Modal>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
+
+      <Modal visible={showExerciseModal} animationType="fade" transparent>
+        {showExerciseModal && (
+          <StatusBar
+            backgroundColor={theme.type === 'light' ? "rgba(0, 0, 0, 0.5)" : "black"}
+            barStyle={theme.type === 'light' ? 'light-content' : 'dark-content'}
+          />
+        )}
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={[styles.modalContainer, { backgroundColor: 'rgba(0, 0, 0, 0.5)' }]}>
+            <View style={[styles.modalContent, { backgroundColor: theme.card, maxHeight: '50%' }]}>
+              <ScrollView style={{width: '100%'}} contentContainerStyle={{padding: 20, alignItems: 'center'}} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+                <Text style={[styles.modalTitle, { color: theme.text }]}>{t('addExerciseFromDetails')}</Text>
+                <TextInput
+                  style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
+                  placeholder={t('exerciseNamePlaceholder')}
+                  placeholderTextColor={theme.text}
+                  value={exerciseName}
+                  onChangeText={setExerciseName}
+                />
+                <TextInput
+                  style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
+                  placeholder={t('setsPlaceholder')}
+                  placeholderTextColor={theme.text}
+                  keyboardType="numeric"
+                  value={exerciseSets}
+                  onChangeText={(text) => {
+                    const sanitizedText = text.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+                    let value = parseInt(sanitizedText || '0'); // Convert to integer
+                    if (value > 0 && value <= 100) {
+                      setExerciseSets(value.toString()); // Update state if valid
+                    } else if (value === 0) {
+                      setExerciseSets(''); // Prevent 0 from being displayed
+                    }
+                  }}
+                />
+                <TextInput
+                  style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
+                  placeholder={t('repsPlaceholder')}
+                  placeholderTextColor={theme.text}
+                  keyboardType="numeric"
+                  value={exerciseReps}
+                  onChangeText={(text) => {
+                    const sanitizedText = text.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+                    let value = parseInt(sanitizedText || '0'); // Convert to integer
+                    if (value > 0 && value <= 10000) {
+                      setExerciseReps(value.toString()); // Update state if valid
+                    } else if (value === 0) {
+                      setExerciseReps(''); // Prevent 0 from being displayed
+                    }
+                  }}
+                />
+                <Text style={[styles.inputLabel, { color: theme.text, marginTop: 10 }]}>{t('webLink')}</Text>
+                <TextInput
+                  style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
+                  placeholder={t('webLinkPlaceholder')}
+                  placeholderTextColor={theme.text}
+                  value={exerciseWebLink}
+                  onChangeText={setExerciseWebLink}
+                  autoCapitalize="none"
+                  keyboardType="url"
+                />
+                <Text style={[styles.inputLabel, { color: theme.text, marginTop: 10 }]}>{t('muscleGroup')}</Text>
+                <FlatList
+                  data={muscleGroupData}
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  keyExtractor={(item) => item.label}
+                  renderItem={({ item }) => {
+                    const isSelected = newExerciseMuscleGroup === item.value;
+                    
+                    return (
+                      <TouchableOpacity
+                        style={[
+                          styles.muscleGroupButton,
+                          { 
+                            backgroundColor: isSelected ? theme.buttonBackground : theme.card,
+                            borderColor: theme.border,
+                          }
+                        ]}
+                        onPress={() => setNewExerciseMuscleGroup(item.value)}
+                      >
+                        <Text style={{ color: isSelected ? theme.buttonText : theme.text }}>{t(item.label)}</Text>
+                      </TouchableOpacity>
+                    );
+                  }}
+                  style={{ marginBottom: 15 }}
+                />
+                <Text style={[styles.inputLabel, { color: theme.text, marginTop: 10 }]}>{t('exerciseNotes')}</Text>
+                <TextInput
+                    style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border, height: 100, textAlignVertical: 'top' }]}
+                    placeholder={t('exerciseNotesPlaceholder')}
+                    placeholderTextColor={theme.text}
+                    value={exerciseNotesInput}
+                    onChangeText={setExerciseNotesInput}
+                    multiline={true}
+                    numberOfLines={4}
+                />
+                <TouchableOpacity style={[styles.saveButton, { backgroundColor: theme.buttonBackground }]} onPress={addExercise}>
+                  <Text style={[styles.saveButtonText, { color: theme.buttonText }]}>{t('Save')}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.cancelButton, { backgroundColor: theme.card }]} onPress={closeAddExerciseModal}>
+                  <Text style={[styles.cancelButtonText, { color: theme.text }]}>{t('Cancel')}</Text>
+                </TouchableOpacity>
+              </ScrollView>
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
+
+      <Modal visible={showWebLinkModal} animationType="fade" transparent>
+        {showWebLinkModal && (
+          <StatusBar
+            backgroundColor={theme.type === 'light' ? "rgba(0, 0, 0, 0.5)" : "black"}
+            barStyle={theme.type === 'light' ? 'light-content' : 'dark-content'}
+          />
+        )}
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={[styles.modalContainer, { backgroundColor: 'rgba(0, 0, 0, 0.5)' }]}>
+            <View style={[styles.modalContent, { backgroundColor: theme.card, maxHeight: '50%' }]}>
+              <ScrollView style={{width: '100%'}} contentContainerStyle={{padding: 20, alignItems: 'center'}} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+                <Text style={[styles.modalTitle, { color: theme.text }]}>{t('exerciseDetails')}</Text>
+                
+                <Text style={[styles.inputLabel, { color: theme.text }]}>{t('exerciseNamePlaceholder')}</Text>
+                <TextInput
+                    style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
+                    placeholder={t('exerciseNamePlaceholder')}
+                    placeholderTextColor={theme.text}
+                    value={exerciseName}
+                    onChangeText={setExerciseName}
+                    autoCapitalize="words"
+                    keyboardType="url"
+                />
+
+                <Text style={[styles.inputLabel, {color: theme.text, marginTop: 15}]}>{t('setsPlaceholder')}</Text>
+                <TextInput
+                  style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
+                  placeholder={t('setsPlaceholder')}
+                  placeholderTextColor={theme.text}
+                  keyboardType="numeric"
+                  value={exerciseSets}
+                  onChangeText={(text) => {
+                    const sanitizedText = text.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+                    let value = parseInt(sanitizedText || '0'); // Convert to integer
+                    if (value > 0 && value <= 100) {
+                      setExerciseSets(value.toString()); // Update state if valid
+                    } else if (value === 0) {
+                      setExerciseSets(''); // Prevent 0 from being displayed
+                    }
+                  }}
+                />
+                <Text style={[styles.inputLabel, {color: theme.text, marginTop: 15}]}>{t('repsPlaceholder')}</Text>
+                <TextInput
+                  style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
+                  placeholder={t('repsPlaceholder')}
+                  placeholderTextColor={theme.text}
+                  keyboardType="numeric"
+                  value={exerciseReps}
+                  onChangeText={(text) => {
+                    const sanitizedText = text.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+                    let value = parseInt(sanitizedText || '0'); // Convert to integer
+                    if (value > 0 && value <= 10000) {
+                      setExerciseReps(value.toString()); // Update state if valid
+                    } else if (value === 0) {
+                      setExerciseReps(''); // Prevent 0 from being displayed
+                    }
+                  }}
+                />
+                <Text style={[styles.inputLabel, { color: theme.text }]}>{t('webLink')}</Text>
+                <TextInput
+                    style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
+                    placeholder={t('webLinkPlaceholder')}
+                    placeholderTextColor={theme.text}
+                    value={webLinkInput}
+                    onChangeText={setWebLinkInput}
+                    autoCapitalize="none"
+                    keyboardType="url"
+                />
+                <Text style={[styles.inputLabel, { color: theme.text, marginTop: 15 }]}>{t('muscleGroup')}</Text>
+                <FlatList
+                  data={muscleGroupData}
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  keyExtractor={(item) => item.label}
+                  renderItem={({ item }) => {
+                    const isSelected = editingMuscleGroup === item.value;
+                    
+                    return (
+                      <TouchableOpacity
+                        style={[
+                          styles.muscleGroupButton,
+                          { 
+                            backgroundColor: isSelected ? theme.buttonBackground : theme.card,
+                            borderColor: theme.border,
+                          }
+                        ]}
+                        onPress={() => setEditingMuscleGroup(item.value)}
+                      >
+                        <Text style={{ color: isSelected ? theme.buttonText : theme.text }}>{t(item.label)}</Text>
+                      </TouchableOpacity>
+                    );
+                  }}
+                  style={{ marginBottom: 15 }}
+                />
+                <Text style={[styles.inputLabel, { color: theme.text, marginTop: 15 }]}>{t('exerciseNotes')}</Text>
+               <TextInput
+                   style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border, height: 100, textAlignVertical: 'top' }]}
+                   placeholder={t('exerciseNotesPlaceholder')}
+                   placeholderTextColor={theme.text}
+                   value={exerciseNotesInput}
+                   onChangeText={setExerciseNotesInput}
+                   multiline={true}
+                   numberOfLines={4}
+               />
+                <TouchableOpacity style={[styles.saveButton, { backgroundColor: theme.buttonBackground }]} onPress={handleSaveWebLink}>
+                    <Text style={[styles.saveButtonText, { color: theme.buttonText }]}>{t('Save')}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.cancelButton, { backgroundColor: theme.card }]} onPress={closeWebLinkModal}>
+                    <Text style={[styles.cancelButtonText, { color: theme.text }]}>{t('Cancel')}</Text>
+                </TouchableOpacity>
+              </ScrollView>
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
     </View>
   );
 }
@@ -1200,6 +1208,16 @@ const styles = StyleSheet.create({
       fontWeight: 'bold',
       marginBottom: 15,
     },
+    dayModalContent: {
+      borderRadius: 15,
+      width: '80%',
+      padding: 20,
+    },
+    dayModalTitle: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      marginBottom: 15,
+    },
     inputLabel: {
       alignSelf: 'stretch',
       textAlign: 'left',
@@ -1269,4 +1287,3 @@ const styles = StyleSheet.create({
       alignItems: 'center',
     },
   });
-  
