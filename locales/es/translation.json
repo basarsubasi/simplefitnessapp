@@ -423,7 +423,8 @@
 "exerciseNotes": "Notas",
 "exerciseNotesPlaceholder": "Notas para el ejercicio (opcional)",
 "quickWorkout": "Entrenamiento rápido",
-"useLogsForRepsTitle": "Usar repeticiones anteriores"
+"useLogsForRepsTitle": "Usar repeticiones anteriores",
+"lastWorkoutInfo": "Entrenamiento anterior"
 
 
 

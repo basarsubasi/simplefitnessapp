@@ -433,7 +433,8 @@
 "exerciseNotes": "备注",
 "exerciseNotesPlaceholder": "练习备注（可选）",
 "quickWorkout": "快速训练",
-"useLogsForRepsTitle": "使用之前的重复"
+"useLogsForRepsTitle": "使用之前的重复",
+"lastWorkoutInfo": "上次训练"
 
 
 

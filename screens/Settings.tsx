@@ -40,7 +40,7 @@ export default function Settings() {
     { code: 'cs', label: 'Čeština' },
     { code: 'de', label: 'Deutsch' },
     { code: 'dk', label: 'Dansk' },
-    { code: 'el', label: 'Ελληνική' },
+    //{ code: 'el', label: 'Ελληνική' },
     { code: 'en', label: 'English' },
     { code: 'es', label: 'Español' },
     { code: 'fi', label: 'Suomi' },

@@ -472,7 +472,8 @@
     "exerciseNotes": "Notes",
     "exerciseNotesPlaceholder": "Notes for exercise (optional)",
     "quickWorkout": "Quick Workout",
-    "useLogsForRepsTitle": "Use previous reps"
+    "useLogsForRepsTitle": "Use previous reps",
+    "lastWorkoutInfo": "Previous workout"
 
 
     }
