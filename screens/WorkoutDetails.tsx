@@ -1,6 +1,6 @@
 import { useFocusEffect } from '@react-navigation/native'; // Import useFocusEffect
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, Modal, TextInput, Animated, Linking, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { View, ScrollView, Text, StyleSheet, FlatList, TouchableOpacity, Alert, Modal, TextInput, Animated, Linking, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useSQLiteContext } from 'expo-sqlite';
@@ -852,7 +852,8 @@ export default function WorkoutDetails() {
   <Modal visible={showExerciseModal} animationType="fade" transparent>
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <View style={[styles.modalContainer, { backgroundColor: 'rgba(0, 0, 0, 0.5)' }]}>
-      <View style={[styles.modalContent, { backgroundColor: theme.card }]}>
+      <View style={[styles.modalContent, { backgroundColor: theme.card, maxHeight: '50%' }]}>
+      <ScrollView style={{width: '100%'}} contentContainerStyle={{padding: 20, alignItems: 'center'}} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
         <Text style={[styles.modalTitle, { color: theme.text }]}>{t('addExerciseFromDetails')}</Text>
         <TextInput
           style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
@@ -903,16 +904,6 @@ export default function WorkoutDetails() {
           autoCapitalize="none"
           keyboardType="url"
         />
-        <Text style={[styles.inputLabel, { color: theme.text, marginTop: 10 }]}>{t('exerciseNotes')}</Text>
-        <TextInput
-            style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border, height: 100, textAlignVertical: 'top' }]}
-            placeholder={t('exerciseNotesPlaceholder')}
-            placeholderTextColor={theme.text}
-            value={exerciseNotesInput}
-            onChangeText={setExerciseNotesInput}
-            multiline={true}
-            numberOfLines={4}
-        />
         <Text style={[styles.inputLabel, { color: theme.text, marginTop: 10 }]}>{t('muscleGroup')}</Text>
         <FlatList
           data={muscleGroupData}
@@ -939,12 +930,23 @@ export default function WorkoutDetails() {
           }}
           style={{ marginBottom: 15 }}
         />
+        <Text style={[styles.inputLabel, { color: theme.text, marginTop: 10 }]}>{t('exerciseNotes')}</Text>
+        <TextInput
+            style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border, height: 100, textAlignVertical: 'top' }]}
+            placeholder={t('exerciseNotesPlaceholder')}
+            placeholderTextColor={theme.text}
+            value={exerciseNotesInput}
+            onChangeText={setExerciseNotesInput}
+            multiline={true}
+            numberOfLines={4}
+        />
         <TouchableOpacity style={[styles.saveButton, { backgroundColor: theme.buttonBackground }]} onPress={addExercise}>
           <Text style={[styles.saveButtonText, { color: theme.buttonText }]}>{t('Save')}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[styles.cancelButton, { backgroundColor: theme.card }]} onPress={closeAddExerciseModal}>
           <Text style={[styles.cancelButtonText, { color: theme.text }]}>{t('Cancel')}</Text>
         </TouchableOpacity>
+        </ScrollView>
       </View>
     </View>
     </TouchableWithoutFeedback>
@@ -953,7 +955,8 @@ export default function WorkoutDetails() {
   <Modal visible={showWebLinkModal} animationType="fade" transparent>
   <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <View style={[styles.modalContainer, { backgroundColor: 'rgba(0, 0, 0, 0.5)' }]}>
-        <View style={[styles.modalContent, { backgroundColor: theme.card }]}>
+        <View style={[styles.modalContent, { backgroundColor: theme.card, maxHeight: '50%' }]}>
+        <ScrollView style={{width: '100%'}} contentContainerStyle={{padding: 20, alignItems: 'center'}} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
             <Text style={[styles.modalTitle, { color: theme.text }]}>{t('exerciseDetails')}</Text>
             
             <Text style={[styles.inputLabel, { color: theme.text }]}>{t('exerciseNamePlaceholder')}</Text>
@@ -1011,16 +1014,6 @@ export default function WorkoutDetails() {
                 autoCapitalize="none"
                 keyboardType="url"
             />
-            <Text style={[styles.inputLabel, { color: theme.text, marginTop: 15 }]}>{t('exerciseNotes')}</Text>
-           <TextInput
-               style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border, height: 100, textAlignVertical: 'top' }]}
-               placeholder={t('exerciseNotesPlaceholder')}
-               placeholderTextColor={theme.text}
-               value={exerciseNotesInput}
-               onChangeText={setExerciseNotesInput}
-               multiline={true}
-               numberOfLines={4}
-           />
             <Text style={[styles.inputLabel, { color: theme.text, marginTop: 15 }]}>{t('muscleGroup')}</Text>
             <FlatList
               data={muscleGroupData}
@@ -1047,12 +1040,23 @@ export default function WorkoutDetails() {
               }}
               style={{ marginBottom: 15 }}
             />
+            <Text style={[styles.inputLabel, { color: theme.text, marginTop: 15 }]}>{t('exerciseNotes')}</Text>
+           <TextInput
+               style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border, height: 100, textAlignVertical: 'top' }]}
+               placeholder={t('exerciseNotesPlaceholder')}
+               placeholderTextColor={theme.text}
+               value={exerciseNotesInput}
+               onChangeText={setExerciseNotesInput}
+               multiline={true}
+               numberOfLines={4}
+           />
             <TouchableOpacity style={[styles.saveButton, { backgroundColor: theme.buttonBackground }]} onPress={handleSaveWebLink}>
                 <Text style={[styles.saveButtonText, { color: theme.buttonText }]}>{t('Save')}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={[styles.cancelButton, { backgroundColor: theme.card }]} onPress={closeWebLinkModal}>
                 <Text style={[styles.cancelButtonText, { color: theme.text }]}>{t('Cancel')}</Text>
             </TouchableOpacity>
+            </ScrollView>
         </View>
     </View>
     </TouchableWithoutFeedback>
@@ -1189,9 +1193,7 @@ const styles = StyleSheet.create({
     },
     modalContent: {
       borderRadius: 15,
-      padding: 20,
       width: '80%',
-      alignItems: 'center',
     },
     modalTitle: {
       fontSize: 20,
@@ -1263,7 +1265,6 @@ const styles = StyleSheet.create({
       shadowOpacity: 0,
       borderWidth: 1,
       marginRight: 10,
-      marginBottom: 25,
       justifyContent: 'center',
       alignItems: 'center',
     },
