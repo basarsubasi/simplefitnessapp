@@ -427,7 +427,8 @@
 "exerciseNotes": "Huomautukset",
 "exerciseNotesPlaceholder": "Huomautukset harjoitukselle (valinnainen)",
 "quickWorkout": "Pikaharjoitus",
-"useLogsForRepsTitle": "Käytä edellisiä toistoja"
+"useLogsForRepsTitle": "Käytä edellisiä toistoja",
+"lastWorkoutInfo": "Edellinen harjoitus"
 
 
 
