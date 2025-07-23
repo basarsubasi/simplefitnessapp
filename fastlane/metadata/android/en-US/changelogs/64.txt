@@ -1,0 +1,8 @@
+
+- Added support to edit Sets and Reps in Workout Details by Shaedow4
+- Now editing/reordering workouts does not erase details related to exercises
+- Fixed the keyboard issue on the modals
+- Statusbar correctly corresponds to background dim when a modal is opened
+- Now you can see your last workout info related to the next set on rest screen when you start your workout
+- Minor stying changes
+
