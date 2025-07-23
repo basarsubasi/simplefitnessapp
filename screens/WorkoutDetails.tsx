@@ -862,6 +862,7 @@ export default function WorkoutDetails() {
                   placeholder={t('exerciseNamePlaceholder')}
                   placeholderTextColor={theme.text}
                   value={exerciseName}
+                  autoCapitalize="words"
                   onChangeText={setExerciseName}
                 />
                 <TextInput
