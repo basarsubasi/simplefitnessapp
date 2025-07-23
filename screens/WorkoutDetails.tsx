@@ -1238,6 +1238,9 @@ const styles = StyleSheet.create({
       paddingVertical: 10,
       paddingHorizontal: 20,
       marginBottom: 10,
+      marginTop: 10,
+      alignItems: 'center',
+      width: '100%',
     },
     saveButtonText: {
       fontWeight: 'bold',
@@ -1248,6 +1251,9 @@ const styles = StyleSheet.create({
       borderRadius: 8,
       paddingVertical: 10,
       paddingHorizontal: 20,
+      alignItems: 'center',
+      width: '100%',
+  
     },
     cancelButtonText: {
       fontWeight: 'bold',
