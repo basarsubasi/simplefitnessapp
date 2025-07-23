@@ -823,7 +823,7 @@ export default function WorkoutDetails() {
             barStyle={theme.type === 'light' ? 'light-content' : 'dark-content'}
           />
         )}
-        <TouchableWithoutFeedback>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={[styles.modalContainer, { backgroundColor: 'rgba(0, 0, 0, 0.5)' }]}>
             <View style={[styles.dayModalContent, { backgroundColor: theme.card }]}>
               <Text style={[styles.dayModalTitle, { color: theme.text }]}>{t('addDayFromDetails')}</Text>
