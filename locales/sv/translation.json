@@ -432,7 +432,8 @@
 "exerciseNotes": "Notiser",
 "exerciseNotesPlaceholder": "Notiser för övning (valfritt)",
 "quickWorkout": "Snabb träning",
-"useLogsForRepsTitle": "Använd tidigare repetitioner"
+"useLogsForRepsTitle": "Använd tidigare repetitioner",
+"lastWorkoutInfo": "Föregående träning"
 
 
 
