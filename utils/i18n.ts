@@ -38,7 +38,7 @@ i18n
       cs: { translation: cs },
       de: { translation: de },
       dk: { translation: dk },
-      el: {translation:  el },
+     // el: {translation:  el },
       en: { translation: en },
       es: { translation: es },
       fi: { translation: fi },
