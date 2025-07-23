@@ -10,6 +10,7 @@ import {
   FlatList,
   Modal,
   TouchableWithoutFeedback,
+  StatusBar,
   
 } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
@@ -3082,6 +3083,12 @@ const calculateCES = (sets: LogData[]): number => {
         onRequestClose={closeTooltip}
         animationType="fade"
       >
+         {tooltipVisible && (
+          <StatusBar
+            backgroundColor={theme.type === 'light' ? "rgba(0, 0, 0, 0.5)" : "black"}
+            barStyle={theme.type === 'light' ? 'light-content' : 'dark-content'}
+          />
+        )}
         <TouchableOpacity 
           style={styles.tooltipOverlay} 
           activeOpacity={1} 
