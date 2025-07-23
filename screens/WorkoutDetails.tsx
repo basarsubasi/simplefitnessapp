@@ -866,35 +866,19 @@ export default function WorkoutDetails() {
                 />
                 <TextInput
                   style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
-                  placeholder={t('setsPlaceholder')}
+                  placeholder={t('setsPlaceholder') + ' (> 0)'}
                   placeholderTextColor={theme.text}
                   keyboardType="numeric"
                   value={exerciseSets}
-                  onChangeText={(text) => {
-                    const sanitizedText = text.replace(/[^0-9]/g, ''); // Remove non-numeric characters
-                    let value = parseInt(sanitizedText || '0'); // Convert to integer
-                    if (value > 0 && value <= 100) {
-                      setExerciseSets(value.toString()); // Update state if valid
-                    } else if (value === 0) {
-                      setExerciseSets(''); // Prevent 0 from being displayed
-                    }
-                  }}
+                  onChangeText={setExerciseSets}
                 />
                 <TextInput
                   style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
-                  placeholder={t('repsPlaceholder')}
+                  placeholder={t('repsPlaceholder') + ' (> 0)'}
                   placeholderTextColor={theme.text}
                   keyboardType="numeric"
                   value={exerciseReps}
-                  onChangeText={(text) => {
-                    const sanitizedText = text.replace(/[^0-9]/g, ''); // Remove non-numeric characters
-                    let value = parseInt(sanitizedText || '0'); // Convert to integer
-                    if (value > 0 && value <= 10000) {
-                      setExerciseReps(value.toString()); // Update state if valid
-                    } else if (value === 0) {
-                      setExerciseReps(''); // Prevent 0 from being displayed
-                    }
-                  }}
+                  onChangeText={setExerciseReps}
                 />
                 <Text style={[styles.inputLabel, { color: theme.text, marginTop: 10 }]}>{t('webLink')}</Text>
                 <TextInput
@@ -981,36 +965,20 @@ export default function WorkoutDetails() {
                 <Text style={[styles.inputLabel, {color: theme.text, marginTop: 15}]}>{t('setsPlaceholder')}</Text>
                 <TextInput
                   style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
-                  placeholder={t('setsPlaceholder')}
+                  placeholder={t('setsPlaceholder') + ' (> 0)'}
                   placeholderTextColor={theme.text}
                   keyboardType="numeric"
                   value={exerciseSets}
-                  onChangeText={(text) => {
-                    const sanitizedText = text.replace(/[^0-9]/g, ''); // Remove non-numeric characters
-                    let value = parseInt(sanitizedText || '0'); // Convert to integer
-                    if (value > 0 && value <= 100) {
-                      setExerciseSets(value.toString()); // Update state if valid
-                    } else if (value === 0) {
-                      setExerciseSets(''); // Prevent 0 from being displayed
-                    }
-                  }}
+                  onChangeText={setExerciseSets}
                 />
                 <Text style={[styles.inputLabel, {color: theme.text, marginTop: 15}]}>{t('repsPlaceholder')}</Text>
                 <TextInput
                   style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
-                  placeholder={t('repsPlaceholder')}
+                  placeholder={t('repsPlaceholder') + ' (> 0)'}
                   placeholderTextColor={theme.text}
                   keyboardType="numeric"
                   value={exerciseReps}
-                  onChangeText={(text) => {
-                    const sanitizedText = text.replace(/[^0-9]/g, ''); // Remove non-numeric characters
-                    let value = parseInt(sanitizedText || '0'); // Convert to integer
-                    if (value > 0 && value <= 10000) {
-                      setExerciseReps(value.toString()); // Update state if valid
-                    } else if (value === 0) {
-                      setExerciseReps(''); // Prevent 0 from being displayed
-                    }
-                  }}
+                  onChangeText={setExerciseReps}
                 />
                 <Text style={[styles.inputLabel, { color: theme.text }]}>{t('webLink')}</Text>
                 <TextInput
