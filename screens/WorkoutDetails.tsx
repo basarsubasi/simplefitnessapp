@@ -823,7 +823,7 @@ export default function WorkoutDetails() {
             barStyle={theme.type === 'light' ? 'light-content' : 'dark-content'}
           />
         )}
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <TouchableWithoutFeedback>
           <View style={[styles.modalContainer, { backgroundColor: 'rgba(0, 0, 0, 0.5)' }]}>
             <View style={[styles.dayModalContent, { backgroundColor: theme.card }]}>
               <Text style={[styles.dayModalTitle, { color: theme.text }]}>{t('addDayFromDetails')}</Text>
@@ -854,7 +854,7 @@ export default function WorkoutDetails() {
         )}
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={[styles.modalContainer, { backgroundColor: 'rgba(0, 0, 0, 0.5)' }]}>
-            <View style={[styles.modalContent, { backgroundColor: theme.card, maxHeight: '50%' }]}>
+            <View style={[styles.modalContent, { backgroundColor: theme.card, maxHeight: '100%' }]}>
               <ScrollView style={{width: '100%'}} contentContainerStyle={{padding: 20, alignItems: 'center'}} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
                 <Text style={[styles.modalTitle, { color: theme.text }]}>{t('addExerciseFromDetails')}</Text>
                 <TextInput
@@ -963,7 +963,7 @@ export default function WorkoutDetails() {
         )}
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={[styles.modalContainer, { backgroundColor: 'rgba(0, 0, 0, 0.5)' }]}>
-            <View style={[styles.modalContent, { backgroundColor: theme.card, maxHeight: '50%' }]}>
+            <View style={[styles.modalContent, { backgroundColor: theme.card, maxHeight: '100%' }]}>
               <ScrollView style={{width: '100%'}} contentContainerStyle={{padding: 20, alignItems: 'center'}} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
                 <Text style={[styles.modalTitle, { color: theme.text }]}>{t('exerciseDetails')}</Text>
                 
@@ -1240,7 +1240,6 @@ const styles = StyleSheet.create({
       marginBottom: 10,
       marginTop: 10,
       alignItems: 'center',
-      width: '100%',
     },
     saveButtonText: {
       fontWeight: 'bold',
@@ -1252,8 +1251,6 @@ const styles = StyleSheet.create({
       paddingVertical: 10,
       paddingHorizontal: 20,
       alignItems: 'center',
-      width: '100%',
-  
     },
     cancelButtonText: {
       fontWeight: 'bold',
