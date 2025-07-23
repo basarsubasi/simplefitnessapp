@@ -431,7 +431,8 @@
 "exerciseNotes": "Заметки",
 "exerciseNotesPlaceholder": "Заметки к упражнению (необязательно)",
 "quickWorkout": "Быстрая тренировка",
-"useLogsForRepsTitle": "Использовать предыдущие повторения"
+"useLogsForRepsTitle": "Использовать предыдущие повторения",
+"lastWorkoutInfo": "Предыдущая тренировка"
 
 
 

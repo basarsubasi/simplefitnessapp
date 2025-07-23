@@ -425,7 +425,8 @@
 "exerciseNotes": "ノート",
 "exerciseNotesPlaceholder": "エクササイズのノート（任意）",
 "quickWorkout": "クイックワークアウト",
-"useLogsForRepsTitle": "前回の練習を使用"
+"useLogsForRepsTitle": "前回の練習を使用",
+"lastWorkoutInfo": "前回のワークアウト"
 
 
 
