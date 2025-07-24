@@ -6,6 +6,8 @@ import {
   FlatList,
   TouchableOpacity,
   Alert,
+  Modal,
+  StatusBar,
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { useSQLiteContext } from 'expo-sqlite';
@@ -57,6 +59,8 @@ export default function WeightLogDetail() {
     start: Date | null;
     end: Date | null;
   }>({ start: null, end: null });
+
+  const [showLogEditModal, setShowLogEditModal] = useState<boolean>(false);
 
   const muscleGroupData = [
     { label: t('Unspecified'), value: null },
@@ -407,28 +411,44 @@ export default function WeightLogDetail() {
               .map(({ exerciseName, sets, loggedExerciseId, muscle_group }) => {
                 const muscleGroupInfo = muscleGroupData.find(mg => mg.value === muscle_group);
                 return (
-                <View key={`${loggedExerciseId}_${exerciseName}`} style={styles.logItem}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', marginBottom: 5 }}>
-                  <Text style={[styles.exerciseName, { color: theme.text }]}>
-                    {exerciseName}
-                  </Text>
-                  {muscleGroupInfo && muscleGroupInfo.value && (
-                    <View style={[styles.muscleGroupBadge, { backgroundColor: theme.card, borderColor: theme.border, marginLeft: 8 }]}>
-                      <Text style={[styles.muscleGroupBadgeText, { color: theme.text }]}>
-                        {muscleGroupInfo.label}
+                  <View>
+                    <TouchableOpacity style={{borderWidth: 1, borderColor: 'black', borderRadius: 8}} onPress={() => setShowLogEditModal(true)}>
+                      <View key={`${loggedExerciseId}_${exerciseName}`} style={styles.logItem}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', marginBottom: 5}}>
+                        <Text style={[styles.exerciseName, { color: theme.text }]}>
+                          {exerciseName}
+                        </Text>
+                        {muscleGroupInfo && muscleGroupInfo.value && (
+                          <View style={[styles.muscleGroupBadge, { backgroundColor: theme.card, borderColor: theme.border, marginLeft: 8 }]}>
+                            <Text style={[styles.muscleGroupBadgeText, { color: theme.text }]}>
+                              {muscleGroupInfo.label}
+                            </Text>
+                          </View>
+                        )}
+                        </View>
+                        {sets.map((set, index) => (
+                          <Text
+                            key={index}
+                            style={[styles.logDetail, { color: theme.text }]}
+                          >
+                            {t('Set')} {set.set_number}: {set.weight_logged} {weightFormat} × {set.reps_logged} {t('Reps')}
+                          </Text>
+                        ))}
+                      </View>
+                    </TouchableOpacity>
+
+                      <Modal visible={showLogEditModal} animationType="fade" transparent onRequestClose={() => setShowLogEditModal(false)}>
+                        {showLogEditModal && (
+                          <StatusBar
+                            backgroundColor={theme.type === 'light' ? "rgba(0, 0, 0, 0.5)" : "black"}
+                            barStyle={theme.type === 'light' ? 'light-content' : 'dark-content'}
+                          />
+                        )}
+                      <Text>
+                        Moin
                       </Text>
-                    </View>
-                  )}
+                    </Modal>
                   </View>
-                  {sets.map((set, index) => (
-                    <Text
-                      key={index}
-                      style={[styles.logDetail, { color: theme.text }]}
-                    >
-                      {t('Set')} {set.set_number}: {set.weight_logged} {weightFormat} × {set.reps_logged} {t('Reps')}
-                    </Text>
-                  ))}
-                </View>
               )})}
           </View>
         )}
