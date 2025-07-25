@@ -8,6 +8,10 @@ import {
   Alert,
   Modal,
   StatusBar,
+  TextInput,
+  TouchableWithoutFeedback,
+  ScrollView,
+  Keyboard,
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { useSQLiteContext } from 'expo-sqlite';
@@ -61,6 +65,9 @@ export default function WeightLogDetail() {
   }>({ start: null, end: null });
 
   const [showLogEditModal, setShowLogEditModal] = useState<boolean>(false);
+  const [editExerciseData, setEditExerciseDate] = useState([]); // TODO: Typing
+  const [editedLog, setEditedLog] = useState({});
+
 
   const muscleGroupData = [
     { label: t('Unspecified'), value: null },
@@ -309,6 +316,8 @@ export default function WeightLogDetail() {
     return `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
   };
 
+  const saveEditedWorkoutLog = () => {};
+
   const renderDay = ({
     day_name,
     workout_date,
@@ -437,16 +446,60 @@ export default function WeightLogDetail() {
                       </View>
                     </TouchableOpacity>
 
-                      <Modal visible={showLogEditModal} animationType="fade" transparent onRequestClose={() => setShowLogEditModal(false)}>
+                      <Modal visible={showLogEditModal} animationType="fade" transparent={false} onRequestClose={() => setShowLogEditModal(false)}>
                         {showLogEditModal && (
                           <StatusBar
                             backgroundColor={theme.type === 'light' ? "rgba(0, 0, 0, 0.5)" : "black"}
                             barStyle={theme.type === 'light' ? 'light-content' : 'dark-content'}
                           />
                         )}
-                      <Text>
-                        Moin
+
+
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={[styles.modalContainer, { backgroundColor: 'rgba(0, 0, 0, 0.5)' }]}>
+            <View style={[styles.modalContent, { backgroundColor: theme.card, maxHeight: '100%' }]}>
+                      <Text style={[styles.modalTitle, { color: theme.text, margin: 10 }]}>
+                        Edit {exerciseName} from {new Date(sets[0]["workout_date"] * 1000).toLocaleDateString()}
                       </Text>
+              <ScrollView style={{width: '100%'}} contentContainerStyle={{padding: 20}} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+                      <FlatList data={sets} keyExtractor={({index}) => index} renderItem={({item, index}) => {
+                        return (
+                          <View>
+                            <Text style={[{fontSize: 18, fontWeight: 600}]}>Set {index+1}</Text>
+                            <Text style={[styles.inputLabel, { color: theme.text, marginTop: 15 }]}>{t('weightKgLbs')}</Text>
+                            <TextInput
+                              style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
+                              placeholder={t('weightKgLbs') + ' (> 0)'}
+                              placeholderTextColor={theme.text}
+                              keyboardType="numeric"
+                              value={item['weight_logged'].toString()}
+                              onChangeText={() => ''}
+                            />
+                            <Text style={[styles.inputLabel, {color: theme.text, marginTop: 15}]}>{t('repsPlaceholder')}</Text>
+                            <TextInput
+                              style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
+                              placeholder={t('repsPlaceholder') + ' (> 0)'}
+                              placeholderTextColor={theme.text}
+                              keyboardType="numeric"
+                              value={item['reps_logged'].toString()}
+                              onChangeText={() => ''}
+                            />
+                          </View>
+                        )
+                      }}>
+                      </FlatList>
+                </ScrollView>
+                <View style={[{padding: 20, display: 'flex', flexDirection: 'column', rowGap: 5}]}>
+                      <TouchableOpacity style={[styles.saveButton, { backgroundColor: theme.buttonBackground }]} onPress={saveEditedWorkoutLog}>
+                        <Text style={[styles.saveButtonText, { color: theme.buttonText }]}>{t('Save')}</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity style={[styles.cancelButton, { backgroundColor: theme.card }]} onPress={() => setShowLogEditModal(false)}>
+                        <Text style={[styles.cancelButtonText, { color: theme.text }]}>{t('Cancel')}</Text>
+                      </TouchableOpacity>
+                </View>
+                </View>
+                </View>
+                </TouchableWithoutFeedback>
                     </Modal>
                   </View>
               )})}
@@ -683,5 +736,56 @@ const styles = StyleSheet.create({
   muscleGroupBadgeText: {
       fontSize: 12,
       fontWeight: '600',
+  },
+  saveButton: {
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    marginBottom: 10,
+    marginTop: 10,
+    alignItems: 'center',
+  },
+  saveButtonText: {
+    fontWeight: 'bold',
+  },
+  cancelButton: {
+    borderWidth: 1,
+    borderColor: '#000000',
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+  },
+  cancelButtonText: {
+    fontWeight: 'bold',
+  },
+  inputLabel: {
+    alignSelf: 'stretch',
+    textAlign: 'left',
+    fontSize: 16,
+    marginBottom: 5,
+    fontWeight: '600',
+  },
+  input: {
+    width: '100%',
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.2)',
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 10,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 15,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    borderRadius: 15,
+    width: '80%',
   },
 });
