@@ -167,7 +167,7 @@
   "createRecurringWorkout": "Wiederkehrendes Workout erstellen",
   "manageRecurringWorkouts": "Wiederkehrende Workouts verwalten",
   "recurringWorkoutsExplanation": "Lege Workouts fest, die sich in regelmäßigen Abständen automatisch in deinem Kalender eintragen.",
-  "everyXDays": "Alle",  
+  "everyXDays": "Alle",
   "everyday": "Jeden Tag",
   "weekly": "Wöchentlich",
   "every": "Jeden",
@@ -346,7 +346,7 @@
   "Metric": "Metrik",
   "Exercise Stats": "Übungs\nstatistiken",
   "settingsFirstWeekday": "Erster Wochentag",
-  
+
 
   "RepsCapital": "Wiederholungen",
   "RepsGraph": "Wiederholungs-Graph",
@@ -365,15 +365,15 @@
 "Chest": "Brust",
 "Back": "Rücken",
 "Shoulders": "Schultern",
-"Biceps": "Biceps",
-"Triceps": "Triceps",
-"Forearms": "Vorarm",
+"Biceps": "Bizeps",
+"Triceps": "Trizeps",
+"Forearms": "Unterarm",
 "Abs": "Bauch",
 "Legs": "Beine",
-"Glutes": "Glute",
-"Hamstrings": "Hüftmuskeln",
-"Calves": "Kalven",
-"Quads": "Kotflügel",
+"Glutes": "Gesäß",
+"Hamstrings": "Beinbeuger",
+"Calves": "Waden",
+"Quads": "Beinstrecker",
 "muscleGroup": "Muskelgruppe",
 
 "Workout Volume": "Trainingsvolumen",
@@ -423,4 +423,3 @@
 
 
 }
-  
