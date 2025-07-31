@@ -474,7 +474,8 @@
     "exerciseNotes": "Σημειώσεις",
     "exerciseNotesPlaceholder": "Σημειώσεις για την άσκηση (προαιρετικό)",
     "quickWorkout": "Γρήγορη Προπόνηση",
-    "useLogsForRepsTitle": "Χρήση προηγούμενων επαναλήψεων"
+    "useLogsForRepsTitle": "Χρήση προηγούμενων επαναλήψεων",
+    "lastWorkoutInfo": "Προηγούμενη προπόνηση"
 
 
     }
