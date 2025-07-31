@@ -60,7 +60,7 @@ An easy to use fitness app that lets you create, schedule and track your workout
 ## 🌍 **Languages**
 
 
-🇨🇿 🇩🇪 🇩🇰 🇬🇧 🇪🇸 🇫🇮 🇫🇷 🇮🇹 🇯🇵 🇰🇷 🇳🇱 🇳🇴 🇵🇱 🇵🇹 🇷🇺 🇸🇮 🇸🇪 🇹🇷 🇺🇦 🇨🇳
+🇨🇿 🇩🇪 🇩🇰 🇬🇷 🇬🇧 🇪🇸 🇫🇮 🇫🇷 🇮🇹 🇯🇵 🇰🇷 🇳🇱 🇳🇴 🇵🇱 🇵🇹 🇷🇺 🇸🇮 🇸🇪 🇹🇷 🇺🇦 🇨🇳
 
 _(If you want to translate the app to your language or improve the existing translations but don't know how, 
 please join our discord server or contact me at basarsubasi@protonmail.com)_
