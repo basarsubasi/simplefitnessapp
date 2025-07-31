@@ -1,0 +1,8 @@
+
+Main Changes:
+
+- Statusbar dim improved and now is on all the modals
+- Add and edit workout modal are now closable via back button by Shaedow4
+- Greek by Geokaragiann
+- Fixed german translations by suedengland
+- Removed the unnecessary permissions 
