@@ -5,11 +5,9 @@ import {
   StyleSheet, 
   TouchableOpacity, 
   ScrollView, 
-   
   TextInput,
-  
   Modal,
-  
+  Alert,
   Keyboard,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
