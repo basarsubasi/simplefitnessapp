@@ -172,7 +172,7 @@ export default function CreateRecurringWorkout() {
       case 'everyday':
         return 1; // Everyday = 1 day interval
       case 'custom':
-        return parseInt(customDaysInterval) || 2; // Parse custom interval, default to 2
+        return parseInt(customDaysInterval); // Parse custom interval, default to 2
       case 'weekly':
         return 0; // 0 indicates to use recurring_days instead
       default:
@@ -284,7 +284,7 @@ export default function CreateRecurringWorkout() {
     
     if (intervalType === 'custom') {
       const interval = parseInt(customDaysInterval);
-      if (isNaN(interval) || interval < 1) return false;
+      if (interval < 1) return false;
     }
 
     if (intervalType === 'weekly' && selectedWeekdays.length === 0) {
