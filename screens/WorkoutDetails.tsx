@@ -820,7 +820,7 @@ export default function WorkoutDetails() {
         {showDayModal && (
           <StatusBar
             backgroundColor={theme.type === 'light' ? "rgba(0, 0, 0, 0.5)" : "black"}
-            barStyle={theme.type === 'light' ? 'light-content' : 'dark-content'}
+            barStyle={'light-content'}
           />
         )}
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -849,8 +849,7 @@ export default function WorkoutDetails() {
         {showExerciseModal && (
           <StatusBar
             backgroundColor={theme.type === 'light' ? "rgba(0, 0, 0, 0.5)" : "black"}
-            barStyle={theme.type === 'light' ? 'light-content' : 'dark-content'}
-          />
+            barStyle={'light-content'}/>
         )}
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={[styles.modalContainer, { backgroundColor: 'rgba(0, 0, 0, 0.5)' }]}>
@@ -943,8 +942,7 @@ export default function WorkoutDetails() {
         {showWebLinkModal && (
           <StatusBar
             backgroundColor={theme.type === 'light' ? "rgba(0, 0, 0, 0.5)" : "black"}
-            barStyle={theme.type === 'light' ? 'light-content' : 'dark-content'}
-          />
+            barStyle={'light-content'}          />
         )}
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={[styles.modalContainer, { backgroundColor: 'rgba(0, 0, 0, 0.5)' }]}>

@@ -824,8 +824,7 @@ export default function MyCalendar() {
          {modalVisible && (
           <StatusBar
             backgroundColor={theme.type === 'light' ? "rgba(0, 0, 0, 0.5)" : "black"}
-            barStyle={theme.type === 'light' ? 'light-content' : 'dark-content'}
-          />
+            barStyle={'light-content'}          />
         )}
         
         <View
@@ -1111,6 +1110,15 @@ export default function MyCalendar() {
         animationType='fade'
         onRequestClose={closeUntrackedModal}
       >
+
+
+    {untrackedChoiceModalVisible && (
+          <StatusBar
+            backgroundColor={theme.type === 'light' ? "rgba(0, 0, 0, 0.5)" : "black"}
+            barStyle={'light-content'}          />
+        )}
+
+
         <View
           style={[
             styles.modalContainer,

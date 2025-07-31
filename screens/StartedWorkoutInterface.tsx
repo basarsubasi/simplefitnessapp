@@ -10,12 +10,10 @@ import {
   Alert,
   FlatList,
   Vibration,
-  Platform,
   Switch,
   Modal,
-  AppState,
-  AppStateStatus,
-  Linking
+  Linking,
+  StatusBar
 } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -1237,6 +1235,16 @@ export default function StartedWorkoutInterface() {
           setIsExerciseListModalVisible(false);
         }}
       >
+
+
+
+
+    {isExerciseListModalVisible && (
+          <StatusBar
+            backgroundColor={theme.type === 'light' ? "rgba(0, 0, 0, 0.5)" : "black"}
+            barStyle={'light-content'}          />
+        )}
+
         <TouchableOpacity
           style={styles.modalOverlay}
           activeOpacity={1}
@@ -1365,6 +1373,17 @@ export default function StartedWorkoutInterface() {
           setIsNotesModalVisible(false);
         }}
       >
+
+        
+    {isNotesModalVisible && (
+          <StatusBar
+            backgroundColor={theme.type === 'light' ? "rgba(0, 0, 0, 0.5)" : "black"}
+            barStyle={'light-content'}          />
+        )}
+
+
+
+        
         <TouchableOpacity
           style={styles.modalOverlay}
           activeOpacity={1}
