@@ -6,6 +6,12 @@ import {
   FlatList,
   TouchableOpacity,
   Alert,
+  Modal,
+  StatusBar,
+  TextInput,
+  TouchableWithoutFeedback,
+  ScrollView,
+  Keyboard,
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { useSQLiteContext } from 'expo-sqlite';
@@ -24,6 +30,20 @@ interface WeightLog {
   reps_logged: number;
   set_number: number;
   completion_time: number | null;
+}
+
+interface EditExerciseMetadata {
+  exerciseName: string;
+  workout_date: number
+}
+
+interface ExerciseLog {
+  weight_log_id: number;
+  weight_logged: number; 
+  reps_logged: number;
+  set_number: number; 
+  workout_date: number; 
+  day_name: string
 }
 
 export default function WeightLogDetail() {
@@ -57,6 +77,27 @@ export default function WeightLogDetail() {
     start: Date | null;
     end: Date | null;
   }>({ start: null, end: null });
+
+  const [showLogEditModal, setShowLogEditModal] = useState<boolean>(false);
+  const [editExerciseMetadata, setEditExerciseMetadata] = useState<EditExerciseMetadata>({
+    exerciseName: '',
+    workout_date: -1
+  });
+  const [editExerciseData, setEditExerciseData] = useState<ExerciseLog[]>([]); // TODO: Typing
+
+  const updateExerciseWeightLog = (item: ExerciseLog,
+                                  val: string, 
+                                  updatedKeyName: 'weight_logged' | 'reps_logged',
+                                  index: number) => {
+    // validation for value
+
+    // Set it
+    item[updatedKeyName] = parseInt(val) 
+
+    // Update editExerciseData to display correct value on Screen
+    setEditExerciseData(prev => prev.map((value, i) => i === index ? item : value))
+  }
+
 
   const muscleGroupData = [
     { label: t('Unspecified'), value: null },
@@ -134,6 +175,7 @@ export default function WeightLogDetail() {
       // Now fetch the weight logs
       const result = await db.getAllAsync<{
         exercise_name: string;
+        workout_log_id: number;
         weight_logged: number;
         reps_logged: number;
         set_number: number;
@@ -142,7 +184,7 @@ export default function WeightLogDetail() {
         logged_exercise_id: number;
         muscle_group: string | null;
       }>(
-        `SELECT Weight_Log.exercise_name, Weight_Log.weight_logged, Weight_Log.reps_logged, 
+        `SELECT Weight_Log.exercise_name, Weight_Log.weight_log_id, Weight_Log.weight_logged, Weight_Log.reps_logged, 
         Weight_Log.set_number, Workout_Log.workout_date, Workout_Log.day_name, 
         Weight_Log.logged_exercise_id, Weight_Log.muscle_group
         FROM Weight_Log
@@ -183,6 +225,7 @@ export default function WeightLogDetail() {
               exerciseName: exercise.exercise_name,
               muscle_group: exercise.muscle_group,
               sets: [{ 
+                weight_log_id: -1,
                 set_number: 1, 
                 weight_logged: 0, 
                 reps_logged: exercise.reps,
@@ -305,6 +348,42 @@ export default function WeightLogDetail() {
     return `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
   };
 
+  const openLogEditModal = (exerciseName: string, sets: ExerciseLog[]) => {
+    setEditExerciseData(sets);
+    setEditExerciseMetadata({
+      exerciseName: exerciseName,
+      workout_date: sets[0].workout_date
+    });
+    setShowLogEditModal(true);
+  }
+
+  const closeLogEditModal = () => {
+    setShowLogEditModal(false)
+    setEditExerciseData([]);
+    setEditExerciseMetadata({
+      exerciseName: '',
+      workout_date: -1,
+    });
+  }
+
+  const saveEditedWorkoutLog = async () => {
+    // Run through state with edited workout and update the weight logs
+    for (const item of editExerciseData) {
+      // Add validation
+      if (item.weight_log_id === -1) {
+        continue;
+      }
+
+      await db.runAsync(
+        'UPDATE Weight_Log SET weight_logged = ?, reps_logged = ? WHERE weight_log_id = ?',
+        [item.weight_logged, item.reps_logged, item.weight_log_id]
+      );
+    }
+
+    setEditExerciseData([]);
+    setShowLogEditModal(false);
+  };
+
   const renderDay = ({
     day_name,
     workout_date,
@@ -407,28 +486,87 @@ export default function WeightLogDetail() {
               .map(({ exerciseName, sets, loggedExerciseId, muscle_group }) => {
                 const muscleGroupInfo = muscleGroupData.find(mg => mg.value === muscle_group);
                 return (
-                <View key={`${loggedExerciseId}_${exerciseName}`} style={styles.logItem}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', marginBottom: 5 }}>
-                  <Text style={[styles.exerciseName, { color: theme.text }]}>
-                    {exerciseName}
-                  </Text>
-                  {muscleGroupInfo && muscleGroupInfo.value && (
-                    <View style={[styles.muscleGroupBadge, { backgroundColor: theme.card, borderColor: theme.border, marginLeft: 8 }]}>
-                      <Text style={[styles.muscleGroupBadgeText, { color: theme.text }]}>
-                        {muscleGroupInfo.label}
-                      </Text>
-                    </View>
-                  )}
+                  <View>
+                    <TouchableOpacity style={{borderWidth: 1, borderColor: 'black', borderRadius: 8}} onPress={() => openLogEditModal(exerciseName, sets)}>
+                      <View key={`${loggedExerciseId}_${exerciseName}`} style={styles.logItem}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', marginBottom: 5}}>
+                        <Text style={[styles.exerciseName, { color: theme.text }]}>
+                          {exerciseName}
+                        </Text>
+                        {muscleGroupInfo && muscleGroupInfo.value && (
+                          <View style={[styles.muscleGroupBadge, { backgroundColor: theme.card, borderColor: theme.border, marginLeft: 8 }]}>
+                            <Text style={[styles.muscleGroupBadgeText, { color: theme.text }]}>
+                              {muscleGroupInfo.label}
+                            </Text>
+                          </View>
+                        )}
+                        </View>
+                        {sets.map((set, index) => (
+                          <Text
+                            key={index}
+                            style={[styles.logDetail, { color: theme.text }]}
+                          >
+                            {t('Set')} {set.set_number}: {set.weight_logged} {weightFormat} × {set.reps_logged} {t('Reps')}
+                          </Text>
+                        ))}
+                      </View>
+
+                    <Modal visible={showLogEditModal} animationType="fade" transparent={false} onRequestClose={closeLogEditModal}>
+                      {showLogEditModal && (
+                        <StatusBar
+                          backgroundColor={theme.type === 'light' ? "rgba(0, 0, 0, 0.5)" : "black"}
+                          barStyle={theme.type === 'light' ? 'light-content' : 'dark-content'}
+                        />
+                      )}
+                        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                          <View style={[styles.modalContainer, { backgroundColor: 'rgba(0, 0, 0, 0.5)' }]}>
+                            <View style={[styles.modalContent, { backgroundColor: theme.card, maxHeight: '100%' }]}>
+                              <Text style={[styles.modalTitle, { color: theme.text, margin: 10 }]}>
+                                Edit {editExerciseMetadata.exerciseName} from {new Date(editExerciseMetadata.workout_date * 1000).toLocaleDateString()}
+                              </Text>
+                              <ScrollView style={{width: '100%'}} contentContainerStyle={{padding: 20}} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+                                <FlatList data={editExerciseData} keyExtractor={(item, index) => item.weight_log_id !== -1 ? item.weight_log_id.toString() : (index * 100).toString()} renderItem={({item, index}) => {
+                                  return (
+                                    <View>
+                                      <Text style={[{fontSize: 18, fontWeight: 600}]}>Set {index+1}</Text>
+                                      <Text style={[styles.inputLabel, { color: theme.text, marginTop: 15 }]}>{t('weightKgLbs')}</Text>
+                                      <TextInput
+                                        style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
+                                        placeholder={t('weightKgLbs') + ' (> 0)'}
+                                        placeholderTextColor={theme.text}
+                                        keyboardType="numeric"
+                                        value={item['weight_logged'].toString()}
+                                        onChangeText={(val) => updateExerciseWeightLog(item, val, 'weight_logged', index)}
+                                      />
+                                      <Text style={[styles.inputLabel, {color: theme.text, marginTop: 15}]}>{t('repsPlaceholder')}</Text>
+                                      <TextInput
+                                        style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
+                                        placeholder={t('repsPlaceholder') + ' (> 0)'}
+                                        placeholderTextColor={theme.text}
+                                        keyboardType="numeric"
+                                        value={item['reps_logged'].toString()}
+                                        onChangeText={(val) => updateExerciseWeightLog(item, val, 'reps_logged', index)}
+                                      />
+                                    </View>
+                                  )
+                                }}>
+                                </FlatList>
+                                </ScrollView>
+                                <View style={[{padding: 20, display: 'flex', flexDirection: 'column', rowGap: 3}]}>
+                                  <TouchableOpacity style={[styles.saveButton, { backgroundColor: theme.buttonBackground }]} onPress={saveEditedWorkoutLog}>
+                                    <Text style={[styles.saveButtonText, { color: theme.buttonText }]}>{t('Save')}</Text>
+                                  </TouchableOpacity>
+                                  <TouchableOpacity style={[styles.cancelButton, { backgroundColor: theme.card }]} onPress={closeLogEditModal}>
+                                    <Text style={[styles.cancelButtonText, { color: theme.text }]}>{t('Cancel')}</Text>
+                                  </TouchableOpacity>
+                                </View>
+                                </View>
+                                </View>
+                                </TouchableWithoutFeedback>
+                    </Modal>
+                    </TouchableOpacity>
+
                   </View>
-                  {sets.map((set, index) => (
-                    <Text
-                      key={index}
-                      style={[styles.logDetail, { color: theme.text }]}
-                    >
-                      {t('Set')} {set.set_number}: {set.weight_logged} {weightFormat} × {set.reps_logged} {t('Reps')}
-                    </Text>
-                  ))}
-                </View>
               )})}
           </View>
         )}
@@ -663,5 +801,56 @@ const styles = StyleSheet.create({
   muscleGroupBadgeText: {
       fontSize: 12,
       fontWeight: '600',
+  },
+  saveButton: {
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    marginBottom: 10,
+    marginTop: 10,
+    alignItems: 'center',
+  },
+  saveButtonText: {
+    fontWeight: 'bold',
+  },
+  cancelButton: {
+    borderWidth: 1,
+    borderColor: '#000000',
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+  },
+  cancelButtonText: {
+    fontWeight: 'bold',
+  },
+  inputLabel: {
+    alignSelf: 'stretch',
+    textAlign: 'left',
+    fontSize: 16,
+    marginBottom: 5,
+    fontWeight: '600',
+  },
+  input: {
+    width: '100%',
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.2)',
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 10,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 15,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    borderRadius: 15,
+    width: '80%',
   },
 });
