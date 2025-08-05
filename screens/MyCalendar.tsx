@@ -659,7 +659,7 @@ export default function MyCalendar() {
     <ScrollView
       style={{ flex: 1, backgroundColor: theme.background }}
       showsVerticalScrollIndicator={false}
-      contentContainerStyle={[styles.contentContainer, { paddingTop: 70 }]}
+      contentContainerStyle={styles.contentContainer}
     >
       <View style={styles.titleContainer}>
         <Ionicons
@@ -1240,6 +1240,7 @@ const styles = StyleSheet.create({
   contentContainer: {
     alignItems: 'center',
     paddingHorizontal: scale(20),
+    paddingTop: verticalScale(30),
     paddingBottom: verticalScale(40),
   },
   titleContainer: {

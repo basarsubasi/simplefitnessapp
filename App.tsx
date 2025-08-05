@@ -40,6 +40,7 @@
   import { checkAndSyncPermissions } from './utils/notificationUtils';
   import { AppState } from 'react-native';
   import GraphsWorkoutDetails from './screens/GraphsWorkoutDetails';
+  import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 
 
@@ -357,6 +358,7 @@ const AppContent = () => {
   const { theme } = useTheme();
   const { notificationPermissionGranted, setNotificationPermissionGranted } =
     useSettings();
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     if (notificationPermissionGranted) {
@@ -365,7 +367,7 @@ const AppContent = () => {
   }, [notificationPermissionGranted, setNotificationPermissionGranted]);
 
   return (
-    <>
+    <View style={{ flex: 1, backgroundColor: theme.background, paddingTop: insets.top }}>
       <StatusBar barStyle={theme.type === 'light' ? "dark-content" : "light-content"} backgroundColor={theme.background} />
       <React.Suspense
         fallback={
@@ -441,7 +443,7 @@ const AppContent = () => {
 
                  </Bottom.Navigator>
                  </SQLiteProvider>
-         </>
+         </View>
   );
 };
 
@@ -495,19 +497,19 @@ const AppContent = () => {
 
 
     return (
-      <ThemeProvider>
-      <GestureHandlerRootView>
-        <NavigationContainer ref={navigationRef}>
-          <SettingsProvider>
-          <I18nextProvider i18n={i18n}>
-          <AppContent/>
-          </I18nextProvider>
-          </SettingsProvider>
-         
-        </NavigationContainer>
-        
-      </GestureHandlerRootView>
-    </ThemeProvider>
+      <SafeAreaProvider>
+        <ThemeProvider>
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <NavigationContainer ref={navigationRef}>
+              <SettingsProvider>
+                <I18nextProvider i18n={i18n}>
+                  <AppContent/>
+                </I18nextProvider>
+              </SettingsProvider>
+            </NavigationContainer>
+          </GestureHandlerRootView>
+        </ThemeProvider>
+      </SafeAreaProvider>
     );
   }
 

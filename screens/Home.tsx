@@ -126,7 +126,7 @@ export default function Home({ navigation }: any) {
 const styles = ScaledSheet.create({
   container: {
     flex: 1,
-    paddingTop: '50@vs',
+    paddingTop: '10@vs',
   },
   headerContainer: {
     position: 'relative',
