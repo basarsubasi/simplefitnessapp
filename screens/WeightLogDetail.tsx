@@ -21,16 +21,7 @@ import { useSettings } from '../context/SettingsContext';
 import { useTheme } from '../context/ThemeContext'; 
 import { useTranslation } from 'react-i18next';
 import { AutoSizeText, ResizeTextMode } from 'react-native-auto-size-text';
-
-interface WeightLog {
-  dayName: string;
-  workoutDate: number;
-  exercise: string;
-  weight_logged: number;
-  reps_logged: number;
-  set_number: number;
-  completion_time: number | null;
-}
+import deepCopy from '../utils/deepCopy';
 
 interface EditExerciseMetadata {
   exerciseName: string;
@@ -39,8 +30,8 @@ interface EditExerciseMetadata {
 
 interface ExerciseLog {
   weight_log_id: number;
-  weight_logged: number; 
-  reps_logged: number;
+  weight_logged: string; 
+  reps_logged: string;
   set_number: number; 
   workout_date: number; 
   day_name: string
@@ -83,16 +74,12 @@ export default function WeightLogDetail() {
     exerciseName: '',
     workout_date: -1
   });
-  const [editExerciseData, setEditExerciseData] = useState<ExerciseLog[]>([]); // TODO: Typing
-
+  const [editExerciseData, setEditExerciseData] = useState<ExerciseLog[]>([]);
   const updateExerciseWeightLog = (item: ExerciseLog,
                                   val: string, 
                                   updatedKeyName: 'weight_logged' | 'reps_logged',
                                   index: number) => {
-    // validation for value
-
-    // Set it
-    item[updatedKeyName] = parseInt(val) 
+    item[updatedKeyName] = val;  
 
     // Update editExerciseData to display correct value on Screen
     setEditExerciseData(prev => prev.map((value, i) => i === index ? item : value))
@@ -349,7 +336,7 @@ export default function WeightLogDetail() {
   };
 
   const openLogEditModal = (exerciseName: string, sets: ExerciseLog[]) => {
-    setEditExerciseData(sets);
+    setEditExerciseData(deepCopy(sets));
     setEditExerciseMetadata({
       exerciseName: exerciseName,
       workout_date: sets[0].workout_date
@@ -370,6 +357,18 @@ export default function WeightLogDetail() {
     // Run through state with edited workout and update the weight logs
     for (const item of editExerciseData) {
       // Add validation
+      const loggedReps = parseInt(item.reps_logged.trim());
+      if (Number.isNaN(loggedReps) || loggedReps === 0) {
+        Alert.alert("Error", "TODO!!!!");
+        return;
+      }
+
+      const loggedWeight = parseInt(item.weight_logged.trim());
+      if (Number.isNaN(loggedWeight) || loggedWeight === 0) {
+        Alert.alert("Error", "TODO!!!!");
+        return;
+      }
+
       if (item.weight_log_id === -1) {
         continue;
       }
@@ -487,7 +486,7 @@ export default function WeightLogDetail() {
                 const muscleGroupInfo = muscleGroupData.find(mg => mg.value === muscle_group);
                 return (
                   <View>
-                    <TouchableOpacity style={{borderWidth: 1, borderColor: 'black', borderRadius: 8}} onPress={() => openLogEditModal(exerciseName, sets)}>
+                    <TouchableOpacity onPress={() => openLogEditModal(exerciseName, sets)}>
                       <View key={`${loggedExerciseId}_${exerciseName}`} style={styles.logItem}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', marginBottom: 5}}>
                         <Text style={[styles.exerciseName, { color: theme.text }]}>
@@ -510,62 +509,7 @@ export default function WeightLogDetail() {
                           </Text>
                         ))}
                       </View>
-
-                    <Modal visible={showLogEditModal} animationType="fade" transparent={false} onRequestClose={closeLogEditModal}>
-                      {showLogEditModal && (
-                        <StatusBar
-                          backgroundColor={theme.type === 'light' ? "rgba(0, 0, 0, 0.5)" : "black"}
-                          barStyle={theme.type === 'light' ? 'light-content' : 'dark-content'}
-                        />
-                      )}
-                        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                          <View style={[styles.modalContainer, { backgroundColor: 'rgba(0, 0, 0, 0.5)' }]}>
-                            <View style={[styles.modalContent, { backgroundColor: theme.card, maxHeight: '100%' }]}>
-                              <Text style={[styles.modalTitle, { color: theme.text, margin: 10 }]}>
-                                Edit {editExerciseMetadata.exerciseName} from {new Date(editExerciseMetadata.workout_date * 1000).toLocaleDateString()}
-                              </Text>
-                              <ScrollView style={{width: '100%'}} contentContainerStyle={{padding: 20}} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
-                                <FlatList data={editExerciseData} keyExtractor={(item, index) => item.weight_log_id !== -1 ? item.weight_log_id.toString() : (index * 100).toString()} renderItem={({item, index}) => {
-                                  return (
-                                    <View>
-                                      <Text style={[{fontSize: 18, fontWeight: 600}]}>Set {index+1}</Text>
-                                      <Text style={[styles.inputLabel, { color: theme.text, marginTop: 15 }]}>{t('weightKgLbs')}</Text>
-                                      <TextInput
-                                        style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
-                                        placeholder={t('weightKgLbs') + ' (> 0)'}
-                                        placeholderTextColor={theme.text}
-                                        keyboardType="numeric"
-                                        value={item['weight_logged'].toString()}
-                                        onChangeText={(val) => updateExerciseWeightLog(item, val, 'weight_logged', index)}
-                                      />
-                                      <Text style={[styles.inputLabel, {color: theme.text, marginTop: 15}]}>{t('repsPlaceholder')}</Text>
-                                      <TextInput
-                                        style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
-                                        placeholder={t('repsPlaceholder') + ' (> 0)'}
-                                        placeholderTextColor={theme.text}
-                                        keyboardType="numeric"
-                                        value={item['reps_logged'].toString()}
-                                        onChangeText={(val) => updateExerciseWeightLog(item, val, 'reps_logged', index)}
-                                      />
-                                    </View>
-                                  )
-                                }}>
-                                </FlatList>
-                                </ScrollView>
-                                <View style={[{padding: 20, display: 'flex', flexDirection: 'column', rowGap: 3}]}>
-                                  <TouchableOpacity style={[styles.saveButton, { backgroundColor: theme.buttonBackground }]} onPress={saveEditedWorkoutLog}>
-                                    <Text style={[styles.saveButtonText, { color: theme.buttonText }]}>{t('Save')}</Text>
-                                  </TouchableOpacity>
-                                  <TouchableOpacity style={[styles.cancelButton, { backgroundColor: theme.card }]} onPress={closeLogEditModal}>
-                                    <Text style={[styles.cancelButtonText, { color: theme.text }]}>{t('Cancel')}</Text>
-                                  </TouchableOpacity>
-                                </View>
-                                </View>
-                                </View>
-                                </TouchableWithoutFeedback>
-                    </Modal>
                     </TouchableOpacity>
-
                   </View>
               )})}
           </View>
@@ -615,6 +559,7 @@ export default function WeightLogDetail() {
         </Text>
       </TouchableOpacity>
     </View>
+
   
     {dateRange.start && dateRange.end && (
       <TouchableOpacity
@@ -648,6 +593,8 @@ export default function WeightLogDetail() {
         }}
         />
       )}
+
+      <Text style={[styles.tipText, { color: theme.text }]}>I am a tipText</Text>
   
       {/* Logs */}
        <FlatList
@@ -661,6 +608,59 @@ export default function WeightLogDetail() {
          }
        />
 
+      <Modal visible={showLogEditModal} animationType="fade" onRequestClose={closeLogEditModal} transparent>
+        {showLogEditModal && (
+          <StatusBar
+            backgroundColor={theme.type === 'light' ? "rgba(0, 0, 0, 0.5)" : "black"}
+            barStyle={theme.type === 'light' ? 'light-content' : 'dark-content'}
+          />
+        )}
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <View style={[styles.modalContainer, { backgroundColor: 'rgba(0, 0, 0, 0.5)' }]}>
+              <View style={[styles.modalContent, { backgroundColor: theme.card }]}>
+                <Text style={[styles.modalTitle, { color: theme.text, margin: 10, marginTop: 20 }]}>
+                  Edit exercise log: {editExerciseMetadata.exerciseName} ({new Date(editExerciseMetadata.workout_date * 1000).toLocaleDateString()})
+                </Text>
+                <ScrollView style={{width: '100%'}} contentContainerStyle={{padding: 20}} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={true}>
+                  <FlatList data={editExerciseData} keyExtractor={(item, index) => item.weight_log_id !== -1 ? item.weight_log_id.toString() : (index * 100).toString()} renderItem={({item, index}) => {
+                    return (
+                      <View>
+                        <Text style={[{fontSize: 18, fontWeight: 600, color: theme.text}]}>Set {index+1}</Text>
+                        <Text style={[styles.inputLabel, { color: theme.text, marginTop: 15 }]}>{t('weightKgLbs')}</Text>
+                        <TextInput
+                          style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
+                          placeholder={t('weightFormat') + ' (> 0)'}
+                          placeholderTextColor={theme.text}
+                          keyboardType="numeric"
+                          value={item['weight_logged'].toString()}
+                          onChangeText={(val) => updateExerciseWeightLog(item, val, 'weight_logged', index)}
+                        />
+                        <Text style={[styles.inputLabel, {color: theme.text, marginTop: 15}]}>{t('repsPlaceholder')}</Text>
+                        <TextInput
+                          style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
+                          placeholder={t('repsPlaceholder') + ' (> 0)'}
+                          placeholderTextColor={theme.text}
+                          keyboardType="numeric"
+                          value={item['reps_logged'].toString()}
+                          onChangeText={(val) => updateExerciseWeightLog(item, val, 'reps_logged', index)}
+                        />
+                      </View>
+                    )
+                  }}>
+                  </FlatList>
+                </ScrollView>
+                  <View style={[{padding: 20, display: 'flex', flexDirection: 'column', rowGap: 3}]}>
+                    <TouchableOpacity style={[styles.saveButton, { backgroundColor: theme.buttonBackground }]} onPress={saveEditedWorkoutLog}>
+                      <Text style={[styles.saveButtonText, { color: theme.buttonText }]}>{t('Save')}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[styles.cancelButton, { backgroundColor: theme.card }]} onPress={closeLogEditModal}>
+                      <Text style={[styles.cancelButtonText, { color: theme.text }]}>{t('Cancel')}</Text>
+                    </TouchableOpacity>
+                  </View>
+              </View>
+              </View>
+          </TouchableWithoutFeedback>
+      </Modal>
     </View>
   );
 }
@@ -674,6 +674,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 40,
   },
+  tipText: {
+    margin: 12, // Space above the text
+    textAlign: 'left', 
+    fontSize: 14, // Smaller font size
+    fontStyle: 'italic', // Italic for emphasis
+  },
   adContainer: {
     alignItems: 'center',
   },
@@ -682,8 +688,7 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     textAlign: 'center',
     marginVertical: 20, // Adds spacing above and below the title
-  },
-  
+  }, 
   filterContainer: {
     flexDirection: 'column', // Stack buttons vertically
     alignItems: 'center',
@@ -850,6 +855,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalContent: {
+    height: '80%',
     borderRadius: 15,
     width: '80%',
   },
