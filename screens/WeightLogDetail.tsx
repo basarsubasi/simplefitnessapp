@@ -357,13 +357,13 @@ export default function WeightLogDetail() {
     // Run through state with edited workout and update the weight logs
     for (const item of editExerciseData) {
       // Add validation
-      const loggedReps = parseInt(item.reps_logged.trim());
+      const loggedReps = parseInt(item.reps_logged);
       if (Number.isNaN(loggedReps) || loggedReps === 0) {
         Alert.alert("Error", "TODO!!!!");
         return;
       }
 
-      const loggedWeight = parseInt(item.weight_logged.trim());
+      const loggedWeight = parseInt(item.weight_logged);
       if (Number.isNaN(loggedWeight) || loggedWeight === 0) {
         Alert.alert("Error", "TODO!!!!");
         return;
@@ -375,10 +375,12 @@ export default function WeightLogDetail() {
 
       await db.runAsync(
         'UPDATE Weight_Log SET weight_logged = ?, reps_logged = ? WHERE weight_log_id = ?',
-        [item.weight_logged, item.reps_logged, item.weight_log_id]
+        [loggedWeight, loggedReps, item.weight_log_id]
       );
     }
 
+    // Get updated weights from database to update expanded log overview
+    await fetchWeights(editExerciseData[0].day_name, editExerciseData[0].workout_date);
     setEditExerciseData([]);
     setShowLogEditModal(false);
   };
