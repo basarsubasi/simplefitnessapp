@@ -473,7 +473,13 @@
     "exerciseNotes": "Notes",
     "exerciseNotesPlaceholder": "Notes for exercise (optional)",
     "quickWorkout": "Quick Workout",
-    "useLogsForRepsTitle": "Use previous reps"
+    "useLogsForRepsTitle": "Use previous reps",
+
+    "editExerciseLog": "Edit exercise log",
+    "editExerciseTipText": "Tip: You can edit exercise logs by clicking them.",
+    
+    "savingError": "Saving Error",
+    "weightsValidationError": "Weights have to be above 0."
 
 
     }
