@@ -22,20 +22,7 @@ import { useTheme } from '../context/ThemeContext';
 import { useTranslation } from 'react-i18next';
 import { AutoSizeText, ResizeTextMode } from 'react-native-auto-size-text';
 import deepCopy from '../utils/deepCopy';
-
-interface EditExerciseMetadata {
-  exerciseName: string;
-  workout_date: number
-}
-
-interface ExerciseLog {
-  weight_log_id: number;
-  weight_logged: string; 
-  reps_logged: string;
-  set_number: number; 
-  workout_date: number; 
-  day_name: string
-}
+import { ExerciseLog } from '../abstractions/IExerciseLog';
 
 export default function WeightLogDetail() {
   const route = useRoute();
@@ -72,7 +59,8 @@ export default function WeightLogDetail() {
   const [showLogEditModal, setShowLogEditModal] = useState<boolean>(false);
   const [editExerciseMetadata, setEditExerciseMetadata] = useState<EditExerciseMetadata>({
     exerciseName: '',
-    workout_date: -1
+    workout_date: -1,
+    logged_exercise_id: -1
   });
   const [editExerciseData, setEditExerciseData] = useState<ExerciseLog[]>([]);
   const updateExerciseWeightLog = (item: ExerciseLog,
@@ -81,7 +69,6 @@ export default function WeightLogDetail() {
                                   index: number) => {
     item[updatedKeyName] = val;  
 
-    // Update editExerciseData to display correct value on Screen
     setEditExerciseData(prev => prev.map((value, i) => i === index ? item : value))
   }
 
@@ -162,7 +149,7 @@ export default function WeightLogDetail() {
       // Now fetch the weight logs
       const result = await db.getAllAsync<{
         exercise_name: string;
-        workout_log_id: number;
+        weight_log_id: number;
         weight_logged: number;
         reps_logged: number;
         set_number: number;
@@ -335,11 +322,12 @@ export default function WeightLogDetail() {
     return `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
   };
 
-  const openLogEditModal = (exerciseName: string, sets: ExerciseLog[]) => {
+  const openLogEditModal = (exerciseName: string, sets: ExerciseLog[], logged_exercise_id: number) => {
     setEditExerciseData(deepCopy(sets));
     setEditExerciseMetadata({
       exerciseName: exerciseName,
-      workout_date: sets[0].workout_date
+      workout_date: sets[0].workout_date,
+      logged_exercise_id: logged_exercise_id,
     });
     setShowLogEditModal(true);
   }
@@ -350,6 +338,7 @@ export default function WeightLogDetail() {
     setEditExerciseMetadata({
       exerciseName: '',
       workout_date: -1,
+      logged_exercise_id: -1,
     });
   }
 
@@ -359,13 +348,13 @@ export default function WeightLogDetail() {
       // Add validation
       const loggedReps = parseInt(item.reps_logged);
       if (Number.isNaN(loggedReps) || loggedReps === 0) {
-        Alert.alert("Error", "TODO!!!!");
+        Alert.alert(t('savingError'), t('repsValidationError'));
         return;
       }
 
       const loggedWeight = parseInt(item.weight_logged);
       if (Number.isNaN(loggedWeight) || loggedWeight === 0) {
-        Alert.alert("Error", "TODO!!!!");
+        Alert.alert(t('savingError'), t('weightsValidationError'));
         return;
       }
 
@@ -379,9 +368,22 @@ export default function WeightLogDetail() {
       );
     }
 
-    // Get updated weights from database to update expanded log overview
-    await fetchWeights(editExerciseData[0].day_name, editExerciseData[0].workout_date);
+    // Update UI Logs
+    const firstItem = editExerciseData[0];
+    const key = `${firstItem.day_name}_${firstItem.workout_date}`;
+    const compositeKey = `${editExerciseMetadata.logged_exercise_id}_${editExerciseMetadata.exerciseName}`;
+
+    setLogs((prev) => {
+      prev[key][compositeKey].sets = editExerciseData;
+      return prev;
+    })
+
     setEditExerciseData([]);
+    setEditExerciseMetadata({
+      exerciseName: '',
+      workout_date: -1,
+      logged_exercise_id: -1
+    });
     setShowLogEditModal(false);
   };
 
@@ -488,7 +490,7 @@ export default function WeightLogDetail() {
                 const muscleGroupInfo = muscleGroupData.find(mg => mg.value === muscle_group);
                 return (
                   <View>
-                    <TouchableOpacity onPress={() => openLogEditModal(exerciseName, sets)}>
+                    <TouchableOpacity onPress={() => openLogEditModal(exerciseName, sets, loggedExerciseId)}>
                       <View key={`${loggedExerciseId}_${exerciseName}`} style={styles.logItem}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', marginBottom: 5}}>
                         <Text style={[styles.exerciseName, { color: theme.text }]}>
@@ -596,7 +598,7 @@ export default function WeightLogDetail() {
         />
       )}
 
-      <Text style={[styles.tipText, { color: theme.text }]}>I am a tipText</Text>
+      <Text style={[styles.tipText, { color: theme.text }]}>{t('editExerciseTipText')}</Text>
   
       {/* Logs */}
        <FlatList
@@ -621,17 +623,17 @@ export default function WeightLogDetail() {
             <View style={[styles.modalContainer, { backgroundColor: 'rgba(0, 0, 0, 0.5)' }]}>
               <View style={[styles.modalContent, { backgroundColor: theme.card }]}>
                 <Text style={[styles.modalTitle, { color: theme.text, margin: 10, marginTop: 20 }]}>
-                  Edit exercise log: {editExerciseMetadata.exerciseName} ({new Date(editExerciseMetadata.workout_date * 1000).toLocaleDateString()})
+                  {t('editExerciseLog')}: {editExerciseMetadata.exerciseName} ({new Date(editExerciseMetadata.workout_date * 1000).toLocaleDateString()})
                 </Text>
                 <ScrollView style={{width: '100%'}} contentContainerStyle={{padding: 20}} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={true}>
                   <FlatList data={editExerciseData} keyExtractor={(item, index) => item.weight_log_id !== -1 ? item.weight_log_id.toString() : (index * 100).toString()} renderItem={({item, index}) => {
                     return (
                       <View>
-                        <Text style={[{fontSize: 18, fontWeight: 600, color: theme.text}]}>Set {index+1}</Text>
+                        <Text style={[{fontSize: 18, fontWeight: 600, color: theme.text}]}>{t("set")} {index+1}</Text>
                         <Text style={[styles.inputLabel, { color: theme.text, marginTop: 15 }]}>{t('weightKgLbs')}</Text>
                         <TextInput
                           style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
-                          placeholder={t('weightFormat') + ' (> 0)'}
+                          placeholder={t('Weight') + ' (> 0)'}
                           placeholderTextColor={theme.text}
                           keyboardType="numeric"
                           value={item['weight_logged'].toString()}
