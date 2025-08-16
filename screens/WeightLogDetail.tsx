@@ -22,7 +22,21 @@ import { useTheme } from '../context/ThemeContext';
 import { useTranslation } from 'react-i18next';
 import { AutoSizeText, ResizeTextMode } from 'react-native-auto-size-text';
 import deepCopy from '../utils/deepCopy';
-import { ExerciseLog } from '../abstractions/IExerciseLog';
+
+interface EditExerciseMetadata {
+    exerciseName: string;
+    workout_date: number;
+    logged_exercise_id: number;
+}
+
+interface ExerciseLog {
+    weight_log_id: number;
+    weight_logged: string; 
+    reps_logged: string;
+    set_number: number; 
+    workout_date: number; 
+    day_name: string 
+}
 
 export default function WeightLogDetail() {
   const route = useRoute();
