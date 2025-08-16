@@ -420,8 +420,13 @@
 "exerciseNotesPlaceholder": "Note per l'esercizio (facoltativo)",
 "quickWorkout": "Allenamento rapido",
 "useLogsForRepsTitle": "Usare ripetizioni precedenti",
-"lastWorkoutInfo": "Allenamento precedente"
+"lastWorkoutInfo": "Allenamento precedente",
 
+"editExerciseLog": "Edit exercise log",
+"editExerciseTipText": "Tip: You can edit exercise logs by clicking them.",
+    
+"savingError": "Saving Error",
+"weightsValidationError": "Weights have to be above 0."
 
 
 

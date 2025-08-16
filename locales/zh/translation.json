@@ -434,12 +434,14 @@
 "exerciseNotesPlaceholder": "练习备注（可选）",
 "quickWorkout": "快速训练",
 "useLogsForRepsTitle": "使用之前的重复",
-"lastWorkoutInfo": "上次训练"
+"lastWorkoutInfo": "上次训练",
 
 
-
-
-
+"editExerciseLog": "Edit exercise log",
+"editExerciseTipText": "Tip: You can edit exercise logs by clicking them.",
+    
+"savingError": "Saving Error",
+"weightsValidationError": "Weights have to be above 0."
 
 
 

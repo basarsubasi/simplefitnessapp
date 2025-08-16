@@ -418,9 +418,12 @@
 "exerciseNotesPlaceholder": "Notizen zur Übung (optional)",
 "quickWorkout": "Schnelles Training",
 "useLogsForRepsTitle": "Vorherige Wiederholungen verwenden",
-"lastWorkoutInfo": "Vorheriges Training"
+"lastWorkoutInfo": "Vorheriges Training",
 
-
+"editExerciseLog": "Bearbeite Übungseintrag",
+"editExerciseTipText": "Tipp: Du kannst Übungseinträge bearbeiten, indem du auf sie klickst.",
+"savingError": "Speicherfehler",
+"weightsValidationError": "Gewichte müssen einen Wert über 0 haben."
 
 
 }

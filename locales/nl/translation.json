@@ -428,9 +428,15 @@
 "exerciseNotesPlaceholder": "Notities voor oefening (optioneel)",
 "quickWorkout": "Snel training",
 "useLogsForRepsTitle": "Vorige herhalingen gebruiken",
-"lastWorkoutInfo": "Vorige oefening"
+"lastWorkoutInfo": "Vorige oefening",
 
 
+
+"editExerciseLog": "Edit exercise log",
+"editExerciseTipText": "Tip: You can edit exercise logs by clicking them.",
+    
+"savingError": "Saving Error",
+"weightsValidationError": "Weights have to be above 0."
 
 
 

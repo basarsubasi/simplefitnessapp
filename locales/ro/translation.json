@@ -431,8 +431,13 @@
 "exerciseNotesPlaceholder": "Note pentru exercițiu (opțional)",
 "quickWorkout": "Antrenament rapid",
 "useLogsForRepsTitle": "Utilizează jurnalele anterioare",
-"lastWorkoutInfo": "Antrenament anterior"
+"lastWorkoutInfo": "Antrenament anterior",
 
+"editExerciseLog": "Edit exercise log",
+"editExerciseTipText": "Tip: You can edit exercise logs by clicking them.",
+    
+"savingError": "Saving Error",
+"weightsValidationError": "Weights have to be above 0."
 
 
 

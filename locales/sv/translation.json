@@ -433,9 +433,14 @@
 "exerciseNotesPlaceholder": "Notiser för övning (valfritt)",
 "quickWorkout": "Snabb träning",
 "useLogsForRepsTitle": "Använd tidigare repetitioner",
-"lastWorkoutInfo": "Föregående träning"
+"lastWorkoutInfo": "Föregående träning",
 
 
+"editExerciseLog": "Edit exercise log",
+"editExerciseTipText": "Tip: You can edit exercise logs by clicking them.",
+    
+"savingError": "Saving Error",
+"weightsValidationError": "Weights have to be above 0."
 
 
     

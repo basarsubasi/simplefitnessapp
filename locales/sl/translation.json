@@ -426,9 +426,14 @@
 "exerciseNotesPlaceholder": "Opombe za vajo (neobvezno)",
 "quickWorkout": "Hitra vadba",
 "useLogsForRepsTitle": "Uporabi prejšnje ponovitve",
-"lastWorkoutInfo": "Prejšnja vadba"
+"lastWorkoutInfo": "Prejšnja vadba",
 
 
+"editExerciseLog": "Edit exercise log",
+"editExerciseTipText": "Tip: You can edit exercise logs by clicking them.",
+    
+"savingError": "Saving Error",
+"weightsValidationError": "Weights have to be above 0."
 
     
 }

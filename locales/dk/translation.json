@@ -425,11 +425,13 @@
 "exerciseNotesPlaceholder": "Notater til øvelse (valgfrit)",
 "quickWorkout": "Hurtig træning",
 "useLogsForRepsTitle": "Brug tidligere gentagelser",
-"lastWorkoutInfo": "Tidligere træning"
+"lastWorkoutInfo": "Tidligere træning",
 
-
-
-
+"editExerciseLog": "Edit exercise log",
+"editExerciseTipText": "Tip: You can edit exercise logs by clicking them.",
     
+"savingError": "Saving Error",
+"weightsValidationError": "Weights have to be above 0."
+
   }
   
