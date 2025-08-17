@@ -432,8 +432,13 @@
 "exerciseNotesPlaceholder": "Заметки к упражнению (необязательно)",
 "quickWorkout": "Быстрая тренировка",
 "useLogsForRepsTitle": "Использовать предыдущие повторения",
-"lastWorkoutInfo": "Предыдущая тренировка"
+"lastWorkoutInfo": "Предыдущая тренировка",
 
 
+"editExerciseLog": "Edit exercise log",
+"editExerciseTipText": "Tip: You can edit exercise logs by clicking them.",
+    
+"savingError": "Saving Error",
+"weightsValidationError": "Weights have to be above 0."
 
 }

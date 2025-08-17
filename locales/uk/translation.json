@@ -430,7 +430,13 @@
   "exerciseNotesPlaceholder": "Записи для вправи (необов'язково)",
   "quickWorkout": "Швидке тренування",
   "useLogsForRepsTitle": "Використовувати попередні повторення",
-  "lastWorkoutInfo": "Попереднє тренування"
+  "lastWorkoutInfo": "Попереднє тренування",
+
+  "editExerciseLog": "Edit exercise log",
+  "editExerciseTipText": "Tip: You can edit exercise logs by clicking them.",
+    
+  "savingError": "Saving Error",
+  "weightsValidationError": "Weights have to be above 0."
 
 
 
