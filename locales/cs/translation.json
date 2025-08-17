@@ -425,8 +425,12 @@
 "exerciseNotesPlaceholder": "Poznámky ke cvičení (volitelné)",
 "quickWorkout": "Rychlé cvičení",
 "useLogsForRepsTitle": "Použít předchozí opakování",
-"lastWorkoutInfo": "Předchozí trénink"
+"lastWorkoutInfo": "Předchozí trénink",
     
+"editExerciseLog": "Edit exercise log",
+"editExerciseTipText": "Tip: You can edit exercise logs by clicking them.",
+"savingError": "Saving Error",
+"weightsValidationError": "Weights have to be above 0."
     
     
 }

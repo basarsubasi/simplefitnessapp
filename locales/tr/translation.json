@@ -457,10 +457,15 @@
 "exerciseNotesPlaceholder": "Egzersiz notları (isteğe bağlı)",
 "quickWorkout": "Hızlı Antrenman",
 "useLogsForRepsTitle": "Önceki tekrarları kullan",
-"lastWorkoutInfo": "Önceki antrenman"
+"lastWorkoutInfo": "Önceki antrenman",
 
 
 
+"editExerciseLog": "Edit exercise log",
+"editExerciseTipText": "Tip: You can edit exercise logs by clicking them.",
+    
+"savingError": "Saving Error",
+"weightsValidationError": "Weights have to be above 0."
 
 
             
