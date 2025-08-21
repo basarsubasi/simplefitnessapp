@@ -427,10 +427,9 @@
 "useLogsForRepsTitle": "Použít předchozí opakování",
 "lastWorkoutInfo": "Předchozí trénink",
     
-"editExerciseLog": "Edit exercise log",
-"editExerciseTipText": "Tip: You can edit exercise logs by clicking them.",
-"savingError": "Saving Error",
-"weightsValidationError": "Weights have to be above 0."
-    
+    "editExerciseLog": "Upravit záznam cvičení",
+    "editExerciseTipText": "Tip: Záznamy o cvičení můžete upravit kliknutím na ně.",
+    "savingError": "Chyba při ukládání",
+    "weightsValidationError": "Váhy musí být větší než 0."
     
 }

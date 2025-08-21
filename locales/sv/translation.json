@@ -436,12 +436,10 @@
 "lastWorkoutInfo": "Föregående träning",
 
 
-"editExerciseLog": "Edit exercise log",
-"editExerciseTipText": "Tip: You can edit exercise logs by clicking them.",
-    
-"savingError": "Saving Error",
-"weightsValidationError": "Weights have to be above 0."
-
+    "editExerciseLog": "Redigera träningslogg",
+    "editExerciseTipText": "Tips: Du kan redigera träningsloggar genom att klicka på dem.",
+    "savingError": "Fel vid sparande",
+    "weightsValidationError": "Vikter måste vara över 0."
 
     
         
