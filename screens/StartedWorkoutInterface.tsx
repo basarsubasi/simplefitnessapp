@@ -4,6 +4,7 @@ import {
   Text, 
   StyleSheet, 
   TouchableOpacity, 
+  TouchableWithoutFeedback,
   ScrollView, 
   ActivityIndicator,
   TextInput,
@@ -1458,8 +1459,14 @@ export default function StartedWorkoutInterface() {
                   }
                 };
 
+                // Use TouchableWithoutFeedback for completed exercises to maintain scrollability
+                const TouchableComponent = item.exercise_fully_logged ? TouchableWithoutFeedback : TouchableOpacity;
+                const touchableProps = item.exercise_fully_logged 
+                  ? {} 
+                  : { onPress: handlePress, disabled: item.exercise_fully_logged };
+
                 return (
-                  <TouchableOpacity onPress={handlePress} disabled={item.exercise_fully_logged}>
+                  <TouchableComponent {...touchableProps}>
                     <View style={itemStyle}>
                       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', flexShrink: 1 }}>
@@ -1501,7 +1508,7 @@ export default function StartedWorkoutInterface() {
                         {item.sets} {t('Sets')} × {item.reps} {t('Reps')}
                       </Text>
                     </View>
-                  </TouchableOpacity>
+                  </TouchableComponent>
                 );
               }}
             />
