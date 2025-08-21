@@ -652,7 +652,7 @@ export default function AllLogs() {
                     return (
                       <View>
                         <Text style={[{fontSize: 18, fontWeight: 600, color: theme.text}]}>{t('set')} {index+1}</Text>
-                        <Text style={[styles.inputLabel, { color: theme.text, marginTop: 15 }]}>{t('weightKgLbs')}</Text>
+                        <Text style={[styles.inputLabel, { color: theme.text, marginTop: 15 }]}>{weightFormat}</Text>
                         <TextInput
                           style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
                           placeholder={t('Weight') + ' (> 0)'}
@@ -702,7 +702,7 @@ const styles = StyleSheet.create({
   },
   tipText: {
     margin: 12, // Space above the text
-    textAlign: 'left', // Center align
+    textAlign: 'center', // Center align
     fontSize: 14, // Smaller font size
     fontStyle: 'italic', // Italic for emphasis
   },
