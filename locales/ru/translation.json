@@ -435,10 +435,9 @@
 "lastWorkoutInfo": "Предыдущая тренировка",
 
 
-"editExerciseLog": "Edit exercise log",
-"editExerciseTipText": "Tip: You can edit exercise logs by clicking them.",
-    
-"savingError": "Saving Error",
-"weightsValidationError": "Weights have to be above 0."
+    "editExerciseLog": "Редактировать журнал упражнений",
+    "editExerciseTipText": "Совет: Вы можете редактировать журналы упражнений, нажав на них.",
+    "savingError": "Ошибка сохранения",
+    "weightsValidationError": "Вес должен быть больше 0."
 
 }

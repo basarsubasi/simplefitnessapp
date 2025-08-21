@@ -461,11 +461,10 @@
 
 
 
-"editExerciseLog": "Edit exercise log",
-"editExerciseTipText": "Tip: You can edit exercise logs by clicking them.",
-    
-"savingError": "Saving Error",
-"weightsValidationError": "Weights have to be above 0."
+    "editExerciseLog": "Egzersiz kaydını düzenle",
+    "editExerciseTipText": "İpucu: Egzersiz kayıtlarını egzersizlerin üzerine tıklayarak düzenleyebilirsiniz.",
+    "savingError": "Kaydetme Hatası",
+    "weightsValidationError": "Ağırlıklar 0'dan büyük olmalıdır."
 
 
             
