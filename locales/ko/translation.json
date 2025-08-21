@@ -423,12 +423,10 @@
 "useLogsForRepsTitle": "이전 반복 사용",
 "lastWorkoutInfo": "이전 트레이닝",
 
-"editExerciseLog": "Edit exercise log",
-"editExerciseTipText": "Tip: You can edit exercise logs by clicking them.",
-    
-"savingError": "Saving Error",
-"weightsValidationError": "Weights have to be above 0."
-    
+    "editExerciseLog": "운동 기록 편집",
+    "editExerciseTipText": "팁: 운동 기록은 클릭하여 편집할 수 있습니다.",
+    "savingError": "저장 오류",
+    "weightsValidationError": "무게는 0보다 커야 합니다."
 
 
 }

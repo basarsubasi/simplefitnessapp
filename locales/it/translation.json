@@ -422,12 +422,10 @@
 "useLogsForRepsTitle": "Usare ripetizioni precedenti",
 "lastWorkoutInfo": "Allenamento precedente",
 
-"editExerciseLog": "Edit exercise log",
-"editExerciseTipText": "Tip: You can edit exercise logs by clicking them.",
-    
-"savingError": "Saving Error",
-"weightsValidationError": "Weights have to be above 0."
-
+    "editExerciseLog": "Modifica registro esercizi",
+    "editExerciseTipText": "Suggerimento: puoi modificare i registri degli esercizi cliccandoci sopra.",
+    "savingError": "Errore di salvataggio",
+    "weightsValidationError": "I pesi devono essere superiori a 0."
 
 
 
