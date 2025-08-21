@@ -429,12 +429,10 @@
 "lastWorkoutInfo": "前回のワークアウト",
 
 
-"editExerciseLog": "Edit exercise log",
-"editExerciseTipText": "Tip: You can edit exercise logs by clicking them.",
-    
-"savingError": "Saving Error",
-"weightsValidationError": "Weights have to be above 0."
-
+    "editExerciseLog": "運動ログを編集",
+    "editExerciseTipText": "ヒント: 運動ログはクリックすると編集できます。",
+    "savingError": "保存エラー",
+    "weightsValidationError": "重量は0より大きくなければなりません。"
 
 
 

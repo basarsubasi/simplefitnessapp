@@ -428,12 +428,10 @@
 "useLogsForRepsTitle": "Utiliser les répétitions précédentes",
 "lastWorkoutInfo": "Entraînement précédent",
 
-
-"editExerciseLog": "Edit exercise log",
-"editExerciseTipText": "Tip: You can edit exercise logs by clicking them.",
-    
-"savingError": "Saving Error",
-"weightsValidationError": "Weights have to be above 0."
+    "editExerciseLog": "Modifier le journal d'exercice",
+    "editExerciseTipText": "Astuce : Vous pouvez modifier les journaux d'exercice en cliquant dessus.",
+    "savingError": "Erreur d'enregistrement",
+    "weightsValidationError": "Les poids doivent être supérieurs à 0."
 
 
 

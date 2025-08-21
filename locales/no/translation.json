@@ -433,11 +433,10 @@
 "useLogsForRepsTitle": "Bruk tidligere repetisjoner",
 "lastWorkoutInfo": "Siste treningsøkt",
 
-"editExerciseLog": "Edit exercise log",
-"editExerciseTipText": "Tip: You can edit exercise logs by clicking them.",
-    
-"savingError": "Saving Error",
-"weightsValidationError": "Weights have to be above 0."
+    "editExerciseLog": "Rediger treningslogg",
+    "editExerciseTipText": "Tips: Du kan redigere treningslogger ved å klikke på dem.",
+    "savingError": "Feil ved lagring",
+    "weightsValidationError": "Vekter må være over 0."
 
 
 

@@ -429,11 +429,10 @@
 "lastWorkoutInfo": "Prejšnja vadba",
 
 
-"editExerciseLog": "Edit exercise log",
-"editExerciseTipText": "Tip: You can edit exercise logs by clicking them.",
-    
-"savingError": "Saving Error",
-"weightsValidationError": "Weights have to be above 0."
+    "editExerciseLog": "Uredi dnevnik vadbe",
+    "editExerciseTipText": "Namig: Dnevnike vadbe lahko uredite s klikom nanje.",
+    "savingError": "Napaka pri shranjevanju",
+    "weightsValidationError": "Teže morajo biti večje od 0."
 
     
 }
