@@ -1,0 +1,2 @@
+   - Make workout logs editable by @haedow4
+   - Fixed the scrolling issue on Started Workout screen
